@@ -65,12 +65,9 @@ export default function SponsorsSection({ lang, isDarkMode }) {
           Get prominent banner placement across live match scorecards, fixture sheets, and WhatsApp shared status cards.
         </p>
         <div className="pt-2">
-          <a
-            href="tel:9961878508"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-black shadow-sm transition"
-          >
-            <span>Contact Committee Media Desk: 9961878508</span>
-          </a>
+          <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 shadow-sm">
+            <span>Contact: UDAYA & KASC Organizing Committee Desk</span>
+          </span>
         </div>
       </div>
     </section>

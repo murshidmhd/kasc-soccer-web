@@ -51,13 +51,9 @@ export default function SponsorAdsSidebar({ lang, isDarkMode }) {
             <MapPin className="w-3 h-3 text-amber-600" />
             <span>പറമ്പിൽ പീടിക • മലപ്പുറം</span>
           </span>
-          <a
-            href="tel:9961878508"
-            className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs shadow-xs transition active:scale-95"
-          >
-            <Phone className="w-3 h-3" />
-            <span>Order Now</span>
-          </a>
+          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-amber-100 text-amber-900 font-bold text-[11px]">
+            <span>Dine-in & Takeaway</span>
+          </span>
         </div>
       </div>
 
@@ -96,13 +92,9 @@ export default function SponsorAdsSidebar({ lang, isDarkMode }) {
             <MapPin className="w-3 h-3 text-emerald-600" />
             <span>മലപ്പുറം • പെരുവള്ളൂർ</span>
           </span>
-          <a
-            href="tel:9961878508"
-            className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition active:scale-95"
-          >
-            <Phone className="w-3 h-3" />
-            <span>Helpline</span>
-          </a>
+          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-emerald-100 text-emerald-900 font-bold text-[11px]">
+            <span>24/7 Casualty Care</span>
+          </span>
         </div>
       </div>
 

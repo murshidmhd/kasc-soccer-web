@@ -16,7 +16,7 @@ export const tournamentInfo = {
   venueMalayalam: "പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം, പറമ്പിൽ പീടിക",
   location: "Parambil Peedika, Malappuram, Kerala",
   googleMapsUrl: "https://maps.google.com/?q=Peruvallur+Panjayath+Stadium+Parambil+Peedika",
-  mediaContact: "9961878508",
+  mediaContact: "KASC & UDAYA Committee",
   matchTime: "8:00 PM IST (Every Night)"
 };
 
@@ -154,9 +154,7 @@ export const participatingTeams = [
     nameMl: "സൂപ്പർ സ്റ്റുഡിയോ മലപ്പുറം",
     city: "Malappuram",
     manager: "Asharaf Bava",
-    managerPhone: "9995252752",
     asstManager: "Imathiyas",
-    asstManagerPhone: "9020570707",
     category: "Permanent SFA Club"
   },
   {
@@ -165,9 +163,7 @@ export const participatingTeams = [
     nameMl: "അൽ മദീന ചെറുപ്പുളശ്ശേരി",
     city: "Cherpulassery, Palakkad",
     manager: "Latheef",
-    managerPhone: "9746850000",
     asstManager: "Sidiq E 4",
-    asstManagerPhone: "9349163638",
     category: "Permanent SFA Club"
   },
   {
@@ -176,9 +172,7 @@ export const participatingTeams = [
     nameMl: "സബാൻ എഫ്.സി കോട്ടക്കൽ",
     city: "Kottakkal, Malappuram",
     manager: "Mubaarak Salih",
-    managerPhone: "7559000009",
     asstManager: "Ajith",
-    asstManagerPhone: "9946425862",
     category: "Permanent SFA Club"
   },
   {
@@ -187,9 +181,7 @@ export const participatingTeams = [
     nameMl: "ലിൻഷാ മെഡിക്കൽസ് മണ്ണാർക്കാട്",
     city: "Mannarkkad, Palakkad",
     manager: "Rasheed Poorona",
-    managerPhone: "9747540473",
     asstManager: "Shameer Babu",
-    asstManagerPhone: "9447876531",
     category: "Permanent SFA Club"
   },
   {
@@ -198,9 +190,7 @@ export const participatingTeams = [
     nameMl: "ഉഷാ എഫ്.സി തൃശ്ശൂർ",
     city: "Thrissur",
     manager: "Pradeep P V",
-    managerPhone: "9447835946",
     asstManager: "C G Shinil",
-    asstManagerPhone: "9847195254",
     category: "Permanent SFA Club"
   },
   {
@@ -209,9 +199,7 @@ export const participatingTeams = [
     nameMl: "കെ.എം.ജി മാവൂർ",
     city: "Mavoor, Kozhikode",
     manager: "Hifsu Rahman",
-    managerPhone: "9947717776",
     asstManager: "Shafeeq",
-    asstManagerPhone: "9744646466",
     category: "Permanent SFA Club"
   },
   {
@@ -220,9 +208,7 @@ export const participatingTeams = [
     nameMl: "റിയൽ എഫ്.സി തെന്നല",
     city: "Thennala, Malappuram",
     manager: "Usman",
-    managerPhone: "7902808445",
     asstManager: "Jershid",
-    asstManagerPhone: "9895818103",
     category: "Registered Club"
   },
   {
@@ -231,9 +217,7 @@ export const participatingTeams = [
     nameMl: "അഭിലാഷ് എഫ്.സി കുപ്പൂത്ത്",
     city: "Kuppooth",
     manager: "Abdul Vahid",
-    managerPhone: "9544619436",
     asstManager: "Muhamed Sabique",
-    asstManagerPhone: "9207212223",
     category: "Registered Club"
   },
   {
@@ -242,9 +226,7 @@ export const participatingTeams = [
     nameMl: "എഫ്.സി നെല്ലിക്കുത്ത്",
     city: "Nellikkuth, Malappuram",
     manager: "Noufal",
-    managerPhone: "9744227678",
     asstManager: "Riyas",
-    asstManagerPhone: "9744227678",
     category: "Registered Club"
   },
   {
@@ -253,9 +235,7 @@ export const participatingTeams = [
     nameMl: "ഉദയ എഫ്.സി പറമ്പിൽ പീടിക",
     city: "Parambil Peedika, Malappuram",
     manager: "Muneer",
-    managerPhone: "9400129900",
     asstManager: "Shabeer",
-    asstManagerPhone: "9562105210",
     category: "Host Club & Permanent SFA"
   },
   {
@@ -264,9 +244,7 @@ export const participatingTeams = [
     nameMl: "എഫ്.സി പെരിന്തൽമണ്ണ",
     city: "Perinthalmanna, Malappuram",
     manager: "Rasheed",
-    managerPhone: "9562812368",
     asstManager: "Arshad Soopi",
-    asstManagerPhone: "8089410922",
     category: "Registered Club"
   },
   {
@@ -275,9 +253,7 @@ export const participatingTeams = [
     nameMl: "ഷൂട്ടേഴ്സ് പടന്ന / ജവഹർ മാവൂർ",
     city: "Padanna / Mavoor",
     manager: "Ansari P",
-    managerPhone: "9746889999",
     asstManager: "Shahul",
-    asstManagerPhone: "9544170807",
     category: "Registered Club"
   },
   {
@@ -286,9 +262,7 @@ export const participatingTeams = [
     nameMl: "കെ.ആർ.എസ്.സി കോഴിക്കോട്",
     city: "Kozhikode",
     manager: "Rujeesh",
-    managerPhone: "9961184009",
     asstManager: "Asif",
-    asstManagerPhone: "8075982482",
     category: "Registered Club"
   },
   {
@@ -297,9 +271,7 @@ export const participatingTeams = [
     nameMl: "പവർ ഡിപ്പോ തൃശ്ശൂർ",
     city: "Thrissur",
     manager: "Santhosh K. T",
-    managerPhone: "9447201299",
     asstManager: "Biju Varghese",
-    asstManagerPhone: "8943889906",
     category: "Registered Club"
   },
   {
@@ -308,9 +280,7 @@ export const participatingTeams = [
     nameMl: "ബേസ് പെരുമ്പാവൂർ",
     city: "Perumbavoor, Ernakulam",
     manager: "Usman K P",
-    managerPhone: "9747008848",
     asstManager: "Musthu",
-    asstManagerPhone: "8589014241",
     category: "Registered Club"
   },
   {
@@ -319,9 +289,7 @@ export const participatingTeams = [
     nameMl: "സോക്കർ സ്പോർട്ടിംഗ് ഷൊർണ്ണൂർ",
     city: "Shornur, Palakkad",
     manager: "Dilshad",
-    managerPhone: "9447942302",
     asstManager: "Anil Mathew",
-    asstManagerPhone: "9895203040",
     category: "Registered Club"
   },
   {
@@ -330,9 +298,7 @@ export const participatingTeams = [
     nameMl: "ഹിറ്റാച്ചി എഫ്.സി തൃക്കരിപ്പൂർ",
     city: "Thrikkarippur, Kasaragod",
     manager: "Siraj AGC",
-    managerPhone: "8590897885",
     asstManager: "Mohammed Rafi",
-    asstManagerPhone: "7012120080",
     category: "Registered Club"
   },
   {
@@ -341,9 +307,7 @@ export const participatingTeams = [
     nameMl: "എ.എഫ്.സി വയനാട്",
     city: "Wayanad",
     manager: "Baiju",
-    managerPhone: "9961006339",
     asstManager: "Shanid",
-    asstManagerPhone: "9961081010",
     category: "Registered Club"
   },
   {
@@ -352,9 +316,7 @@ export const participatingTeams = [
     nameMl: "ഹണ്ടേഴ്സ് കൂത്തുപറമ്പ്",
     city: "Koothuparambu, Kannur",
     manager: "Shamsu",
-    managerPhone: "9895170168",
     asstManager: "Ansar",
-    asstManagerPhone: "9605064787",
     category: "Registered Club"
   },
   {
@@ -363,9 +325,7 @@ export const participatingTeams = [
     nameMl: "ടൗൺ ടീം അരീക്കോട്",
     city: "Areekode, Malappuram",
     manager: "Salam",
-    managerPhone: "9447925702",
     asstManager: "Rajeesh Piari",
-    asstManagerPhone: "9747044604",
     category: "Permanent SFA Club"
   },
   {
@@ -374,9 +334,7 @@ export const participatingTeams = [
     nameMl: "എ.വൈ.സി ഉച്ചാരക്കടവ്",
     city: "Ucharakkadavu, Malappuram",
     manager: "Saifudheen (Mani)",
-    managerPhone: "9207195311",
     asstManager: "Manager Desk",
-    asstManagerPhone: "9207195311",
     category: "Registered Club"
   },
   {
@@ -385,9 +343,7 @@ export const participatingTeams = [
     nameMl: "എഫ്.സി ഗോവ",
     city: "Goa / Kerala Circuit",
     manager: "Saidalavi K P",
-    managerPhone: "8593969696",
     asstManager: "Akber P",
-    asstManagerPhone: "9745500700",
     category: "Registered Club"
   }
 ];
@@ -405,7 +361,7 @@ export const sponsors = [
   { name: "UDAYA & KASC Peruvallur", tier: "Organizers", desc: "UDAYA Parambil Peedika & KASC Peruvallur" },
   { name: "Sevens Football Association", tier: "Governing Body", desc: "SFA Approved Tournament" },
   { name: "Gulf Expat Fans Club", tier: "Diaspora Partner", desc: "UAE, Saudi & Qatar Pravasi Koottayma" },
-  { name: "Media Desk Hotline", tier: "Broadcast & Media", desc: "Call / WhatsApp: 9961878508" }
+  { name: "Organizing Committee", tier: "Event Administration", desc: "UDAYA Parambil Peedika & KASC Peruvallur" }
 ];
 
 export const sponsorAds = [

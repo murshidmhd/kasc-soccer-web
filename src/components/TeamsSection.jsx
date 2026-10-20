@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Phone, Search, Users, CheckCircle2, UserCheck } from 'lucide-react';
+import { Shield, Search, Users, CheckCircle2, UserCheck } from 'lucide-react';
 import { participatingTeams } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
 
@@ -39,7 +39,7 @@ export default function TeamsSection({ lang, isDarkMode }) {
         </h2>
         <p className="text-xs sm:text-sm text-slate-600">
           {lang === 'ml'
-            ? 'സെവൻസ് ഫുട്ബോൾ അസോസിയേഷൻ (SFA) അംഗീകൃത ടീമുകളും അവയുടെ ഉടമ/മാനേജർ വിവരങ്ങളും'
+            ? 'സെവൻസ് ഫുട്ബോൾ അസോസിയേഷൻ (SFA) അംഗീകൃത ടീമുകളും അവയുടെ മാനേജ്‌മെന്റ് വിവരങ്ങളും'
             : 'Official Sevens Football Association (SFA) registered permanent & tournament teams'}
         </p>
       </div>
@@ -130,43 +130,19 @@ export default function TeamsSection({ lang, isDarkMode }) {
               📍 {team.city}
             </p>
 
-            {/* Management & Contact Information */}
-            <div className="space-y-2 text-xs border-t border-slate-100 pt-3">
+            {/* Official Management Information (Clean & Private) */}
+            <div className="space-y-1.5 text-xs border-t border-slate-100 pt-3">
               {/* Manager */}
-              <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 border border-slate-100">
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Manager</span>
-                  <span className="font-bold text-slate-900 text-xs">{team.manager}</span>
-                </div>
-                {team.managerPhone && (
-                  <a
-                    href={`tel:${team.managerPhone}`}
-                    className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition active:scale-95 flex items-center gap-1 text-[11px] font-bold"
-                    title={`Call Manager ${team.manager}`}
-                  >
-                    <Phone className="w-3 h-3 text-emerald-600" />
-                    <span>{team.managerPhone}</span>
-                  </a>
-                )}
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                <span className="text-[10px] font-bold text-slate-400 uppercase">Manager</span>
+                <span className="font-bold text-slate-900 text-xs">{team.manager}</span>
               </div>
 
               {/* Assistant Manager */}
               {team.asstManager && (
-                <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50/70 border border-slate-100">
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Asst Manager</span>
-                    <span className="font-bold text-slate-800 text-xs">{team.asstManager}</span>
-                  </div>
-                  {team.asstManagerPhone && (
-                    <a
-                      href={`tel:${team.asstManagerPhone}`}
-                      className="p-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition active:scale-95 flex items-center gap-1 text-[11px] font-bold"
-                      title={`Call Asst Manager ${team.asstManager}`}
-                    >
-                      <Phone className="w-3 h-3 text-blue-600" />
-                      <span>{team.asstManagerPhone}</span>
-                    </a>
-                  )}
+                <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50/70 border border-slate-100">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase">Asst Manager</span>
+                  <span className="font-bold text-slate-800 text-xs">{team.asstManager}</span>
                 </div>
               )}
             </div>

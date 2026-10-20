@@ -40,7 +40,7 @@ export default function TicketCounterModal({ isOpen, onClose, lang, isDarkMode }
 
   // Settings: Committee UPI details (Persisted in localStorage)
   const [upiId, setUpiId] = useState(() => {
-    return localStorage.getItem('kasc_committee_upi_id') || '9961878508@okaxis';
+    return localStorage.getItem('kasc_committee_upi_id') || 'kascsevens@upi';
   });
   const [payeeName, setPayeeName] = useState(() => {
     return localStorage.getItem('kasc_committee_payee_name') || 'KASC Sevens Football';
@@ -684,7 +684,7 @@ export default function TicketCounterModal({ isOpen, onClose, lang, isDarkMode }
                     value={upiId}
                     onChange={(e) => setUpiId(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
-                    placeholder="9961878508@okaxis"
+                    placeholder="kascsevens@upi"
                   />
                 </div>
 
