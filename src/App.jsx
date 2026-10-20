@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import LiveMatchCard from './components/LiveMatchCard';
+import MatchPredictionCard from './components/MatchPredictionCard';
+import PlayerOfTheMatchVote from './components/PlayerOfTheMatchVote';
+import FanHypeMeter from './components/FanHypeMeter';
+import HeadToHeadCard from './components/HeadToHeadCard';
 import FixturesSection from './components/FixturesSection';
 import TeamsSection from './components/TeamsSection';
 import TopScorers from './components/TopScorers';
@@ -71,11 +75,36 @@ export default function App() {
             
             <div className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                {/* Left 8 cols: Match Center */}
-                <div className="lg:col-span-8">
+                {/* Left 8 cols: Match Center & Interactive Fan Features */}
+                <div className="lg:col-span-8 space-y-6">
+                  {/* Real-time Match Center Scoreboard */}
                   <LiveMatchCard 
                     lang={lang} 
                     isDarkMode={isDarkMode} 
+                  />
+
+                  {/* FotMob & Sofascore Style: Predict & Win Contest */}
+                  <MatchPredictionCard
+                    lang={lang}
+                    isDarkMode={isDarkMode}
+                  />
+
+                  {/* Premier League Style: Fan Player of the Match Voting */}
+                  <PlayerOfTheMatchVote
+                    lang={lang}
+                    isDarkMode={isDarkMode}
+                  />
+
+                  {/* Malappuram Sevens Gallery Hype Meter & Stadium Soundboard */}
+                  <FanHypeMeter
+                    lang={lang}
+                    isDarkMode={isDarkMode}
+                  />
+
+                  {/* Head-to-Head & Form Guide */}
+                  <HeadToHeadCard
+                    lang={lang}
+                    isDarkMode={isDarkMode}
                   />
                 </div>
 

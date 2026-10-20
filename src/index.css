@@ -43,3 +43,22 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+@keyframes floatFade {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(0.8);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateY(-40px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-80px) scale(1);
+  }
+}
+
+.animate-float-fade {
+  animation: floatFade 1.1s ease-out forwards;
+}
