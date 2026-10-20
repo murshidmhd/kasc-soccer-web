@@ -67,8 +67,8 @@ export default function Hero({ lang, scrollToSection, isDarkMode }) {
             </span>
           </h1>
 
-          <p className="text-xs sm:text-lg font-bold text-slate-600 tracking-wide font-sports max-w-3xl mx-auto">
-            ALL INDIA SEVENS FOOTBALL TOURNAMENT
+          <p className="text-xs sm:text-base font-bold text-blue-700 tracking-wide font-sports max-w-3xl mx-auto">
+            {lang === 'ml' ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം, പറമ്പിൽ പീടിക' : 'PERUVALLUR PANCHAYATH STADIUM, PARAMBIL PEEDIKA'}
           </p>
 
           {/* Tournament Date & Venue Ribbon (Optimized for Mobile) */}

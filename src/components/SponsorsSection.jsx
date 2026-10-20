@@ -16,7 +16,7 @@ export default function SponsorsSection({ lang, isDarkMode }) {
         </h2>
         <p className="text-xs sm:text-sm text-slate-600">
           {lang === 'ml'
-            ? 'പെരുവള്ളൂർ കപ്പ് വിജയകരമാക്കാൻ സഹകരിക്കുന്ന സ്ഥാപനങ്ങളും പ്രവാസി കൂട്ടായ്മകളും'
+            ? 'അഖിലേന്ത്യാ സെവൻസ് ടൂർണ്ണമെന്റ് വിജയകരമാക്കാൻ സഹകരിക്കുന്ന സ്ഥാപനങ്ങളും പ്രവാസി കൂട്ടായ്മകളും'
             : 'Proudly supported by local business leaders, community patrons, and Gulf expat associations.'}
         </p>
       </div>

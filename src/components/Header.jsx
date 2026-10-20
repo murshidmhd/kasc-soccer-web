@@ -17,7 +17,7 @@ export default function Header({
 }) {
   const shareOnWhatsApp = () => {
     const text = encodeURIComponent(
-      `⚽ *പെരുവള്ളൂർ കപ്പ് Season 7 (All India Sevens)*\n` +
+      `⚽ *അഖിലേന്ത്യാ സെവൻസ് ടൂർണ്ണമെന്റ് Season 7*\n` +
       `📅 2026 Nov 06 - Dec 06\n` +
       `📍 Peruvallur Panjayath Stadium, Parambil Peedika\n` +
       `🔥 Opening Match: UDAYA Peruvallur vs SABAN FC Kottakkal\n` +

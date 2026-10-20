@@ -1,6 +1,6 @@
 export const tournamentInfo = {
-  name: "പെരുവള്ളൂർ കപ്പ്",
-  nameEn: "PERUVALLUR CUP",
+  name: "അഖിലേന്ത്യാ സെവൻസ് ടൂർണ്ണമെന്റ്",
+  nameEn: "ALL INDIA SEVENS TOURNAMENT",
   season: "SEASON 7",
   fullTitle: "UDAYA KASC SOCCER - ALL INDIA SEVENS FOOTBALL TOURNAMENT",
   organizersMalayalam: "KASC പെരുവള്ളൂരും ഉദയ പറമ്പിൽ പീടികയും സംയുക്തമായി സംഘടിപ്പിക്കുന്ന",

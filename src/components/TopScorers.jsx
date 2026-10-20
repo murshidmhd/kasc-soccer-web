@@ -24,7 +24,7 @@ export default function TopScorers({ lang, isDarkMode }) {
           </div>
           <div>
             <h4 className="text-lg font-black font-sports text-slate-900 uppercase tracking-wider">
-              {lang === 'ml' ? 'പെരുവള്ളൂർ കപ്പ് ട്രോഫി' : 'PERUVALLUR CUP TROPHY'}
+              {lang === 'ml' ? 'അഖിലേന്ത്യാ സെവൻസ് ട്രോഫി' : 'ALL INDIA SEVENS TROPHY'}
             </h4>
             <p className="text-xs text-amber-700 font-bold">
               Season 7 All-India Champions
