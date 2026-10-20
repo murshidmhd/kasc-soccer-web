@@ -60,12 +60,20 @@ export default function Hero({ lang, scrollToSection, isDarkMode }) {
             {lang === 'ml' ? tournamentInfo.organizersMalayalam : tournamentInfo.organizersEn}
           </p>
 
-          <h1 className="text-3xl sm:text-6xl md:text-7xl font-black font-sports tracking-tight text-slate-950 uppercase leading-none">
-            <span>{lang === 'ml' ? tournamentInfo.name : tournamentInfo.nameEn}</span>
-            <span className="block text-xl sm:text-4xl md:text-5xl text-red-600 tracking-wider mt-1">
-              {tournamentInfo.season}
-            </span>
-          </h1>
+          <div className="space-y-1.5 sm:space-y-2">
+            <h1 className={`font-black uppercase text-slate-950 ${
+              lang === 'ml' 
+                ? 'font-malayalam text-2xl sm:text-4xl md:text-5xl leading-snug sm:leading-normal tracking-normal' 
+                : 'font-sports text-3xl sm:text-5xl md:text-6xl leading-tight tracking-tight'
+            }`}>
+              {lang === 'ml' ? tournamentInfo.name : tournamentInfo.nameEn}
+            </h1>
+            <div className="pt-1">
+              <span className="inline-block text-lg sm:text-3xl md:text-4xl font-black font-sports text-red-600 tracking-wider px-3.5 py-0.5 rounded-xl bg-red-50 border border-red-200 shadow-xs">
+                {tournamentInfo.season}
+              </span>
+            </div>
+          </div>
 
           <p className="text-xs sm:text-base font-bold text-blue-700 tracking-wide font-sports max-w-3xl mx-auto">
             {lang === 'ml' ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം, പറമ്പിൽ പീടിക' : 'PERUVALLUR PANCHAYATH STADIUM, PARAMBIL PEEDIKA'}

@@ -7,6 +7,7 @@ import TeamsSection from './components/TeamsSection';
 import TopScorers from './components/TopScorers';
 import VenueSection from './components/VenueSection';
 import SponsorsSection from './components/SponsorsSection';
+import SponsorAdsSidebar from './components/SponsorAdsSidebar';
 import ScorerDemoModal from './components/ScorerDemoModal';
 import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
@@ -67,10 +68,26 @@ export default function App() {
               isDarkMode={isDarkMode} 
               scrollToSection={(id) => handleTabChange(id === 'fixtures' ? 'fixtures' : 'live')} 
             />
-            <LiveMatchCard 
-              lang={lang} 
-              isDarkMode={isDarkMode} 
-            />
+            
+            <div className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                {/* Left 8 cols: Match Center */}
+                <div className="lg:col-span-8">
+                  <LiveMatchCard 
+                    lang={lang} 
+                    isDarkMode={isDarkMode} 
+                  />
+                </div>
+
+                {/* Right 4 cols: Side Sponsor Ads */}
+                <div className="lg:col-span-4 lg:sticky lg:top-20">
+                  <SponsorAdsSidebar 
+                    lang={lang} 
+                    isDarkMode={isDarkMode} 
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

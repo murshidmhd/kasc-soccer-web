@@ -166,8 +166,43 @@ export const topScorersPreview = [
 ];
 
 export const sponsors = [
-  { name: "Official Club Partner", tier: "Title", desc: "UDAYA Parambil Peedika & KASC Peruvallur" },
+  { name: "Raidhan Kuzhimanthi", tier: "Food Partner", desc: "Official Food & Hospitality Partner - Parambil Peedika" },
+  { name: "Life Line Hospital", tier: "Healthcare Partner", desc: "24x7 Emergency Care & Medical Partner" },
+  { name: "UDAYA & KASC Peruvallur", tier: "Organizers", desc: "UDAYA Parambil Peedika & KASC Peruvallur" },
   { name: "Sevens Football Association", tier: "Governing Body", desc: "SFA Approved Tournament" },
   { name: "Gulf Expat Fans Club", tier: "Diaspora Partner", desc: "UAE, Saudi & Qatar Pravasi Koottayma" },
   { name: "Media Desk Hotline", tier: "Broadcast & Media", desc: "Call / WhatsApp: 9961878508" }
+];
+
+export const sponsorAds = [
+  {
+    id: "raidhan",
+    name: "Raidhan Kuzhimanthi",
+    nameMl: "റൈദാൻ കുഴിമന്തി",
+    category: "Official Food Partner",
+    categoryMl: "ഭക്ഷണ പങ്കാളി",
+    tagline: "Authentic Arabian Kuzhimanthi & Mandi Specialists",
+    taglineMl: "അറേബ്യൻ കുഴിമന്തിയുടെ തനിമയാർന്ന രുചിപ്പെരുമ",
+    location: "Parambil Peedika & Malappuram",
+    offers: "Special Sevens Match Combos & Family AC Dine-In",
+    offersMl: "സെവൻസ് സ്പെഷ്യൽ ഫാമിലി കോമ്പോ ഓഫറുകൾ",
+    badge: "🍗 FOOD PARTNER",
+    badgeColor: "bg-amber-100 text-amber-900 border-amber-300",
+    gradient: "from-amber-500 to-orange-600"
+  },
+  {
+    id: "lifeline",
+    name: "Life Line Hospital",
+    nameMl: "ലൈഫ് ലൈൻ ഹോസ്പിറ്റൽ",
+    category: "Official Healthcare Partner",
+    categoryMl: "മെഡിക്കൽ പങ്കാളി",
+    tagline: "24x7 Emergency Care, Trauma Unit & Sports Clinic",
+    taglineMl: "24x7 അത്യാഹിത വിഭാഗം, അത്യാധുനിക ഐ.സി.യു & ആംബുലൻസ്",
+    location: "Parambil Peedika / Malappuram",
+    offers: "Free Medical Emergency & First Aid on Ground",
+    offersMl: "കളിക്കാർക്ക് ഗ്രൗണ്ടിൽ സൗജന്യ പ്രഥമശുശ്രൂഷ സഹായം",
+    badge: "🏥 MEDICAL PARTNER",
+    badgeColor: "bg-emerald-100 text-emerald-900 border-emerald-300",
+    gradient: "from-emerald-600 to-teal-700"
+  }
 ];

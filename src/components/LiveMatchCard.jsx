@@ -64,7 +64,7 @@ export default function LiveMatchCard({ lang, isDarkMode }) {
   };
 
   return (
-    <section id="live-match" className="py-8 px-3 sm:px-6 max-w-5xl mx-auto">
+    <section id="live-match" className="w-full">
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
