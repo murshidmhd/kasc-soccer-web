@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import StadiumAnnouncementBanner from './components/StadiumAnnouncementBanner';
 import LiveMatchCard from './components/LiveMatchCard';
 import MatchPredictionCard from './components/MatchPredictionCard';
 import PlayerOfTheMatchVote from './components/PlayerOfTheMatchVote';
@@ -77,7 +78,13 @@ export default function App() {
               onOpenTicketModal={() => setIsTicketModalOpen(true)}
             />
             
-            <div className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8">
+            <div className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-6">
+              {/* Official Malayalam Stadium Announcement Player */}
+              <StadiumAnnouncementBanner 
+                lang={lang} 
+                isDarkMode={isDarkMode} 
+              />
+
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 {/* Left 8 cols: Match Center & Interactive Fan Features */}
                 <div className="lg:col-span-8 space-y-6">

@@ -35,11 +35,13 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
   const awayPercent = 100 - homePercent - drawPercent;
 
   const handleVoteOutcome = (outcome) => {
+    if (isSubmitted) return; // Locked once submitted
     setSelectedOutcome(outcome);
     localStorage.setItem('kasc_prediction_outcome', outcome);
   };
 
   const handleScoreChange = (team, delta) => {
+    if (isSubmitted) return; // Locked once submitted
     if (team === 'home') {
       const next = Math.max(0, Math.min(10, predictedScoreHome + delta));
       setPredictedScoreHome(next);
@@ -149,7 +151,10 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
           {/* Option 1: UDAYA Win */}
           <button
             onClick={() => handleVoteOutcome('home')}
-            className={`p-2.5 sm:p-3 rounded-xl border text-center transition active:scale-95 flex flex-col items-center justify-center space-y-1 ${
+            disabled={isSubmitted}
+            className={`p-2.5 sm:p-3 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-1 ${
+              isSubmitted ? 'cursor-not-allowed opacity-90' : 'active:scale-95'
+            } ${
               selectedOutcome === 'home'
                 ? 'bg-blue-600 border-blue-600 text-white shadow-xs font-black'
                 : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800 font-bold'
@@ -166,7 +171,10 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
           {/* Option 2: Draw */}
           <button
             onClick={() => handleVoteOutcome('draw')}
-            className={`p-2.5 sm:p-3 rounded-xl border text-center transition active:scale-95 flex flex-col items-center justify-center space-y-1 ${
+            disabled={isSubmitted}
+            className={`p-2.5 sm:p-3 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-1 ${
+              isSubmitted ? 'cursor-not-allowed opacity-90' : 'active:scale-95'
+            } ${
               selectedOutcome === 'draw'
                 ? 'bg-slate-800 border-slate-800 text-white shadow-xs font-black'
                 : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800 font-bold'
@@ -183,7 +191,10 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
           {/* Option 3: SABAN FC Win */}
           <button
             onClick={() => handleVoteOutcome('away')}
-            className={`p-2.5 sm:p-3 rounded-xl border text-center transition active:scale-95 flex flex-col items-center justify-center space-y-1 ${
+            disabled={isSubmitted}
+            className={`p-2.5 sm:p-3 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-1 ${
+              isSubmitted ? 'cursor-not-allowed opacity-90' : 'active:scale-95'
+            } ${
               selectedOutcome === 'away'
                 ? 'bg-amber-500 border-amber-500 text-slate-950 shadow-xs font-black'
                 : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800 font-bold'
@@ -252,8 +263,8 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handleScoreChange('home', -1)}
-                disabled={predictedScoreHome <= 0}
-                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 text-slate-800 font-black text-base flex items-center justify-center active:scale-95 transition"
+                disabled={isSubmitted || predictedScoreHome <= 0}
+                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-slate-800 font-black text-base flex items-center justify-center active:scale-95 transition"
               >
                 -
               </button>
@@ -262,8 +273,8 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
               </span>
               <button
                 onClick={() => handleScoreChange('home', 1)}
-                disabled={predictedScoreHome >= 10}
-                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 text-slate-800 font-black text-base flex items-center justify-center active:scale-95 transition"
+                disabled={isSubmitted || predictedScoreHome >= 10}
+                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-slate-800 font-black text-base flex items-center justify-center active:scale-95 transition"
               >
                 +
               </button>
@@ -287,8 +298,8 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handleScoreChange('away', -1)}
-                disabled={predictedScoreAway <= 0}
-                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 text-slate-800 font-black text-base flex items-center justify-center active:scale-95 transition"
+                disabled={isSubmitted || predictedScoreAway <= 0}
+                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-slate-800 font-black text-base flex items-center justify-center active:scale-95 transition"
               >
                 -
               </button>
@@ -297,8 +308,8 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
               </span>
               <button
                 onClick={() => handleScoreChange('away', 1)}
-                disabled={predictedScoreAway >= 10}
-                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 text-slate-800 font-black text-base flex items-center justify-center active:scale-95 transition"
+                disabled={isSubmitted || predictedScoreAway >= 10}
+                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-slate-800 font-black text-base flex items-center justify-center active:scale-95 transition"
               >
                 +
               </button>
@@ -306,7 +317,7 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
           </div>
         </div>
 
-        {/* Submission / Confirmation & WhatsApp Share */}
+        {/* Submission / Locked State & WhatsApp Share */}
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
           {!isSubmitted ? (
             <button
@@ -317,31 +328,33 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
               <span>{lang === 'ml' ? 'പ്രവചനം സമർപ്പിക്കുക (Submit Vote)' : 'Lock In My Prediction'}</span>
             </button>
           ) : (
-            <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900">
+            <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900">
               <div className="flex items-center gap-2 text-xs font-bold">
                 <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                <span>
-                  {lang === 'ml' 
-                    ? `നിങ്ങളുടെ പ്രവചനം രേഖപ്പെടുത്തി: ${openingMatch.teamHome.shortName} ${predictedScoreHome} - ${predictedScoreAway} ${openingMatch.teamAway.shortName}` 
-                    : `Prediction Saved: ${openingMatch.teamHome.shortName} ${predictedScoreHome} - ${predictedScoreAway} ${openingMatch.teamAway.shortName}`}
-                </span>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span>
+                      {lang === 'ml' 
+                        ? `പ്രവചനം: ${openingMatch.teamHome.shortName} ${predictedScoreHome} - ${predictedScoreAway} ${openingMatch.teamAway.shortName}` 
+                        : `Prediction: ${openingMatch.teamHome.shortName} ${predictedScoreHome} - ${predictedScoreAway} ${openingMatch.teamAway.shortName}`}
+                    </span>
+                    <span className="px-1.5 py-0.2 rounded-md bg-emerald-200 text-emerald-900 text-[10px] font-black uppercase tracking-wider">
+                      🔒 LOCKED
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-emerald-700 font-medium block">
+                    {lang === 'ml' ? 'ഒരിക്കൽ രേഖപ്പെടുത്തിയ പ്രവചനം മാറ്റാനാകില്ല' : 'Your prediction is locked and cannot be edited'}
+                  </span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <button
-                  onClick={() => setIsSubmitted(false)}
-                  className="px-3 py-1.5 rounded-xl border border-emerald-300 text-[11px] font-bold text-emerald-800 hover:bg-emerald-100 transition active:scale-95"
-                >
-                  Change
-                </button>
-                <button
-                  onClick={handleShareToWhatsApp}
-                  className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition active:scale-95 flex items-center gap-1.5"
-                >
-                  <Share2 className="w-3.5 h-3.5" />
-                  <span>Share Status</span>
-                </button>
-              </div>
+              <button
+                onClick={handleShareToWhatsApp}
+                className="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5"
+              >
+                <Share2 className="w-3.5 h-3.5" />
+                <span>Share Status</span>
+              </button>
             </div>
           )}
         </div>
