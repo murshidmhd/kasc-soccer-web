@@ -4,7 +4,7 @@ import { Volume2, VolumeX, Play, Pause, Radio, Sparkles, Mic, Music } from 'luci
 export default function StadiumAnnouncementBanner({ lang, isDarkMode }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(27);
+  const [duration, setDuration] = useState(32);
   const audioRef = useRef(null);
 
   useEffect(() => {
@@ -12,7 +12,7 @@ export default function StadiumAnnouncementBanner({ lang, isDarkMode }) {
     if (!audio) return;
 
     const updateTime = () => setCurrentTime(audio.currentTime);
-    const setAudioDuration = () => setDuration(audio.duration || 27);
+    const setAudioDuration = () => setDuration(audio.duration || 32);
     const onEnded = () => {
       setIsPlaying(false);
       setCurrentTime(0);
@@ -145,7 +145,7 @@ export default function StadiumAnnouncementBanner({ lang, isDarkMode }) {
         <input
           type="range"
           min="0"
-          max={duration || 27}
+          max={duration || 32}
           step="0.1"
           value={currentTime}
           onChange={handleSeek}
