@@ -13,6 +13,7 @@ import VenueSection from './components/VenueSection';
 import SponsorsSection from './components/SponsorsSection';
 import SponsorAdsSidebar from './components/SponsorAdsSidebar';
 import ScorerDemoModal from './components/ScorerDemoModal';
+import TicketCounterModal from './components/TicketCounterModal';
 import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
 
@@ -21,6 +22,7 @@ export default function App() {
   const [isDarkMode, setIsDarkMode] = useState(false); // Default Clean White Theme
   const [activeTab, setActiveTab] = useState('live'); // 'live' | 'fixtures' | 'teams' | 'stats' | 'venue'
   const [isScorerDemoOpen, setIsScorerDemoOpen] = useState(false);
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
 
   // Sync with URL hash if provided
   useEffect(() => {
@@ -60,6 +62,7 @@ export default function App() {
         isDarkMode={isDarkMode}
         setIsDarkMode={setIsDarkMode}
         onOpenScorerDemo={() => setIsScorerDemoOpen(true)}
+        onOpenTicketModal={() => setIsTicketModalOpen(true)}
       />
 
       {/* Main Content Rendered by Page/Tab */}
@@ -71,6 +74,7 @@ export default function App() {
               lang={lang} 
               isDarkMode={isDarkMode} 
               scrollToSection={(id) => handleTabChange(id === 'fixtures' ? 'fixtures' : 'live')} 
+              onOpenTicketModal={() => setIsTicketModalOpen(true)}
             />
             
             <div className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8">
@@ -184,6 +188,14 @@ export default function App() {
         isOpen={isScorerDemoOpen}
         isDarkMode={isDarkMode}
         onClose={() => setIsScorerDemoOpen(false)}
+      />
+
+      {/* Smart Ticket Counter POS & GPay QR Modal */}
+      <TicketCounterModal
+        isOpen={isTicketModalOpen}
+        isDarkMode={isDarkMode}
+        lang={lang}
+        onClose={() => setIsTicketModalOpen(false)}
       />
     </div>
   );

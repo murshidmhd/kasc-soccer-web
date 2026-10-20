@@ -1,5 +1,5 @@
 import React from 'react';
-import { Share2, Smartphone, Moon, Sun, Flame, Calendar, Shield, Trophy, MapPin } from 'lucide-react';
+import { Share2, Smartphone, Moon, Sun, Flame, Calendar, Shield, Trophy, MapPin, Ticket } from 'lucide-react';
 import logoKerala from '../assets/logo_kerala.png';
 import logoKasc from '../assets/logo_kasc.png';
 import logoSfa from '../assets/logo_sfa.png';
@@ -10,6 +10,7 @@ export default function Header({
   activeTab, 
   setActiveTab, 
   onOpenScorerDemo, 
+  onOpenTicketModal,
   lang, 
   setLang, 
   isDarkMode, 
@@ -142,6 +143,16 @@ export default function Header({
           >
             <Smartphone className="w-3.5 h-3.5" />
             <span>Scorer</span>
+          </button>
+
+          {/* Ticket Counter / GPay POS Modal trigger */}
+          <button
+            onClick={onOpenTicketModal}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-black rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-slate-950 shadow-xs transition active:scale-95"
+            title="Book Tickets / Counter POS"
+          >
+            <Ticket className="w-3.5 h-3.5" />
+            <span>{lang === 'ml' ? 'ടിക്കറ്റ് / GPay' : 'Tickets'}</span>
           </button>
 
           {/* WhatsApp Share Button */}

@@ -148,14 +148,248 @@ export const fixtures = [
 ];
 
 export const participatingTeams = [
-  { name: "UDAYA Peruvallur", city: "Peruvallur", captain: "Riyas K.", starPlayer: "Ibrahim (Ivory Coast)", gradient: "from-sky-600 to-blue-900" },
-  { name: "SABAN FC Kottakkal", city: "Kottakkal", captain: "Shameer", starPlayer: "Ousmane (Ghana)", gradient: "from-amber-400 to-yellow-600" },
-  { name: "FIFA Manjeri", city: "Manjeri", captain: "Ashiq", starPlayer: "Junior Toure", gradient: "from-rose-600 to-red-900" },
-  { name: "Linsha Tirur", city: "Tirur", captain: "Faslu", starPlayer: "Diallo", gradient: "from-emerald-500 to-green-800" },
-  { name: "Al-Madina Cherpulassery", city: "Cherpulassery", captain: "Navas", starPlayer: "Kante", gradient: "from-purple-600 to-indigo-900" },
-  { name: "Royal Travel Kozhikode", city: "Kozhikode", captain: "Arjun", starPlayer: "Moussa", gradient: "from-cyan-500 to-blue-800" },
-  { name: "Super Studio Malappuram", city: "Malappuram", captain: "Sameer", starPlayer: "Traore", gradient: "from-blue-600 to-indigo-900" },
-  { name: "Usha Thrissur", city: "Thrissur", captain: "Nikhil", starPlayer: "Emmanuel", gradient: "from-orange-500 to-amber-800" }
+  {
+    id: 1,
+    name: "SUPER STUDIO MALAPPURAM",
+    nameMl: "സൂപ്പർ സ്റ്റുഡിയോ മലപ്പുറം",
+    city: "Malappuram",
+    manager: "Asharaf Bava",
+    managerPhone: "9995252752",
+    asstManager: "Imathiyas",
+    asstManagerPhone: "9020570707",
+    category: "Permanent SFA Club"
+  },
+  {
+    id: 2,
+    name: "AL MADEENA CHERPULASSERY",
+    nameMl: "അൽ മദീന ചെറുപ്പുളശ്ശേരി",
+    city: "Cherpulassery, Palakkad",
+    manager: "Latheef",
+    managerPhone: "9746850000",
+    asstManager: "Sidiq E 4",
+    asstManagerPhone: "9349163638",
+    category: "Permanent SFA Club"
+  },
+  {
+    id: 3,
+    name: "SABAN FC KOTTAKKAL",
+    nameMl: "സബാൻ എഫ്.സി കോട്ടക്കൽ",
+    city: "Kottakkal, Malappuram",
+    manager: "Mubaarak Salih",
+    managerPhone: "7559000009",
+    asstManager: "Ajith",
+    asstManagerPhone: "9946425862",
+    category: "Permanent SFA Club"
+  },
+  {
+    id: 4,
+    name: "LINSHA MEDICALS MANNARKKAD",
+    nameMl: "ലിൻഷാ മെഡിക്കൽസ് മണ്ണാർക്കാട്",
+    city: "Mannarkkad, Palakkad",
+    manager: "Rasheed Poorona",
+    managerPhone: "9747540473",
+    asstManager: "Shameer Babu",
+    asstManagerPhone: "9447876531",
+    category: "Permanent SFA Club"
+  },
+  {
+    id: 5,
+    name: "USHA FC THRISSUR",
+    nameMl: "ഉഷാ എഫ്.സി തൃശ്ശൂർ",
+    city: "Thrissur",
+    manager: "Pradeep P V",
+    managerPhone: "9447835946",
+    asstManager: "C G Shinil",
+    asstManagerPhone: "9847195254",
+    category: "Permanent SFA Club"
+  },
+  {
+    id: 6,
+    name: "KMG MAVOOR",
+    nameMl: "കെ.എം.ജി മാവൂർ",
+    city: "Mavoor, Kozhikode",
+    manager: "Hifsu Rahman",
+    managerPhone: "9947717776",
+    asstManager: "Shafeeq",
+    asstManagerPhone: "9744646466",
+    category: "Permanent SFA Club"
+  },
+  {
+    id: 7,
+    name: "REAL FC THENNALA",
+    nameMl: "റിയൽ എഫ്.സി തെന്നല",
+    city: "Thennala, Malappuram",
+    manager: "Usman",
+    managerPhone: "7902808445",
+    asstManager: "Jershid",
+    asstManagerPhone: "9895818103",
+    category: "Registered Club"
+  },
+  {
+    id: 8,
+    name: "ABHILASH FC KUPPOOTH",
+    nameMl: "അഭിലാഷ് എഫ്.സി കുപ്പൂത്ത്",
+    city: "Kuppooth",
+    manager: "Abdul Vahid",
+    managerPhone: "9544619436",
+    asstManager: "Muhamed Sabique",
+    asstManagerPhone: "9207212223",
+    category: "Registered Club"
+  },
+  {
+    id: 9,
+    name: "FC NELLIKKUTH",
+    nameMl: "എഫ്.സി നെല്ലിക്കുത്ത്",
+    city: "Nellikkuth, Malappuram",
+    manager: "Noufal",
+    managerPhone: "9744227678",
+    asstManager: "Riyas",
+    asstManagerPhone: "9744227678",
+    category: "Registered Club"
+  },
+  {
+    id: 10,
+    name: "UDAYA FC PARAMBIL PEEDIKA",
+    nameMl: "ഉദയ എഫ്.സി പറമ്പിൽ പീടിക",
+    city: "Parambil Peedika, Malappuram",
+    manager: "Muneer",
+    managerPhone: "9400129900",
+    asstManager: "Shabeer",
+    asstManagerPhone: "9562105210",
+    category: "Host Club & Permanent SFA"
+  },
+  {
+    id: 11,
+    name: "FC PERINTHALMANNA",
+    nameMl: "എഫ്.സി പെരിന്തൽമണ്ണ",
+    city: "Perinthalmanna, Malappuram",
+    manager: "Rasheed",
+    managerPhone: "9562812368",
+    asstManager: "Arshad Soopi",
+    asstManagerPhone: "8089410922",
+    category: "Registered Club"
+  },
+  {
+    id: 12,
+    name: "SHOOTERS PADANNA / JAWAHAR MAVOOR",
+    nameMl: "ഷൂട്ടേഴ്സ് പടന്ന / ജവഹർ മാവൂർ",
+    city: "Padanna / Mavoor",
+    manager: "Ansari P",
+    managerPhone: "9746889999",
+    asstManager: "Shahul",
+    asstManagerPhone: "9544170807",
+    category: "Registered Club"
+  },
+  {
+    id: 13,
+    name: "KRSC KOZHIKKODE",
+    nameMl: "കെ.ആർ.എസ്.സി കോഴിക്കോട്",
+    city: "Kozhikode",
+    manager: "Rujeesh",
+    managerPhone: "9961184009",
+    asstManager: "Asif",
+    asstManagerPhone: "8075982482",
+    category: "Registered Club"
+  },
+  {
+    id: 14,
+    name: "POWER DIPPO THRISSUR",
+    nameMl: "പവർ ഡിപ്പോ തൃശ്ശൂർ",
+    city: "Thrissur",
+    manager: "Santhosh K. T",
+    managerPhone: "9447201299",
+    asstManager: "Biju Varghese",
+    asstManagerPhone: "8943889906",
+    category: "Registered Club"
+  },
+  {
+    id: 15,
+    name: "BASE PERUMBAVUR",
+    nameMl: "ബേസ് പെരുമ്പാവൂർ",
+    city: "Perumbavoor, Ernakulam",
+    manager: "Usman K P",
+    managerPhone: "9747008848",
+    asstManager: "Musthu",
+    asstManagerPhone: "8589014241",
+    category: "Registered Club"
+  },
+  {
+    id: 16,
+    name: "SOCCER SPORTING SHORNUR",
+    nameMl: "സോക്കർ സ്പോർട്ടിംഗ് ഷൊർണ്ണൂർ",
+    city: "Shornur, Palakkad",
+    manager: "Dilshad",
+    managerPhone: "9447942302",
+    asstManager: "Anil Mathew",
+    asstManagerPhone: "9895203040",
+    category: "Registered Club"
+  },
+  {
+    id: 17,
+    name: "HITTACHI FC THRIKKARIPPUR",
+    nameMl: "ഹിറ്റാച്ചി എഫ്.സി തൃക്കരിപ്പൂർ",
+    city: "Thrikkarippur, Kasaragod",
+    manager: "Siraj AGC",
+    managerPhone: "8590897885",
+    asstManager: "Mohammed Rafi",
+    asstManagerPhone: "7012120080",
+    category: "Registered Club"
+  },
+  {
+    id: 18,
+    name: "AFC WAYANAD",
+    nameMl: "എ.എഫ്.സി വയനാട്",
+    city: "Wayanad",
+    manager: "Baiju",
+    managerPhone: "9961006339",
+    asstManager: "Shanid",
+    asstManagerPhone: "9961081010",
+    category: "Registered Club"
+  },
+  {
+    id: 19,
+    name: "HUNDERS KOOTHUPARAMBU",
+    nameMl: "ഹണ്ടേഴ്സ് കൂത്തുപറമ്പ്",
+    city: "Koothuparambu, Kannur",
+    manager: "Shamsu",
+    managerPhone: "9895170168",
+    asstManager: "Ansar",
+    asstManagerPhone: "9605064787",
+    category: "Registered Club"
+  },
+  {
+    id: 20,
+    name: "TOWN TEAM AREEKKODE",
+    nameMl: "ടൗൺ ടീം അരീക്കോട്",
+    city: "Areekode, Malappuram",
+    manager: "Salam",
+    managerPhone: "9447925702",
+    asstManager: "Rajeesh Piari",
+    asstManagerPhone: "9747044604",
+    category: "Permanent SFA Club"
+  },
+  {
+    id: 21,
+    name: "AYC UCHARAKKADAVU",
+    nameMl: "എ.വൈ.സി ഉച്ചാരക്കടവ്",
+    city: "Ucharakkadavu, Malappuram",
+    manager: "Saifudheen (Mani)",
+    managerPhone: "9207195311",
+    asstManager: "Manager Desk",
+    asstManagerPhone: "9207195311",
+    category: "Registered Club"
+  },
+  {
+    id: 22,
+    name: "FC GOA",
+    nameMl: "എഫ്.സി ഗോവ",
+    city: "Goa / Kerala Circuit",
+    manager: "Saidalavi K P",
+    managerPhone: "8593969696",
+    asstManager: "Akber P",
+    asstManagerPhone: "9745500700",
+    category: "Registered Club"
+  }
 ];
 
 export const topScorersPreview = [

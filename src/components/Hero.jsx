@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, MapPin, Phone, Award, Shield, ChevronDown } from 'lucide-react';
+import { Calendar, MapPin, Phone, Award, Shield, ChevronDown, Ticket } from 'lucide-react';
 import { tournamentInfo } from '../data/tournamentData';
 import Countdown from './Countdown';
 import playersHero from '../assets/players_hero.png';
@@ -8,7 +8,7 @@ import logoKasc from '../assets/logo_kasc.png';
 import matchActionDuel from '../assets/match_action_duel.jpg';
 import tournamentOfficialPoster from '../assets/tournament_official_poster.jpg';
 
-export default function Hero({ lang, scrollToSection, isDarkMode }) {
+export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketModal }) {
   const [activeBannerTab, setActiveBannerTab] = React.useState('action');
 
   return (
@@ -144,19 +144,19 @@ export default function Hero({ lang, scrollToSection, isDarkMode }) {
                   : 'The greatest Sevens football carnival returns to Peruvallur Panjayath Stadium. Live floodlit matches at 8:00 PM.'}
               </p>
 
-              {/* Dynamic 2 Players Duel Visual */}
+              {/* Dynamic 2 Players Duel Visual (Fixed object-top so players' heads are completely visible on laptops & desktops) */}
               <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-50 p-1 shadow-xs">
                 {activeBannerTab === 'action' ? (
                   <img
                     src={matchActionDuel}
                     alt="Match Duel: Udaya vs Saban FC"
-                    className="w-full h-44 sm:h-56 object-cover rounded-lg"
+                    className="w-full h-56 sm:h-72 md:h-80 lg:h-[340px] object-cover object-top rounded-lg"
                   />
                 ) : (
                   <img
                     src={playersHero}
                     alt="Featured Stars"
-                    className="w-full h-44 sm:h-56 object-cover rounded-lg"
+                    className="w-full h-56 sm:h-72 md:h-80 lg:h-[340px] object-cover object-top rounded-lg"
                   />
                 )}
               </div>
@@ -176,6 +176,22 @@ export default function Hero({ lang, scrollToSection, isDarkMode }) {
                   {lang === 'ml' ? 'മത്സരക്രമം' : 'View Fixtures'}
                 </button>
               </div>
+
+              {/* Instant Ticket & GPay Counter POS Banner Button */}
+              <button
+                onClick={onOpenTicketModal}
+                className="w-full py-2.5 px-4 rounded-xl font-black text-xs sm:text-sm bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-slate-950 shadow-sm transition active:scale-98 flex items-center justify-center gap-2 border border-amber-300"
+              >
+                <Ticket className="w-4 h-4 text-slate-950" />
+                <span>
+                  {lang === 'ml' 
+                    ? 'ടിക്കറ്റ് ബുക്കിംഗ് & GPay ക്യുആർ കൗണ്ടർ (Book Tickets)' 
+                    : 'Match Tickets & Instant GPay QR Counter'}
+                </span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black uppercase">
+                  From ₹50
+                </span>
+              </button>
             </div>
 
             {/* Right Column: Clean Generated Tournament Poster (NO text at bottom) */}
