@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import StadiumAnnouncementBanner from './components/StadiumAnnouncementBanner';
 import LiveMatchCard from './components/LiveMatchCard';
+import LiveStreamHub from './components/LiveStreamHub';
 import MatchPredictionCard from './components/MatchPredictionCard';
 import PlayerOfTheMatchVote from './components/PlayerOfTheMatchVote';
 import FanHypeMeter from './components/FanHypeMeter';
@@ -92,6 +93,12 @@ export default function App() {
                   <LiveMatchCard 
                     lang={lang} 
                     isDarkMode={isDarkMode} 
+                  />
+
+                  {/* Official Matchday Live Stream Broadcast Hub */}
+                  <LiveStreamHub
+                    lang={lang}
+                    isDarkMode={isDarkMode}
                   />
 
                   {/* FotMob & Sofascore Style: Predict & Win Contest */}
