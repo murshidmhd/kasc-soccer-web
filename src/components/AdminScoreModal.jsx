@@ -13,7 +13,11 @@ import {
   Users, 
   RotateCcw, 
   Send, 
-  LogOut 
+  LogOut,
+  Radio,
+  Play,
+  Square,
+  Pause
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { 
@@ -72,6 +76,68 @@ export default function AdminScoreModal({ isOpen, onClose, isDarkMode, lang }) {
     setAdminAuthenticated(false);
     setIsAuthenticated(false);
     setPinInput('');
+  };
+
+  const handleStartMatch = (half) => {
+    const min = half === '1ST_HALF' ? 1 : half === 'HALF_TIME' ? 35 : 36;
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        status: half,
+        matchMinute: min,
+        isCrowdLocked: false
+      };
+      saveOfficialMatchState(next);
+      return next;
+    });
+    confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+    setNotification(
+      half === '1ST_HALF'
+        ? '🟢 Match Started! Live 1st Half Kickoff broadcasted to all fans.'
+        : half === 'HALF_TIME'
+        ? '⏸️ Half Time Break Called (35 mins).'
+        : '▶️ 2nd Half Kickoff broadcasted!'
+    );
+    setTimeout(() => setNotification(''), 3000);
+  };
+
+  const handleStopMatch = () => {
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        status: 'FULL_TIME',
+        isCrowdLocked: true
+      };
+      saveOfficialMatchState(next);
+      return next;
+    });
+    confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
+    setNotification('⏹️ Match Ended! Final Score Locked & Broadcasted.');
+    setTimeout(() => setNotification(''), 3500);
+  };
+
+  const handleAdjustMinute = (delta) => {
+    setMatchState((prev) => {
+      const nextMin = Math.max(0, Math.min(90, prev.matchMinute + delta));
+      const next = { ...prev, matchMinute: nextMin };
+      saveOfficialMatchState(next);
+      return next;
+    });
+  };
+
+  const handleResetToUpcoming = () => {
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        status: 'UPCOMING',
+        matchMinute: 0,
+        isCrowdLocked: false
+      };
+      saveOfficialMatchState(next);
+      return next;
+    });
+    setNotification('Match reset to Upcoming Pre-Match status (8:00 PM).');
+    setTimeout(() => setNotification(''), 2500);
   };
 
   const handleScoreChange = (team, delta) => {
@@ -263,6 +329,120 @@ export default function AdminScoreModal({ isOpen, onClose, isDarkMode, lang }) {
                   <LogOut className="w-3.5 h-3.5" />
                   <span>Lock</span>
                 </button>
+              </div>
+
+              {/* MASTER MATCH CONTROLLER: START / PAUSE / STOP LIVE OPERATIONS */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white space-y-3.5 shadow-md border border-blue-800">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 rounded-lg bg-amber-500 text-slate-950 font-black">
+                      <Radio className="w-4 h-4" />
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-black font-sports uppercase tracking-wider text-amber-300">
+                        Live Match Operations
+                      </h4>
+                      <p className="text-[11px] text-blue-200">
+                        Kickoff, pause half time, or blow final whistle
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Active Match Status Pill */}
+                  <div>
+                    {matchState.status === 'UPCOMING' && (
+                      <span className="px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 font-bold text-xs border border-slate-700">
+                        ⚪ Pre-Match (8:00 PM)
+                      </span>
+                    )}
+                    {(matchState.status === '1ST_HALF' || matchState.status === '2ND_HALF') && (
+                      <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600 text-white font-black text-xs uppercase animate-pulse shadow-xs">
+                        <span className="w-2 h-2 rounded-full bg-white"></span>
+                        LIVE MATCH ON ({matchState.status === '1ST_HALF' ? '1st Half' : '2nd Half'})
+                      </span>
+                    )}
+                    {matchState.status === 'HALF_TIME' && (
+                      <span className="px-3 py-1 rounded-full bg-amber-500 text-slate-950 font-black text-xs uppercase shadow-xs">
+                        ⏸️ Half Time Break
+                      </span>
+                    )}
+                    {matchState.status === 'FULL_TIME' && (
+                      <span className="px-3 py-1 rounded-full bg-slate-950 text-white font-black text-xs uppercase border border-slate-700 shadow-xs">
+                        🏁 Match Ended & Locked
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Big Action Buttons */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+                  {/* Button 1: Start 1st Half */}
+                  <button
+                    onClick={() => handleStartMatch('1ST_HALF')}
+                    className="p-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex flex-col items-center justify-center gap-1 shadow-md transition active:scale-95"
+                  >
+                    <span className="text-base">🟢</span>
+                    <span>START MATCH</span>
+                    <span className="text-[9px] font-normal opacity-90">(1st Half Kickoff)</span>
+                  </button>
+
+                  {/* Button 2: Half Time */}
+                  <button
+                    onClick={() => handleStartMatch('HALF_TIME')}
+                    className="p-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex flex-col items-center justify-center gap-1 shadow-md transition active:scale-95"
+                  >
+                    <span className="text-base">⏸️</span>
+                    <span>HALF TIME</span>
+                    <span className="text-[9px] font-normal opacity-90">(Pause at 35')</span>
+                  </button>
+
+                  {/* Button 3: Start 2nd Half */}
+                  <button
+                    onClick={() => handleStartMatch('2ND_HALF')}
+                    className="p-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-black text-xs flex flex-col items-center justify-center gap-1 shadow-md transition active:scale-95"
+                  >
+                    <span className="text-base">▶️</span>
+                    <span>START 2ND HALF</span>
+                    <span className="text-[9px] font-normal opacity-90">(Resume at 36')</span>
+                  </button>
+
+                  {/* Button 4: Stop Match (Full Time) */}
+                  <button
+                    onClick={handleStopMatch}
+                    className="p-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-black text-xs flex flex-col items-center justify-center gap-1 shadow-md transition active:scale-95"
+                  >
+                    <span className="text-base">⏹️</span>
+                    <span>STOP MATCH</span>
+                    <span className="text-[9px] font-normal opacity-90">(Final Whistle & Lock)</span>
+                  </button>
+                </div>
+
+                {/* Live Minute Tickers */}
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-white/10 text-xs">
+                  <span className="text-blue-200">
+                    Live Match Clock: <strong className="text-white text-sm font-mono">{matchState.matchMinute}' mins</strong>
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => handleAdjustMinute(1)}
+                      className="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white font-bold text-[11px] active:scale-95"
+                    >
+                      +1 Min
+                    </button>
+                    <button
+                      onClick={() => handleAdjustMinute(5)}
+                      className="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white font-bold text-[11px] active:scale-95"
+                    >
+                      +5 Mins
+                    </button>
+                    <button
+                      onClick={handleResetToUpcoming}
+                      className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-red-500 text-white font-medium text-[11px] active:scale-95"
+                    >
+                      Reset Pre-Match
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {/* SECTION A: OFFICIAL MATCH SCORE OVERWRITE */}

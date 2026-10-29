@@ -14,6 +14,7 @@ import VenueSection from './components/VenueSection';
 import SponsorsSection from './components/SponsorsSection';
 import SponsorAdsSidebar from './components/SponsorAdsSidebar';
 import PromoEventsSection from './components/PromoEventsSection';
+import ClubFanVoteSection from './components/ClubFanVoteSection';
 import AdminScoreModal from './components/AdminScoreModal';
 import ScorerDemoModal from './components/ScorerDemoModal';
 import TicketCounterModal from './components/TicketCounterModal';
@@ -117,6 +118,12 @@ export default function App() {
                     isDarkMode={isDarkMode}
                   />
 
+                  {/* Vote for Your Favorite Club (Fan Poll Battle) */}
+                  <ClubFanVoteSection
+                    lang={lang}
+                    isDarkMode={isDarkMode}
+                  />
+
                   {/* Head-to-Head & Form Guide */}
                   <HeadToHeadCard
                     lang={lang}
@@ -156,7 +163,12 @@ export default function App() {
 
         {/* Page 3: TEAMS & CLUBS */}
         {activeTab === 'teams' && (
-          <div className="animate-fadeIn pt-4">
+          <div className="animate-fadeIn pt-4 space-y-6 max-w-6xl mx-auto px-3 sm:px-6">
+            {/* Club Popularity Fan Poll at top of Clubs page */}
+            <ClubFanVoteSection 
+              lang={lang} 
+              isDarkMode={isDarkMode} 
+            />
             <TeamsSection 
               lang={lang} 
               isDarkMode={isDarkMode} 
