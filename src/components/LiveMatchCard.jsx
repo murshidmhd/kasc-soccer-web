@@ -19,35 +19,38 @@ import TeamLogo from './TeamLogo';
 import { 
   getStoredMatchState, 
   submitFanCrowdGoal, 
-  getUserRateLimitStatus 
+  getUserRateLimitStatus,
+  getCalculatedMatchTime,
+  SEVENS_HALF_MINUTES,
+  SEVENS_TOTAL_MINUTES
 } from '../utils/matchStateManager';
 
 export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
   const [matchState, setMatchState] = useState(getStoredMatchState);
+  const [clock, setClock] = useState(() => getCalculatedMatchTime(getStoredMatchState()));
   const [rateLimit, setRateLimit] = useState(getUserRateLimitStatus);
   const [toastMessage, setToastMessage] = useState(null);
 
   // Sync with global custom event when Admin updates score
   useEffect(() => {
     const handleStateUpdate = (e) => {
-      if (e.detail) {
-        setMatchState(e.detail);
-      } else {
-        setMatchState(getStoredMatchState());
-      }
+      const newState = e.detail || getStoredMatchState();
+      setMatchState(newState);
+      setClock(getCalculatedMatchTime(newState));
     };
 
     window.addEventListener('kasc_match_state_updated', handleStateUpdate);
     return () => window.removeEventListener('kasc_match_state_updated', handleStateUpdate);
   }, []);
 
-  // Cooldown countdown timer interval
+  // Continuous 1-second ticker interval for live moving clock & rate limit
   useEffect(() => {
     const interval = setInterval(() => {
       setRateLimit(getUserRateLimitStatus());
+      setClock(getCalculatedMatchTime(matchState));
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [matchState]);
 
   const handleCrowdGoal = (team) => {
     const result = submitFanCrowdGoal(team);
@@ -85,28 +88,28 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
         );
       case '1ST_HALF':
         return (
-          <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-red-600 text-white font-bold text-[10px] sm:text-xs uppercase shadow-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-            LIVE • 1st Half • {matchState.matchMinute}'
+          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600 text-white font-mono font-bold text-xs uppercase shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-white animate-ping"></span>
+            <span>LIVE 1ST HALF • {clock.display}</span>
           </span>
         );
       case 'HALF_TIME':
         return (
-          <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black text-[10px] sm:text-xs uppercase shadow-xs">
-            ⏸️ Half Time (HT)
+          <span className="px-3 py-1 rounded-full bg-amber-500 text-slate-950 font-black text-xs uppercase shadow-xs">
+            ⏸️ Half Time (30:00 Break)
           </span>
         );
       case '2ND_HALF':
         return (
-          <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-red-600 text-white font-bold text-[10px] sm:text-xs uppercase shadow-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-            LIVE • 2nd Half • {matchState.matchMinute}'
+          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600 text-white font-mono font-bold text-xs uppercase shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-white animate-ping"></span>
+            <span>LIVE 2ND HALF • {clock.display}</span>
           </span>
         );
       case 'FULL_TIME':
         return (
-          <span className="px-2.5 py-0.5 rounded-full bg-slate-900 text-white font-black text-[10px] sm:text-xs uppercase shadow-xs border border-slate-700">
-            🏁 FULL TIME (FINAL)
+          <span className="px-3 py-1 rounded-full bg-slate-950 text-white font-black text-xs uppercase shadow-xs border border-slate-700">
+            🏁 FULL TIME • 60:00 (FINAL)
           </span>
         );
       default:

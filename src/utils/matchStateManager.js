@@ -9,10 +9,17 @@ export const COOLDOWN_SECONDS = 45;
 export const MAX_REPORTS_PER_USER = 5;
 export const DEFAULT_ADMIN_PIN = '7012'; // Default Committee PIN
 
+// Kerala Sevens Football: 30 minutes + 30 minutes = 60 minutes full match
+export const SEVENS_HALF_MINUTES = 30;
+export const SEVENS_TOTAL_MINUTES = 60;
+
 export const initialOfficialMatchState = {
   officialScoreHome: 2,
   officialScoreAway: 1,
-  matchMinute: 38,
+  matchSeconds: 30 * 60 + 30, // 30:30 in 2nd Half (Sevens 30+30 rule)
+  matchMinute: 31,
+  isTimerRunning: true,
+  timerStartedAt: Date.now(),
   status: '2ND_HALF', // 'UPCOMING' | '1ST_HALF' | 'HALF_TIME' | '2ND_HALF' | 'FULL_TIME'
   isVerified: true,
   lastUpdated: new Date().toISOString(),
@@ -26,9 +33,37 @@ export const initialOfficialMatchState = {
   events: [
     { id: 'evt-1', minute: 12, team: 'home', player: 'Ibrahim Soumahoro', type: 'goal', text: 'Stunning curler into top right corner', isOfficial: true },
     { id: 'evt-2', minute: 24, team: 'away', player: 'Shameer K.', type: 'goal', text: 'Equalizer through penalty rebound', isOfficial: true },
-    { id: 'evt-3', minute: 36, team: 'home', player: 'Riyas K. (Captain)', type: 'goal', text: 'Header from close range', isOfficial: true }
+    { id: 'evt-3', minute: 30, team: 'home', player: 'Riyas K. (Captain)', type: 'goal', text: 'Header right before Half-Time whistle', isOfficial: true }
   ]
 };
+
+// Calculate real-time ticking match time (MM:SS)
+export function getCalculatedMatchTime(matchState) {
+  if (!matchState) {
+    return { minutes: 0, seconds: 0, totalSeconds: 0, display: '00:00', minuteOnly: 0, isRunning: false };
+  }
+
+  let totalSeconds = typeof matchState.matchSeconds === 'number' ? matchState.matchSeconds : (matchState.matchMinute || 0) * 60;
+
+  if (matchState.isTimerRunning && matchState.timerStartedAt) {
+    const elapsed = Math.max(0, Math.floor((Date.now() - matchState.timerStartedAt) / 1000));
+    totalSeconds += elapsed;
+  }
+
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  const pad = (n) => String(n).padStart(2, '0');
+  const display = `${pad(minutes)}:${pad(seconds)}`;
+
+  return {
+    minutes,
+    seconds,
+    totalSeconds,
+    display,
+    minuteOnly: minutes,
+    isRunning: Boolean(matchState.isTimerRunning)
+  };
+}
 
 // Retrieve stored state or fallback to default
 export function getStoredMatchState() {

@@ -25,7 +25,10 @@ import {
   isAdminAuthenticated, 
   setAdminAuthenticated, 
   getStoredMatchState, 
-  saveOfficialMatchState 
+  saveOfficialMatchState,
+  getCalculatedMatchTime,
+  SEVENS_HALF_MINUTES,
+  SEVENS_TOTAL_MINUTES
 } from '../utils/matchStateManager';
 import { openingMatch } from '../data/tournamentData';
 
@@ -36,22 +39,28 @@ export default function AdminScoreModal({ isOpen, onClose, isDarkMode, lang }) {
 
   // Match State copy for Admin editing
   const [matchState, setMatchState] = useState(getStoredMatchState);
+  const [clock, setClock] = useState(() => getCalculatedMatchTime(getStoredMatchState()));
   const [notification, setNotification] = useState('');
 
-  // New Event form
-  const [newEvent, setNewEvent] = useState({
-    type: 'goal',
-    team: 'home',
-    player: 'Ibrahim Soumahoro',
-    minute: 38,
-    text: 'Clinical finish into bottom corner'
-  });
+  // Custom Time Setter inputs (defaulting to Sevens 30:30)
+  const [inputMinutes, setInputMinutes] = useState(30);
+  const [inputSeconds, setInputSeconds] = useState(30);
+
+  // Live ticking interval for the clock inside Admin Modal
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setClock(getCalculatedMatchTime(matchState));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [matchState]);
 
   // Sync state whenever modal opens
   useEffect(() => {
     if (isOpen) {
+      const stored = getStoredMatchState();
       setIsAuthenticated(isAdminAuthenticated());
-      setMatchState(getStoredMatchState());
+      setMatchState(stored);
+      setClock(getCalculatedMatchTime(stored));
       setPinError('');
       setPinInput('');
     }
@@ -78,26 +87,82 @@ export default function AdminScoreModal({ isOpen, onClose, isDarkMode, lang }) {
     setPinInput('');
   };
 
+  // Sevens Football: 30 minutes 1st Half + 30 minutes 2nd Half = 60 minutes
   const handleStartMatch = (half) => {
-    const min = half === '1ST_HALF' ? 1 : half === 'HALF_TIME' ? 35 : 36;
+    // 1st Half starts at 0s (00:00); Half Time pauses at 1800s (30:00); 2nd Half resumes at 1800s (30:00)
+    const totalSec = half === '1ST_HALF' ? 0 : half === 'HALF_TIME' ? 30 * 60 : 30 * 60;
+    const isRunning = half === '1ST_HALF' || half === '2ND_HALF';
+
     setMatchState((prev) => {
       const next = {
         ...prev,
         status: half,
-        matchMinute: min,
+        matchSeconds: totalSec,
+        matchMinute: Math.floor(totalSec / 60),
+        isTimerRunning: isRunning,
+        timerStartedAt: Date.now(),
         isCrowdLocked: false
       };
       saveOfficialMatchState(next);
+      setClock(getCalculatedMatchTime(next));
       return next;
     });
+
     confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
     setNotification(
       half === '1ST_HALF'
-        ? '🟢 Match Started! Live 1st Half Kickoff broadcasted to all fans.'
+        ? '🟢 Match Started! 1st Half Kickoff (00:00 to 30:00) clock is now moving.'
         : half === 'HALF_TIME'
-        ? '⏸️ Half Time Break Called (35 mins).'
-        : '▶️ 2nd Half Kickoff broadcasted!'
+        ? '⏸️ Half Time Whistle (Paused at 30:00).'
+        : '▶️ 2nd Half Kickoff (30:00 to 60:00) clock is now moving!'
     );
+    setTimeout(() => setNotification(''), 3000);
+  };
+
+  const handleToggleTimerRunning = () => {
+    const currentClock = getCalculatedMatchTime(matchState);
+    const newRunning = !matchState.isTimerRunning;
+
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        matchSeconds: currentClock.totalSeconds,
+        isTimerRunning: newRunning,
+        timerStartedAt: newRunning ? Date.now() : null
+      };
+      saveOfficialMatchState(next);
+      setClock(getCalculatedMatchTime(next));
+      return next;
+    });
+
+    setNotification(newRunning ? '▶️ Match clock resumed and ticking.' : '⏸️ Match clock paused.');
+    setTimeout(() => setNotification(''), 2000);
+  };
+
+  const handleApplyCustomTime = (min, sec) => {
+    const m = typeof min === 'number' ? min : parseInt(inputMinutes, 10) || 0;
+    const s = typeof sec === 'number' ? sec : parseInt(inputSeconds, 10) || 0;
+    const totalSec = Math.max(0, m * 60 + s);
+
+    // Auto determine status (before 30m is 1st half, after 30m is 2nd half)
+    const newStatus = totalSec < 30 * 60 ? '1ST_HALF' : totalSec < 60 * 60 ? '2ND_HALF' : 'FULL_TIME';
+
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        status: prev.status === 'UPCOMING' ? newStatus : prev.status,
+        matchSeconds: totalSec,
+        matchMinute: Math.floor(totalSec / 60),
+        isTimerRunning: true,
+        timerStartedAt: Date.now()
+      };
+      saveOfficialMatchState(next);
+      setClock(getCalculatedMatchTime(next));
+      return next;
+    });
+
+    confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+    setNotification(`⚡ Match clock set to ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} and moving!`);
     setTimeout(() => setNotification(''), 3000);
   };
 
@@ -106,21 +171,33 @@ export default function AdminScoreModal({ isOpen, onClose, isDarkMode, lang }) {
       const next = {
         ...prev,
         status: 'FULL_TIME',
+        matchSeconds: 60 * 60, // 60:00 Sevens Full Time
+        matchMinute: 60,
+        isTimerRunning: false,
         isCrowdLocked: true
       };
       saveOfficialMatchState(next);
+      setClock(getCalculatedMatchTime(next));
       return next;
     });
     confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
-    setNotification('⏹️ Match Ended! Final Score Locked & Broadcasted.');
+    setNotification('⏹️ Final Whistle blown! Full Time (60:00) locked.');
     setTimeout(() => setNotification(''), 3500);
   };
 
   const handleAdjustMinute = (delta) => {
+    const currentClock = getCalculatedMatchTime(matchState);
+    const newTotal = Math.max(0, currentClock.totalSeconds + delta * 60);
+
     setMatchState((prev) => {
-      const nextMin = Math.max(0, Math.min(90, prev.matchMinute + delta));
-      const next = { ...prev, matchMinute: nextMin };
+      const next = {
+        ...prev,
+        matchSeconds: newTotal,
+        matchMinute: Math.floor(newTotal / 60),
+        timerStartedAt: prev.isTimerRunning ? Date.now() : null
+      };
       saveOfficialMatchState(next);
+      setClock(getCalculatedMatchTime(next));
       return next;
     });
   };
@@ -130,10 +207,13 @@ export default function AdminScoreModal({ isOpen, onClose, isDarkMode, lang }) {
       const next = {
         ...prev,
         status: 'UPCOMING',
+        matchSeconds: 0,
         matchMinute: 0,
+        isTimerRunning: false,
         isCrowdLocked: false
       };
       saveOfficialMatchState(next);
+      setClock(getCalculatedMatchTime(next));
       return next;
     });
     setNotification('Match reset to Upcoming Pre-Match status (8:00 PM).');
@@ -374,7 +454,7 @@ export default function AdminScoreModal({ isOpen, onClose, isDarkMode, lang }) {
                   </div>
                 </div>
 
-                {/* Big Action Buttons */}
+                {/* Big Action Buttons (Kerala Sevens: 30 + 30 Mins) */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
                   {/* Button 1: Start 1st Half */}
                   <button
@@ -383,7 +463,7 @@ export default function AdminScoreModal({ isOpen, onClose, isDarkMode, lang }) {
                   >
                     <span className="text-base">🟢</span>
                     <span>START MATCH</span>
-                    <span className="text-[9px] font-normal opacity-90">(1st Half Kickoff)</span>
+                    <span className="text-[9px] font-normal opacity-90">(00:00 to 30:00)</span>
                   </button>
 
                   {/* Button 2: Half Time */}
@@ -393,7 +473,7 @@ export default function AdminScoreModal({ isOpen, onClose, isDarkMode, lang }) {
                   >
                     <span className="text-base">⏸️</span>
                     <span>HALF TIME</span>
-                    <span className="text-[9px] font-normal opacity-90">(Pause at 35')</span>
+                    <span className="text-[9px] font-normal opacity-90">(Pause at 30:00)</span>
                   </button>
 
                   {/* Button 3: Start 2nd Half */}
@@ -403,7 +483,7 @@ export default function AdminScoreModal({ isOpen, onClose, isDarkMode, lang }) {
                   >
                     <span className="text-base">▶️</span>
                     <span>START 2ND HALF</span>
-                    <span className="text-[9px] font-normal opacity-90">(Resume at 36')</span>
+                    <span className="text-[9px] font-normal opacity-90">(Resume 30:00 to 60:00)</span>
                   </button>
 
                   {/* Button 4: Stop Match (Full Time) */}
@@ -413,16 +493,119 @@ export default function AdminScoreModal({ isOpen, onClose, isDarkMode, lang }) {
                   >
                     <span className="text-base">⏹️</span>
                     <span>STOP MATCH</span>
-                    <span className="text-[9px] font-normal opacity-90">(Final Whistle & Lock)</span>
+                    <span className="text-[9px] font-normal opacity-90">(FT 60:00 & Lock)</span>
                   </button>
                 </div>
 
-                {/* Live Minute Tickers */}
+                {/* DIGITAL MOVING CLOCK & CUSTOM TIME SETTER (SEVENS 30:30) */}
+                <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-amber-400 animate-spin" style={{ animationDuration: '6s' }} />
+                      <div>
+                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">
+                          Live Ticking Match Clock (Sevens: 30 + 30 Mins)
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl font-black font-mono tracking-widest text-white drop-shadow-sm">
+                            {clock.display}
+                          </span>
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                            matchState.isTimerRunning ? 'bg-emerald-500 text-slate-950 animate-pulse' : 'bg-slate-700 text-slate-300'
+                          }`}>
+                            {matchState.isTimerRunning ? 'Clock Running' : 'Clock Paused'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={handleToggleTimerRunning}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 active:scale-95 self-start sm:self-center ${
+                        matchState.isTimerRunning
+                          ? 'bg-amber-500 hover:bg-amber-400 text-slate-950'
+                          : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                      }`}
+                    >
+                      {matchState.isTimerRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                      <span>{matchState.isTimerRunning ? 'Pause Clock' : 'Resume Clock'}</span>
+                    </button>
+                  </div>
+
+                  {/* Manual Time Setter (Min:Sec) with 30:30 Quick Preset */}
+                  <div className="pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[11px] text-blue-200">Set Clock:</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="75"
+                        value={inputMinutes}
+                        onChange={(e) => setInputMinutes(e.target.value)}
+                        className="w-12 p-1 text-center font-mono font-bold rounded bg-slate-900 border border-slate-700 text-white"
+                        placeholder="MM"
+                      />
+                      <span className="text-white font-bold">:</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="59"
+                        value={inputSeconds}
+                        onChange={(e) => setInputSeconds(e.target.value)}
+                        className="w-12 p-1 text-center font-mono font-bold rounded bg-slate-900 border border-slate-700 text-white"
+                        placeholder="SS"
+                      />
+                      <button
+                        onClick={() => handleApplyCustomTime()}
+                        className="px-2.5 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold active:scale-95"
+                      >
+                        Apply Time
+                      </button>
+                    </div>
+
+                    {/* Quick Presets: 30:30, 00:00, 15:00, 45:00 */}
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => { setInputMinutes(30); setInputSeconds(30); handleApplyCustomTime(30, 30); }}
+                        className="px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-black text-[10px] hover:bg-amber-400 shadow-xs"
+                        title="Set to 30:30 (Sevens 2nd Half Kickoff)"
+                      >
+                        ⚡ 30:30
+                      </button>
+                      <button
+                        onClick={() => { setInputMinutes(0); setInputSeconds(0); handleApplyCustomTime(0, 0); }}
+                        className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-white font-bold text-[10px]"
+                      >
+                        00:00
+                      </button>
+                      <button
+                        onClick={() => { setInputMinutes(30); setInputSeconds(0); handleApplyCustomTime(30, 0); }}
+                        className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-white font-bold text-[10px]"
+                      >
+                        30:00 (HT)
+                      </button>
+                      <button
+                        onClick={() => { setInputMinutes(60); setInputSeconds(0); handleApplyCustomTime(60, 0); }}
+                        className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-white font-bold text-[10px]"
+                      >
+                        60:00 (FT)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Live Minute Quick Increments */}
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-white/10 text-xs">
                   <span className="text-blue-200">
-                    Live Match Clock: <strong className="text-white text-sm font-mono">{matchState.matchMinute}' mins</strong>
+                    Quick Adjust:
                   </span>
                   <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => handleAdjustMinute(-1)}
+                      className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] active:scale-95"
+                    >
+                      -1 Min
+                    </button>
                     <button
                       onClick={() => handleAdjustMinute(1)}
                       className="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white font-bold text-[11px] active:scale-95"
