@@ -32,7 +32,8 @@ export default function Header({
     { id: 'fixtures', label: lang === 'ml' ? 'ഫിക്സ്ചറുകൾ' : 'Fixtures' },
     { id: 'teams', label: lang === 'ml' ? 'ടീമുകൾ' : 'Clubs' },
     { id: 'stats', label: lang === 'ml' ? 'ഗോൾഡൻ ബൂട്ട്' : 'Stats' },
-    { id: 'venue', label: lang === 'ml' ? 'സ്റ്റേഡിയം & സ്പോൺസേഴ്സ്' : 'Venue & Info' }
+    { id: 'promo', label: lang === 'ml' ? 'മാരത്തോൺ & പോസ്റ്റർ' : 'Marathon & Promo' },
+    { id: 'venue', label: lang === 'ml' ? 'സ്റ്റേഡിയം' : 'Venue & Info' }
   ];
 
   return (

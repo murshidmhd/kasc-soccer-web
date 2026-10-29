@@ -13,6 +13,7 @@ import TopScorers from './components/TopScorers';
 import VenueSection from './components/VenueSection';
 import SponsorsSection from './components/SponsorsSection';
 import SponsorAdsSidebar from './components/SponsorAdsSidebar';
+import PromoEventsSection from './components/PromoEventsSection';
 import ScorerDemoModal from './components/ScorerDemoModal';
 import TicketCounterModal from './components/TicketCounterModal';
 import BottomNav from './components/BottomNav';
@@ -21,20 +22,21 @@ import Footer from './components/Footer';
 export default function App() {
   const [lang, setLang] = useState('ml'); // Default Malayalam
   const [isDarkMode, setIsDarkMode] = useState(false); // Default Clean White Theme
-  const [activeTab, setActiveTab] = useState('live'); // 'live' | 'fixtures' | 'teams' | 'stats' | 'venue'
+  const [activeTab, setActiveTab] = useState('live'); // 'live' | 'fixtures' | 'teams' | 'stats' | 'promo' | 'venue'
   const [isScorerDemoOpen, setIsScorerDemoOpen] = useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
 
   // Sync with URL hash if provided
   useEffect(() => {
+    const validTabs = ['live', 'fixtures', 'teams', 'stats', 'promo', 'venue'];
     const hash = window.location.hash.replace('#', '');
-    if (['live', 'fixtures', 'teams', 'stats', 'venue'].includes(hash)) {
+    if (validTabs.includes(hash)) {
       setActiveTab(hash);
     }
 
     const handleHashChange = () => {
       const newHash = window.location.hash.replace('#', '');
-      if (['live', 'fixtures', 'teams', 'stats', 'venue'].includes(newHash)) {
+      if (validTabs.includes(newHash)) {
         setActiveTab(newHash);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
@@ -127,6 +129,14 @@ export default function App() {
                   />
                 </div>
               </div>
+
+              {/* Tournament Promotions & 8 KM Mini Marathon Highlights */}
+              <div className="pt-2">
+                <PromoEventsSection
+                  lang={lang}
+                  isDarkMode={isDarkMode}
+                />
+              </div>
             </div>
           </div>
         )}
@@ -161,10 +171,24 @@ export default function App() {
           </div>
         )}
 
-        {/* Page 5: VENUE & SPONSORS */}
+        {/* Page 5: PROMOTIONS & MINI MARATHON (Full Page) */}
+        {activeTab === 'promo' && (
+          <div className="animate-fadeIn pt-4 max-w-6xl mx-auto px-3 sm:px-6">
+            <PromoEventsSection 
+              lang={lang} 
+              isDarkMode={isDarkMode} 
+            />
+          </div>
+        )}
+
+        {/* Page 6: VENUE & SPONSORS */}
         {activeTab === 'venue' && (
-          <div className="animate-fadeIn pt-4 space-y-4">
+          <div className="animate-fadeIn pt-4 space-y-6 max-w-6xl mx-auto px-3 sm:px-6">
             <VenueSection 
+              lang={lang} 
+              isDarkMode={isDarkMode} 
+            />
+            <PromoEventsSection 
               lang={lang} 
               isDarkMode={isDarkMode} 
             />

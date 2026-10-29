@@ -105,8 +105,8 @@ export default function SponsorAdsSidebar({ lang, isDarkMode }) {
         <p className="font-bold text-[11px] text-slate-700">
           {lang === 'ml' ? 'നിങ്ങളുടെ പരസ്യങ്ങൾ ഇവിടെ നൽകാൻ:' : 'Advertise Your Business on this Portal:'}
         </p>
-        <p className="text-[11px] text-blue-700 font-mono font-bold">
-          Media Desk: +91 99618 78508
+        <p className="text-[11px] text-blue-700 font-bold">
+          Media Desk: UDAYA & KASC Organizing Committee
         </p>
       </div>
     </aside>

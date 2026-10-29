@@ -356,6 +356,7 @@ export const topScorersPreview = [
 ];
 
 export const sponsors = [
+  { name: "Abacus Academy", tier: "Marathon Prize Partner", desc: "Parambil Peedika & Puthur Pallikkal - Educational Excellence & Sports Sponsor" },
   { name: "Raidhan Kuzhimanthi", tier: "Food Partner", desc: "Official Food & Hospitality Partner - Parambil Peedika" },
   { name: "Life Line Hospital", tier: "Healthcare Partner", desc: "24x7 Emergency Care & Medical Partner" },
   { name: "UDAYA & KASC Peruvallur", tier: "Organizers", desc: "UDAYA Parambil Peedika & KASC Peruvallur" },
@@ -365,6 +366,21 @@ export const sponsors = [
 ];
 
 export const sponsorAds = [
+  {
+    id: "abacus",
+    name: "Abacus Academy",
+    nameMl: "അബാക്കസ് അക്കാദമി",
+    category: "Official Prize Sponsor",
+    categoryMl: "പ്രൈസ് സ്പോൺസർ",
+    tagline: "Quality Education & Promoting Local Athletic Excellence",
+    taglineMl: "വിദ്യാഭ്യാസ രംഗത്ത് പുത്തൻ മുന്നേറ്റം • പറമ്പിൽ പീടിക & പുത്തൂർ പള്ളിക്കൽ",
+    location: "Parambil Peedika & Puthur Pallikkal",
+    offers: "Proud Cash Prize Sponsor for SFA All India Sevens 8 KM Mini Marathon",
+    offersMl: "8 കി.മീ മിനി മാരത്തോൺ ക്യാഷ് പ്രൈസ് സ്പോൺസർമാർ",
+    badge: "🎓 EDUCATION & SPORTS",
+    badgeColor: "bg-blue-100 text-blue-900 border-blue-300",
+    gradient: "from-blue-600 to-indigo-700"
+  },
   {
     id: "raidhan",
     name: "Raidhan Kuzhimanthi",
@@ -396,3 +412,136 @@ export const sponsorAds = [
     gradient: "from-emerald-600 to-teal-700"
   }
 ];
+
+export const promoData = {
+  marathon: {
+    title: "SFA Promotional Mini Marathon (8 KM)",
+    titleMl: "എസ്.എഫ്.എ അഖിലേന്ത്യാ സെവൻസ് പ്രചരണാർത്ഥം മിനി മാരത്തോൺ",
+    organizers: "UDAYA Parambil Peedika & KASC Peruvallur",
+    organizersMl: "ഉദയ പറമ്പിൽ പീടിക",
+    date: "Sunday, 25 October 2026",
+    dateMl: "2026 ഒക്ടോബർ 25, ഞായറാഴ്ച",
+    time: "Reporting: 6:00 AM | Flag-off: 6:30 AM",
+    timeMl: "റിപ്പോർട്ടിംഗ്: രാവിലെ 6:00 | ഫ്ലാഗ് ഓഫ്: രാവിലെ 6:30",
+    venue: "Peruvallur Panjayath Stadium, Parambil Peedika",
+    venueMl: "പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം, പറമ്പിൽ പീടിക",
+    distance: "8 KM (Free Registration)",
+    distanceMl: "8 കി.മീ സൗജന്യ രജിസ്ട്രേഷൻ",
+    flagOffBy: {
+      name: "P. P. Suneel",
+      nameMl: "പി. പി. സുനീൽ",
+      designation: "President, Peruvallur Grama Panchayath",
+      designationMl: "പെരുവള്ളൂർ ഗ്രാമ പഞ്ചായത്ത് പ്രസിഡന്റ്"
+    },
+    prizeSponsor: {
+      name: "Abacus Academy",
+      nameMl: "അബാക്കസ് അക്കാദമി",
+      branches: "Parambil Peedika & Puthur Pallikkal",
+      branchesMl: "പറമ്പിൽ പീടിക & പുത്തൂർ പള്ളിക്കൽ",
+      role: "Official Prize Sponsor (₹6,000 Total Cash Awards)"
+    },
+    prizes: [
+      {
+        place: 1,
+        title: "1st Prize",
+        titleMl: "ഒന്നാം സ്ഥാനം",
+        cash: "₹3,000",
+        winner: "Avinash Koyilandy",
+        winnerMl: "അവിനാഷ് കൊയിലാണ്ടി",
+        badge: "🥇 Champion Runner",
+        filename: "marathon_winner_1st.jpg"
+      },
+      {
+        place: 2,
+        title: "2nd Prize",
+        titleMl: "രണ്ടാം സ്ഥാനം",
+        cash: "₹2,000",
+        winner: "Aswan Palakkad",
+        winnerMl: "അസ്വാൻ പാലക്കാട്",
+        badge: "🥈 Runner-Up",
+        filename: "marathon_winner_2nd.jpg"
+      },
+      {
+        place: 3,
+        title: "3rd Prize",
+        titleMl: "മൂന്നാം സ്ഥാനം",
+        cash: "₹1,000",
+        winner: "Aadil Kummipiparambin",
+        winnerMl: "ആദിൽ കുമ്മിണിപ്പറമ്പ്",
+        badge: "🥉 2nd Runner-Up",
+        filename: "marathon_winner_3rd.jpg"
+      }
+    ],
+    gallery: [
+      {
+        id: "flagoff",
+        title: "Flag-off Ceremony by Panchayath President",
+        titleMl: "ഫ്ലാഗ് ഓഫ് കർമ്മം - പി. പി. സുനീൽ",
+        desc: "Peruvallur Grama Panchayath President P. P. Suneel inaugurating and flagging off the 8 KM Mini Marathon at Panjayath Stadium.",
+        descMl: "പെരുവള്ളൂർ ഗ്രാമ പഞ്ചായത്ത് പ്രസിഡന്റ് പി. പി. സുനീൽ ഫ്ലാഗ് ഓഫ് നിർവ്വഹിക്കുന്നു",
+        filename: "marathon_flagoff.jpg",
+        tag: "Inauguration"
+      },
+      {
+        id: "crowd",
+        title: "Elite Runners Assembly at Parambil Peedika",
+        titleMl: "കായിക താരങ്ങളുടെ സംഗമം",
+        desc: "Participants gathered with the official SFA Sevens Mini Marathon promotional banner before embarking on the 8 km race.",
+        descMl: "പറമ്പിൽ പീടിക ടൗണിൽ അത്‌ലറ്റുകളുടെ ആവേശകരമായ ഒത്തുചേരൽ",
+        filename: "marathon_runners_crowd.jpg",
+        tag: "Athletes Gathering"
+      },
+      {
+        id: "poster",
+        title: "Official 8 KM Marathon Notice",
+        titleMl: "ഔദ്യോഗിക മാരത്തോൺ അറിയിപ്പ്",
+        desc: "Official announcement poster sponsored by Abacus Academy Parambil Peedika & Puthur Pallikkal.",
+        descMl: "അബാക്കസ് അക്കാദമി സ്പോൺസർ ചെയ്ത മാരത്തോൺ അറിയിപ്പ്",
+        filename: "marathon_official_poster.jpg",
+        tag: "Official Poster"
+      }
+    ]
+  },
+  countdownPosters: [
+    {
+      days: 8,
+      title: "8 Days To Go",
+      titleMl: "ഇനി 8 ദിനങ്ങൾ മാത്രം",
+      subtitle: "Star Forward in Festiwelt Jersey #10 Spotlight",
+      dates: "2026 Nov 06 - Dec 06",
+      venue: "Peruvallur Panchayath Stadium, Parambil Peedika",
+      filename: "countdown_8days.jpg",
+      highlight: "Jersey #10 Edition"
+    },
+    {
+      days: 9,
+      title: "9 Days To Go",
+      titleMl: "ഇനി 9 ദിനങ്ങൾ മാത്രം",
+      subtitle: "Sprint Attack Through the Gateway of Fire",
+      dates: "2026 Nov 06 - Dec 06",
+      venue: "Peruvallur Panchayath Stadium",
+      filename: "countdown_9days.jpg",
+      highlight: "Inferno Gate Edition"
+    },
+    {
+      days: 10,
+      title: "10 Days To Go",
+      titleMl: "ഇനി 10 ദിനങ്ങൾ മാത്രം",
+      subtitle: "Aerial Clash & Fortress Defense (#9 vs #2)",
+      dates: "2026 Nov 06 - Dec 06",
+      venue: "Peruvallur Panchayath Stadium",
+      filename: "countdown_10days.jpg",
+      highlight: "Fortress Aerial Battle"
+    },
+    {
+      days: 11,
+      title: "11 Days To Go",
+      titleMl: "ഇനി 11 ദിനങ്ങൾ മാത്രം",
+      subtitle: "The Proud Udaya Club Flag Flying at Sunset",
+      dates: "2026 Nov 06 - Dec 06",
+      venue: "Peruvallur Panchayath Stadium",
+      filename: "countdown_11days.jpg",
+      highlight: "Official Club Colors"
+    }
+  ]
+};

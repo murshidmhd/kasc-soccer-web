@@ -1,12 +1,13 @@
 import React from 'react';
-import { Flame, Calendar, Shield, Trophy, MapPin } from 'lucide-react';
+import { Flame, Calendar, Shield, Trophy, MapPin, Award } from 'lucide-react';
 
 export default function BottomNav({ activeTab, setActiveTab, isDarkMode, lang }) {
   const navItems = [
     { id: 'live', label: lang === 'ml' ? 'ലൈവ്' : 'Live', icon: Flame, color: 'text-red-600' },
     { id: 'fixtures', label: lang === 'ml' ? 'ഫിക്സ്ചർ' : 'Fixtures', icon: Calendar, color: 'text-blue-600' },
     { id: 'teams', label: lang === 'ml' ? 'ക്ലബ്ബുകൾ' : 'Clubs', icon: Shield, color: 'text-blue-600' },
-    { id: 'stats', label: lang === 'ml' ? 'സ്റ്റാറ്റ്സ്' : 'Stats', icon: Trophy, color: 'text-amber-600' },
+    { id: 'promo', label: lang === 'ml' ? 'മാരത്തോൺ' : 'Buzz', icon: Award, color: 'text-amber-600' },
+    { id: 'stats', label: lang === 'ml' ? 'സ്റ്റാറ്റ്സ്' : 'Stats', icon: Trophy, color: 'text-indigo-600' },
     { id: 'venue', label: lang === 'ml' ? 'സ്റ്റേഡിയം' : 'Venue', icon: MapPin, color: 'text-emerald-600' }
   ];
 
