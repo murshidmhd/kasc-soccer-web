@@ -18,28 +18,30 @@ import { participatingTeams } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
 
 const INITIAL_VOTES = {
-  1: 1840, // FIFA Manjeri
-  2: 1680, // UDAYA Peruvallur
-  3: 1520, // SABAN FC Kottakkal
-  4: 1250, // Al-Madina Cherpulassery
-  5: 1120, // Super Studio Malappuram
-  6: 980,  // Town Team Areekode
-  7: 890,  // Linsha Tirur
-  8: 840,  // Royal Travel Kozhikode
-  9: 760,  // Black & White Kozhikode
-  10: 690, // Usha Thrissur
-  11: 620, // Gymkhana Thrissur
-  12: 580, // Moon Star Kalpakanchery
-  13: 540, // Hitrick Kozhikode
-  14: 510, // Real Malabar Kondotty
-  15: 480, // Base Peruvallur
-  16: 450, // Sky Blue Edappal
-  17: 420, // Mediguard Areekode
-  18: 390, // Friends Mampad
-  19: 360, // G-Force Calicut
-  20: 330, // Brothers Vengara
-  21: 310, // Golden Star Malappuram
-  22: 290  // FC Goa
+  1: 1840, // Super Studio Malappuram
+  2: 1420, // Linsha Medicals Mannarkkad
+  3: 1780, // Saban Kottakkal
+  4: 1530, // Al Madeena Cherpulasseri
+  5: 960,  // Base Perumbavur
+  6: 1150, // KMG Mavoor
+  7: 1220, // FC Perinthalmanna
+  8: 910,  // United FC Nellikkuth
+  9: 1390, // I nov FC Manjeri
+  10: 840, // X8 Tours Calicut
+  11: 990, // Malbar FC Kozhikkode
+  12: 1040,// Shooters Padanna
+  13: 1110,// AYC Ucharakadavu
+  14: 870, // Soccer Sporting Shornur
+  15: 1690,// Town Team Areekode
+  16: 940, // Seven Star FC Palakkad
+  17: 880, // Real FC Thennala
+  18: 920, // Powerdippo Thrissur
+  19: 1060,// KRSC Kozhikkode
+  20: 890, // Hunters Koothuparamba
+  21: 830, // Abilash FC Kuppooth
+  22: 950, // AFC Wayanad
+  23: 1950,// Udaya Parambil Peedika (Host)
+  24: 1130 // Usha FC Thrissur
 };
 
 export default function ClubFanVoteSection({ lang, isDarkMode }) {
@@ -143,8 +145,8 @@ export default function ClubFanVoteSection({ lang, isDarkMode }) {
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl font-malayalam">
               {lang === 'ml' 
-                ? 'സെവൻസ് അസോസിയേഷനിലെ 22 പ്രമുഖ ക്ലബ്ബുകളിൽ ഏറ്റവും കൂടുതൽ ആരാധക പിന്തുണ ആർക്ക്? നിങ്ങളുടെ വോട്ട് രേഖപ്പെടുത്തൂ!' 
-                : 'Which of the 22 registered clubs has the biggest fan following in Kerala? Cast your vote and see the live standings!'}
+                ? 'സെവൻസ് അസോസിയേഷനിലെ 24 ഔദ്യോഗിക ക്ലബ്ബുകളിൽ ഏറ്റവും കൂടുതൽ ആരാധക പിന്തുണ ആർക്ക്? നിങ്ങളുടെ വോട്ട് രേഖപ്പെടുത്തൂ!' 
+                : 'Which of the 24 confirmed clubs has the biggest fan following in Kerala? Cast your vote and see the live standings!'}
             </p>
           </div>
 
@@ -193,7 +195,7 @@ export default function ClubFanVoteSection({ lang, isDarkMode }) {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={lang === 'ml' ? 'ക്ലബ്ബിന്റെ പേര് തിരയുക...' : 'Search any of the 22 clubs...'}
+                placeholder={lang === 'ml' ? 'ക്ലബ്ബിന്റെ പേര് തിരയുക...' : 'Search any of the 24 confirmed clubs...'}
                 className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-xs sm:text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 shadow-xs"
               />
             </div>
