@@ -18,6 +18,7 @@ import ClubFanVoteSection from './components/ClubFanVoteSection';
 import AdminScoreModal from './components/AdminScoreModal';
 import ScorerDemoModal from './components/ScorerDemoModal';
 import TicketCounterModal from './components/TicketCounterModal';
+import StickyScoreWidget from './components/StickyScoreWidget';
 import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
 
@@ -227,6 +228,13 @@ export default function App() {
         setActiveTab={handleTabChange}
         isDarkMode={isDarkMode} 
         lang={lang}
+      />
+
+      {/* Floating / Sticky Live Score Widget (FotMob & Flashscore Style) */}
+      <StickyScoreWidget
+        activeTab={activeTab}
+        setActiveTab={handleTabChange}
+        isDarkMode={isDarkMode}
       />
 
       {/* Official Match Scorer & Admin Desk Modal */}
