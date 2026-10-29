@@ -6,7 +6,7 @@ import logoKasc from '../assets/logo_kasc.png';
 import logoSfa from '../assets/logo_sfa.png';
 import logoUdaya from '../assets/logo_udaya_transparent.png';
 
-export default function Footer({ lang, isDarkMode }) {
+export default function Footer({ lang, isDarkMode, setActiveTab }) {
   return (
     <footer className="border-t border-slate-200 bg-slate-900 text-slate-300 py-12 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto space-y-8">
@@ -36,7 +36,16 @@ export default function Footer({ lang, isDarkMode }) {
             </div>
             <ul className="text-xs space-y-2 text-slate-400">
               <li>
-                <a href="#live-match" className="hover:text-white transition">
+                <button
+                  onClick={() => { setActiveTab?.('admin'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="text-amber-400 hover:text-amber-300 font-bold transition flex items-center gap-1.5"
+                >
+                  <Shield className="w-3.5 h-3.5" />
+                  <span>Official Scorer Desk (PIN: 7012)</span>
+                </button>
+              </li>
+              <li>
+                <a href="#live" onClick={() => setActiveTab?.('live')} className="hover:text-white transition">
                   Live Match Center
                 </a>
               </li>

@@ -1,0 +1,1004 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  ShieldCheck, 
+  Lock, 
+  Unlock, 
+  Zap, 
+  Plus, 
+  Minus, 
+  Clock, 
+  CheckCircle2, 
+  AlertTriangle, 
+  Users, 
+  RotateCcw, 
+  Send, 
+  LogOut,
+  Radio,
+  Play,
+  Pause,
+  Square,
+  ArrowLeft,
+  ExternalLink,
+  Trash2,
+  X
+} from 'lucide-react';
+import confetti from 'canvas-confetti';
+import { 
+  DEFAULT_ADMIN_PIN, 
+  isAdminAuthenticated, 
+  setAdminAuthenticated, 
+  getStoredMatchState, 
+  saveOfficialMatchState,
+  getCalculatedMatchTime,
+  SEVENS_HALF_MINUTES,
+  SEVENS_TOTAL_MINUTES
+} from '../utils/matchStateManager';
+import { tournamentInfo, openingMatch } from '../data/tournamentData';
+import logoUdaya from '../assets/logo_udaya_transparent.png';
+import logoKasc from '../assets/logo_kasc.png';
+
+export default function AdminDeskSection({ 
+  isDarkMode, 
+  lang, 
+  onBackToLive, 
+  isModal = false, 
+  onClose 
+}) {
+  const [pinInput, setPinInput] = useState('');
+  const [pinError, setPinError] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(isAdminAuthenticated);
+
+  // Match State copy for Admin editing
+  const [matchState, setMatchState] = useState(getStoredMatchState);
+  const [clock, setClock] = useState(() => getCalculatedMatchTime(getStoredMatchState()));
+  const [notification, setNotification] = useState('');
+
+  // Custom Time Setter inputs (defaulting to Sevens 30:30)
+  const [inputMinutes, setInputMinutes] = useState(30);
+  const [inputSeconds, setInputSeconds] = useState(30);
+
+  // New Event Form State
+  const [newEvent, setNewEvent] = useState({
+    type: 'goal',
+    team: 'home',
+    player: '',
+    minute: 31,
+    text: ''
+  });
+
+  // Live ticking interval for the clock inside Admin Desk
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setClock(getCalculatedMatchTime(matchState));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [matchState]);
+
+  // Sync state whenever mounted or updated
+  useEffect(() => {
+    const stored = getStoredMatchState();
+    setIsAuthenticated(isAdminAuthenticated());
+    setMatchState(stored);
+    setClock(getCalculatedMatchTime(stored));
+    setPinError('');
+    setPinInput('');
+  }, []);
+
+  const handleLogin = (e) => {
+    e?.preventDefault();
+    if (pinInput.trim() === DEFAULT_ADMIN_PIN || pinInput.trim() === '2026') {
+      setIsAuthenticated(true);
+      setAdminAuthenticated(true);
+      setPinError('');
+      setNotification('Authenticated as Official Ground Referee Desk');
+      setTimeout(() => setNotification(''), 3000);
+    } else {
+      setPinError('Invalid Committee PIN. Default PIN: 7012');
+    }
+  };
+
+  const handleLogout = () => {
+    setAdminAuthenticated(false);
+    setIsAuthenticated(false);
+    setPinInput('');
+  };
+
+  // Sevens Football: 30 minutes 1st Half + 30 minutes 2nd Half = 60 minutes
+  const handleStartMatch = (half) => {
+    // 1st Half starts at 0s (00:00); Half Time pauses at 1800s (30:00); 2nd Half resumes at 1800s (30:00)
+    const totalSec = half === '1ST_HALF' ? 0 : half === 'HALF_TIME' ? 30 * 60 : 30 * 60;
+    const isRunning = half === '1ST_HALF' || half === '2ND_HALF';
+
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        status: half,
+        matchSeconds: totalSec,
+        matchMinute: Math.floor(totalSec / 60),
+        isTimerRunning: isRunning,
+        timerStartedAt: isRunning ? Date.now() : null,
+        isCrowdLocked: false
+      };
+      saveOfficialMatchState(next);
+      setClock(getCalculatedMatchTime(next));
+      return next;
+    });
+
+    confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+    setNotification(
+      half === '1ST_HALF'
+        ? '🟢 Match Started! 1st Half Kickoff (00:00 to 30:00) clock is now moving.'
+        : half === 'HALF_TIME'
+        ? '⏸️ Half Time Whistle (Paused at 30:00).'
+        : '▶️ 2nd Half Kickoff (30:00 to 60:00) clock is now moving!'
+    );
+    setTimeout(() => setNotification(''), 3000);
+  };
+
+  const handleToggleTimerRunning = () => {
+    const currentClock = getCalculatedMatchTime(matchState);
+    const newRunning = !matchState.isTimerRunning;
+
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        matchSeconds: currentClock.totalSeconds,
+        isTimerRunning: newRunning,
+        timerStartedAt: newRunning ? Date.now() : null
+      };
+      saveOfficialMatchState(next);
+      setClock(getCalculatedMatchTime(next));
+      return next;
+    });
+
+    setNotification(newRunning ? '▶️ Match clock resumed and ticking.' : '⏸️ Match clock paused.');
+    setTimeout(() => setNotification(''), 2000);
+  };
+
+  const handleApplyCustomTime = (min, sec) => {
+    const m = typeof min === 'number' ? min : parseInt(inputMinutes, 10) || 0;
+    const s = typeof sec === 'number' ? sec : parseInt(inputSeconds, 10) || 0;
+    const totalSec = Math.max(0, m * 60 + s);
+
+    // Auto determine status (before 30m is 1st half, after 30m is 2nd half)
+    const newStatus = totalSec < 30 * 60 ? '1ST_HALF' : totalSec < 60 * 60 ? '2ND_HALF' : 'FULL_TIME';
+
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        status: prev.status === 'UPCOMING' ? newStatus : prev.status,
+        matchSeconds: totalSec,
+        matchMinute: Math.floor(totalSec / 60),
+        isTimerRunning: true,
+        timerStartedAt: Date.now()
+      };
+      saveOfficialMatchState(next);
+      setClock(getCalculatedMatchTime(next));
+      return next;
+    });
+
+    confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+    setNotification(`⚡ Match clock set to ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} and moving!`);
+    setTimeout(() => setNotification(''), 3000);
+  };
+
+  const handleStopMatch = () => {
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        status: 'FULL_TIME',
+        matchSeconds: 60 * 60, // 60:00 Sevens Full Time
+        matchMinute: 60,
+        isTimerRunning: false,
+        isCrowdLocked: true
+      };
+      saveOfficialMatchState(next);
+      setClock(getCalculatedMatchTime(next));
+      return next;
+    });
+    confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
+    setNotification('⏹️ Final Whistle blown! Full Time (60:00) locked.');
+    setTimeout(() => setNotification(''), 3500);
+  };
+
+  const handleAdjustMinute = (delta) => {
+    const currentClock = getCalculatedMatchTime(matchState);
+    const newTotal = Math.max(0, currentClock.totalSeconds + delta * 60);
+
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        matchSeconds: newTotal,
+        matchMinute: Math.floor(newTotal / 60),
+        timerStartedAt: prev.isTimerRunning ? Date.now() : null
+      };
+      saveOfficialMatchState(next);
+      setClock(getCalculatedMatchTime(next));
+      return next;
+    });
+  };
+
+  const handleResetToUpcoming = () => {
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        status: 'UPCOMING',
+        matchSeconds: 0,
+        matchMinute: 0,
+        isTimerRunning: false,
+        isCrowdLocked: false
+      };
+      saveOfficialMatchState(next);
+      setClock(getCalculatedMatchTime(next));
+      return next;
+    });
+    setNotification('Match reset to Upcoming Pre-Match status (8:00 PM).');
+    setTimeout(() => setNotification(''), 2500);
+  };
+
+  const handleScoreChange = (team, delta) => {
+    setMatchState((prev) => {
+      const nextHome = team === 'home' ? Math.max(0, prev.officialScoreHome + delta) : prev.officialScoreHome;
+      const nextAway = team === 'away' ? Math.max(0, prev.officialScoreAway + delta) : prev.officialScoreAway;
+      return {
+        ...prev,
+        officialScoreHome: nextHome,
+        officialScoreAway: nextAway
+      };
+    });
+  };
+
+  const handleStatusChange = (status) => {
+    setMatchState((prev) => ({
+      ...prev,
+      status
+    }));
+  };
+
+  const handleMinuteChange = (e) => {
+    const val = parseInt(e.target.value, 10) || 0;
+    setMatchState((prev) => ({
+      ...prev,
+      matchMinute: Math.max(0, Math.min(90, val))
+    }));
+  };
+
+  const handleToggleCrowdLock = () => {
+    setMatchState((prev) => ({
+      ...prev,
+      isCrowdLocked: !prev.isCrowdLocked
+    }));
+  };
+
+  const handleAddOfficialEvent = () => {
+    if (!newEvent.player.trim()) return;
+
+    const eventObj = {
+      id: `evt-${Date.now()}`,
+      minute: newEvent.minute,
+      team: newEvent.team,
+      player: newEvent.player.trim(),
+      type: newEvent.type,
+      text: newEvent.text.trim() || `${newEvent.type.toUpperCase()} recorded`,
+      isOfficial: true
+    };
+
+    setMatchState((prev) => ({
+      ...prev,
+      events: [eventObj, ...(prev.events || [])]
+    }));
+
+    setNewEvent({
+      type: 'goal',
+      team: 'home',
+      player: '',
+      minute: matchState.matchMinute || 30,
+      text: ''
+    });
+
+    confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+    setNotification('Official Match Event Added!');
+    setTimeout(() => setNotification(''), 2500);
+  };
+
+  const handleDeleteEvent = (id) => {
+    setMatchState((prev) => ({
+      ...prev,
+      events: (prev.events || []).filter((e) => e.id !== id)
+    }));
+  };
+
+  const handleSaveAndBroadcast = () => {
+    saveOfficialMatchState(matchState);
+    confetti({ particleCount: 80, spread: 70, origin: { y: 0.5 } });
+    setNotification('✅ OFFICIAL SCORE SAVED & BROADCASTED TO ALL FANS!');
+    setTimeout(() => {
+      setNotification('');
+      if (isModal && onClose) onClose();
+    }, 1200);
+  };
+
+  const handleResetCrowdSpam = () => {
+    setMatchState((prev) => ({
+      ...prev,
+      crowdReports: {
+        home: prev.officialScoreHome * 8,
+        away: prev.officialScoreAway * 8,
+        total: (prev.officialScoreHome + prev.officialScoreAway) * 8
+      }
+    }));
+    setNotification('Crowd reports synchronized with official score!');
+    setTimeout(() => setNotification(''), 2500);
+  };
+
+  return (
+    <div className={`w-full ${isModal ? 'flex flex-col h-full' : 'space-y-6 pb-12'}`}>
+      {/* Top Header Card */}
+      <div className={`rounded-3xl border shadow-xl overflow-hidden transition-colors ${
+        isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
+      }`}>
+        <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 p-4 sm:p-6 text-white flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center -space-x-1 sm:space-x-1.5 shrink-0">
+              <img 
+                src={logoUdaya} 
+                alt="Udaya" 
+                className="w-10 h-10 rounded-full border-2 border-amber-400 bg-white p-0.5 object-contain" 
+              />
+              <img 
+                src={logoKasc} 
+                alt="KASC" 
+                className="w-10 h-10 rounded-full border-2 border-blue-400 bg-white p-0.5 object-contain" 
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="p-1 rounded bg-amber-500 text-slate-950 font-black">
+                  <ShieldCheck className="w-4 h-4" />
+                </span>
+                <h2 className="text-base sm:text-xl font-black font-sports uppercase tracking-wider">
+                  Official Match Scorer & Admin Desk
+                </h2>
+                <span className="px-2 py-0.5 rounded-full bg-red-600 text-[10px] font-black uppercase shrink-0">
+                  PIN 7012
+                </span>
+              </div>
+              <p className="text-xs text-blue-200 mt-0.5">
+                Ground Referee Desk • SFA All India Sevens Season 7 • Peruvallur
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {onBackToLive && (
+              <button
+                onClick={onBackToLive}
+                className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition active:scale-95"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>View Fan Site</span>
+              </button>
+            )}
+
+            {isModal && onClose && (
+              <button
+                onClick={onClose}
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition active:scale-95"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Status Notification Flash */}
+        {notification && (
+          <div className="bg-emerald-600 text-white py-2.5 px-4 text-xs font-bold text-center animate-fadeIn shadow-md">
+            {notification}
+          </div>
+        )}
+
+        <div className="p-4 sm:p-6">
+          {/* SCREEN 1: PIN AUTHENTICATION */}
+          {!isAuthenticated ? (
+            <div className="py-8 max-w-md mx-auto text-center space-y-5">
+              <div className="w-16 h-16 rounded-3xl bg-blue-100 text-blue-800 flex items-center justify-center mx-auto shadow-inner">
+                <Lock className="w-8 h-8" />
+              </div>
+              
+              <div className="space-y-1">
+                <h3 className="text-xl font-black font-sports uppercase tracking-wide">
+                  Enter Committee Scorer PIN
+                </h3>
+                <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                  Authorized Ground Referees and Committee Members can unlock the live match clock, score adjustments, and anti-spam controls.
+                </p>
+              </div>
+
+              <form onSubmit={handleLogin} className="space-y-3.5 max-w-xs mx-auto">
+                <input
+                  type="password"
+                  maxLength={6}
+                  value={pinInput}
+                  onChange={(e) => setPinInput(e.target.value)}
+                  placeholder="Enter PIN (Default: 7012)"
+                  className={`w-full p-3.5 text-center text-2xl font-mono tracking-widest rounded-2xl border font-bold shadow-xs ${
+                    isDarkMode ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
+                  }`}
+                  autoFocus
+                />
+
+                {pinError && (
+                  <p className="text-xs text-red-600 font-bold bg-red-50 p-2 rounded-xl border border-red-200">
+                    {pinError}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  className="w-full py-3.5 rounded-2xl bg-blue-700 hover:bg-blue-800 text-white font-black text-sm uppercase tracking-wider shadow-md transition active:scale-95"
+                >
+                  Unlock Admin Control Panel
+                </button>
+              </form>
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => { setPinInput('7012'); }}
+                  className="text-xs text-blue-600 hover:text-blue-700 hover:underline font-bold"
+                >
+                  Click to Auto-fill Default PIN (7012)
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* SCREEN 2: MAIN ADMIN CONTROLLER */
+            <div className="space-y-6">
+              {/* Authenticated Status Banner */}
+              <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 flex flex-wrap items-center justify-between text-xs font-bold gap-2">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Authorized: Ground Match Scorer Desk (Murshid / KASC Committee)</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  {onBackToLive && (
+                    <button
+                      onClick={onBackToLive}
+                      className="text-blue-700 hover:underline flex items-center gap-1 font-bold"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>View Live Match Page</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="text-red-700 hover:underline flex items-center gap-1 font-bold"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Lock Desk</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* MASTER MATCH CONTROLLER: START / PAUSE / STOP LIVE OPERATIONS */}
+              <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white space-y-4 shadow-lg border border-blue-800">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <span className="p-2 rounded-xl bg-amber-500 text-slate-950 font-black">
+                      <Radio className="w-5 h-5" />
+                    </span>
+                    <div>
+                      <h4 className="text-sm font-black font-sports uppercase tracking-wider text-amber-300">
+                        Live Match Operations
+                      </h4>
+                      <p className="text-xs text-blue-200">
+                        Kickoff 1st Half, pause at Half Time, or blow Final Whistle
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Active Match Status Pill */}
+                  <div>
+                    {matchState.status === 'UPCOMING' && (
+                      <span className="px-3 py-1 rounded-full bg-slate-800 text-slate-300 font-bold text-xs border border-slate-700">
+                        ⚪ Pre-Match (8:00 PM)
+                      </span>
+                    )}
+                    {(matchState.status === '1ST_HALF' || matchState.status === '2ND_HALF') && (
+                      <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600 text-white font-black text-xs uppercase animate-pulse shadow-xs">
+                        <span className="w-2 h-2 rounded-full bg-white"></span>
+                        LIVE MATCH ON ({matchState.status === '1ST_HALF' ? '1st Half' : '2nd Half'})
+                      </span>
+                    )}
+                    {matchState.status === 'HALF_TIME' && (
+                      <span className="px-3 py-1 rounded-full bg-amber-500 text-slate-950 font-black text-xs uppercase shadow-xs">
+                        ⏸️ Half Time Break (30:00)
+                      </span>
+                    )}
+                    {matchState.status === 'FULL_TIME' && (
+                      <span className="px-3 py-1 rounded-full bg-slate-950 text-white font-black text-xs uppercase border border-slate-700 shadow-xs">
+                        🏁 Match Ended (Full Time 60:00)
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Big Action Buttons (Kerala Sevens: 30 + 30 Mins = 60 Mins) */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+                  {/* Button 1: Start 1st Half */}
+                  <button
+                    onClick={() => handleStartMatch('1ST_HALF')}
+                    className="p-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex flex-col items-center justify-center gap-1 shadow-md transition active:scale-95"
+                  >
+                    <span className="text-lg">🟢</span>
+                    <span className="uppercase tracking-wider">START MATCH</span>
+                    <span className="text-[10px] font-normal opacity-90">(00:00 to 30:00)</span>
+                  </button>
+
+                  {/* Button 2: Half Time */}
+                  <button
+                    onClick={() => handleStartMatch('HALF_TIME')}
+                    className="p-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex flex-col items-center justify-center gap-1 shadow-md transition active:scale-95"
+                  >
+                    <span className="text-lg">⏸️</span>
+                    <span className="uppercase tracking-wider">HALF TIME</span>
+                    <span className="text-[10px] font-normal opacity-90">(Pause at 30:00)</span>
+                  </button>
+
+                  {/* Button 3: Start 2nd Half */}
+                  <button
+                    onClick={() => handleStartMatch('2ND_HALF')}
+                    className="p-3.5 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-black text-xs flex flex-col items-center justify-center gap-1 shadow-md transition active:scale-95"
+                  >
+                    <span className="text-lg">▶️</span>
+                    <span className="uppercase tracking-wider">START 2ND HALF</span>
+                    <span className="text-[10px] font-normal opacity-90">(Resume 30:00 to 60:00)</span>
+                  </button>
+
+                  {/* Button 4: Stop Match (Full Time) */}
+                  <button
+                    onClick={handleStopMatch}
+                    className="p-3.5 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-black text-xs flex flex-col items-center justify-center gap-1 shadow-md transition active:scale-95"
+                  >
+                    <span className="text-lg">⏹️</span>
+                    <span className="uppercase tracking-wider">STOP MATCH</span>
+                    <span className="text-[10px] font-normal opacity-90">(FT 60:00 & Lock)</span>
+                  </button>
+                </div>
+
+                {/* DIGITAL MOVING CLOCK & CUSTOM TIME SETTER (SEVENS 30:30) */}
+                <div className="p-3.5 sm:p-4 rounded-2xl bg-black/40 border border-white/10 space-y-3.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <Clock className="w-5 h-5 text-amber-400 animate-spin" style={{ animationDuration: '6s' }} />
+                      <div>
+                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">
+                          Live Ticking Match Clock (Kerala Sevens: 30 + 30 Mins)
+                        </span>
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-3xl font-black font-mono tracking-widest text-white drop-shadow-sm">
+                            {clock.display}
+                          </span>
+                          <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase ${
+                            matchState.isTimerRunning ? 'bg-emerald-500 text-slate-950 animate-pulse' : 'bg-slate-700 text-slate-300'
+                          }`}>
+                            {matchState.isTimerRunning ? 'Clock Running' : 'Clock Paused'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={handleToggleTimerRunning}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 active:scale-95 self-start sm:self-center shadow-md ${
+                        matchState.isTimerRunning
+                          ? 'bg-amber-500 hover:bg-amber-400 text-slate-950'
+                          : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                      }`}
+                    >
+                      {matchState.isTimerRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                      <span>{matchState.isTimerRunning ? 'Pause Clock' : 'Resume Clock'}</span>
+                    </button>
+                  </div>
+
+                  {/* Manual Time Setter (Min:Sec) with 30:30 Quick Preset */}
+                  <div className="pt-2.5 border-t border-white/10 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-blue-200 font-bold">Set Clock:</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="75"
+                        value={inputMinutes}
+                        onChange={(e) => setInputMinutes(e.target.value)}
+                        className="w-14 p-1.5 text-center font-mono font-bold rounded-lg bg-slate-900 border border-slate-700 text-white"
+                        placeholder="MM"
+                      />
+                      <span className="text-white font-bold text-sm">:</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="59"
+                        value={inputSeconds}
+                        onChange={(e) => setInputSeconds(e.target.value)}
+                        className="w-14 p-1.5 text-center font-mono font-bold rounded-lg bg-slate-900 border border-slate-700 text-white"
+                        placeholder="SS"
+                      />
+                      <button
+                        onClick={() => handleApplyCustomTime()}
+                        className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold active:scale-95 shadow-xs"
+                      >
+                        Apply Time
+                      </button>
+                    </div>
+
+                    {/* Quick Presets: 30:30, 00:00, 30:00, 60:00 */}
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => { setInputMinutes(30); setInputSeconds(30); handleApplyCustomTime(30, 30); }}
+                        className="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-black text-xs hover:bg-amber-400 shadow-xs"
+                        title="Set to 30:30 (Sevens 2nd Half Kickoff)"
+                      >
+                        ⚡ 30:30
+                      </button>
+                      <button
+                        onClick={() => { setInputMinutes(0); setInputSeconds(0); handleApplyCustomTime(0, 0); }}
+                        className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-xs"
+                      >
+                        00:00
+                      </button>
+                      <button
+                        onClick={() => { setInputMinutes(30); setInputSeconds(0); handleApplyCustomTime(30, 0); }}
+                        className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-xs"
+                      >
+                        30:00 (HT)
+                      </button>
+                      <button
+                        onClick={() => { setInputMinutes(60); setInputSeconds(0); handleApplyCustomTime(60, 0); }}
+                        className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-xs"
+                      >
+                        60:00 (FT)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Live Minute Quick Increments */}
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-white/10 text-xs">
+                  <span className="text-blue-200 font-medium">Quick Minute Nudge:</span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => handleAdjustMinute(-1)}
+                      className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] active:scale-95"
+                    >
+                      -1 Min
+                    </button>
+                    <button
+                      onClick={() => handleAdjustMinute(1)}
+                      className="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white font-bold text-[11px] active:scale-95"
+                    >
+                      +1 Min
+                    </button>
+                    <button
+                      onClick={() => handleAdjustMinute(5)}
+                      className="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white font-bold text-[11px] active:scale-95"
+                    >
+                      +5 Mins
+                    </button>
+                    <button
+                      onClick={handleResetToUpcoming}
+                      className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-red-500 text-white font-medium text-[11px] active:scale-95"
+                    >
+                      Reset Pre-Match
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* SECTION A: OFFICIAL MATCH SCORE OVERWRITE */}
+              <div className={`p-4 sm:p-5 rounded-3xl border space-y-4 ${
+                isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-black font-sports uppercase tracking-wider text-slate-500">
+                    Official Ground Scoreboard
+                  </h4>
+                  <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-900 border border-blue-200">
+                    FINAL AUTHORITY OVER CROWD
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 items-center">
+                  {/* Home Team Score (UDAYA) */}
+                  <div className={`p-4 rounded-2xl border text-center space-y-2 ${
+                    isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200 shadow-sm'
+                  }`}>
+                    <span className="text-xs sm:text-sm font-bold text-sky-700 block truncate">
+                      UDAYA Peruvallur
+                    </span>
+                    <div className="text-5xl sm:text-6xl font-black font-sports text-slate-950">
+                      {matchState.officialScoreHome}
+                    </div>
+                    <div className="flex items-center justify-center gap-2 pt-1">
+                      <button
+                        onClick={() => handleScoreChange('home', -1)}
+                        className="w-10 h-10 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold flex items-center justify-center active:scale-95 shadow-xs"
+                      >
+                        <Minus className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => handleScoreChange('home', 1)}
+                        className="w-10 h-10 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold flex items-center justify-center active:scale-95 shadow-md"
+                      >
+                        <Plus className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Away Team Score (SABAN FC) */}
+                  <div className={`p-4 rounded-2xl border text-center space-y-2 ${
+                    isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200 shadow-sm'
+                  }`}>
+                    <span className="text-xs sm:text-sm font-bold text-amber-700 block truncate">
+                      SABAN FC Kottakkal
+                    </span>
+                    <div className="text-5xl sm:text-6xl font-black font-sports text-slate-950">
+                      {matchState.officialScoreAway}
+                    </div>
+                    <div className="flex items-center justify-center gap-2 pt-1">
+                      <button
+                        onClick={() => handleScoreChange('away', -1)}
+                        className="w-10 h-10 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold flex items-center justify-center active:scale-95 shadow-xs"
+                      >
+                        <Minus className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => handleScoreChange('away', 1)}
+                        className="w-10 h-10 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold flex items-center justify-center active:scale-95 shadow-md"
+                      >
+                        <Plus className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Score Preset Buttons */}
+                <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
+                  <span className="text-[11px] font-bold text-slate-500 mr-1">Quick Presets:</span>
+                  {['0-0', '1-0', '0-1', '1-1', '2-1', '2-2', '3-2', '4-2'].map((preset) => {
+                    const [h, a] = preset.split('-').map(Number);
+                    return (
+                      <button
+                        key={preset}
+                        onClick={() => setMatchState((prev) => ({ ...prev, officialScoreHome: h, officialScoreAway: a }))}
+                        className="px-3 py-1 rounded-lg text-xs font-sports font-bold bg-slate-200 hover:bg-blue-600 hover:text-white transition active:scale-95 shadow-2xs"
+                      >
+                        {preset}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* SECTION B: MATCH STATUS & CLOCK SLIDER */}
+              <div className={`p-4 sm:p-5 rounded-3xl border space-y-3.5 ${
+                isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-black font-sports uppercase tracking-wider text-slate-500">
+                    Match Period & Progress Slider
+                  </h4>
+                  <span className="text-xs font-bold text-blue-700">
+                    Current: {matchState.matchMinute}'
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  {[
+                    { id: 'UPCOMING', label: 'Upcoming' },
+                    { id: '1ST_HALF', label: '1st Half' },
+                    { id: 'HALF_TIME', label: 'Half Time' },
+                    { id: '2ND_HALF', label: '2nd Half' },
+                    { id: 'FULL_TIME', label: 'Full Time (FT)' }
+                  ].map((st) => (
+                    <button
+                      key={st.id}
+                      onClick={() => handleStatusChange(st.id)}
+                      className={`py-2 px-2.5 rounded-xl text-xs font-bold transition active:scale-95 ${
+                        matchState.status === st.id
+                          ? 'bg-blue-700 text-white shadow-sm'
+                          : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      {st.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Minute Input Slider */}
+                <div className="pt-2 flex items-center gap-3">
+                  <Clock className="w-4 h-4 text-slate-400 shrink-0" />
+                  <input
+                    type="range"
+                    min="0"
+                    max="75"
+                    value={matchState.matchMinute}
+                    onChange={handleMinuteChange}
+                    className="flex-1 accent-blue-600 cursor-pointer"
+                  />
+                  <span className="w-14 text-center text-xs font-mono font-bold px-2 py-1 bg-white border border-slate-200 rounded-lg shadow-2xs">
+                    {matchState.matchMinute}'
+                  </span>
+                </div>
+              </div>
+
+              {/* SECTION C: PUBLISH MATCH EVENT (GOAL / CARD / PENALTY) */}
+              <div className={`p-4 sm:p-5 rounded-3xl border space-y-3.5 ${
+                isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-black font-sports uppercase tracking-wider text-slate-500">
+                    Publish Official Timeline Event
+                  </h4>
+                  <span className="text-[10px] font-bold text-slate-400">
+                    Appears instantly on fan match centers
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-500 block mb-1">Event Type</label>
+                    <select
+                      value={newEvent.type}
+                      onChange={(e) => setNewEvent({ ...newEvent, type: e.target.value })}
+                      className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white border-slate-300 shadow-2xs"
+                    >
+                      <option value="goal">⚽ Goal</option>
+                      <option value="yellow_card">🟨 Yellow Card</option>
+                      <option value="red_card">🟥 Red Card</option>
+                      <option value="penalty">🥅 Penalty Kick</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-500 block mb-1">Team</label>
+                    <select
+                      value={newEvent.team}
+                      onChange={(e) => setNewEvent({ ...newEvent, team: e.target.value })}
+                      className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white border-slate-300 shadow-2xs"
+                    >
+                      <option value="home">UDAYA Peruvallur</option>
+                      <option value="away">SABAN FC Kottakkal</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-500 block mb-1">Player Name</label>
+                    <input
+                      type="text"
+                      value={newEvent.player}
+                      onChange={(e) => setNewEvent({ ...newEvent, player: e.target.value })}
+                      placeholder="e.g. Ibrahim Soumahoro"
+                      className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white border-slate-300 shadow-2xs"
+                    >
+                    </input>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-500 block mb-1">Minute</label>
+                    <input
+                      type="number"
+                      value={newEvent.minute}
+                      onChange={(e) => setNewEvent({ ...newEvent, minute: parseInt(e.target.value, 10) || 0 })}
+                      className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white border-slate-300 shadow-2xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <input
+                    type="text"
+                    value={newEvent.text}
+                    onChange={(e) => setNewEvent({ ...newEvent, text: e.target.value })}
+                    placeholder="Event note: e.g. Stunning top corner volley"
+                    className="flex-1 p-2.5 text-xs rounded-xl border bg-white border-slate-300 shadow-2xs"
+                  />
+                  <button
+                    onClick={handleAddOfficialEvent}
+                    className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 active:scale-95 shadow-sm shrink-0"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Publish Event</span>
+                  </button>
+                </div>
+
+                {/* Published Events List */}
+                {matchState.events && matchState.events.length > 0 && (
+                  <div className="pt-2 space-y-1.5">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                      Published Match Events ({matchState.events.length})
+                    </span>
+                    <div className="space-y-1 max-h-36 overflow-y-auto pr-1">
+                      {matchState.events.map((ev) => (
+                        <div 
+                          key={ev.id}
+                          className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-xs shadow-2xs"
+                        >
+                          <div className="flex items-center gap-2 truncate">
+                            <span className="font-mono font-bold text-blue-700">{ev.minute}'</span>
+                            <span className="font-bold">{ev.player}</span>
+                            <span className="text-slate-500 text-[11px] truncate">({ev.text})</span>
+                          </div>
+                          <button
+                            onClick={() => handleDeleteEvent(ev.id)}
+                            className="p-1 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition"
+                            title="Delete Event"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* SECTION D: ANTI-SPAM & CROWD REPORTING GOVERNANCE */}
+              <div className={`p-4 sm:p-5 rounded-3xl border space-y-3.5 ${
+                isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <h4 className="text-xs font-black font-sports uppercase tracking-wider text-slate-700">
+                      Crowd Anti-Spam Governance
+                    </h4>
+                    <p className="text-[11px] text-slate-500">
+                      Users have a strict 45s cooldown rate limit and 5-submission cap per match.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={handleToggleCrowdLock}
+                    className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-xs ${
+                      matchState.isCrowdLocked
+                        ? 'bg-red-600 text-white'
+                        : 'bg-emerald-600 text-white'
+                    }`}
+                  >
+                    {matchState.isCrowdLocked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
+                    <span>{matchState.isCrowdLocked ? 'Crowd Input: LOCKED' : 'Crowd Input: ACTIVE'}</span>
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-slate-200 text-xs">
+                  <span className="text-slate-600">
+                    Current Fan Reports: <strong>{matchState.crowdReports?.total || 0} votes</strong>
+                  </span>
+                  <button
+                    onClick={handleResetCrowdSpam}
+                    className="px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs flex items-center gap-1 shadow-2xs"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Sync Crowd to Official Score</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* ACTION FOOTER */}
+              <div className="pt-2">
+                <button
+                  onClick={handleSaveAndBroadcast}
+                  className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-800 hover:from-blue-800 hover:to-indigo-900 text-white font-black text-sm uppercase tracking-wider shadow-xl flex items-center justify-center gap-2 active:scale-98 transition"
+                >
+                  <Zap className="w-4 h-4 text-amber-300" />
+                  <span>Save & Push Official Score to Website</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

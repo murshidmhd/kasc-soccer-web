@@ -16,6 +16,7 @@ import SponsorAdsSidebar from './components/SponsorAdsSidebar';
 import PromoEventsSection from './components/PromoEventsSection';
 import ClubFanVoteSection from './components/ClubFanVoteSection';
 import AdminScoreModal from './components/AdminScoreModal';
+import AdminDeskSection from './components/AdminDeskSection';
 import ScorerDemoModal from './components/ScorerDemoModal';
 import TicketCounterModal from './components/TicketCounterModal';
 import StickyScoreWidget from './components/StickyScoreWidget';
@@ -30,12 +31,16 @@ export default function App() {
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
 
-  // Sync with URL hash if provided
+  // Sync with URL hash or path if provided
   useEffect(() => {
-    const validTabs = ['live', 'fixtures', 'teams', 'stats', 'promo', 'venue'];
+    const validTabs = ['live', 'fixtures', 'teams', 'stats', 'promo', 'venue', 'admin'];
     const hash = window.location.hash.replace('#', '');
+    const path = window.location.pathname.replace(/^\//, '');
+
     if (validTabs.includes(hash)) {
       setActiveTab(hash);
+    } else if (validTabs.includes(path)) {
+      setActiveTab(path);
     }
 
     const handleHashChange = () => {
@@ -68,7 +73,7 @@ export default function App() {
         setLang={setLang}
         isDarkMode={isDarkMode}
         setIsDarkMode={setIsDarkMode}
-        onOpenScorerDemo={() => setIsAdminModalOpen(true)}
+        onOpenScorerDemo={() => handleTabChange('admin')}
         onOpenTicketModal={() => setIsTicketModalOpen(true)}
       />
 
@@ -214,12 +219,24 @@ export default function App() {
             />
           </div>
         )}
+
+        {/* Page 7: OFFICIAL REFEREE & SCORER ADMIN DESK (Dedicated Full Page) */}
+        {activeTab === 'admin' && (
+          <div className="animate-fadeIn pt-4 max-w-5xl mx-auto px-3 sm:px-6">
+            <AdminDeskSection 
+              lang={lang} 
+              isDarkMode={isDarkMode} 
+              onBackToLive={() => handleTabChange('live')}
+            />
+          </div>
+        )}
       </main>
 
       {/* Footer */}
       <Footer 
         lang={lang} 
         isDarkMode={isDarkMode} 
+        setActiveTab={handleTabChange}
       />
 
       {/* Mobile App Bottom Navigation Bar */}

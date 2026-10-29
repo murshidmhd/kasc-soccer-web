@@ -33,7 +33,8 @@ export default function Header({
     { id: 'teams', label: lang === 'ml' ? 'ടീമുകൾ' : 'Clubs' },
     { id: 'stats', label: lang === 'ml' ? 'സ്റ്റാറ്റ്സ്' : 'Stats' },
     { id: 'promo', label: lang === 'ml' ? 'പ്രചാരണം' : 'Promo' },
-    { id: 'venue', label: lang === 'ml' ? 'സ്റ്റേഡിയം' : 'Venue' }
+    { id: 'venue', label: lang === 'ml' ? 'സ്റ്റേഡിയം' : 'Venue' },
+    { id: 'admin', label: lang === 'ml' ? 'സ്കോറർ' : 'Admin' }
   ];
 
   return (
@@ -139,8 +140,12 @@ export default function Header({
 
           {/* Admin / Official Scorer Panel (PIN Protected) */}
           <button
-            onClick={onOpenScorerDemo}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-xl bg-blue-700 hover:bg-blue-800 text-white shadow-xs transition active:scale-95"
+            onClick={() => { setActiveTab('admin'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-xl transition active:scale-95 shadow-xs ${
+              activeTab === 'admin'
+                ? 'bg-amber-500 text-slate-950 font-black ring-2 ring-amber-300'
+                : 'bg-blue-700 hover:bg-blue-800 text-white'
+            }`}
             title="Official Referee & Scorer Panel (PIN: 7012)"
           >
             <Smartphone className="w-3.5 h-3.5" />
