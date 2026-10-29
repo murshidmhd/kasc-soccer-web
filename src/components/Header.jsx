@@ -28,12 +28,12 @@ export default function Header({
   };
 
   const navLinks = [
-    { id: 'live', label: lang === 'ml' ? 'ലൈവ് മാച്ച്' : 'Live Match' },
-    { id: 'fixtures', label: lang === 'ml' ? 'ഫിക്സ്ചറുകൾ' : 'Fixtures' },
+    { id: 'live', label: lang === 'ml' ? 'ലൈവ്' : 'Live' },
+    { id: 'fixtures', label: lang === 'ml' ? 'ഫിക്സ്ചർ' : 'Fixtures' },
     { id: 'teams', label: lang === 'ml' ? 'ടീമുകൾ' : 'Clubs' },
-    { id: 'stats', label: lang === 'ml' ? 'ഗോൾഡൻ ബൂട്ട്' : 'Stats' },
-    { id: 'promo', label: lang === 'ml' ? 'മാരത്തോൺ & പോസ്റ്റർ' : 'Marathon & Promo' },
-    { id: 'venue', label: lang === 'ml' ? 'സ്റ്റേഡിയം' : 'Venue & Info' }
+    { id: 'stats', label: lang === 'ml' ? 'സ്റ്റാറ്റ്സ്' : 'Stats' },
+    { id: 'promo', label: lang === 'ml' ? 'പ്രചാരണം' : 'Promo' },
+    { id: 'venue', label: lang === 'ml' ? 'സ്റ്റേഡിയം' : 'Venue' }
   ];
 
   return (
@@ -73,15 +73,15 @@ export default function Header({
 
           <div className="leading-tight">
             <div className="flex items-center gap-1.5">
-              <span className="text-base sm:text-2xl font-black font-sports tracking-wide">
-                {lang === 'ml' ? tournamentInfo.name : tournamentInfo.nameEn}
+              <span className="text-base sm:text-xl font-black font-sports tracking-tight whitespace-nowrap">
+                {lang === 'ml' ? 'അഖിലേന്ത്യാ സെവൻസ്' : 'ALL INDIA SEVENS'}
               </span>
-              <span className="px-1.5 py-0.5 text-[9px] sm:text-xs font-bold rounded bg-red-600 text-white uppercase tracking-wider">
+              <span className="px-1.5 py-0.5 text-[9px] sm:text-xs font-black rounded bg-red-600 text-white uppercase tracking-wider shrink-0 shadow-xs">
                 S7
               </span>
             </div>
-            <p className="text-[10px] sm:text-xs text-slate-500 font-medium truncate max-w-[170px] sm:max-w-md font-malayalam">
-              {lang === 'ml' ? 'KASC & ഉദയ സംയുക്തമായി' : tournamentInfo.organizersEn}
+            <p className="text-[10px] sm:text-xs text-slate-500 font-medium truncate max-w-[160px] sm:max-w-md font-malayalam">
+              {lang === 'ml' ? 'ഉദയ & KASC പെരുവള്ളൂർ' : 'UDAYA & KASC Peruvallur'}
             </p>
           </div>
         </div>
@@ -94,7 +94,7 @@ export default function Header({
               <button
                 key={link.id}
                 onClick={() => { setActiveTab(link.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition active:scale-95 ${
                   isActive
                     ? isDarkMode
                       ? 'bg-blue-900 text-white shadow-xs'

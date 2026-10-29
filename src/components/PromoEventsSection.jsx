@@ -79,13 +79,13 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
               </span>
             </div>
             <h2 className={`font-black uppercase tracking-tight ${
-              lang === 'ml' ? 'font-malayalam text-xl sm:text-3xl' : 'font-sports text-2xl sm:text-3xl'
+              lang === 'ml' ? 'font-malayalam text-xl sm:text-2xl' : 'font-sports text-2xl sm:text-3xl'
             }`}>
-              {lang === 'ml' ? 'മിനി മാരത്തോൺ & ഔദ്യോഗിക പോസ്റ്ററുകൾ' : 'PROMOTIONS & MINI MARATHON 2026'}
+              {lang === 'ml' ? 'മാരത്തോൺ & പ്രചാരണം' : 'PROMOTIONS & MINI MARATHON'}
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl font-malayalam">
               {lang === 'ml' 
-                ? 'ഉദയ പറമ്പിൽ പീടിക സംഘടിപ്പിച്ച 8 കി.മീ മിനി മാരത്തോൺ ഫോട്ടോകളും കൗണ്ട്ഡൗൺ പോസ്റ്ററുകളും' 
+                ? 'ഉദയ പറമ്പിൽ പീടിക സംഘടിപ്പിച്ച 8 കി.മീ മിനി മാരത്തോൺ & കൗണ്ട്ഡൗൺ ചിത്രങ്ങൾ' 
                 : 'Highlights from the official 8 KM Mini Marathon and the countdown series organized by Udaya Parambil Peedika.'}
             </p>
           </div>
@@ -94,25 +94,25 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
           <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100 border border-slate-200 self-start sm:self-center">
             <button
               onClick={() => setActiveSubTab('marathon')}
-              className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition active:scale-95 ${
                 activeSubTab === 'marathon'
                   ? 'bg-blue-700 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Trophy className="w-3.5 h-3.5 text-amber-300" />
-              <span>{lang === 'ml' ? 'മിനി മാരത്തോൺ (8 KM)' : 'Mini Marathon (8 KM)'}</span>
+              <span>{lang === 'ml' ? 'മിനി മാരത്തോൺ' : 'Mini Marathon (8 KM)'}</span>
             </button>
             <button
               onClick={() => setActiveSubTab('countdown')}
-              className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition active:scale-95 ${
                 activeSubTab === 'countdown'
                   ? 'bg-blue-700 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Calendar className="w-3.5 h-3.5 text-red-300" />
-              <span>{lang === 'ml' ? 'കൗണ്ട്ഡൗൺ പോസ്റ്റർ' : 'Countdown Posters'}</span>
+              <span>{lang === 'ml' ? 'കൗണ്ട്ഡൗൺ' : 'Countdown Posters'}</span>
             </button>
           </div>
         </div>

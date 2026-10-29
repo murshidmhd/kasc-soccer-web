@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Anek Malayalam', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: #f8fafc;
     color: #0f172a;
     overflow-x: hidden;
@@ -16,7 +16,7 @@
   }
 
   .font-malayalam {
-    font-family: 'Manjari', sans-serif;
+    font-family: 'Anek Malayalam', 'Noto Sans Malayalam', sans-serif;
   }
 }
 

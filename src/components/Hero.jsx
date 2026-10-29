@@ -18,88 +18,74 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
         : 'bg-gradient-to-b from-blue-50/70 via-white to-slate-50 border-slate-200 text-slate-900'
     }`}>
       <div className="max-w-6xl mx-auto relative z-10">
-        {/* Top Affiliation Badge */}
-        <div className="flex flex-wrap items-center justify-center gap-1.5 mb-3">
-          <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
+        {/* Top Badges: Affiliation & Season */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-3">
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
             isDarkMode 
               ? 'bg-blue-950 border-blue-800 text-blue-300' 
               : 'bg-blue-50 border-blue-200 text-blue-800'
           }`}>
-            <Shield className="w-3 h-3 text-blue-600" />
+            <Shield className="w-3.5 h-3.5 text-blue-600" />
             {tournamentInfo.affiliation}
           </span>
-          <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
             isDarkMode 
               ? 'bg-amber-950 border-amber-800 text-amber-300' 
               : 'bg-amber-50 border-amber-200 text-amber-800'
           }`}>
-            <Award className="w-3 h-3 text-amber-600" />
+            <Award className="w-3.5 h-3.5 text-amber-600" />
             {lang === 'ml' ? 'സീസൺ 7' : 'Season 7'}
           </span>
         </div>
 
         {/* Club Crests & Main Tournament Heading */}
-        <div className="text-center space-y-2.5">
-          <div className="flex items-center justify-center gap-2 mb-1 flex-wrap">
-            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl border shadow-xs ${
-              isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'
-            }`}>
-              <img src={logoUdaya} alt="Udaya Club" className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white p-0.5 object-contain" />
-              <span className="text-[11px] sm:text-xs font-bold text-amber-700">UDAYA Parambil Peedika</span>
-            </div>
+        <div className="text-center space-y-3">
+          {/* Joint Organizers Crest Bar */}
+          <div className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-2xl border shadow-xs bg-white border-slate-200">
+            <img src={logoUdaya} alt="Udaya Club" className="w-7 h-7 rounded-full object-contain" />
+            <span className="text-xs font-black text-amber-800 font-sports">UDAYA</span>
             <span className="text-slate-400 font-bold text-xs">✕</span>
-            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl border shadow-xs ${
-              isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'
-            }`}>
-              <img src={logoKasc} alt="KASC Peruvallur" className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white p-0.5 object-contain" />
-              <span className="text-[11px] sm:text-xs font-bold text-blue-700">KASC Peruvallur</span>
-            </div>
+            <img src={logoKasc} alt="KASC Peruvallur" className="w-7 h-7 rounded-full object-contain" />
+            <span className="text-xs font-black text-blue-800 font-sports">KASC</span>
+            <span className="text-[11px] text-slate-500 font-medium pl-1 hidden sm:inline font-malayalam">
+              {lang === 'ml' ? 'സംയുക്തമായി സംഘടിപ്പിക്കുന്നു' : 'Joint Presentation'}
+            </span>
           </div>
 
-          <p className="text-[11px] sm:text-sm font-bold text-blue-700 uppercase tracking-wider font-malayalam px-2">
-            {lang === 'ml' ? tournamentInfo.organizersMalayalam : tournamentInfo.organizersEn}
-          </p>
-
-          <div className="space-y-1.5 sm:space-y-2">
+          {/* Main Title & Season Tag */}
+          <div className="space-y-1">
             <h1 className={`font-black uppercase text-slate-950 ${
               lang === 'ml' 
-                ? 'font-malayalam text-2xl sm:text-4xl md:text-5xl leading-snug sm:leading-normal tracking-normal' 
+                ? 'font-malayalam text-2xl sm:text-4xl md:text-5xl leading-tight' 
                 : 'font-sports text-3xl sm:text-5xl md:text-6xl leading-tight tracking-tight'
             }`}>
-              {lang === 'ml' ? tournamentInfo.name : tournamentInfo.nameEn}
+              {lang === 'ml' ? 'അഖിലേന്ത്യാ സെവൻസ്' : 'ALL INDIA SEVENS'}
             </h1>
-            <div className="pt-1">
-              <span className="inline-block text-lg sm:text-3xl md:text-4xl font-black font-sports text-red-600 tracking-wider px-3.5 py-0.5 rounded-xl bg-red-50 border border-red-200 shadow-xs">
-                {tournamentInfo.season}
+            <div className="flex items-center justify-center gap-2 pt-0.5">
+              <span className="text-base sm:text-2xl font-black font-sports text-red-600 tracking-wider">
+                SEASON 7
+              </span>
+              <span className="text-slate-300">•</span>
+              <span className="text-xs sm:text-sm font-bold text-slate-600">
+                {lang === 'ml' ? 'നവംബർ 06 - ഡിസംബർ 06' : 'Nov 06 - Dec 06, 2026'}
               </span>
             </div>
           </div>
 
-          <p className="text-xs sm:text-base font-bold text-blue-700 tracking-wide font-sports max-w-3xl mx-auto">
-            {lang === 'ml' ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം, പറമ്പിൽ പീടിക' : 'PERUVALLUR PANCHAYATH STADIUM, PARAMBIL PEEDIKA'}
-          </p>
-
-          {/* Tournament Date & Venue Ribbon (Optimized for Mobile) */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-1 max-w-lg mx-auto">
-            <div className={`w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl border text-[11px] sm:text-xs font-bold shadow-xs ${
-              isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-800'
-            }`}>
-              <Calendar className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-              <span className="truncate">{lang === 'ml' ? tournamentInfo.durationMalayalam : `${tournamentInfo.startDateDisplay} - ${tournamentInfo.endDateDisplay}`}</span>
-            </div>
-
+          {/* Venue & Maps Button */}
+          <div className="flex justify-center pt-1">
             <a
               href={tournamentInfo.googleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={`w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl border text-[11px] sm:text-xs font-bold shadow-xs transition active:scale-95 ${
+              className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border text-xs font-bold shadow-xs transition hover:border-red-400 ${
                 isDarkMode 
                   ? 'bg-slate-900 border-slate-700 text-slate-200' 
                   : 'bg-white border-slate-200 text-slate-800'
               }`}
             >
               <MapPin className="w-3.5 h-3.5 text-red-600 shrink-0" />
-              <span className="truncate">{lang === 'ml' ? 'പെരുവള്ളൂർ സ്റ്റേഡിയം' : tournamentInfo.venue}</span>
+              <span>{lang === 'ml' ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം, പറമ്പിൽ പീടിക' : tournamentInfo.venue}</span>
             </a>
           </div>
         </div>
@@ -138,10 +124,10 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                 UDAYA PERUVALLUR <span className="text-blue-600">vs</span> SABAN FC KOTTAKKAL
               </h2>
 
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 font-medium">
                 {lang === 'ml'
-                  ? 'മലപ്പുറത്തിന്റെ സ്വന്തം സെവൻസ് ആരവം പറമ്പിൽ പീടിക പഞ്ചായത്ത് സ്റ്റേഡിയത്തിൽ. എല്ലാ ദിവസവും രാത്രി 8:00 മണിക്ക്.'
-                  : 'The greatest Sevens football carnival returns to Peruvallur Panjayath Stadium. Live floodlit matches at 8:00 PM.'}
+                  ? 'ഫ്ലഡ്‌ലിറ്റ് സെവൻസ് ഫുട്ബോൾ പോരാട്ടം • രാത്രി 8:00 PM'
+                  : 'Live Floodlit Sevens Football • Every Night 8:00 PM IST'}
               </p>
 
               {/* Dynamic 2 Players Duel Visual (Fixed object-top so players' heads are completely visible on laptops & desktops) */}
@@ -185,8 +171,8 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                 <Ticket className="w-4 h-4 text-slate-950" />
                 <span>
                   {lang === 'ml' 
-                    ? 'ടിക്കറ്റ് ബുക്കിംഗ് & GPay ക്യുആർ കൗണ്ടർ (Book Tickets)' 
-                    : 'Match Tickets & Instant GPay QR Counter'}
+                    ? 'ടിക്കറ്റ് ബുക്കിംഗ് & GPay QR' 
+                    : 'Match Tickets & Instant GPay QR'}
                 </span>
                 <span className="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black uppercase">
                   From ₹50
