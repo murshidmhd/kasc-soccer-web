@@ -137,13 +137,15 @@ export default function Header({
             {lang === 'ml' ? 'EN' : 'മലയാളം'}
           </button>
 
-          {/* Scorer Demo (Visible on desktop/tablet) */}
+          {/* Admin / Official Scorer Panel (PIN Protected) */}
           <button
             onClick={onOpenScorerDemo}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-blue-700 hover:bg-blue-800 text-white shadow-xs transition"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-xl bg-blue-700 hover:bg-blue-800 text-white shadow-xs transition active:scale-95"
+            title="Official Referee & Scorer Panel (PIN: 7012)"
           >
             <Smartphone className="w-3.5 h-3.5" />
-            <span>Scorer</span>
+            <span className="hidden sm:inline">Admin Desk</span>
+            <span className="sm:hidden">Admin</span>
           </button>
 
           {/* Ticket Counter / GPay POS Modal trigger */}

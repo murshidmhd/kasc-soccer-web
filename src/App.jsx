@@ -14,6 +14,7 @@ import VenueSection from './components/VenueSection';
 import SponsorsSection from './components/SponsorsSection';
 import SponsorAdsSidebar from './components/SponsorAdsSidebar';
 import PromoEventsSection from './components/PromoEventsSection';
+import AdminScoreModal from './components/AdminScoreModal';
 import ScorerDemoModal from './components/ScorerDemoModal';
 import TicketCounterModal from './components/TicketCounterModal';
 import BottomNav from './components/BottomNav';
@@ -24,6 +25,7 @@ export default function App() {
   const [isDarkMode, setIsDarkMode] = useState(false); // Default Clean White Theme
   const [activeTab, setActiveTab] = useState('live'); // 'live' | 'fixtures' | 'teams' | 'stats' | 'promo' | 'venue'
   const [isScorerDemoOpen, setIsScorerDemoOpen] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
 
   // Sync with URL hash if provided
@@ -64,7 +66,7 @@ export default function App() {
         setLang={setLang}
         isDarkMode={isDarkMode}
         setIsDarkMode={setIsDarkMode}
-        onOpenScorerDemo={() => setIsScorerDemoOpen(true)}
+        onOpenScorerDemo={() => setIsAdminModalOpen(true)}
         onOpenTicketModal={() => setIsTicketModalOpen(true)}
       />
 
@@ -90,10 +92,11 @@ export default function App() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 {/* Left 8 cols: Match Center & Interactive Fan Features */}
                 <div className="lg:col-span-8 space-y-6">
-                  {/* Real-time Match Center Scoreboard */}
+                  {/* Real-time Match Center Scoreboard with Admin Governance */}
                   <LiveMatchCard 
                     lang={lang} 
                     isDarkMode={isDarkMode} 
+                    onOpenAdminPanel={() => setIsAdminModalOpen(true)}
                   />
 
                   {/* FotMob & Sofascore Style: Predict & Win Contest */}
@@ -212,6 +215,14 @@ export default function App() {
         setActiveTab={handleTabChange}
         isDarkMode={isDarkMode} 
         lang={lang}
+      />
+
+      {/* Official Match Scorer & Admin Desk Modal */}
+      <AdminScoreModal
+        isOpen={isAdminModalOpen}
+        isDarkMode={isDarkMode}
+        lang={lang}
+        onClose={() => setIsAdminModalOpen(false)}
       />
 
       {/* Scorer Demonstration Modal for Committee */}
