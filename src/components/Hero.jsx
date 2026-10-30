@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, MapPin, Phone, Award, Shield, ChevronDown, Ticket } from 'lucide-react';
+import { Calendar, MapPin, Phone, Award, Shield, ChevronDown, Ticket, Play, Film, Gamepad2 } from 'lucide-react';
 import { tournamentInfo } from '../data/tournamentData';
 import Countdown from './Countdown';
 import squadStarsPoster from '../assets/squad_stars_poster.jpg';
@@ -7,6 +7,8 @@ import logoUdaya from '../assets/logo_udaya_transparent.png';
 import logoKasc from '../assets/logo_kasc.png';
 import matchActionDuel from '../assets/match_action_duel.jpg';
 import tournamentOfficialPoster from '../assets/tournament_official_poster.jpg';
+import tournamentTeaser from '../assets/tournament_teaser.mp4';
+import tournamentTeaserPoster from '../assets/tournament_teaser_poster.jpg';
 
 export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketModal }) {
   const [activeBannerTab, setActiveBannerTab] = React.useState('action');
@@ -106,14 +108,27 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                 {/* Toggle Visual Mode */}
                 <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[11px]">
                   <button
+                    onClick={() => setActiveBannerTab('video')}
+                    className={`px-2.5 py-1 rounded-md font-bold transition active:scale-95 flex items-center gap-1 ${
+                      activeBannerTab === 'video' ? 'bg-red-600 text-white shadow-xs' : 'text-slate-700 hover:text-red-600'
+                    }`}
+                  >
+                    <Play className="w-3 h-3 fill-current" />
+                    <span>{lang === 'ml' ? 'ടീസർ' : 'Teaser Video'}</span>
+                  </button>
+                  <button
                     onClick={() => setActiveBannerTab('action')}
-                    className={`px-2.5 py-1 rounded-md font-bold transition active:scale-95 ${activeBannerTab === 'action' ? 'bg-blue-700 text-white shadow-xs' : 'text-slate-600'}`}
+                    className={`px-2.5 py-1 rounded-md font-bold transition active:scale-95 ${
+                      activeBannerTab === 'action' ? 'bg-blue-700 text-white shadow-xs' : 'text-slate-600'
+                    }`}
                   >
                     Match Duel
                   </button>
                   <button
                     onClick={() => setActiveBannerTab('stars')}
-                    className={`px-2.5 py-1 rounded-md font-bold transition active:scale-95 ${activeBannerTab === 'stars' ? 'bg-blue-700 text-white shadow-xs' : 'text-slate-600'}`}
+                    className={`px-2.5 py-1 rounded-md font-bold transition active:scale-95 ${
+                      activeBannerTab === 'stars' ? 'bg-blue-700 text-white shadow-xs' : 'text-slate-600'
+                    }`}
                   >
                     Squad Stars
                   </button>
@@ -130,20 +145,51 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                   : 'Live Floodlit Sevens Football • Every Night 8:00 PM IST'}
               </p>
 
-              {/* Dynamic Duel Visual (Action Duel vs Squad Stars) */}
-              <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-50 p-1 shadow-xs">
-                {activeBannerTab === 'action' ? (
-                  <img
-                    src={matchActionDuel}
-                    alt="Match Duel: Udaya vs New Malaya Malabar FC"
-                    className="w-full h-56 sm:h-72 md:h-80 lg:h-[340px] object-cover object-top rounded-lg"
-                  />
+              {/* Dynamic Duel Visual (Official Video vs Action Duel vs Squad Stars) */}
+              <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-950 p-1 shadow-xs relative">
+                {activeBannerTab === 'video' ? (
+                  <div className="relative w-full h-56 sm:h-72 md:h-80 lg:h-[340px] rounded-lg overflow-hidden bg-black flex items-center justify-center">
+                    <video
+                      src={tournamentTeaser}
+                      poster={tournamentTeaserPoster}
+                      controls
+                      autoPlay
+                      playsInline
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                ) : activeBannerTab === 'action' ? (
+                  <div className="relative group">
+                    <img
+                      src={matchActionDuel}
+                      alt="Match Duel: Udaya vs New Malaya Malabar FC"
+                      className="w-full h-56 sm:h-72 md:h-80 lg:h-[340px] object-cover object-top rounded-lg"
+                    />
+                    <button
+                      onClick={() => setActiveBannerTab('video')}
+                      className="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-red-600/90 hover:bg-red-700 text-white font-black text-xs shadow-lg backdrop-blur-md flex items-center gap-1.5 transition active:scale-95 animate-pulse"
+                      title="Play Official Promo Video"
+                    >
+                      <Play className="w-3.5 h-3.5 fill-current" />
+                      <span>{lang === 'ml' ? 'ടീസർ കാണുക' : 'Watch Promo Video'}</span>
+                    </button>
+                  </div>
                 ) : (
-                  <img
-                    src={squadStarsPoster}
-                    alt="Official Udaya FC Squad 2026-2027"
-                    className="w-full h-56 sm:h-72 md:h-80 lg:h-[340px] object-cover object-top rounded-lg"
-                  />
+                  <div className="relative group">
+                    <img
+                      src={squadStarsPoster}
+                      alt="Official Udaya FC Squad 2026-2027"
+                      className="w-full h-56 sm:h-72 md:h-80 lg:h-[340px] object-cover object-top rounded-lg"
+                    />
+                    <button
+                      onClick={() => setActiveBannerTab('video')}
+                      className="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-red-600/90 hover:bg-red-700 text-white font-black text-xs shadow-lg backdrop-blur-md flex items-center gap-1.5 transition active:scale-95"
+                      title="Play Official Promo Video"
+                    >
+                      <Play className="w-3.5 h-3.5 fill-current" />
+                      <span>{lang === 'ml' ? 'ടീസർ കാണുക' : 'Watch Promo Video'}</span>
+                    </button>
+                  </div>
                 )}
               </div>
 
@@ -181,13 +227,31 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
             </div>
 
             {/* Right Column: Clean Generated Tournament Poster (NO text at bottom) */}
-            <div className="md:col-span-5 flex justify-center pt-2 md:pt-0">
+            <div className="md:col-span-5 flex flex-col items-center justify-center pt-2 md:pt-0 space-y-2.5">
               <div className="relative group rounded-2xl overflow-hidden border border-slate-200 shadow-md max-w-[260px] sm:max-w-[300px] w-full">
                 <img
                   src={tournamentOfficialPoster}
                   alt="Peruvallur Cup Official Poster"
                   className="w-full h-auto object-cover transform group-hover:scale-105 transition duration-500"
                 />
+              </div>
+
+              {/* Teaser Video Quick Play Button & Penalty Game Launcher */}
+              <div className="w-full max-w-[260px] sm:max-w-[300px] grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => setActiveBannerTab('video')}
+                  className="py-2 px-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black text-[11px] shadow-xs flex items-center justify-center gap-1.5 transition active:scale-95"
+                >
+                  <Play className="w-3.5 h-3.5 fill-current" />
+                  <span>{lang === 'ml' ? 'ടീസർ (HD)' : 'Teaser Video'}</span>
+                </button>
+                <a
+                  href="#game"
+                  className="py-2 px-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] shadow-xs flex items-center justify-center gap-1.5 transition active:scale-95 text-center"
+                >
+                  <Gamepad2 className="w-3.5 h-3.5" />
+                  <span>{lang === 'ml' ? 'പെനാൽറ്റി കളി' : 'Play Penalty'}</span>
+                </a>
               </div>
             </div>
           </div>

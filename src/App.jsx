@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import StadiumAnnouncementBanner from './components/StadiumAnnouncementBanner';
 import LiveMatchCard from './components/LiveMatchCard';
+import SevensPenaltyGame from './components/SevensPenaltyGame';
 import MatchPredictionCard from './components/MatchPredictionCard';
 import PlayerOfTheMatchVote from './components/PlayerOfTheMatchVote';
 import FanHypeMeter from './components/FanHypeMeter';
@@ -45,7 +46,13 @@ export default function App() {
 
     const handleHashChange = () => {
       const newHash = window.location.hash.replace('#', '');
-      if (validTabs.includes(newHash)) {
+      if (newHash === 'game') {
+        setActiveTab('live');
+        setTimeout(() => {
+          const el = document.getElementById('game');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
+      } else if (validTabs.includes(newHash)) {
         setActiveTab(newHash);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
@@ -104,6 +111,12 @@ export default function App() {
                     lang={lang} 
                     isDarkMode={isDarkMode} 
                     onOpenAdminPanel={() => setIsAdminModalOpen(true)}
+                  />
+
+                  {/* Kerala Sevens Penalty Shootout Mini-Game */}
+                  <SevensPenaltyGame
+                    lang={lang}
+                    isDarkMode={isDarkMode}
                   />
 
                   {/* FotMob & Sofascore Style: Predict & Win Contest */}
