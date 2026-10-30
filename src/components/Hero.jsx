@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, MapPin, Phone, Award, Shield, ChevronDown, Ticket, Play, Film, Gamepad2 } from 'lucide-react';
+import { Calendar, MapPin, Phone, Award, Shield, ChevronDown, Ticket, Play, Film, Gamepad2, X } from 'lucide-react';
 import { tournamentInfo } from '../data/tournamentData';
 import Countdown from './Countdown';
 import squadStarsPoster from '../assets/squad_stars_poster.jpg';
@@ -9,6 +9,7 @@ import matchActionDuel from '../assets/match_action_duel.jpg';
 import tournamentOfficialPoster from '../assets/tournament_official_poster.jpg';
 import tournamentTeaser from '../assets/tournament_teaser.mp4';
 import tournamentTeaserPoster from '../assets/tournament_teaser_poster.jpg';
+import teaserVideoBtnThumb from '../assets/teaser_video_btn_thumb.jpg';
 
 export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketModal }) {
   const [activeBannerTab, setActiveBannerTab] = React.useState('action');
@@ -157,6 +158,14 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                       playsInline
                       className="w-full h-full object-cover rounded-lg"
                     />
+                    <button
+                      onClick={() => setActiveBannerTab('action')}
+                      className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-slate-950/85 hover:bg-black text-white text-[11px] font-bold border border-white/20 backdrop-blur-md flex items-center gap-1 transition active:scale-95 shadow-md"
+                      title="Back to Match Duel Poster"
+                    >
+                      <X className="w-3.5 h-3.5 text-red-400" />
+                      <span>{lang === 'ml' ? 'പോസ്റ്റർ' : 'Poster'}</span>
+                    </button>
                   </div>
                 ) : activeBannerTab === 'action' ? (
                   <div className="relative group">
@@ -165,13 +174,36 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                       alt="Match Duel: Udaya vs New Malaya Malabar FC"
                       className="w-full h-56 sm:h-72 md:h-80 lg:h-[340px] object-cover object-top rounded-lg"
                     />
+                    {/* Cinema-Style Video Teaser Button with Real Video Frame */}
                     <button
                       onClick={() => setActiveBannerTab('video')}
-                      className="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-red-600/90 hover:bg-red-700 text-white font-black text-xs shadow-lg backdrop-blur-md flex items-center gap-1.5 transition active:scale-95 animate-pulse"
+                      className="group/btn absolute bottom-3 right-3 p-1.5 pr-3.5 rounded-2xl bg-slate-950/85 hover:bg-black text-white border border-white/25 shadow-2xl backdrop-blur-md flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 cursor-pointer"
                       title="Play Official Promo Video"
                     >
-                      <Play className="w-3.5 h-3.5 fill-current" />
-                      <span>{lang === 'ml' ? 'ടീസർ കാണുക' : 'Watch Promo Video'}</span>
+                      <div className="relative w-12 h-9 sm:w-14 sm:h-10 rounded-xl overflow-hidden border border-amber-400/90 shrink-0 shadow-sm">
+                        <img 
+                          src={teaserVideoBtnThumb} 
+                          alt="Video Preview" 
+                          className="w-full h-full object-cover group-hover/btn:scale-110 transition duration-300"
+                        />
+                        <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
+                          <div className="w-5 h-5 rounded-full bg-red-600 flex items-center justify-center text-white shadow-md group-hover/btn:scale-110 transition">
+                            <Play className="w-2.5 h-2.5 fill-current ml-0.5" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-left leading-tight">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[9px] uppercase tracking-wider font-extrabold px-1.5 py-0.2 rounded bg-red-600 text-white">
+                            HD Video
+                          </span>
+                          <span className="text-[10px] text-amber-300 font-mono font-bold">0:23</span>
+                        </div>
+                        <span className="text-xs font-black text-white group-hover/btn:text-amber-400 transition block mt-0.5">
+                          {lang === 'ml' ? 'ടീസർ കാണുക' : 'Watch Promo'}
+                        </span>
+                      </div>
                     </button>
                   </div>
                 ) : (
@@ -181,13 +213,36 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                       alt="Official Udaya FC Squad 2026-2027"
                       className="w-full h-56 sm:h-72 md:h-80 lg:h-[340px] object-cover object-top rounded-lg"
                     />
+                    {/* Cinema-Style Video Teaser Button with Real Video Frame */}
                     <button
                       onClick={() => setActiveBannerTab('video')}
-                      className="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-red-600/90 hover:bg-red-700 text-white font-black text-xs shadow-lg backdrop-blur-md flex items-center gap-1.5 transition active:scale-95"
+                      className="group/btn absolute bottom-3 right-3 p-1.5 pr-3.5 rounded-2xl bg-slate-950/85 hover:bg-black text-white border border-white/25 shadow-2xl backdrop-blur-md flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 cursor-pointer"
                       title="Play Official Promo Video"
                     >
-                      <Play className="w-3.5 h-3.5 fill-current" />
-                      <span>{lang === 'ml' ? 'ടീസർ കാണുക' : 'Watch Promo Video'}</span>
+                      <div className="relative w-12 h-9 sm:w-14 sm:h-10 rounded-xl overflow-hidden border border-amber-400/90 shrink-0 shadow-sm">
+                        <img 
+                          src={teaserVideoBtnThumb} 
+                          alt="Video Preview" 
+                          className="w-full h-full object-cover group-hover/btn:scale-110 transition duration-300"
+                        />
+                        <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
+                          <div className="w-5 h-5 rounded-full bg-red-600 flex items-center justify-center text-white shadow-md group-hover/btn:scale-110 transition">
+                            <Play className="w-2.5 h-2.5 fill-current ml-0.5" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-left leading-tight">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[9px] uppercase tracking-wider font-extrabold px-1.5 py-0.2 rounded bg-red-600 text-white">
+                            HD Video
+                          </span>
+                          <span className="text-[10px] text-amber-300 font-mono font-bold">0:23</span>
+                        </div>
+                        <span className="text-xs font-black text-white group-hover/btn:text-amber-400 transition block mt-0.5">
+                          {lang === 'ml' ? 'ടീസർ കാണുക' : 'Watch Promo'}
+                        </span>
+                      </div>
                     </button>
                   </div>
                 )}
