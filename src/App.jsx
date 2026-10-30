@@ -317,7 +317,7 @@ export default function App() {
         onClose={() => setIsScorerDemoOpen(false)}
       />
 
-      {/* Smart Ticket Counter POS & GPay QR Modal */}
+      {/* Official Ticket Pricing & Coming Soon Modal */}
       <TicketCounterModal
         isOpen={isTicketModalOpen}
         isDarkMode={isDarkMode}

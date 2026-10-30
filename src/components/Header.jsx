@@ -154,11 +154,11 @@ export default function Header({
             <span className="md:hidden">Admin</span>
           </button>
 
-          {/* Ticket Counter / GPay POS Modal trigger */}
+          {/* Ticket Rates Modal trigger (Coming Soon) */}
           <button
             onClick={onOpenTicketModal}
             className="flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 text-xs font-black rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-slate-950 shadow-xs transition active:scale-95 shrink-0"
-            title="Book Tickets / Counter POS"
+            title="Ticket Pricing & Online Booking (Coming Soon)"
           >
             <Ticket className="w-3.5 h-3.5" />
             <span className="hidden xs:inline sm:inline">{lang === 'ml' ? 'ടിക്കറ്റ്' : 'Tickets'}</span>

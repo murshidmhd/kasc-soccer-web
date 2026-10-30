@@ -264,7 +264,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                 </button>
               </div>
 
-              {/* Instant Ticket & GPay Counter POS Banner Button */}
+              {/* Official Ticket Pricing & Coming Soon Modal Trigger */}
               <button
                 onClick={onOpenTicketModal}
                 className="w-full py-2.5 px-4 rounded-xl font-black text-xs sm:text-sm bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-slate-950 shadow-sm transition active:scale-98 flex items-center justify-center gap-2 border border-amber-300"
@@ -272,10 +272,10 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                 <Ticket className="w-4 h-4 text-slate-950" />
                 <span>
                   {lang === 'ml' 
-                    ? 'ടിക്കറ്റ് ബുക്കിംഗ് & GPay QR' 
-                    : 'Match Tickets & Instant GPay QR'}
+                    ? 'ടിക്കറ്റ് നിരക്കുകൾ (ബുക്കിംഗ് ഉടൻ)' 
+                    : 'Ticket Pricing (Booking Soon)'}
                 </span>
-                <span className="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black uppercase">
+                <span className="px-2 py-0.5 rounded-md bg-slate-950 text-amber-300 text-[10px] font-black uppercase">
                   From ₹50
                 </span>
               </button>

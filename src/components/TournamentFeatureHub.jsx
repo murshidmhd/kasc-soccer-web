@@ -99,11 +99,11 @@ export default function TournamentFeatureHub({
     },
     {
       id: 'tickets',
-      title: lang === 'ml' ? 'ടിക്കറ്റ് കൗണ്ടർ & UPI QR' : 'Tickets & GPay Counter',
-      desc: lang === 'ml' ? 'ഗ്യാലറി, വി.ഐ.പി, സീസൺ പാസ്സ് നിരക്കുകൾ' : 'Official seat pricing & direct booking',
+      title: lang === 'ml' ? 'ടിക്കറ്റ് നിരക്കുകൾ' : 'Ticket Tiers & Rates',
+      desc: lang === 'ml' ? 'ഓൺലൈൻ ബുക്കിംഗ് ഉടൻ ആരംഭിക്കും • നിരക്കുകൾ കാണുക' : 'Online booking coming soon • View official pricing',
       icon: Ticket,
-      badge: 'Instant POS',
-      badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
+      badge: 'Coming Soon',
+      badgeColor: 'bg-amber-100 text-amber-900 border-amber-300 font-bold',
       action: onOpenTicketModal
     },
     {
