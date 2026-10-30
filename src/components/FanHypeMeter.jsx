@@ -224,8 +224,8 @@ export default function FanHypeMeter({ lang, isDarkMode }) {
           <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">
             Matchday Roar
           </span>
-          <span className="text-amber-700 flex items-center gap-1 font-sports">
-            <span>SABAN FC: {cheersAway.toLocaleString()}</span>
+          <span className="text-zinc-800 flex items-center gap-1 font-sports">
+            <span>NEW MALAYA: {cheersAway.toLocaleString()}</span>
             <TeamLogo teamName={openingMatch.teamAway.name} className="w-4 h-4" />
           </span>
         </div>
@@ -238,13 +238,13 @@ export default function FanHypeMeter({ lang, isDarkMode }) {
           />
           <div
             style={{ width: `${awayPercent}%` }}
-            className="bg-amber-500 rounded-r-full transition-all duration-300"
+            className="bg-zinc-800 rounded-r-full transition-all duration-300"
           />
         </div>
 
         <div className="flex items-center justify-between text-[11px] font-bold text-slate-600 px-0.5">
           <span className="text-blue-700">{homePercent}% Hype</span>
-          <span className="text-amber-700">{awayPercent}% Hype</span>
+          <span className="text-zinc-800">{awayPercent}% Hype</span>
         </div>
       </div>
 
@@ -260,10 +260,10 @@ export default function FanHypeMeter({ lang, isDarkMode }) {
 
         <button
           onClick={handleCheerAway}
-          className="p-3 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-slate-950 font-black text-xs sm:text-sm shadow-xs transition active:scale-95 flex items-center justify-center gap-2"
+          className="p-3 rounded-2xl bg-gradient-to-r from-zinc-800 to-black hover:from-zinc-900 hover:to-black text-white font-black text-xs sm:text-sm shadow-xs transition active:scale-95 flex items-center justify-center gap-2"
         >
           <span className="text-base">👏</span>
-          <span>{lang === 'ml' ? 'സബാന് കയ്യടി!' : 'Cheer SABAN!'}</span>
+          <span>{lang === 'ml' ? 'ന്യൂ മലയക്ക് കയ്യടി!' : 'Cheer NEW MALAYA!'}</span>
         </button>
       </div>
 

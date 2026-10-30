@@ -82,13 +82,13 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
     const outcomeText = selectedOutcome === 'home' 
       ? 'UDAYA ജയിക്കും' 
       : selectedOutcome === 'away' 
-        ? 'SABAN FC ജയിക്കും' 
+        ? 'NEW MALAYA FC ജയിക്കും' 
         : 'മത്സരം സമനിലയാകും (Draw)';
 
     const shareUrl = `${window.location.origin}${window.location.pathname}#live`;
     const text = encodeURIComponent(
       `⚽ *അഖിലേന്ത്യാ സെവൻസ് സീസൺ 7 - എന്റെ മാച്ച് പ്രവചനം!* 🔥\n\n` +
-      `⚔️ UDAYA Peruvallur vs SABAN FC Kottakkal\n` +
+      `⚔️ UDAYA Parambil Peedika vs NEW MALAYA MALABAR FC\n` +
       `🎯 എന്റെ പ്രവചനം: *${openingMatch.teamHome.shortName} ${predictedScoreHome} - ${predictedScoreAway} ${openingMatch.teamAway.shortName}* (${outcomeText})\n` +
       `🎁 കൃത്യമായി പ്രവചിച്ച് റൈദാൻ കുഴിമന്തി സ്പെഷ്യൽ സമ്മാനങ്ങൾ നേടൂ!\n\n` +
       `നിങ്ങളുടെ പ്രവചനം ഇവിടെ രേഖപ്പെടുത്തൂ: ${shareUrl}`

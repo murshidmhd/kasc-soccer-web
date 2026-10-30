@@ -8,8 +8,8 @@ export default function ScorerDemoModal({ isOpen, onClose, isDarkMode }) {
   const [scorerLog, setScorerLog] = useState([
     'Match started: 08:00 PM',
     'Kickoff whistle blown by referee',
-    '12\' - Goal Udaya Peruvallur (Ibrahim)',
-    '24\' - Goal Saban FC (Shameer)',
+    '12\' - Goal Udaya Parambil Peedika (Ibrahim)',
+    '24\' - Goal New Malaya Malabar FC (Jameel)',
   ]);
 
   const recordEvent = (text) => {
@@ -59,7 +59,7 @@ export default function ScorerDemoModal({ isOpen, onClose, isDarkMode }) {
 
             <div className="grid grid-cols-2 gap-2">
               <button
-                onClick={() => recordEvent('⚽ Goal: UDAYA Peruvallur (+1)')}
+                onClick={() => recordEvent('⚽ Goal: UDAYA Parambil Peedika (+1)')}
                 className="p-3.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs flex flex-col items-center justify-center shadow-sm active:scale-95 transition"
               >
                 <span className="text-xl">⚽</span>
@@ -67,11 +67,11 @@ export default function ScorerDemoModal({ isOpen, onClose, isDarkMode }) {
               </button>
 
               <button
-                onClick={() => recordEvent('⚽ Goal: SABAN FC (+1)')}
-                className="p-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs flex flex-col items-center justify-center shadow-sm active:scale-95 transition"
+                onClick={() => recordEvent('⚽ Goal: NEW MALAYA MALABAR FC (+1)')}
+                className="p-3.5 rounded-xl bg-zinc-800 hover:bg-zinc-900 text-white font-bold text-xs flex flex-col items-center justify-center shadow-sm active:scale-95 transition"
               >
                 <span className="text-xl">⚽</span>
-                <span>+ GOAL SABAN</span>
+                <span>+ GOAL NEW MALAYA</span>
               </button>
             </div>
 

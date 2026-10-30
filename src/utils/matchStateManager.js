@@ -32,7 +32,7 @@ export const initialOfficialMatchState = {
   },
   events: [
     { id: 'evt-1', minute: 12, team: 'home', player: 'Ibrahim Soumahoro', type: 'goal', text: 'Stunning curler into top right corner', isOfficial: true },
-    { id: 'evt-2', minute: 24, team: 'away', player: 'Shameer K.', type: 'goal', text: 'Equalizer through penalty rebound', isOfficial: true },
+    { id: 'evt-2', minute: 24, team: 'away', player: 'Jameel (New Malaya #6)', type: 'goal', text: 'Equalizer through penalty rebound for New Malaya Malabar', isOfficial: true },
     { id: 'evt-3', minute: 30, team: 'home', player: 'Riyas K. (Captain)', type: 'goal', text: 'Header right before Half-Time whistle', isOfficial: true }
   ]
 };

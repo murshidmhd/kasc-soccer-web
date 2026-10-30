@@ -174,16 +174,16 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           </div>
         </div>
 
-        {/* Mobile-Perfect Scoreboard (UDAYA vs SABAN FC) */}
+        {/* Mobile-Perfect Scoreboard (UDAYA vs NEW MALAYA) */}
         <div className="grid grid-cols-12 gap-2 sm:gap-4 items-center text-center py-2">
-          {/* Team Home (UDAYA Peruvallur) */}
+          {/* Team Home (UDAYA Parambil Peedika) */}
           <div className="col-span-4 flex flex-col items-center space-y-1.5">
             <TeamLogo teamName={openingMatch.teamHome.name} className="w-16 h-16 sm:w-20 sm:h-20 shadow-xs" />
             <h3 className="text-sm sm:text-lg font-black font-sports text-slate-950 leading-tight">
               UDAYA
             </h3>
             <span className="text-[10px] sm:text-xs text-blue-700 font-bold">
-              Peruvallur
+              Parambil Peedika
             </span>
           </div>
 
@@ -217,14 +217,14 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
             )}
           </div>
 
-          {/* Team Away (SABAN FC Kottakkal) */}
+          {/* Team Away (NEW MALAYA MALABAR FC) */}
           <div className="col-span-4 flex flex-col items-center space-y-1.5">
             <TeamLogo teamName={openingMatch.teamAway.name} className="w-16 h-16 sm:w-20 sm:h-20 shadow-xs" />
             <h3 className="text-sm sm:text-lg font-black font-sports text-slate-950 leading-tight">
-              SABAN FC
+              NEW MALAYA
             </h3>
-            <span className="text-[10px] sm:text-xs text-amber-700 font-bold">
-              Kottakkal
+            <span className="text-[10px] sm:text-xs text-zinc-700 font-bold">
+              Kozhikode
             </span>
           </div>
         </div>
@@ -299,10 +299,10 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
               className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs active:scale-95 ${
                 rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'
                   ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
-                  : 'bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-sm'
+                  : 'bg-zinc-800 hover:bg-zinc-900 text-white shadow-sm'
               }`}
             >
-              <span>⚽ Report Goal: SABAN FC</span>
+              <span>⚽ Report Goal: NEW MALAYA</span>
               {rateLimit.isCooldownActive && <span className="text-[10px]">({rateLimit.remainingSeconds}s)</span>}
             </button>
           </div>
@@ -310,7 +310,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           {/* Crowd Stats Counter Bar */}
           <div className="flex items-center justify-between text-[11px] text-slate-500 bg-white p-2.5 rounded-xl border border-slate-200">
             <span>
-              Community Reports: <strong>{matchState.crowdReports?.home || 0} Udaya</strong> vs <strong>{matchState.crowdReports?.away || 0} Saban</strong> ({matchState.crowdReports?.total || 0} total)
+              Community Reports: <strong>{matchState.crowdReports?.home || 0} Udaya</strong> vs <strong>{matchState.crowdReports?.away || 0} New Malaya</strong> ({matchState.crowdReports?.total || 0} total)
             </span>
             <span className="font-bold text-blue-700">
               🛡️ Admin Score Governed

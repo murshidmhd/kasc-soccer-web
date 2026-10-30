@@ -715,7 +715,7 @@ export default function AdminDeskSection({
                     isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200 shadow-sm'
                   }`}>
                     <span className="text-xs sm:text-sm font-bold text-sky-700 block truncate">
-                      UDAYA Peruvallur
+                      UDAYA Parambil Peedika
                     </span>
                     <div className="text-5xl sm:text-6xl font-black font-sports text-slate-950">
                       {matchState.officialScoreHome}
@@ -736,12 +736,12 @@ export default function AdminDeskSection({
                     </div>
                   </div>
 
-                  {/* Away Team Score (SABAN FC) */}
+                  {/* Away Team Score (NEW MALAYA) */}
                   <div className={`p-4 rounded-2xl border text-center space-y-2 ${
                     isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200 shadow-sm'
                   }`}>
-                    <span className="text-xs sm:text-sm font-bold text-amber-700 block truncate">
-                      SABAN FC Kottakkal
+                    <span className="text-xs sm:text-sm font-bold text-zinc-900 block truncate">
+                      NEW MALAYA MALABAR FC
                     </span>
                     <div className="text-5xl sm:text-6xl font-black font-sports text-slate-950">
                       {matchState.officialScoreAway}
@@ -868,8 +868,8 @@ export default function AdminDeskSection({
                       onChange={(e) => setNewEvent({ ...newEvent, team: e.target.value })}
                       className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white border-slate-300 shadow-2xs"
                     >
-                      <option value="home">UDAYA Peruvallur</option>
-                      <option value="away">SABAN FC Kottakkal</option>
+                      <option value="home">UDAYA Parambil Peedika</option>
+                      <option value="away">NEW MALAYA MALABAR FC</option>
                     </select>
                   </div>
 

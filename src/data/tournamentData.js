@@ -28,28 +28,28 @@ export const openingMatch = {
   venue: "Peruvallur Panjayath Stadium",
   teamHome: {
     id: "udaya-peruvallur",
-    name: "UDAYA PERUVALLUR",
-    nameMl: "ഉദയ പെരുവള്ളൂർ",
+    name: "UDAYA PARAMBIL PEEDIKA",
+    nameMl: "ഉദയ പറമ്പിൽ പീടിക",
     shortName: "UDAYA",
-    city: "Peruvallur",
-    color: "#0284c7",
+    city: "Parambil Peedika",
+    color: "#6b21a8",
     textColor: "#ffffff",
-    badgeBg: "from-sky-600 to-blue-900",
-    kit: "Royal Blue & Navy",
+    badgeBg: "from-purple-700 via-indigo-900 to-red-700",
+    kit: "Purple & Red Stripes (Festiwell #10)",
     manager: "K. M. Basheer",
     form: ["W", "W", "D", "W", "W"]
   },
   teamAway: {
-    id: "saban-kottakkal",
-    name: "SABAN FC KOTTAKKAL",
-    nameMl: "സബാൻ എഫ്.സി കോട്ടക്കൽ",
-    shortName: "SABAN",
-    city: "Kottakkal",
-    color: "#eab308",
-    textColor: "#000000",
-    badgeBg: "from-amber-400 to-yellow-600",
-    kit: "Gold & Black",
-    manager: "Saban Master",
+    id: "new-malaya-malabar-fc",
+    name: "NEW MALAYA MALABAR FC",
+    nameMl: "ന്യൂ മലയ മലബാർ എഫ്.സി",
+    shortName: "NEW MALAYA",
+    city: "Kozhikode",
+    color: "#0f172a",
+    textColor: "#ffffff",
+    badgeBg: "from-zinc-900 to-black",
+    kit: "Black & White Stripes (EDEX #6)",
+    manager: "Aboobacker Master",
     form: ["W", "W", "W", "L", "W"]
   }
 };
@@ -62,12 +62,12 @@ export const fixtures = [
     time: "08:00 PM",
     stage: "Round 1 (Opening Blockbuster)",
     team1: "UDAYA PARAMBIL PEEDIKA",
-    team2: "SABAN KOTTAKKAL",
+    team2: "NEW MALAYA MALABAR FC",
     status: "Upcoming",
     score1: null,
     score2: null,
-    badge1Color: "from-sky-500 to-blue-800",
-    badge2Color: "from-amber-400 to-yellow-600",
+    badge1Color: "from-purple-700 to-indigo-950",
+    badge2Color: "from-zinc-800 to-black",
     stadium: "Peruvallur Panjayath Stadium"
   },
   {
@@ -211,12 +211,12 @@ export const fixtures = [
     date: "16 Nov 2026",
     time: "08:00 PM",
     stage: "Round 1",
-    team1: "MALBAR FC KOZHIKKODE",
+    team1: "SABAN KOTTAKKAL",
     team2: "AFC WAYANAD",
     status: "Upcoming",
     score1: null,
     score2: null,
-    badge1Color: "from-sky-500 to-blue-900",
+    badge1Color: "from-amber-400 to-yellow-600",
     badge2Color: "from-red-600 to-amber-700",
     stadium: "Peruvallur Panjayath Stadium"
   },
@@ -351,10 +351,10 @@ export const participatingTeams = [
   {
     id: 11,
     slug: "malbar_fc_kozhikkode",
-    name: "MALBAR FC KOZHIKKODE",
-    nameMl: "മൽബാർ എഫ്.സി കോഴിക്കോട്",
+    name: "NEW MALAYA MALABAR FC",
+    nameMl: "ന്യൂ മലയ മലബാർ എഫ്.സി",
     city: "Kozhikode",
-    manager: "Aboobacker",
+    manager: "Aboobacker Master",
     asstManager: "Ziyad",
     category: "Permanent SFA Club",
     column: "left"
@@ -505,7 +505,7 @@ export const participatingTeams = [
 ];
 
 export const topScorersPreview = [
-  { rank: 1, name: "Ibrahim Soumahoro", team: "UDAYA Peruvallur", goals: 0, matches: 0, origin: "Ivory Coast", flag: "🇨🇮", category: "Overseas Marquee" },
+  { rank: 1, name: "Ibrahim Soumahoro", team: "UDAYA Parambil Peedika", goals: 0, matches: 0, origin: "Ivory Coast", flag: "🇨🇮", category: "Overseas Marquee" },
   { rank: 2, name: "Shameer Kottakkal", team: "SABAN FC Kottakkal", goals: 0, matches: 0, origin: "Malappuram", flag: "🇮🇳", category: "Homegrown Striker" },
   { rank: 3, name: "Junior Toure", team: "FIFA Manjeri", goals: 0, matches: 0, origin: "Ghana", flag: "🇬🇭", category: "Overseas Marquee" },
   { rank: 4, name: "Muhammed Faslu", team: "Linsha Tirur", goals: 0, matches: 0, origin: "Tirur, Malappuram", flag: "🇮🇳", category: "Homegrown Striker" }

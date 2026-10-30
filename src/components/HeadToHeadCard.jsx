@@ -86,12 +86,12 @@ export default function HeadToHeadCard({ lang, isDarkMode }) {
                 </div>
               </div>
 
-              {/* SABAN FC Form */}
+              {/* NEW MALAYA Form */}
               <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200">
                 <div className="flex items-center gap-1.5 mb-2">
                   <TeamLogo teamName={openingMatch.teamAway.name} className="w-5 h-5" />
-                  <span className="text-xs font-black font-sports text-amber-900">
-                    SABAN FC
+                  <span className="text-xs font-black font-sports text-zinc-900">
+                    NEW MALAYA
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -105,14 +105,14 @@ export default function HeadToHeadCard({ lang, isDarkMode }) {
                       {res}
                     </span>
                   ))}
-                  <span className="text-[10px] text-amber-700 font-bold ml-1">4 Wins</span>
+                  <span className="text-[10px] text-zinc-700 font-bold ml-1">4 Wins</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Past H2H Summary */}
-          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/60 to-amber-50/60 border border-slate-200">
+          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/60 to-zinc-100/60 border border-slate-200">
             <div className="flex items-center justify-between text-center">
               <div>
                 <span className="text-xl font-black font-sports text-blue-700">2</span>
@@ -125,8 +125,8 @@ export default function HeadToHeadCard({ lang, isDarkMode }) {
               </div>
 
               <div>
-                <span className="text-xl font-black font-sports text-amber-600">1</span>
-                <p className="text-[10px] font-bold text-slate-600">SABAN Wins</p>
+                <span className="text-xl font-black font-sports text-zinc-700">1</span>
+                <p className="text-[10px] font-bold text-slate-600">NEW MALAYA Wins</p>
               </div>
             </div>
           </div>
@@ -135,7 +135,7 @@ export default function HeadToHeadCard({ lang, isDarkMode }) {
           <div className="pt-1 text-xs text-slate-600 space-y-1.5">
             <div className="flex items-center justify-between py-1 border-b border-slate-100">
               <span className="font-medium text-slate-500">{lang === 'ml' ? 'പോരാട്ടം' : 'Battle'}:</span>
-              <span className="font-bold text-slate-900">Ibrahim (UDAYA #9) vs Ousmane (SABAN #4)</span>
+              <span className="font-bold text-slate-900">Ibrahim (UDAYA #9) vs Jameel (NEW MALAYA #6)</span>
             </div>
             <div className="flex items-center justify-between py-1 border-b border-slate-100">
               <span className="font-medium text-slate-500">{lang === 'ml' ? 'വേദി' : 'Pitch'}:</span>

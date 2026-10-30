@@ -114,10 +114,17 @@ export const teamNameToSlug = {
   'XB TOURS CALICUT': 'x8_tours_calicut',
   'എക്സ് 8 ടൂർസ് കോഴിക്കോട്': 'x8_tours_calicut',
 
-  // Malbar FC Kozhikkode
+  // Malbar FC Kozhikkode / New Malaya Malabar FC
   'MALBAR FC KOZHIKKODE': 'malbar_fc_kozhikkode',
   'Malbar FC Kozhikkode': 'malbar_fc_kozhikkode',
   'Malabar FC Kozhikode': 'malbar_fc_kozhikkode',
+  'NEW MALAYA MALABAR FC': 'malbar_fc_kozhikkode',
+  'New Malaya Malabar FC': 'malbar_fc_kozhikkode',
+  'NEW MALAYA FC': 'malbar_fc_kozhikkode',
+  'New Malaya FC': 'malbar_fc_kozhikkode',
+  'EDEX NEW MALAYA MALABAR FC': 'malbar_fc_kozhikkode',
+  'ന്യൂ മലയ മലബാർ എഫ്.സി': 'malbar_fc_kozhikkode',
+  'ന്യൂ മലയ മലബാർ FC കോഴിക്കോട്': 'malbar_fc_kozhikkode',
   'Royal Travel Kozhikode': 'malbar_fc_kozhikkode',
   'മൽബാർ എഫ്.സി കോഴിക്കോട്': 'malbar_fc_kozhikkode',
 

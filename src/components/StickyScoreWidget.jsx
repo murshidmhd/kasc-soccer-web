@@ -78,16 +78,16 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
   }, [activeTab, isDismissed]);
 
   if (!isVisible || isDismissed) {
-    // If dismissed or hidden, render a tiny recall pill button if match is live
-    if (isDismissed && matchState.status !== 'UPCOMING') {
+    // If dismissed or hidden, render a tiny recall pill button
+    if (isDismissed) {
       return (
         <button
           onClick={() => setIsDismissed(false)}
-          className="fixed bottom-20 right-3 sm:bottom-6 sm:right-6 z-40 px-3 py-1.5 rounded-full bg-slate-900/90 text-white text-xs font-bold border border-slate-700 shadow-xl backdrop-blur-md flex items-center gap-1.5 hover:scale-105 active:scale-95 transition animate-fadeIn"
+          className="fixed bottom-16 sm:bottom-6 right-3 sm:right-6 z-40 px-3 py-1.5 rounded-full bg-slate-900/95 text-white text-xs font-bold border border-slate-700 shadow-xl backdrop-blur-md flex items-center gap-1.5 hover:scale-105 active:scale-95 transition animate-fadeIn touch-manipulation"
           title="Show Live Match Score"
         >
           <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-          <span className="font-mono font-black">{matchState.officialScoreHome}-{matchState.officialScoreAway}</span>
+          <span className="font-sports font-black">UDY {matchState.officialScoreHome}-{matchState.officialScoreAway} MAL</span>
           <span className="text-[10px] text-amber-400 font-mono">({clock.display})</span>
         </button>
       );
@@ -117,7 +117,7 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
 
   return (
     <aside 
-      className={`fixed bottom-20 right-3 sm:bottom-6 sm:right-6 z-40 transition-all duration-300 select-none ${
+      className={`fixed bottom-16 sm:bottom-6 right-3 sm:right-6 z-40 transition-all duration-300 select-none ${
         goalAlert ? 'scale-105 ring-4 ring-amber-400' : ''
       }`}
       aria-label="Sticky Live Score Widget"
@@ -131,7 +131,7 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
       )}
 
       {/* Main Glassmorphic Widget Container */}
-      <div className="bg-slate-950/95 backdrop-blur-xl border border-slate-800 text-white rounded-2xl shadow-2xl p-2.5 sm:p-3 w-[270px] sm:w-[310px] space-y-2 transition-all">
+      <div className="bg-slate-950/95 backdrop-blur-xl border border-slate-800 text-white rounded-2xl shadow-2xl p-2.5 sm:p-3 w-[calc(100vw-24px)] max-w-[320px] sm:w-[320px] space-y-2 transition-all">
         {/* Top Status & Controls Bar */}
         <div className="flex items-center justify-between text-[11px] pb-1.5 border-b border-slate-800">
           <div className="flex items-center gap-1.5">
@@ -165,17 +165,19 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
           <div className="flex items-center gap-1 text-slate-400">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="p-1 rounded-md hover:bg-slate-800 hover:text-white transition"
+              className="p-1.5 rounded-lg hover:bg-slate-800 hover:text-white transition active:scale-90 touch-manipulation"
               title={isExpanded ? 'Collapse' : 'Expand Details'}
+              aria-label={isExpanded ? 'Collapse' : 'Expand'}
             >
-              {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
+              {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
             </button>
             <button
               onClick={() => setIsDismissed(true)}
-              className="p-1 rounded-md hover:bg-slate-800 hover:text-red-400 transition"
+              className="p-1.5 rounded-lg hover:bg-slate-800 hover:text-red-400 transition active:scale-90 touch-manipulation"
               title="Close mini widget"
+              aria-label="Close widget"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -189,16 +191,18 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
           {/* Home Team */}
           <div className="flex items-center gap-2 flex-1 min-w-0">
             <TeamLogo teamName={openingMatch.teamHome.name} className="w-7 h-7 shrink-0" />
-            <div className="truncate">
+            <div className="truncate min-w-0">
               <span className="font-sports font-black text-xs sm:text-sm block truncate group-hover:text-blue-400 transition">
                 UDAYA
               </span>
-              <span className="text-[9px] text-slate-400 block truncate">Peruvallur</span>
+              <span className="text-[9px] text-slate-400 block truncate">
+                {openingMatch.teamHome.city || 'Parambil Peedika'}
+              </span>
             </div>
           </div>
 
           {/* Score Numbers */}
-          <div className="px-3 text-center shrink-0">
+          <div className="px-2.5 text-center shrink-0">
             <div className="font-sports font-black text-xl sm:text-2xl tracking-widest text-white flex items-center justify-center gap-1.5">
               <span>{matchState.officialScoreHome}</span>
               <span className="text-slate-500 text-base">-</span>
@@ -208,11 +212,13 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
 
           {/* Away Team */}
           <div className="flex items-center justify-end gap-2 flex-1 min-w-0 text-right">
-            <div className="truncate">
+            <div className="truncate min-w-0">
               <span className="font-sports font-black text-xs sm:text-sm block truncate group-hover:text-amber-400 transition">
-                SABAN
+                {openingMatch.teamAway.shortName || 'NEW MALAYA'}
               </span>
-              <span className="text-[9px] text-slate-400 block truncate">Kottakkal</span>
+              <span className="text-[9px] text-slate-400 block truncate">
+                {openingMatch.teamAway.city || 'Kozhikode'}
+              </span>
             </div>
             <TeamLogo teamName={openingMatch.teamAway.name} className="w-7 h-7 shrink-0" />
           </div>

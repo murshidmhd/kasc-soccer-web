@@ -9,7 +9,7 @@ const CANDIDATES = [
     name: 'Ibrahim Soumahoro',
     nameMl: 'ഇബ്രാഹിം സുമഹോറോ',
     number: '9',
-    team: 'UDAYA Peruvallur',
+    team: 'UDAYA Parambil Peedika',
     teamShort: 'UDAYA',
     position: 'Striker / ഫോർവേഡ്',
     origin: 'Ivory Coast 🇨🇮',
@@ -19,25 +19,25 @@ const CANDIDATES = [
     tag: 'Marquee Striker'
   },
   {
-    id: 'shameer',
-    name: 'Shameer Kottakkal',
-    nameMl: 'ഷമീർ കോട്ടക്കൽ',
-    number: '10',
-    team: 'SABAN FC Kottakkal',
-    teamShort: 'SABAN',
+    id: 'jameel',
+    name: 'Jameel Kozhikode',
+    nameMl: 'ജമീൽ കോഴിക്കോട്',
+    number: '6',
+    team: 'NEW MALAYA MALABAR FC',
+    teamShort: 'NEW MALAYA',
     position: 'Playmaker / ക്യാപ്റ്റൻ',
-    origin: 'Malappuram 🇮🇳',
+    origin: 'Kozhikode 🇮🇳',
     votes: 520,
-    accent: 'from-amber-500 to-yellow-600',
-    border: 'border-amber-500',
-    tag: 'Homegrown Star'
+    accent: 'from-zinc-800 to-black',
+    border: 'border-zinc-500',
+    tag: 'EDEX Playmaker'
   },
   {
     id: 'riyas',
     name: 'Riyas K.',
     nameMl: 'റിയാസ് കെ.',
     number: '7',
-    team: 'UDAYA Peruvallur',
+    team: 'UDAYA Parambil Peedika',
     teamShort: 'UDAYA',
     position: 'Midfield Maestro / ക്യാപ്റ്റൻ',
     origin: 'Peruvallur 🇮🇳',
@@ -47,17 +47,17 @@ const CANDIDATES = [
     tag: 'Captain'
   },
   {
-    id: 'ousmane',
-    name: 'Ousmane',
-    nameMl: 'ഉസ്മാൻ',
+    id: 'emmanuel',
+    name: 'Emmanuel',
+    nameMl: 'ഇമ്മാനുവൽ',
     number: '4',
-    team: 'SABAN FC Kottakkal',
-    teamShort: 'SABAN',
+    team: 'NEW MALAYA MALABAR FC',
+    teamShort: 'NEW MALAYA',
     position: 'Center Back / ഡിഫെൻഡർ',
     origin: 'Ghana 🇬🇭',
     votes: 170,
-    accent: 'from-amber-600 to-yellow-700',
-    border: 'border-amber-400',
+    accent: 'from-zinc-700 to-slate-900',
+    border: 'border-zinc-400',
     tag: 'Ghana Wall'
   }
 ];
@@ -107,7 +107,7 @@ export default function PlayerOfTheMatchVote({ lang, isDarkMode }) {
     const shareUrl = `${window.location.origin}${window.location.pathname}#live`;
     const text = encodeURIComponent(
       `⭐ *അഖിലേന്ത്യാ സെവൻസ് ടൂർണ്ണമെന്റ് സീസൺ 7 - മാൻ ഓഫ് ദി മാച്ച് വോട്ടിംഗ്!* ⚽\n\n` +
-      `🔥 UDAYA Peruvallur vs SABAN FC Kottakkal ഉദ്ഘാടന മത്സരത്തിലെ കളിയിലെ താരമായി ഞാൻ വോട്ട് ചെയ്തത്: *${candidateName}* (${selectedCandidate?.teamShort || ''})\n\n` +
+      `🔥 UDAYA Parambil Peedika vs NEW MALAYA MALABAR FC ഉദ്ഘാടന മത്സരത്തിലെ കളിയിലെ താരമായി ഞാൻ വോട്ട് ചെയ്തത്: *${candidateName}* (${selectedCandidate?.teamShort || ''})\n\n` +
       `നിങ്ങളുടെ പ്രിയതാരത്തിന് ഇവിടെ വോട്ട് രേഖപ്പെടുത്തൂ: ${shareUrl}`
     );
 

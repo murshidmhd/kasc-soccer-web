@@ -4,7 +4,7 @@ import TeamLogo from './TeamLogo';
 
 const BRACKET_DATA = {
   round1: [
-    { id: 'm1', date: '06 Nov', team1: 'UDAYA Peruvallur', team2: 'SABAN FC Kottakkal', status: 'Day 1 Blockbuster', winner: null, qfSlot: 'qf1' },
+    { id: 'm1', date: '06 Nov', team1: 'UDAYA PARAMBIL PEEDIKA', team2: 'NEW MALAYA MALABAR FC', status: 'Day 1 Blockbuster', winner: null, qfSlot: 'qf1' },
     { id: 'm2', date: '07 Nov', team1: 'FIFA Manjeri', team2: 'Linsha Medicals Tirur', status: 'Upcoming', winner: null, qfSlot: 'qf1' },
     { id: 'm3', date: '08 Nov', team1: 'Al-Madina Cherpulassery', team2: 'Royal Travel Kozhikode', status: 'Upcoming', winner: null, qfSlot: 'qf2' },
     { id: 'm4', date: '09 Nov', team1: 'Usha Thrissur', team2: 'Black & White Kozhikode', status: 'Upcoming', winner: null, qfSlot: 'qf2' },
@@ -14,7 +14,7 @@ const BRACKET_DATA = {
     { id: 'm8', date: '13 Nov', team1: 'KMG Mavoor', team2: 'Abhilash FC Kuppooth', status: 'Upcoming', winner: null, qfSlot: 'qf4' }
   ],
   quarterFinals: [
-    { id: 'qf1', date: '20 Nov', team1: 'Winner Match 1 (Udaya/Saban)', team2: 'Winner Match 2 (FIFA/Linsha)', status: 'QF 1', sfSlot: 'sf1' },
+    { id: 'qf1', date: '20 Nov', team1: 'Winner Match 1 (Udaya/New Malaya)', team2: 'Winner Match 2 (FIFA/Linsha)', status: 'QF 1', sfSlot: 'sf1' },
     { id: 'qf2', date: '22 Nov', team1: 'Winner Match 3 (Al-Madina/Royal)', team2: 'Winner Match 4 (Usha/B&W)', status: 'QF 2', sfSlot: 'sf1' },
     { id: 'qf3', date: '24 Nov', team1: 'Winner Match 5 (Super Studio/Gymkhana)', team2: 'Winner Match 6 (Town Team/Moon Star)', status: 'QF 3', sfSlot: 'sf2' },
     { id: 'qf4', date: '26 Nov', team1: 'Winner Match 7 (Nellikkuth/Thennala)', team2: 'Winner Match 8 (KMG/Abhilash)', status: 'QF 4', sfSlot: 'sf2' }

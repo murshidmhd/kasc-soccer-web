@@ -2,7 +2,7 @@ import React from 'react';
 import { Calendar, MapPin, Phone, Award, Shield, ChevronDown, Ticket } from 'lucide-react';
 import { tournamentInfo } from '../data/tournamentData';
 import Countdown from './Countdown';
-import playersHero from '../assets/players_hero.png';
+import squadStarsPoster from '../assets/squad_stars_poster.jpg';
 import logoUdaya from '../assets/logo_udaya_transparent.png';
 import logoKasc from '../assets/logo_kasc.png';
 import matchActionDuel from '../assets/match_action_duel.jpg';
@@ -121,7 +121,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
               </div>
 
               <h2 className="text-xl sm:text-2xl font-extrabold text-slate-950 font-sports">
-                UDAYA PERUVALLUR <span className="text-blue-600">vs</span> SABAN FC KOTTAKKAL
+                UDAYA PARAMBIL PEEDIKA <span className="text-blue-600">vs</span> NEW MALAYA MALABAR FC
               </h2>
 
               <p className="text-xs text-slate-600 font-medium">
@@ -130,18 +130,18 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                   : 'Live Floodlit Sevens Football • Every Night 8:00 PM IST'}
               </p>
 
-              {/* Dynamic 2 Players Duel Visual (Fixed object-top so players' heads are completely visible on laptops & desktops) */}
+              {/* Dynamic Duel Visual (Action Duel vs Squad Stars) */}
               <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-50 p-1 shadow-xs">
                 {activeBannerTab === 'action' ? (
                   <img
                     src={matchActionDuel}
-                    alt="Match Duel: Udaya vs Saban FC"
+                    alt="Match Duel: Udaya vs New Malaya Malabar FC"
                     className="w-full h-56 sm:h-72 md:h-80 lg:h-[340px] object-cover object-top rounded-lg"
                   />
                 ) : (
                   <img
-                    src={playersHero}
-                    alt="Featured Stars"
+                    src={squadStarsPoster}
+                    alt="Official Udaya FC Squad 2026-2027"
                     className="w-full h-56 sm:h-72 md:h-80 lg:h-[340px] object-cover object-top rounded-lg"
                   />
                 )}
