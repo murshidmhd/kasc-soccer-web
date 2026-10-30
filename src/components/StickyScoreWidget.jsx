@@ -23,6 +23,7 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
   const [clock, setClock] = useState(() => getCalculatedMatchTime(getStoredMatchState()));
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [goalAlert, setGoalAlert] = useState(null);
 
@@ -78,12 +79,12 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
   }, [activeTab, isDismissed]);
 
   if (!isVisible || isDismissed) {
-    // If dismissed or hidden, render a tiny recall pill button
+    // If dismissed, render a tiny recall pill button
     if (isDismissed) {
       return (
         <button
-          onClick={() => setIsDismissed(false)}
-          className="fixed bottom-16 sm:bottom-6 right-3 sm:right-6 z-40 px-3 py-1.5 rounded-full bg-slate-900/95 text-white text-xs font-bold border border-slate-700 shadow-xl backdrop-blur-md flex items-center gap-1.5 hover:scale-105 active:scale-95 transition animate-fadeIn touch-manipulation"
+          onClick={() => { setIsDismissed(false); setIsMinimized(false); }}
+          className="fixed bottom-[68px] sm:bottom-6 right-3 sm:right-6 z-40 px-3 py-1.5 rounded-full bg-slate-900/95 text-white text-xs font-bold border border-slate-700 shadow-xl backdrop-blur-md flex items-center gap-1.5 hover:scale-105 active:scale-95 transition animate-fadeIn touch-manipulation"
           title="Show Live Match Score"
         >
           <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
@@ -115,9 +116,49 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
 
   const latestEvent = matchState.events && matchState.events[0];
 
+  // Compact Mini Pill Mode on mobile screens
+  if (isMinimized) {
+    return (
+      <aside 
+        className="fixed bottom-[68px] inset-x-3 z-40 max-w-[320px] mx-auto sm:bottom-6 sm:right-6 sm:inset-x-auto sm:mx-0 transition-all select-none animate-fadeIn"
+        aria-label="Sticky Live Score Mini Pill"
+      >
+        <div 
+          onClick={() => setIsMinimized(false)}
+          className="bg-slate-950/95 backdrop-blur-xl border border-slate-700 text-white rounded-full shadow-2xl px-3 py-1.5 flex items-center justify-between gap-2 cursor-pointer hover:border-slate-500 transition active:scale-98"
+        >
+          <div className="flex items-center gap-1.5 text-xs truncate min-w-0">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-ping shrink-0"></span>
+            <span className="font-sports font-black tracking-wide truncate">
+              UDAYA {matchState.officialScoreHome} - {matchState.officialScoreAway} NEW MALAYA
+            </span>
+            <span className="text-[10px] text-amber-400 font-mono shrink-0">({clock.display})</span>
+          </div>
+
+          <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setIsMinimized(false)}
+              className="p-1 rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition"
+              title="Expand scoreboard"
+            >
+              <Maximize2 className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setIsDismissed(true)}
+              className="p-1 rounded-full hover:bg-slate-800 text-slate-400 hover:text-rose-400 transition"
+              title="Close"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      </aside>
+    );
+  }
+
   return (
     <aside 
-      className={`fixed bottom-16 sm:bottom-6 right-3 sm:right-6 z-40 transition-all duration-300 select-none ${
+      className={`fixed bottom-[68px] inset-x-3 z-40 max-w-[320px] mx-auto sm:bottom-6 sm:right-6 sm:inset-x-auto sm:mx-0 sm:w-[320px] transition-all duration-200 select-none ${
         goalAlert ? 'scale-105 ring-4 ring-amber-400' : ''
       }`}
       aria-label="Sticky Live Score Widget"
@@ -131,7 +172,7 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
       )}
 
       {/* Main Glassmorphic Widget Container */}
-      <div className="bg-slate-950/95 backdrop-blur-xl border border-slate-800 text-white rounded-2xl shadow-2xl p-2.5 sm:p-3 w-[calc(100vw-24px)] max-w-[320px] sm:w-[320px] space-y-2 transition-all">
+      <div className="bg-slate-950/95 backdrop-blur-xl border border-slate-800 text-white rounded-2xl shadow-2xl p-2.5 sm:p-3 w-full space-y-2 transition-all">
         {/* Top Status & Controls Bar */}
         <div className="flex items-center justify-between text-[11px] pb-1.5 border-b border-slate-800">
           <div className="flex items-center gap-1.5">
@@ -161,23 +202,31 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
             </span>
           </div>
 
-          {/* Right Action Icons: Expand / Close */}
+          {/* Right Action Icons: Minimize to Pill / Expand Details / Close */}
           <div className="flex items-center gap-1 text-slate-400">
             <button
+              onClick={() => setIsMinimized(true)}
+              className="p-1 rounded-lg hover:bg-slate-800 hover:text-white transition active:scale-90 touch-manipulation sm:hidden"
+              title="Minimize to Pill"
+              aria-label="Minimize"
+            >
+              <Minimize2 className="w-3.5 h-3.5" />
+            </button>
+            <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="p-1.5 rounded-lg hover:bg-slate-800 hover:text-white transition active:scale-90 touch-manipulation"
+              className="p-1 rounded-lg hover:bg-slate-800 hover:text-white transition active:scale-90 touch-manipulation"
               title={isExpanded ? 'Collapse' : 'Expand Details'}
               aria-label={isExpanded ? 'Collapse' : 'Expand'}
             >
-              {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+              {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
             </button>
             <button
               onClick={() => setIsDismissed(true)}
-              className="p-1.5 rounded-lg hover:bg-slate-800 hover:text-red-400 transition active:scale-90 touch-manipulation"
+              className="p-1 rounded-lg hover:bg-slate-800 hover:text-red-400 transition active:scale-90 touch-manipulation"
               title="Close mini widget"
               aria-label="Close widget"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -185,25 +234,25 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
         {/* Middle Scoreboard Area */}
         <div 
           onClick={handleJumpToMatch}
-          className="flex items-center justify-between px-1 cursor-pointer hover:opacity-90 transition group"
+          className="flex items-center justify-between px-0.5 cursor-pointer hover:opacity-90 transition group"
           title="Click to jump to Match Center"
         >
           {/* Home Team */}
-          <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="flex items-center gap-1.5 flex-1 min-w-0">
             <TeamLogo teamName={openingMatch.teamHome.name} className="w-7 h-7 shrink-0" />
-            <div className="truncate min-w-0">
+            <div className="truncate min-w-0 flex-1">
               <span className="font-sports font-black text-xs sm:text-sm block truncate group-hover:text-blue-400 transition">
                 UDAYA
               </span>
-              <span className="text-[9px] text-slate-400 block truncate">
+              <span className="text-[9px] text-slate-400 block truncate hidden xs:block">
                 {openingMatch.teamHome.city || 'Parambil Peedika'}
               </span>
             </div>
           </div>
 
           {/* Score Numbers */}
-          <div className="px-2.5 text-center shrink-0">
-            <div className="font-sports font-black text-xl sm:text-2xl tracking-widest text-white flex items-center justify-center gap-1.5">
+          <div className="px-2 text-center shrink-0">
+            <div className="font-sports font-black text-xl sm:text-2xl tracking-wider text-white flex items-center justify-center gap-1.5">
               <span>{matchState.officialScoreHome}</span>
               <span className="text-slate-500 text-base">-</span>
               <span>{matchState.officialScoreAway}</span>
@@ -211,12 +260,12 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
           </div>
 
           {/* Away Team */}
-          <div className="flex items-center justify-end gap-2 flex-1 min-w-0 text-right">
-            <div className="truncate min-w-0">
+          <div className="flex items-center justify-end gap-1.5 flex-1 min-w-0 text-right">
+            <div className="truncate min-w-0 flex-1">
               <span className="font-sports font-black text-xs sm:text-sm block truncate group-hover:text-amber-400 transition">
                 {openingMatch.teamAway.shortName || 'NEW MALAYA'}
               </span>
-              <span className="text-[9px] text-slate-400 block truncate">
+              <span className="text-[9px] text-slate-400 block truncate hidden xs:block">
                 {openingMatch.teamAway.city || 'Kozhikode'}
               </span>
             </div>
