@@ -17,6 +17,9 @@ import SponsorAdsSidebar from './components/SponsorAdsSidebar';
 import PromoEventsSection from './components/PromoEventsSection';
 import ClubFanVoteSection from './components/ClubFanVoteSection';
 import ClubFanVoteCard from './components/ClubFanVoteCard';
+import TournamentFeatureHub from './components/TournamentFeatureHub';
+import StartingSevenPitch from './components/StartingSevenPitch';
+import VipMatchPassModal from './components/VipMatchPassModal';
 import AdminScoreModal from './components/AdminScoreModal';
 import AdminDeskSection from './components/AdminDeskSection';
 import ScorerDemoModal from './components/ScorerDemoModal';
@@ -32,6 +35,7 @@ export default function App() {
   const [isScorerDemoOpen, setIsScorerDemoOpen] = useState(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+  const [isVipPassModalOpen, setIsVipPassModalOpen] = useState(false);
 
   // Sync with URL hash or path if provided
   useEffect(() => {
@@ -104,6 +108,18 @@ export default function App() {
                 isDarkMode={isDarkMode} 
               />
 
+              {/* Tournament Features Command Hub (Instant proof of 10+ professional features) */}
+              <TournamentFeatureHub
+                lang={lang}
+                setActiveTab={handleTabChange}
+                onOpenTicketModal={() => setIsTicketModalOpen(true)}
+                onOpenPassGenerator={() => setIsVipPassModalOpen(true)}
+                onOpenPitchLineup={() => {
+                  const el = document.getElementById('pitch-lineup');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+              />
+
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 {/* Left 8 cols: Match Center & Interactive Fan Features */}
                 <div className="lg:col-span-8 space-y-6">
@@ -112,6 +128,12 @@ export default function App() {
                     lang={lang} 
                     isDarkMode={isDarkMode} 
                     onOpenAdminPanel={() => setIsAdminModalOpen(true)}
+                  />
+
+                  {/* Starting 7 Tactical Turf Pitch Lineup (Premier League Style) */}
+                  <StartingSevenPitch
+                    lang={lang}
+                    isDarkMode={isDarkMode}
                   />
 
                   {/* Kerala Sevens Penalty Shootout Mini-Game */}
@@ -301,6 +323,13 @@ export default function App() {
         isDarkMode={isDarkMode}
         lang={lang}
         onClose={() => setIsTicketModalOpen(false)}
+      />
+
+      {/* Personalized VIP Matchday Fan Pass Generator Modal */}
+      <VipMatchPassModal
+        isOpen={isVipPassModalOpen}
+        onClose={() => setIsVipPassModalOpen(false)}
+        lang={lang}
       />
     </div>
   );

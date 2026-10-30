@@ -30,6 +30,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
   const [clock, setClock] = useState(() => getCalculatedMatchTime(getStoredMatchState()));
   const [rateLimit, setRateLimit] = useState(getUserRateLimitStatus);
   const [toastMessage, setToastMessage] = useState(null);
+  const [timelineTab, setTimelineTab] = useState('commentary'); // 'timeline' | 'commentary'
 
   // Sync with global custom event when Admin updates score
   useEffect(() => {
@@ -317,40 +318,94 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
             </span>
           </div>
 
-          {/* Official Events Timeline */}
-          {matchState.events && matchState.events.length > 0 && (
-            <div className="space-y-1.5 pt-2">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                Official Match Events Timeline (Referee Desk):
+          {/* Dual Tab: Official Events vs Live Commentary Feed */}
+          <div className="pt-2 space-y-2">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+              <div className="flex items-center gap-1 bg-slate-200/80 p-0.5 rounded-xl text-xs font-bold">
+                <button
+                  onClick={() => setTimelineTab('commentary')}
+                  className={`px-3 py-1 rounded-lg transition flex items-center gap-1.5 ${
+                    timelineTab === 'commentary' ? 'bg-blue-700 text-white shadow-2xs font-black' : 'text-slate-700 hover:text-blue-700'
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>{lang === 'ml' ? 'ലൈവ് കമന്ററി' : 'Live Commentary'}</span>
+                </button>
+                <button
+                  onClick={() => setTimelineTab('timeline')}
+                  className={`px-3 py-1 rounded-lg transition flex items-center gap-1.5 ${
+                    timelineTab === 'timeline' ? 'bg-blue-700 text-white shadow-2xs font-black' : 'text-slate-700 hover:text-blue-700'
+                  }`}
+                >
+                  <span>{lang === 'ml' ? 'റഫറി ഇവന്റ്സ്' : 'Referee Timeline'}</span>
+                </button>
+              </div>
+
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider hidden xs:inline">
+                FotMob Style
               </span>
-              <div className="space-y-1.5 max-h-48 overflow-y-auto">
-                {matchState.events.map((evt) => (
-                  <div
-                    key={evt.id}
-                    className="flex items-center justify-between text-xs py-2 px-3 rounded-xl bg-white border border-slate-200 shadow-xs"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="font-black text-blue-800 font-sports">
-                        {evt.minute}'
-                      </span>
-                      <span>
-                        {evt.type === 'goal' ? '⚽' : evt.type === 'yellow_card' ? '🟨' : evt.type === 'red_card' ? '🟥' : '🥅'}
-                      </span>
-                      <span className="font-bold text-slate-900 truncate">
-                        {evt.player}
-                      </span>
-                      <span className="text-[11px] text-slate-500 hidden sm:inline">
-                        ({evt.text})
-                      </span>
-                    </div>
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                      Official
+            </div>
+
+            {/* View 1: Ball-by-ball Text Commentary */}
+            {timelineTab === 'commentary' && (
+              <div className="space-y-2 max-h-56 overflow-y-auto pr-1 animate-fadeIn">
+                {[
+                  { min: "30'", type: "whistle", text: lang === 'ml' ? 'ഹാഫ് ടൈം വിസിൽ! ആദ്യ പകുതിയിൽ ഉദയ പറമ്പിൽ പീടിക 2 - 1 ന് മുന്നിൽ. ഗാലറിയിൽ ആവേശക്കടൽ.' : 'Half-time whistle! Udaya leads 2-1 after a breathless first half under the floodlights.' },
+                  { min: "26'", type: "card", text: lang === 'ml' ? '🟨 യെല്ലോ കാർഡ്: ന്യൂ മലയ മിഡ്ഫീൽഡർക്ക് കൗണ്ടർ തടഞ്ഞതിന് റഫറിയുടെ മുന്നറിയിപ്പ്.' : '🟨 Yellow Card: Tactical foul stopping a dangerous Udaya break.' },
+                  { min: "24'", type: "goal", text: lang === 'ml' ? '⚽ ഗോൾ!! ഷമീർ കെ. (ഉദയ). ഡി-ബോക്സിന് വെളിയിൽ നിന്നുള്ള ബുള്ളറ്റ് വോളി പോസ്റ്റിന്റെ ടോപ്പ് കോർണറിലേക്ക്!' : '⚽ GOAL!! Shameer K. (Udaya) with a screamer from 20 yards into the top corner!' },
+                  { min: "18'", type: "save", text: lang === 'ml' ? '🧤 മിന്നൽ സേവ്! ന്യൂ മലയ സ്ട്രൈക്കറുടെ ഹെഡർ ഉദയ ഗോൾകീപ്പർ ഷംസീർ പറന്നു തട്ടിയകറ്റി.' : '🧤 Sensational fingertip reflex save by Udaya keeper Shamseer to deny an equalizer!' },
+                  { min: "12'", type: "goal", text: lang === 'ml' ? '⚽ ഗോൾ!! ഇബ്രാഹിം സുമഹോറോ (ഉദയ). ഡിഫൻഡർമാരെ വെട്ടിച്ച് കിടിലൻ ചിപ്പ് ഫിനിഷ്.' : '⚽ GOAL!! Ibrahim Soumahoro (Udaya) chips the keeper with sublime composure.' },
+                  { min: "7'", type: "attack", text: lang === 'ml' ? 'ന്യൂ മലയയുടെ കൗണ്ടർ അറ്റാക്ക്! ഉദയ സെന്റർ ബാക്ക് ഫൈസൽ പന്ത് കൃത്യസമയത്ത് ക്ലിയർ ചെയ്തു.' : 'Dangerous counter-attack by New Malaya, snuffed out by Udaya defender Faisal.' },
+                  { min: "1'", type: "start", text: lang === 'ml' ? '🟢 പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയത്തിൽ ഫ്ലഡ്‌ലൈറ്റിന്റെ പ്രഭയിൽ ആവേശകരമായ ഉദ്ഘാടന മത്സരത്തിന് തുടക്കം!' : '🟢 Kickoff under electric floodlights at Peruvallur Panjayath Stadium!' }
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-2.5 p-2 rounded-xl bg-white border border-slate-100 shadow-2xs text-xs">
+                    <span className="font-sports font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md shrink-0 border border-blue-200">
+                      {item.min}
                     </span>
+                    <p className="text-slate-800 font-medium leading-relaxed">
+                      {item.text}
+                    </p>
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            )}
+
+            {/* View 2: Official Referee Events */}
+            {timelineTab === 'timeline' && (
+              <div className="space-y-1.5 max-h-48 overflow-y-auto animate-fadeIn">
+                {matchState.events && matchState.events.length > 0 ? (
+                  matchState.events.map((evt) => (
+                    <div
+                      key={evt.id}
+                      className="flex items-center justify-between text-xs py-2 px-3 rounded-xl bg-white border border-slate-200 shadow-xs"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="font-black text-blue-800 font-sports">
+                          {evt.minute}'
+                        </span>
+                        <span>
+                          {evt.type === 'goal' ? '⚽' : evt.type === 'yellow_card' ? '🟨' : evt.type === 'red_card' ? '🟥' : '🥅'}
+                        </span>
+                        <span className="font-bold text-slate-900 truncate">
+                          {evt.player}
+                        </span>
+                        <span className="text-[11px] text-slate-500 hidden sm:inline">
+                          ({evt.text})
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                        Official
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-4 text-xs text-slate-500">
+                    No official referee events recorded yet.
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
