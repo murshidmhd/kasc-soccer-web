@@ -11,7 +11,8 @@ import {
   Award, 
   TrendingUp, 
   ChevronRight, 
-  Lock 
+  Lock,
+  ArrowLeft 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { participatingTeams } from '../data/tournamentData';
@@ -44,7 +45,7 @@ const INITIAL_VOTES = {
   24: 1130 // Usha FC Thrissur
 };
 
-export default function ClubFanVoteSection({ lang, isDarkMode }) {
+export default function ClubFanVoteSection({ lang, isDarkMode, onBack }) {
   // Stored voted club in localStorage
   const [votedClubId, setVotedClubId] = useState(() => {
     return parseInt(localStorage.getItem('kasc_fan_voted_club_id') || '0', 10);
@@ -122,6 +123,17 @@ export default function ClubFanVoteSection({ lang, isDarkMode }) {
 
   return (
     <section className="space-y-5">
+      {/* Optional Back to Live Match navigation */}
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition active:scale-95 shadow-2xs border border-slate-200"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>{lang === 'ml' ? '← ലൈവ് മാച്ചിലേക്ക് മടങ്ങുക' : '← Back to Live Match'}</span>
+        </button>
+      )}
+
       {/* Header Banner */}
       <div className={`rounded-3xl p-5 sm:p-7 border transition-all ${
         isDarkMode ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900 shadow-xs'

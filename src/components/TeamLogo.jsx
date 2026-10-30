@@ -61,11 +61,12 @@ const teamBadgeConfigs = {
 export default function TeamLogo({ teamName, className = "w-12 h-12", fallbackClassName }) {
   const [hasImageError, setHasImageError] = useState(false);
   const logoUrl = getTeamLogoUrl(teamName);
+  const hasCustomRounding = className.includes('rounded-');
 
   if (logoUrl && !hasImageError) {
     return (
       <div 
-        className={`${className} shrink-0 rounded-2xl bg-white p-1 border border-slate-200 shadow-xs flex items-center justify-center overflow-hidden transition-transform duration-200 hover:scale-105 select-none`}
+        className={`${className} shrink-0 ${hasCustomRounding ? '' : 'rounded-2xl'} bg-white p-1 border border-slate-200 shadow-xs flex items-center justify-center overflow-hidden transition-transform duration-200 hover:scale-105 select-none`}
         title={teamName}
       >
         <img 

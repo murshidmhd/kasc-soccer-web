@@ -16,6 +16,7 @@ import SponsorsSection from './components/SponsorsSection';
 import SponsorAdsSidebar from './components/SponsorAdsSidebar';
 import PromoEventsSection from './components/PromoEventsSection';
 import ClubFanVoteSection from './components/ClubFanVoteSection';
+import ClubFanVoteCard from './components/ClubFanVoteCard';
 import AdminScoreModal from './components/AdminScoreModal';
 import AdminDeskSection from './components/AdminDeskSection';
 import ScorerDemoModal from './components/ScorerDemoModal';
@@ -34,7 +35,7 @@ export default function App() {
 
   // Sync with URL hash or path if provided
   useEffect(() => {
-    const validTabs = ['live', 'fixtures', 'teams', 'stats', 'promo', 'venue', 'admin'];
+    const validTabs = ['live', 'vote', 'fixtures', 'teams', 'stats', 'promo', 'venue', 'admin'];
     const hash = window.location.hash.replace('#', '');
     const path = window.location.pathname.replace(/^\//, '');
 
@@ -137,10 +138,11 @@ export default function App() {
                     isDarkMode={isDarkMode}
                   />
 
-                  {/* Vote for Your Favorite Club (Fan Poll Battle) */}
-                  <ClubFanVoteSection
+                  {/* Compact Club Fan Vote Teaser Card (Opens full 24-team voting page without cluttering home scroll) */}
+                  <ClubFanVoteCard
                     lang={lang}
                     isDarkMode={isDarkMode}
+                    onOpenVotingPage={() => handleTabChange('vote')}
                   />
 
                   {/* Head-to-Head & Form Guide */}
@@ -167,6 +169,17 @@ export default function App() {
                 />
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Dedicated Page: 24 SFA CLUBS FAN VOTE BATTLE */}
+        {activeTab === 'vote' && (
+          <div className="animate-fadeIn pt-4 max-w-6xl mx-auto px-3 sm:px-6">
+            <ClubFanVoteSection 
+              lang={lang} 
+              isDarkMode={isDarkMode} 
+              onBack={() => handleTabChange('live')}
+            />
           </div>
         )}
 

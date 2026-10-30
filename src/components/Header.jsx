@@ -29,6 +29,7 @@ export default function Header({
 
   const navLinks = [
     { id: 'live', label: lang === 'ml' ? 'ലൈവ്' : 'Live' },
+    { id: 'vote', label: lang === 'ml' ? 'ഫാൻ വോട്ട്' : 'Fan Vote' },
     { id: 'fixtures', label: lang === 'ml' ? 'ഫിക്സ്ചർ' : 'Fixtures' },
     { id: 'teams', label: lang === 'ml' ? 'ടീമുകൾ' : 'Clubs' },
     { id: 'stats', label: lang === 'ml' ? 'സ്റ്റാറ്റ്സ്' : 'Stats' },
