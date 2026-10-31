@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, ChevronLeft, ChevronRight, Sparkles, Calendar, Eye } from 'lucide-react';
 import { tournamentInfo } from '../data/tournamentData';
+import proPoster from '../assets/promo/peruvallur_cup_pro_poster.jpg';
 import countdown8 from '../assets/promo/countdown_8days.jpg';
 import countdown9 from '../assets/promo/countdown_9days.jpg';
 import countdown10 from '../assets/promo/countdown_10days.jpg';
 import countdown11 from '../assets/promo/countdown_11days.jpg';
 
 const COUNTDOWN_SLIDES = [
-  { id: 8, days: '8 DAYS TO GO', titleMl: '8 ദിനങ്ങൾ ബാക്കി', img: countdown8, date: '29 Oct 2026' },
-  { id: 9, days: '9 DAYS TO GO', titleMl: '9 ദിനങ്ങൾ ബാക്കി', img: countdown9, date: '28 Oct 2026' },
-  { id: 10, days: '10 DAYS TO GO', titleMl: '10 ദിനങ്ങൾ ബാക്കി', img: countdown10, date: '27 Oct 2026' },
-  { id: 11, days: '11 DAYS TO GO', titleMl: '11 ദിനങ്ങൾ ബാക്കി', img: countdown11, date: '26 Oct 2026' }
+  { id: 'pro', days: 'OFFICIAL MATCH POSTER', titleMl: 'ഔദ്യോഗിക മാച്ച് പോസ്റ്റർ', img: proPoster, date: '06 Nov 2026', tag: '3:4 HD' },
+  { id: 8, days: '8 DAYS TO GO', titleMl: '8 ദിനങ്ങൾ ബാക്കി', img: countdown8, date: '29 Oct 2026', tag: 'COUNTDOWN' },
+  { id: 9, days: '9 DAYS TO GO', titleMl: '9 ദിനങ്ങൾ ബാക്കി', img: countdown9, date: '28 Oct 2026', tag: 'COUNTDOWN' },
+  { id: 10, days: '10 DAYS TO GO', titleMl: '10 ദിനങ്ങൾ ബാക്കി', img: countdown10, date: '27 Oct 2026', tag: 'COUNTDOWN' },
+  { id: 11, days: '11 DAYS TO GO', titleMl: '11 ദിനങ്ങൾ ബാക്കി', img: countdown11, date: '26 Oct 2026', tag: 'COUNTDOWN' }
 ];
 
 export default function Countdown({ lang, isDarkMode }) {
@@ -159,10 +161,10 @@ export default function Countdown({ lang, isDarkMode }) {
               </span>
             </div>
 
-            {/* Slide Poster Frame */}
+            {/* Slide Poster Frame (Strict 3:4 Sports Poster Format) */}
             <div 
               onClick={() => setSelectedPoster(currentSlide.img)}
-              className="relative w-full h-44 sm:h-48 rounded-2xl overflow-hidden border-2 border-slate-200 hover:border-blue-400 shadow-md cursor-pointer transition-all duration-300"
+              className="relative w-full max-w-[240px] sm:max-w-[260px] mx-auto aspect-[3/4] rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-700 hover:border-blue-500 shadow-md cursor-pointer transition-all duration-300 bg-slate-950 group"
             >
               <img 
                 src={currentSlide.img} 
@@ -171,16 +173,16 @@ export default function Countdown({ lang, isDarkMode }) {
               />
 
               {/* Floating Slide Badge on Image */}
-              <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-xl text-white text-xs border border-white/20">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-                  <span className="font-sports font-black tracking-wider text-amber-300">
+              <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl text-white text-xs border border-white/20">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="w-2 h-2 rounded-full bg-red-500 animate-ping shrink-0"></span>
+                  <span className="font-sports font-black tracking-wider text-amber-300 truncate">
                     {lang === 'ml' ? currentSlide.titleMl : currentSlide.days}
                   </span>
                 </div>
-                <div className="flex items-center gap-1 text-[10px] text-slate-300">
+                <div className="flex items-center gap-1 text-[10px] text-slate-300 shrink-0">
                   <Eye className="w-3 h-3" />
-                  <span>View</span>
+                  <span>3:4</span>
                 </div>
               </div>
 
@@ -190,7 +192,7 @@ export default function Countdown({ lang, isDarkMode }) {
                   e.stopPropagation();
                   setActiveSlide((prev) => (prev - 1 + COUNTDOWN_SLIDES.length) % COUNTDOWN_SLIDES.length);
                 }}
-                className="absolute left-1.5 top-1/2 -translate-y-1/2 p-1 rounded-full bg-black/60 hover:bg-black/80 text-white transition opacity-0 group-hover:opacity-100"
+                className="absolute left-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-black/70 hover:bg-black text-white transition opacity-0 group-hover:opacity-100 shadow-md"
                 title="Previous Slide"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -200,7 +202,7 @@ export default function Countdown({ lang, isDarkMode }) {
                   e.stopPropagation();
                   setActiveSlide((prev) => (prev + 1) % COUNTDOWN_SLIDES.length);
                 }}
-                className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded-full bg-black/60 hover:bg-black/80 text-white transition opacity-0 group-hover:opacity-100"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-black/70 hover:bg-black text-white transition opacity-0 group-hover:opacity-100 shadow-md"
                 title="Next Slide"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -226,17 +228,17 @@ export default function Countdown({ lang, isDarkMode }) {
         </div>
       </div>
 
-      {/* Poster Full Size Lightbox Modal */}
+      {/* Poster Full Size Lightbox Modal (3:4 Poster Lightbox) */}
       {selectedPoster && (
         <div 
           onClick={() => setSelectedPoster(null)}
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn"
         >
-          <div className="relative max-w-lg w-full max-h-[90vh] rounded-2xl overflow-hidden border border-white/20 shadow-2xl">
-            <img src={selectedPoster} alt="Countdown Poster Full" className="w-full h-auto object-contain" />
+          <div className="relative max-w-sm sm:max-w-md w-full aspect-[3/4] rounded-2xl overflow-hidden border border-white/20 shadow-2xl bg-black">
+            <img src={selectedPoster} alt="Countdown Poster Full" className="w-full h-full object-contain" />
             <button
               onClick={() => setSelectedPoster(null)}
-              className="absolute top-3 right-3 p-2 rounded-full bg-black/80 text-white text-xs font-bold"
+              className="absolute top-3 right-3 p-2 rounded-full bg-black/80 hover:bg-red-600 text-white text-xs font-bold transition shadow-md"
             >
               ✕ Close
             </button>

@@ -52,11 +52,11 @@ export default function Header({
         </span>
       </div>
 
-      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-1.5 sm:gap-4 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-1.5 sm:gap-4 overflow-hidden w-full">
         {/* Logos & Brand Title */}
         <div 
           onClick={() => { setActiveTab('live'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-          className="flex items-center gap-1.5 sm:gap-3 cursor-pointer select-none min-w-0 flex-1 max-w-[calc(100%-145px)] sm:max-w-none"
+          className="flex items-center gap-1.5 sm:gap-2.5 cursor-pointer select-none min-w-0 flex-1 max-w-[calc(100%-130px)] sm:max-w-none"
         >
           <div className="flex items-center -space-x-1 sm:space-x-1 shrink-0">
             <img 
@@ -112,19 +112,19 @@ export default function Header({
           })}
         </nav>
 
-        {/* Right Action buttons - strictly compact on mobile */}
+        {/* Right Action buttons - strictly compact on mobile (fits within 125px with zero overflow) */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {/* Theme Toggle (Light / Dark) */}
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
-            className={`p-1.5 sm:p-2 rounded-xl border text-xs font-bold transition flex items-center justify-center active:scale-95 shrink-0 ${
+            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl border text-xs font-bold transition flex items-center justify-center active:scale-95 shrink-0 ${
               isDarkMode 
                 ? 'border-slate-700 bg-slate-800 text-amber-300' 
                 : 'border-slate-200 bg-slate-100 text-slate-700'
             }`}
             title="Toggle Theme"
           >
-            {isDarkMode ? <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+            {isDarkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
           </button>
 
           {/* Language Toggle */}
@@ -157,17 +157,17 @@ export default function Header({
           {/* Ticket Rates Modal trigger (Coming Soon) */}
           <button
             onClick={onOpenTicketModal}
-            className="flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 text-xs font-black rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-slate-950 shadow-xs transition active:scale-95 shrink-0"
+            className="flex items-center gap-1 p-1.5 sm:px-2.5 sm:py-1.5 text-xs font-black rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-slate-950 shadow-xs transition active:scale-95 shrink-0"
             title="Ticket Pricing & Online Booking (Coming Soon)"
           >
             <Ticket className="w-3.5 h-3.5" />
-            <span className="hidden xs:inline sm:inline">{lang === 'ml' ? 'ടിക്കറ്റ്' : 'Tickets'}</span>
+            <span className="hidden sm:inline font-malayalam">{lang === 'ml' ? 'ടിക്കറ്റ്' : 'Tickets'}</span>
           </button>
 
           {/* WhatsApp Share Button */}
           <button
             onClick={shareOnWhatsApp}
-            className="flex items-center gap-1 p-1.5 sm:px-3 sm:py-1.5 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition active:scale-95 shrink-0"
+            className="flex items-center gap-1 p-1.5 sm:px-2.5 sm:py-1.5 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition active:scale-95 shrink-0"
             title="Share on WhatsApp"
           >
             <Share2 className="w-3.5 h-3.5" />

@@ -68,8 +68,8 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
         return;
       }
 
-      // On 'live' home page, show only when scrolled past the main match scoreboard (380px)
-      const scrolled = window.scrollY > 380;
+      // On 'live' home page, show only when scrolled past the main match scoreboard (600px)
+      const scrolled = window.scrollY > 600;
       setIsVisible(scrolled);
     };
 
@@ -84,7 +84,7 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
       return (
         <button
           onClick={() => { setIsDismissed(false); setIsMinimized(false); }}
-          className="fixed bottom-[68px] sm:bottom-6 right-3 sm:right-6 z-40 px-3 py-1.5 rounded-full bg-slate-900/95 text-white text-xs font-bold border border-slate-700 shadow-xl backdrop-blur-md flex items-center gap-1.5 hover:scale-105 active:scale-95 transition animate-fadeIn touch-manipulation"
+          className="fixed bottom-[74px] sm:bottom-6 right-3 sm:right-6 z-40 px-3 py-1.5 rounded-full bg-slate-900/95 text-white text-xs font-bold border border-slate-700 shadow-xl backdrop-blur-md flex items-center gap-1.5 hover:scale-105 active:scale-95 transition animate-fadeIn touch-manipulation"
           title="Show Live Match Score"
         >
           <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
@@ -120,7 +120,7 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
   if (isMinimized) {
     return (
       <aside 
-        className="fixed bottom-[68px] inset-x-3 z-40 max-w-[320px] mx-auto sm:bottom-6 sm:right-6 sm:inset-x-auto sm:mx-0 transition-all select-none animate-fadeIn"
+        className="fixed bottom-[74px] left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-[320px] sm:bottom-6 sm:right-6 sm:left-auto sm:translate-x-0 sm:w-[320px] transition-all select-none animate-fadeIn"
         aria-label="Sticky Live Score Mini Pill"
       >
         <div 
@@ -158,7 +158,7 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
 
   return (
     <aside 
-      className={`fixed bottom-[68px] inset-x-3 z-40 max-w-[320px] mx-auto sm:bottom-6 sm:right-6 sm:inset-x-auto sm:mx-0 sm:w-[320px] transition-all duration-200 select-none ${
+      className={`fixed bottom-[74px] left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-[320px] sm:bottom-6 sm:right-6 sm:left-auto sm:translate-x-0 sm:w-[320px] transition-all duration-200 select-none ${
         goalAlert ? 'scale-105 ring-4 ring-amber-400' : ''
       }`}
       aria-label="Sticky Live Score Widget"
