@@ -98,7 +98,9 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
 
           {/* Crisp, Vibrant Main Title & Season Tag */}
           <div className="space-y-1">
-            <h1 className={`font-black uppercase text-slate-950 dark:text-white tracking-tight ${
+            <h1 className={`font-black uppercase tracking-tight ${
+              isDarkMode ? 'text-white' : 'text-slate-950'
+            } ${
               lang === 'ml' 
                 ? 'font-malayalam text-2xl sm:text-4xl md:text-5xl leading-tight' 
                 : 'font-sports text-3xl sm:text-5xl md:text-6xl leading-tight'
@@ -109,8 +111,10 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
               <span className="text-base sm:text-2xl font-black font-sports text-red-600 tracking-wider">
                 SEASON 7
               </span>
-              <span className="text-slate-300 dark:text-slate-600">•</span>
-              <span className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300">
+              <span className={isDarkMode ? 'text-slate-600' : 'text-slate-400'}>•</span>
+              <span className={`text-xs sm:text-sm font-bold ${
+                isDarkMode ? 'text-slate-300' : 'text-slate-600'
+              }`}>
                 {lang === 'ml' ? 'നവംബർ 06 - ഡിസംബർ 06' : 'Nov 06 - Dec 06, 2026'}
               </span>
             </div>
@@ -187,11 +191,15 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                 </div>
               </div>
 
-              <h2 className="text-xl sm:text-2xl font-black font-sports tracking-wide text-slate-950 dark:text-white">
+              <h2 className={`text-xl sm:text-2xl font-black font-sports tracking-wide ${
+                isDarkMode ? 'text-white' : 'text-slate-950'
+              }`}>
                 UDAYA PARAMBIL PEEDIKA <span className="text-blue-600">vs</span> NEW MALAYA MALABAR FC
               </h2>
 
-              <p className="text-xs text-slate-600 dark:text-slate-400 font-medium flex items-center gap-1.5">
+              <p className={`text-xs font-medium flex items-center gap-1.5 ${
+                isDarkMode ? 'text-slate-400' : 'text-slate-600'
+              }`}>
                 <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                 <span>
                   {lang === 'ml'

@@ -38,6 +38,15 @@ export default function App() {
   const [isVipPassModalOpen, setIsVipPassModalOpen] = useState(false);
   const [matchSubTab, setMatchSubTab] = useState('lineup'); // 'lineup' | 'predict' | 'game' | 'h2h' | 'all'
 
+  // Sync dark class on document element with isDarkMode state
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
   // Sync with URL hash or path if provided
   useEffect(() => {
     const validTabs = ['live', 'vote', 'fixtures', 'teams', 'stats', 'promo', 'venue', 'admin'];
