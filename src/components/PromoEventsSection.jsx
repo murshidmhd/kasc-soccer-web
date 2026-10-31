@@ -17,6 +17,7 @@ import {
 import { promoData } from '../data/tournamentData';
 
 // Import local promo & marathon images
+import countdown6 from '../assets/promo/countdown_6days.jpg';
 import countdown8 from '../assets/promo/countdown_8days.jpg';
 import countdown9 from '../assets/promo/countdown_9days.jpg';
 import countdown10 from '../assets/promo/countdown_10days.jpg';
@@ -29,6 +30,7 @@ import runnersCrowdImg from '../assets/promo/marathon_runners_crowd.jpg';
 import marathonPosterImg from '../assets/promo/marathon_official_poster.jpg';
 
 const imageMap = {
+  'countdown_6days.jpg': countdown6,
   'countdown_8days.jpg': countdown8,
   'countdown_9days.jpg': countdown9,
   'countdown_10days.jpg': countdown10,

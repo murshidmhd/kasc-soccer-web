@@ -10,12 +10,13 @@ import tournamentOfficialPoster from '../assets/tournament_official_poster.jpg';
 import tournamentTeaser from '../assets/tournament_teaser.mp4';
 import tournamentTeaserPoster from '../assets/tournament_teaser_poster.jpg';
 import teaserVideoBtnThumb from '../assets/teaser_video_btn_thumb.jpg';
+import countdown6 from '../assets/promo/countdown_6days.jpg';
 import countdown8 from '../assets/promo/countdown_8days.jpg';
 import countdown9 from '../assets/promo/countdown_9days.jpg';
 import countdown10 from '../assets/promo/countdown_10days.jpg';
 import countdown11 from '../assets/promo/countdown_11days.jpg';
 
-const AMBIENT_COUNTDOWN_POSTERS = [countdown8, countdown9, countdown10, countdown11];
+const AMBIENT_COUNTDOWN_POSTERS = [countdown6, countdown8, countdown9, countdown10, countdown11];
 
 export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketModal }) {
   const [activeBannerTab, setActiveBannerTab] = React.useState('action');

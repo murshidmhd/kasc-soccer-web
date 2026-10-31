@@ -660,6 +660,16 @@ export const promoData = {
   },
   countdownPosters: [
     {
+      days: 6,
+      title: "6 Days To Go",
+      titleMl: "ഇനി 06 ദിനങ്ങൾ മാത്രം",
+      subtitle: "Peruvallur Panchayath Office Parambil Peedika Edition",
+      dates: "2026 Nov 06 - Dec 06",
+      venue: "Peruvallur Panchayath Stadium, Parambil Peedika",
+      filename: "countdown_6days.jpg",
+      highlight: "Panchayath Office Edition"
+    },
+    {
       days: 8,
       title: "8 Days To Go",
       titleMl: "ഇനി 8 ദിനങ്ങൾ മാത്രം",

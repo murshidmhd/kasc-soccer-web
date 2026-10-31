@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, ChevronLeft, ChevronRight, Sparkles, Calendar, Eye } from 'lucide-react';
 import { tournamentInfo } from '../data/tournamentData';
-import proPoster from '../assets/promo/peruvallur_cup_pro_poster.jpg';
+import countdown6 from '../assets/promo/countdown_6days.jpg';
 import countdown8 from '../assets/promo/countdown_8days.jpg';
 import countdown9 from '../assets/promo/countdown_9days.jpg';
 import countdown10 from '../assets/promo/countdown_10days.jpg';
 import countdown11 from '../assets/promo/countdown_11days.jpg';
+import proPoster from '../assets/promo/peruvallur_cup_pro_poster.jpg';
 
 const COUNTDOWN_SLIDES = [
-  { id: 'pro', days: 'OFFICIAL MATCH POSTER', titleMl: 'ഔദ്യോഗിക മാച്ച് പോസ്റ്റർ', img: proPoster, date: '06 Nov 2026', tag: '3:4 HD' },
-  { id: 8, days: '8 DAYS TO GO', titleMl: '8 ദിനങ്ങൾ ബാക്കി', img: countdown8, date: '29 Oct 2026', tag: 'COUNTDOWN' },
-  { id: 9, days: '9 DAYS TO GO', titleMl: '9 ദിനങ്ങൾ ബാക്കി', img: countdown9, date: '28 Oct 2026', tag: 'COUNTDOWN' },
+  { id: 6, days: '06 DAYS TO GO', titleMl: '06 ദിനങ്ങൾ ബാക്കി', img: countdown6, date: '31 Oct 2026', tag: 'LATEST' },
+  { id: 8, days: '08 DAYS TO GO', titleMl: '08 ദിനങ്ങൾ ബാക്കി', img: countdown8, date: '29 Oct 2026', tag: 'COUNTDOWN' },
+  { id: 9, days: '09 DAYS TO GO', titleMl: '09 ദിനങ്ങൾ ബാക്കി', img: countdown9, date: '28 Oct 2026', tag: 'COUNTDOWN' },
   { id: 10, days: '10 DAYS TO GO', titleMl: '10 ദിനങ്ങൾ ബാക്കി', img: countdown10, date: '27 Oct 2026', tag: 'COUNTDOWN' },
-  { id: 11, days: '11 DAYS TO GO', titleMl: '11 ദിനങ്ങൾ ബാക്കി', img: countdown11, date: '26 Oct 2026', tag: 'COUNTDOWN' }
+  { id: 11, days: '11 DAYS TO GO', titleMl: '11 ദിനങ്ങൾ ബാക്കി', img: countdown11, date: '26 Oct 2026', tag: 'COUNTDOWN' },
+  { id: 'pro', days: 'OFFICIAL MATCH POSTER', titleMl: 'ഔദ്യോഗിക മാച്ച് പോസ്റ്റർ', img: proPoster, date: '06 Nov 2026', tag: '3:4 HD' }
 ];
 
 export default function Countdown({ lang, isDarkMode }) {
