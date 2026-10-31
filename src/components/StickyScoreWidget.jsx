@@ -23,7 +23,10 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
   const [clock, setClock] = useState(() => getCalculatedMatchTime(getStoredMatchState()));
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
+  // On mobile screens, default to minimized sleek pill to never block content
+  const [isMinimized, setIsMinimized] = useState(() => {
+    return typeof window !== 'undefined' && window.innerWidth < 640;
+  });
   const [isExpanded, setIsExpanded] = useState(false);
   const [goalAlert, setGoalAlert] = useState(null);
 
@@ -57,19 +60,21 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
     return () => clearInterval(interval);
   }, [matchState]);
 
-  // Visibility logic based on scroll position & active tab
+  // Visibility logic: only show on other tabs (fixtures, teams, stats, promo)
+  // or on live page only when scrolled deep into the bottom archive (scrollY > 2200px)
   useEffect(() => {
     const checkScroll = () => {
       if (isDismissed) return;
 
-      // On pages other than 'live', always show the sticky score widget
+      // On pages other than 'live', show the sticky score widget
       if (activeTab !== 'live') {
         setIsVisible(true);
         return;
       }
 
-      // On 'live' home page, show only when scrolled past the main match scoreboard (600px)
-      const scrolled = window.scrollY > 600;
+      // On 'live' home page, the match center is already on screen,
+      // so ONLY show if scrolled deep past all hero, countdown, lineup & prediction (2200px)
+      const scrolled = window.scrollY > 2200;
       setIsVisible(scrolled);
     };
 

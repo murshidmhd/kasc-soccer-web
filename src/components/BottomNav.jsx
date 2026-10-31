@@ -18,12 +18,12 @@ export default function BottomNav({ activeTab, setActiveTab, isDarkMode, lang })
   };
 
   return (
-    <nav className={`fixed bottom-0 inset-x-0 z-50 sm:hidden border-t backdrop-blur-lg px-1 py-1.5 transition-colors ${
+    <nav className={`fixed bottom-0 inset-x-0 z-50 sm:hidden border-t backdrop-blur-lg px-0.5 py-1 transition-colors ${
       isDarkMode 
         ? 'bg-slate-950/95 border-slate-800 text-slate-400' 
         : 'bg-white/95 border-slate-200 text-slate-600 shadow-lg'
     }`}>
-      <div className="flex items-center justify-around max-w-md mx-auto">
+      <div className="grid grid-cols-6 items-center w-full max-w-md mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
@@ -31,7 +31,7 @@ export default function BottomNav({ activeTab, setActiveTab, isDarkMode, lang })
             <button
               key={item.id}
               onClick={() => handleTabClick(item.id)}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition active:scale-90 ${
+              className={`flex flex-col items-center justify-center py-1 px-0.5 rounded-lg transition active:scale-90 w-full min-w-0 ${
                 isActive
                   ? isDarkMode
                     ? 'bg-blue-950/80 text-blue-400 font-bold'
@@ -39,8 +39,8 @@ export default function BottomNav({ activeTab, setActiveTab, isDarkMode, lang })
                   : 'hover:text-slate-900 font-medium'
               }`}
             >
-              <Icon className={`w-5 h-5 ${isActive ? item.color : 'text-slate-400'}`} />
-              <span className={`text-[10px] mt-0.5 tracking-tight ${isActive ? 'font-bold' : ''}`}>
+              <Icon className={`w-4 h-4 sm:w-5 sm:h-5 shrink-0 ${isActive ? item.color : 'text-slate-400'}`} />
+              <span className={`text-[9.5px] mt-0.5 tracking-tight truncate w-full text-center ${isActive ? 'font-black' : 'font-medium'}`}>
                 {item.label}
               </span>
             </button>
