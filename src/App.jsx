@@ -36,6 +36,7 @@ export default function App() {
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   const [isVipPassModalOpen, setIsVipPassModalOpen] = useState(false);
+  const [matchSubTab, setMatchSubTab] = useState('lineup'); // 'lineup' | 'predict' | 'game' | 'h2h' | 'all'
 
   // Sync with URL hash or path if provided
   useEffect(() => {
@@ -53,8 +54,16 @@ export default function App() {
       const newHash = window.location.hash.replace('#', '');
       if (newHash === 'game') {
         setActiveTab('live');
+        setMatchSubTab('game');
         setTimeout(() => {
-          const el = document.getElementById('game');
+          const el = document.getElementById('penalty-game');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
+      } else if (newHash === 'predict') {
+        setActiveTab('live');
+        setMatchSubTab('predict');
+        setTimeout(() => {
+          const el = document.getElementById('match-subtabs');
           if (el) el.scrollIntoView({ behavior: 'smooth' });
         }, 150);
       } else if (validTabs.includes(newHash)) {
@@ -115,8 +124,11 @@ export default function App() {
                 onOpenTicketModal={() => setIsTicketModalOpen(true)}
                 onOpenPassGenerator={() => setIsVipPassModalOpen(true)}
                 onOpenPitchLineup={() => {
-                  const el = document.getElementById('pitch-lineup');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  setMatchSubTab('lineup');
+                  setTimeout(() => {
+                    const el = document.getElementById('match-subtabs');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }, 100);
                 }}
               />
 
@@ -130,48 +142,134 @@ export default function App() {
                     onOpenAdminPanel={() => setIsAdminModalOpen(true)}
                   />
 
-                  {/* Starting 7 Tactical Turf Pitch Lineup (Premier League Style) */}
-                  <StartingSevenPitch
-                    lang={lang}
-                    isDarkMode={isDarkMode}
-                  />
+                  {/* Clean Matchday Segmented Sub-Tabs Bar (Eliminates Endless Cluttered Scroll) */}
+                  <div id="match-subtabs" className="sticky top-16 z-20 bg-slate-100/95 dark:bg-slate-900/95 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs flex items-center justify-between gap-1 overflow-x-auto no-scrollbar">
+                    <div className="flex items-center gap-1 min-w-max">
+                      <button
+                        onClick={() => setMatchSubTab('lineup')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                          matchSubTab === 'lineup' 
+                            ? 'bg-blue-700 text-white shadow-xs font-black' 
+                            : 'text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+                        }`}
+                      >
+                        <span>⚽</span>
+                        <span>{lang === 'ml' ? 'ലൈനപ്പ് & റേറ്റിംഗ്' : 'Lineups'}</span>
+                      </button>
 
-                  {/* Kerala Sevens Penalty Shootout Mini-Game */}
-                  <SevensPenaltyGame
-                    lang={lang}
-                    isDarkMode={isDarkMode}
-                  />
+                      <button
+                        onClick={() => setMatchSubTab('predict')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                          matchSubTab === 'predict' 
+                            ? 'bg-amber-500 text-slate-950 shadow-xs font-black' 
+                            : 'text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+                        }`}
+                      >
+                        <span>🎯</span>
+                        <span>{lang === 'ml' ? 'പ്രവചന മത്സരങ്ങൾ' : 'Predict & Win'}</span>
+                        <span className="px-1.5 py-0.2 rounded-full bg-red-600 text-white text-[9px] font-black uppercase">
+                          Live
+                        </span>
+                      </button>
 
-                  {/* FotMob & Sofascore Style: Predict & Win Contest */}
-                  <MatchPredictionCard
-                    lang={lang}
-                    isDarkMode={isDarkMode}
-                  />
+                      <button
+                        onClick={() => setMatchSubTab('game')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                          matchSubTab === 'game' 
+                            ? 'bg-emerald-600 text-white shadow-xs font-black' 
+                            : 'text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+                        }`}
+                      >
+                        <span>🎮</span>
+                        <span>{lang === 'ml' ? 'പെനാൽറ്റി കളി' : 'Mini Game'}</span>
+                      </button>
 
-                  {/* Premier League Style: Fan Player of the Match Voting */}
-                  <PlayerOfTheMatchVote
-                    lang={lang}
-                    isDarkMode={isDarkMode}
-                  />
+                      <button
+                        onClick={() => setMatchSubTab('h2h')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                          matchSubTab === 'h2h' 
+                            ? 'bg-indigo-600 text-white shadow-xs font-black' 
+                            : 'text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+                        }`}
+                      >
+                        <span>📊</span>
+                        <span>{lang === 'ml' ? 'H2H & ഫോം' : 'H2H'}</span>
+                      </button>
+                    </div>
 
-                  {/* Malappuram Sevens Gallery Hype Meter & Stadium Soundboard */}
-                  <FanHypeMeter
-                    lang={lang}
-                    isDarkMode={isDarkMode}
-                  />
+                    {/* Toggle All Continuous View */}
+                    <button
+                      onClick={() => setMatchSubTab(matchSubTab === 'all' ? 'lineup' : 'all')}
+                      className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition shrink-0 ml-1 ${
+                        matchSubTab === 'all'
+                          ? 'bg-slate-950 text-white font-black'
+                          : 'text-slate-500 hover:text-slate-800'
+                      }`}
+                      title="Toggle full continuous view of all components"
+                    >
+                      {matchSubTab === 'all' ? (lang === 'ml' ? 'ചുരുക്കുക' : 'Tabs View') : (lang === 'ml' ? 'എല്ലാം കാണുക' : 'View All')}
+                    </button>
+                  </div>
 
-                  {/* Compact Club Fan Vote Teaser Card (Opens full 24-team voting page without cluttering home scroll) */}
-                  <ClubFanVoteCard
-                    lang={lang}
-                    isDarkMode={isDarkMode}
-                    onOpenVotingPage={() => handleTabChange('vote')}
-                  />
+                  {/* Section 1: Starting 7 Tactical Turf Pitch & Google Player Ratings */}
+                  {(matchSubTab === 'lineup' || matchSubTab === 'all') && (
+                    <div className="animate-fadeIn">
+                      <StartingSevenPitch
+                        lang={lang}
+                        isDarkMode={isDarkMode}
+                      />
+                    </div>
+                  )}
 
-                  {/* Head-to-Head & Form Guide */}
-                  <HeadToHeadCard
-                    lang={lang}
-                    isDarkMode={isDarkMode}
-                  />
+                  {/* Section 2: Fan Zone & Prediction Hub (Cleanly grouped so home page is not cluttered) */}
+                  {(matchSubTab === 'predict' || matchSubTab === 'all') && (
+                    <div className="space-y-6 animate-fadeIn">
+                      {/* Predict & Win Contest */}
+                      <MatchPredictionCard
+                        lang={lang}
+                        isDarkMode={isDarkMode}
+                      />
+
+                      {/* Fan Player of the Match Voting */}
+                      <PlayerOfTheMatchVote
+                        lang={lang}
+                        isDarkMode={isDarkMode}
+                      />
+
+                      {/* 24 Club Fan Vote Teaser Card */}
+                      <ClubFanVoteCard
+                        lang={lang}
+                        isDarkMode={isDarkMode}
+                        onOpenVotingPage={() => handleTabChange('vote')}
+                      />
+
+                      {/* Gallery Hype Meter & Soundboard */}
+                      <FanHypeMeter
+                        lang={lang}
+                        isDarkMode={isDarkMode}
+                      />
+                    </div>
+                  )}
+
+                  {/* Section 3: Interactive Penalty Shootout Mini-Game */}
+                  {(matchSubTab === 'game' || matchSubTab === 'all') && (
+                    <div id="penalty-game" className="animate-fadeIn">
+                      <SevensPenaltyGame
+                        lang={lang}
+                        isDarkMode={isDarkMode}
+                      />
+                    </div>
+                  )}
+
+                  {/* Section 4: Head-to-Head & Historical Form */}
+                  {(matchSubTab === 'h2h' || matchSubTab === 'all') && (
+                    <div className="animate-fadeIn">
+                      <HeadToHeadCard
+                        lang={lang}
+                        isDarkMode={isDarkMode}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Right 4 cols: Side Sponsor Ads */}

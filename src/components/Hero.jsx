@@ -10,16 +10,47 @@ import tournamentOfficialPoster from '../assets/tournament_official_poster.jpg';
 import tournamentTeaser from '../assets/tournament_teaser.mp4';
 import tournamentTeaserPoster from '../assets/tournament_teaser_poster.jpg';
 import teaserVideoBtnThumb from '../assets/teaser_video_btn_thumb.jpg';
+import countdown8 from '../assets/promo/countdown_8days.jpg';
+import countdown9 from '../assets/promo/countdown_9days.jpg';
+import countdown10 from '../assets/promo/countdown_10days.jpg';
+import countdown11 from '../assets/promo/countdown_11days.jpg';
+
+const AMBIENT_COUNTDOWN_POSTERS = [countdown8, countdown9, countdown10, countdown11];
 
 export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketModal }) {
   const [activeBannerTab, setActiveBannerTab] = React.useState('action');
+  const [ambientIndex, setAmbientIndex] = React.useState(0);
+
+  // Subtle ambient countdown posters background rotation
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setAmbientIndex((prev) => (prev + 1) % AMBIENT_COUNTDOWN_POSTERS.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <section className={`relative pt-5 pb-10 px-3 sm:px-6 border-b transition-colors ${
+    <section className={`relative pt-5 pb-10 px-3 sm:px-6 border-b transition-colors overflow-hidden ${
       isDarkMode 
         ? 'bg-slate-950 border-slate-800 text-white' 
         : 'bg-gradient-to-b from-blue-50/70 via-white to-slate-50 border-slate-200 text-slate-900'
     }`}>
+      {/* Subtle Ambient Countdown Posters Background Blend */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+        {AMBIENT_COUNTDOWN_POSTERS.map((poster, idx) => (
+          <img
+            key={idx}
+            src={poster}
+            alt="Countdown Backdrop Ambient"
+            className={`absolute inset-0 w-full h-full object-cover filter blur-[3px] transition-all duration-1000 ${
+              idx === ambientIndex 
+                ? 'opacity-[0.07] dark:opacity-[0.12] scale-105' 
+                : 'opacity-0 scale-100'
+            }`}
+          />
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-transparent to-white/90 dark:from-slate-950/95 dark:via-transparent dark:to-slate-950/90"></div>
+      </div>
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Top Badges: Affiliation & Season */}
         <div className="flex flex-wrap items-center justify-center gap-2 mb-3">
