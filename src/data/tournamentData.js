@@ -658,6 +658,64 @@ export const promoData = {
       }
     ]
   },
+  goalVandi: {
+    title: "Udaya Goal Vandi Shootout Contest",
+    titleMl: "ഉദയ ഗോൾ വണ്ടി ഷൂട്ട് ഔട്ട് മത്സരം",
+    organizers: "Udaya Kala Kayika Samskarika Vedi Parambil Peedika & KASC",
+    organizersMl: "ഉദയ കലാ കായിക സാംസ്കാരിക വേദി പറമ്പിൽ പീടിക",
+    sponsor: "FEZCO GROUP",
+    sponsorMl: "ഫെസ്കോ ഗ്രൂപ്പ് (FEZCO GROUP)",
+    desc: "As part of the promotional campaigns for the Udaya KASC All India Sevens, the 'Udaya Goal Vandi' mobile penalty shootout contest was organized across schools and local centers.",
+    descMl: "ഉദയ കാസ്ക് സോക്കർ അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ ടൂർണമെന്റിന്റെ പ്രചരണത്തിന്റെ ഭാഗമായി ഉദയ കലാ കായിക സാംസ്കാരിക വേദി പറമ്പിൽ പീടിക സംഘടിപ്പിച്ച “ഉദയ ഗോൾ വണ്ടി” ഷൂട്ട് ഔട്ട് മത്സരം സംഘടിപ്പിച്ചു.",
+    locations: [
+      { name: "AKHM UP School, Chatrathodi", nameMl: "AKHM UP സ്കൂൾ ചാത്രത്തൊടി" },
+      { name: "Peruvallur Higher Secondary School", nameMl: "പെരുവള്ളൂർ ഹയർ സെക്കൻഡറി സ്കൂൾ" },
+      { name: "VPKMHSS, Puthur Pallikkal Padikkal", nameMl: "VPKMHSS പുത്തൂർ പള്ളിക്കൽ പടിക്കൽ" },
+      { name: "Parambil Peedika Town", nameMl: "പറമ്പിൽ പീടിക" }
+    ],
+    reward: "Free Opening Matchday Passes awarded to all shootout champions",
+    rewardMl: "ഷൂട്ട് ഔട്ട് മത്സരത്തിലെ വിജയികൾക്ക് അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ ഉദ്ഘാടന ദിവസത്തെ മത്സരം കാണുവാനുള്ള FREE PASS സമ്മാനിച്ചു.",
+    upcomingNotice: "In the coming days, Udaya Goal Vandi Shootout contests will continue across Peruvallur and surrounding regions.",
+    upcomingNoticeMl: "വരും ദിവസങ്ങളിൽ പെരുവള്ളൂരിലും പരിസര പ്രദേശങ്ങളിലും ഉദയ ഗോൾ വണ്ടി ഷൂട്ട് ഔട്ട് മത്സരം ഉണ്ടായിരിക്കുമെന്ന് സംഘാടകർ അറിയിച്ചു.",
+    gallery: [
+      {
+        id: "goalvandi_vehicle",
+        title: "Official Udaya Goal Vandi Promotional Vehicle",
+        titleMl: "ഔദ്യോഗിക ഉദയ ഗോൾ വണ്ടി വാഹനം",
+        desc: "Customized promotional Thar / Jeep equipped with trophy showcase & Fezco Group branding.",
+        descMl: "ഫെസ്കോ ഗ്രൂപ്പ് സ്പോൺസർ ചെയ്ത ഉദയ ഗോൾ വണ്ടി പ്രചാരണ വാഹനം",
+        filename: "goalvandi_vehicle.jpg",
+        tag: "Promo Vehicle"
+      },
+      {
+        id: "goalvandi_winners",
+        title: "Shootout Champions Awarded Free Match Passes",
+        titleMl: "വിജയികൾക്ക് ഉദ്ഘാടന മത്സര ഫ്രീ പാസ്സ് സമ്മാനിച്ചു",
+        desc: "Winners from school campuses and local centers receiving their official All India Sevens opening day VIP tickets.",
+        descMl: "വിവിധ കേന്ദ്രങ്ങളിലെ വിജയികൾക്ക് ഫ്രീ പാസ്സ് വിതരണം ചെയ്യുന്നു",
+        filename: "goalvandi_winners_collage.jpg",
+        tag: "Champions & Free Passes"
+      },
+      {
+        id: "goalvandi_school",
+        title: "Students Gather at Peruvallur Higher Secondary School",
+        titleMl: "വിദ്യാർത്ഥികളുടെ ആവേശകരമായ ഒത്തുചേരൽ",
+        desc: "Massive turnout of passionate school students cheering on the live kickoff of the Goal Vandi shootout challenge.",
+        descMl: "സ്കൂൾ അങ്കണത്തിൽ വിദ്യാർത്ഥികളുടെ വലിയ ആവേശം",
+        filename: "goalvandi_school_crowd.jpg",
+        tag: "School Tour"
+      },
+      {
+        id: "goalvandi_action",
+        title: "Ground Penalty Shootout Action in Progress",
+        titleMl: "ഷൂട്ട് ഔട്ട് മത്സരം തത്സമയം",
+        desc: "Young talents competing in penalty shootout kicks towards the mini target goalpost.",
+        descMl: "മിനി പോസ്റ്റിലേക്ക് കുട്ടികളുടെ പെനാൽറ്റി ഷോട്ടുകൾ",
+        filename: "goalvandi_shootout_action.jpg",
+        tag: "Ground Action"
+      }
+    ]
+  },
   countdownPosters: [
     {
       days: 3,
