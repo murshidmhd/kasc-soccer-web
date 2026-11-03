@@ -23,7 +23,9 @@ import {
   X,
   Wifi,
   WifiOff,
-  UserCheck
+  UserCheck,
+  Share2,
+  Camera
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { 
@@ -50,6 +52,7 @@ import {
 import { tournamentInfo, openingMatch } from '../data/tournamentData';
 import logoUdaya from '../assets/logo_udaya_transparent.png';
 import logoKasc from '../assets/logo_kasc.png';
+import GoalShareCardModal from './GoalShareCardModal';
 
 export default function AdminDeskSection({ 
   isDarkMode, 
@@ -94,6 +97,12 @@ export default function AdminDeskSection({
     player: '',
     minute: 31,
     text: ''
+  });
+
+  // Goal Share WhatsApp Status Modal State
+  const [goalShareModal, setGoalShareModal] = useState({
+    isOpen: false,
+    goalData: null
   });
 
   // Live ticking interval for the clock inside Admin Desk
@@ -455,6 +464,24 @@ export default function AdminDeskSection({
       return next;
     });
 
+    // If official GOAL is logged, auto-prompt the branded WhatsApp Status Goal Card
+    if (newEvent.type === 'goal') {
+      setGoalShareModal({
+        isOpen: true,
+        goalData: {
+          scorerName: newEvent.player.trim(),
+          minute: newEvent.minute,
+          goalTeam: newEvent.team,
+          scoreHome: matchState.officialScoreHome,
+          scoreAway: matchState.officialScoreAway,
+          homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
+          awayTeamName: 'NEW MALAYA MALABAR FC',
+          matchStatus: matchState.status === 'UPCOMING' ? 'MATCH HIGHLIGHT' : matchState.status,
+          goalText: newEvent.text.trim()
+        }
+      });
+    }
+
     setNewEvent({
       type: 'goal',
       team: 'home',
@@ -464,7 +491,7 @@ export default function AdminDeskSection({
     });
 
     confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
-    setNotification('Official Match Event Added!');
+    setNotification(newEvent.type === 'goal' ? '⚽ Goal Recorded & Status Card Ready!' : 'Official Match Event Added!');
     setTimeout(() => setNotification(''), 2500);
   };
 
@@ -1078,9 +1105,27 @@ export default function AdminDeskSection({
                   <h4 className="text-xs font-black font-sports uppercase tracking-wider text-slate-500">
                     Publish Official Timeline Event
                   </h4>
-                  <span className="text-[10px] font-bold text-slate-400">
-                    Appears instantly on fan match centers
-                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setGoalShareModal({
+                      isOpen: true,
+                      goalData: {
+                        scorerName: newEvent.player || 'Ibrahim Soumahoro',
+                        minute: newEvent.minute || matchState.matchMinute || 24,
+                        goalTeam: newEvent.team,
+                        scoreHome: matchState.officialScoreHome,
+                        scoreAway: matchState.officialScoreAway,
+                        homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
+                        awayTeamName: 'NEW MALAYA MALABAR FC',
+                        matchStatus: matchState.status === 'UPCOMING' ? 'MATCH HIGHLIGHT' : matchState.status,
+                        goalText: newEvent.text || 'Official Goal Highlight'
+                      }
+                    })}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 font-bold text-[11px] border border-amber-500/30 transition active:scale-95"
+                  >
+                    <Camera className="w-3.5 h-3.5" />
+                    <span>Status Card Creator</span>
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -1166,13 +1211,38 @@ export default function AdminDeskSection({
                             <span className="font-bold">{ev.player}</span>
                             <span className="text-slate-500 text-[11px] truncate">({ev.text})</span>
                           </div>
-                          <button
-                            onClick={() => handleDeleteEvent(ev.id)}
-                            className="p-1 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition"
-                            title="Delete Event"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            {ev.type === 'goal' && (
+                              <button
+                                onClick={() => setGoalShareModal({
+                                  isOpen: true,
+                                  goalData: {
+                                    scorerName: ev.player,
+                                    minute: ev.minute,
+                                    goalTeam: ev.team,
+                                    scoreHome: matchState.officialScoreHome,
+                                    scoreAway: matchState.officialScoreAway,
+                                    homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
+                                    awayTeamName: 'NEW MALAYA MALABAR FC',
+                                    matchStatus: matchState.status,
+                                    goalText: ev.text
+                                  }
+                                })}
+                                className="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-[10px] flex items-center gap-1 border border-emerald-200 transition active:scale-95"
+                                title="Generate WhatsApp Status Goal Card"
+                              >
+                                <Share2 className="w-3 h-3" />
+                                <span>Share</span>
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDeleteEvent(ev.id)}
+                              className="p-1 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition"
+                              title="Delete Event"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -1277,6 +1347,21 @@ export default function AdminDeskSection({
           </div>
         </div>
       )}
+
+      {/* Branded 1080x1920 WhatsApp Status / Story Goal Card Modal */}
+      <GoalShareCardModal
+        isOpen={goalShareModal.isOpen}
+        onClose={() => setGoalShareModal({ isOpen: false, goalData: null })}
+        initialGoalData={goalShareModal.goalData || {
+          scoreHome: matchState.officialScoreHome,
+          scoreAway: matchState.officialScoreAway,
+          minute: matchState.matchMinute || 30,
+          homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
+          awayTeamName: 'NEW MALAYA MALABAR FC',
+          matchStatus: matchState.status
+        }}
+        isDarkMode={isDarkMode}
+      />
     </div>
   );
 }

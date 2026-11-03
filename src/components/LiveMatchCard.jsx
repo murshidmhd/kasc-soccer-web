@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { openingMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
+import GoalShareCardModal from './GoalShareCardModal';
 import { 
   getStoredMatchState, 
   submitFanCrowdGoal, 
@@ -38,6 +39,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
   const [toastMessage, setToastMessage] = useState(null);
   const [timelineTab, setTimelineTab] = useState('commentary'); // 'timeline' | 'commentary'
   const [isDemo, setIsDemo] = useState(isDemoModeActive);
+  const [goalShareModal, setGoalShareModal] = useState({ isOpen: false, goalData: null });
 
   // Sync with global custom events
   useEffect(() => {
@@ -247,9 +249,32 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                     {matchState.officialScoreAway}
                   </span>
                 </div>
-                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-bold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span>Ground Referee Score</span>
+                <div className="flex flex-col items-center gap-1">
+                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-bold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Ground Referee Score</span>
+                  </div>
+                  <button
+                    onClick={() => setGoalShareModal({
+                      isOpen: true,
+                      goalData: {
+                        scorerName: matchState.events?.find(e => e.type === 'goal')?.player || 'Match Update',
+                        minute: matchState.matchMinute || 30,
+                        goalTeam: 'home',
+                        scoreHome: matchState.officialScoreHome,
+                        scoreAway: matchState.officialScoreAway,
+                        homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
+                        awayTeamName: 'NEW MALAYA MALABAR FC',
+                        matchStatus: matchState.status,
+                        goalText: 'Official Live Match Score'
+                      }
+                    })}
+                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 text-[10px] font-bold border border-blue-200 transition active:scale-95"
+                    title="Generate WhatsApp Status Card"
+                  >
+                    <Share2 className="w-3 h-3" />
+                    <span>Share Status Card</span>
+                  </button>
                 </div>
               </div>
             ) : (
@@ -454,9 +479,34 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                             ({evt.text})
                           </span>
                         </div>
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                          Official
-                        </span>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {evt.type === 'goal' && (
+                            <button
+                              onClick={() => setGoalShareModal({
+                                isOpen: true,
+                                goalData: {
+                                  scorerName: evt.player,
+                                  minute: evt.minute,
+                                  goalTeam: evt.team || 'home',
+                                  scoreHome: matchState.officialScoreHome,
+                                  scoreAway: matchState.officialScoreAway,
+                                  homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
+                                  awayTeamName: 'NEW MALAYA MALABAR FC',
+                                  matchStatus: matchState.status,
+                                  goalText: evt.text
+                                }
+                              })}
+                              className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-200 transition active:scale-95"
+                              title="Share Goal Status to WhatsApp"
+                            >
+                              <Share2 className="w-3 h-3" />
+                              <span>Share</span>
+                            </button>
+                          )}
+                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                            Official
+                          </span>
+                        </div>
                       </div>
                     ))
                   ) : (
@@ -470,6 +520,21 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           </div>
         )}
       </div>
+
+      {/* Goal Share Status Modal */}
+      <GoalShareCardModal
+        isOpen={goalShareModal.isOpen}
+        onClose={() => setGoalShareModal({ isOpen: false, goalData: null })}
+        initialGoalData={goalShareModal.goalData || {
+          scoreHome: matchState.officialScoreHome,
+          scoreAway: matchState.officialScoreAway,
+          minute: matchState.matchMinute || 30,
+          homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
+          awayTeamName: 'NEW MALAYA MALABAR FC',
+          matchStatus: matchState.status
+        }}
+        isDarkMode={isDarkMode}
+      />
     </section>
   );
 }
