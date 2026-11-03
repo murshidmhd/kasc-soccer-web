@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Sparkles, Calendar, Eye, ZoomIn, X } from 'lucide-react';
+import { Clock, Sparkles, ChevronLeft, ChevronRight, Eye, ZoomIn, X } from 'lucide-react';
 import { tournamentInfo } from '../data/tournamentData';
-import countdownSeason7 from '../assets/promo/countdown_6days.jpg';
+import countdown3 from '../assets/promo/countdown_3days.jpg';
+import countdown4 from '../assets/promo/countdown_4days.jpg';
+import countdown5 from '../assets/promo/countdown_5days.jpg';
+import countdown6 from '../assets/promo/countdown_6days.jpg';
+
+const COUNTDOWN_SLIDES = [
+  { id: 3, days: '03 DAYS TO GO', titleMl: '03 ദിനങ്ങൾ ബാക്കി', img: countdown3, date: '03 Nov 2026', tag: 'TODAY' },
+  { id: 4, days: '04 DAYS TO GO', titleMl: '04 ദിനങ്ങൾ ബാക്കി', img: countdown4, date: '02 Nov 2026', tag: 'SEASON 7' },
+  { id: 5, days: '05 DAYS TO GO', titleMl: '05 ദിനങ്ങൾ ബാക്കി', img: countdown5, date: '01 Nov 2026', tag: 'SEASON 7' },
+  { id: 6, days: '06 DAYS TO GO', titleMl: '06 ദിനങ്ങൾ ബാക്കി', img: countdown6, date: '31 Oct 2026', tag: 'SEASON 7' },
+];
 
 export default function Countdown({ lang, isDarkMode }) {
   const [timeLeft, setTimeLeft] = useState({
@@ -11,6 +21,8 @@ export default function Countdown({ lang, isDarkMode }) {
     seconds: 0
   });
 
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const [selectedPoster, setSelectedPoster] = useState(null);
 
   // Live countdown clock ticker - single source of truth for time remaining
@@ -28,7 +40,7 @@ export default function Countdown({ lang, isDarkMode }) {
 
       const days = Math.floor(difference / (1000 * 60 * 60 * 24));
       const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const minutes = Math.floor((difference % (1000 * 60)) / (1000 * 60));
       const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
       setTimeLeft({ days, hours, minutes, seconds });
@@ -39,9 +51,17 @@ export default function Countdown({ lang, isDarkMode }) {
     return () => clearInterval(interval);
   }, []);
 
-  const daysLabel = timeLeft.days === 1
-    ? (lang === 'ml' ? '01 ദിനം ബാക്കി' : '01 DAY TO GO')
-    : (lang === 'ml' ? `${String(timeLeft.days).padStart(2, '0')} ദിനങ്ങൾ ബാക്കി` : `${String(timeLeft.days).padStart(2, '0')} DAYS TO GO`);
+  // Automatic slide rotation every 3.8 seconds
+  useEffect(() => {
+    if (isPaused) return;
+    const slideTimer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % COUNTDOWN_SLIDES.length);
+    }, 3800);
+
+    return () => clearInterval(slideTimer);
+  }, [isPaused]);
+
+  const currentSlide = COUNTDOWN_SLIDES[activeSlide];
 
   return (
     <div className={`w-full max-w-4xl mx-auto rounded-3xl p-4 sm:p-6 my-6 border transition-all shadow-sm ${
@@ -121,37 +141,41 @@ export default function Countdown({ lang, isDarkMode }) {
           </div>
         </div>
 
-        {/* Right 5 cols: Current Season 7 Poster */}
-        <div className="md:col-span-5 flex flex-col items-center">
+        {/* Right 5 cols: Official Season 7 Countdown Poster Carousel */}
+        <div 
+          className="md:col-span-5 flex flex-col items-center"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
           <div className="w-full relative group">
             {/* Top Badge */}
             <div className="flex items-center justify-between text-xs mb-1.5 px-1">
               <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
                 <Sparkles className="w-3 h-3 text-amber-600" />
-                <span>{lang === 'ml' ? 'ഔദ്യോഗിക സീസൺ 7 പോസ്റ്റർ' : 'Official Season 7 Poster'}</span>
+                <span>{lang === 'ml' ? 'ഔദ്യോഗിക പോസ്റ്റർ പരമ്പര' : 'Official Countdown Series'}</span>
               </span>
               <span className="text-[10px] text-blue-700 font-mono font-bold">
-                Season 7
+                {activeSlide + 1} / {COUNTDOWN_SLIDES.length}
               </span>
             </div>
 
             {/* Poster Frame (Strict 3:4 Sports Poster Format) */}
             <div 
-              onClick={() => setSelectedPoster(countdownSeason7)}
+              onClick={() => setSelectedPoster(currentSlide.img)}
               className="relative w-full max-w-[240px] sm:max-w-[260px] mx-auto aspect-[3/4] rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-700 hover:border-blue-500 shadow-md cursor-pointer transition-all duration-300 bg-slate-950 group"
             >
               <img 
-                src={countdownSeason7} 
-                alt="Season 7 Official Tournament Poster"
+                src={currentSlide.img} 
+                alt={currentSlide.days}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
 
-              {/* Floating Badge on Image driven by single source of truth countdown */}
+              {/* Floating Badge on Image */}
               <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl text-white text-xs border border-white/20">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className="w-2 h-2 rounded-full bg-red-500 animate-ping shrink-0"></span>
                   <span className="font-sports font-black tracking-wider text-amber-300">
-                    {daysLabel}
+                    {lang === 'ml' ? currentSlide.titleMl : currentSlide.days}
                   </span>
                 </div>
                 <div className="flex items-center gap-1 text-[10px] text-slate-300 shrink-0">
@@ -159,6 +183,44 @@ export default function Countdown({ lang, isDarkMode }) {
                   <span>3:4</span>
                 </div>
               </div>
+
+              {/* Previous / Next Arrow Controls */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveSlide((prev) => (prev - 1 + COUNTDOWN_SLIDES.length) % COUNTDOWN_SLIDES.length);
+                }}
+                className="absolute left-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-black/70 hover:bg-black text-white transition opacity-0 group-hover:opacity-100 shadow-md"
+                title="Previous Slide"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveSlide((prev) => (prev + 1) % COUNTDOWN_SLIDES.length);
+                }}
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-black/70 hover:bg-black text-white transition opacity-0 group-hover:opacity-100 shadow-md"
+                title="Next Slide"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Indicator Dots */}
+            <div className="flex items-center justify-center gap-1.5 mt-2">
+              {COUNTDOWN_SLIDES.map((slide, idx) => (
+                <button
+                  key={slide.id}
+                  onClick={() => setActiveSlide(idx)}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    idx === activeSlide 
+                      ? 'w-6 bg-blue-600' 
+                      : 'w-2 bg-slate-300 hover:bg-slate-400'
+                  }`}
+                  title={slide.days}
+                />
+              ))}
             </div>
           </div>
         </div>

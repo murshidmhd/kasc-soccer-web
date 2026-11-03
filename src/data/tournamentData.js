@@ -660,6 +660,36 @@ export const promoData = {
   },
   countdownPosters: [
     {
+      days: 3,
+      title: "3 Days To Go",
+      titleMl: "ഇനി 03 ദിനങ്ങൾ മാത്രം",
+      subtitle: "Team Huddle Floodlights & Full Crowd Stadium Edition",
+      dates: "2026 Nov 06 - Dec 06",
+      venue: "Peruvallur Panchayath Stadium, Parambil Peedika",
+      filename: "countdown_3days.jpg",
+      highlight: "Team Unity Floodlight Edition"
+    },
+    {
+      days: 4,
+      title: "4 Days To Go",
+      titleMl: "ഇനി 04 ദിനങ്ങൾ മാത്രം",
+      subtitle: "Purple Fortress & Star Striker #10 Edition",
+      dates: "2026 Nov 06 - Dec 06",
+      venue: "Peruvallur Panchayath Stadium, Parambil Peedika",
+      filename: "countdown_4days.jpg",
+      highlight: "Purple Power Striker Edition"
+    },
+    {
+      days: 5,
+      title: "5 Days To Go",
+      titleMl: "ഇനി 05 ദിനങ്ങൾ മാത്രം",
+      subtitle: "The Ultimate Battle Begins Sunset Inferno Edition",
+      dates: "2026 Nov 06 - Dec 06",
+      venue: "Peruvallur Panchayath Stadium, Parambil Peedika",
+      filename: "countdown_5days.jpg",
+      highlight: "The Ultimate Battle Begins"
+    },
+    {
       days: 6,
       title: "6 Days To Go",
       titleMl: "ഇനി 06 ദിനങ്ങൾ മാത്രം",
