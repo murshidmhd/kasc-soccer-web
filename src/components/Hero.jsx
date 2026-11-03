@@ -14,8 +14,21 @@ import countdown3 from '../assets/promo/countdown_3days.jpg';
 import countdown4 from '../assets/promo/countdown_4days.jpg';
 import countdown5 from '../assets/promo/countdown_5days.jpg';
 import countdown6 from '../assets/promo/countdown_6days.jpg';
+import countdown8 from '../assets/promo/countdown_8days.jpg';
+import countdown9 from '../assets/promo/countdown_9days.jpg';
+import countdown10 from '../assets/promo/countdown_10days.jpg';
+import countdown11 from '../assets/promo/countdown_11days.jpg';
 
-const AMBIENT_COUNTDOWN_POSTERS = [countdown3, countdown4, countdown5, countdown6];
+const AMBIENT_COUNTDOWN_POSTERS = [
+  countdown3,
+  countdown4,
+  countdown5,
+  countdown6,
+  countdown8,
+  countdown9,
+  countdown10,
+  countdown11
+];
 
 export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketModal }) {
   const [activeBannerTab, setActiveBannerTab] = React.useState('action');

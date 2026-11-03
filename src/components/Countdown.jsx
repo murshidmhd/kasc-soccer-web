@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Sparkles, ChevronLeft, ChevronRight, Eye, ZoomIn, X } from 'lucide-react';
+import { Clock, Sparkles, ChevronLeft, ChevronRight, Eye, ZoomIn, X, LayoutGrid, Layers } from 'lucide-react';
 import { tournamentInfo } from '../data/tournamentData';
 import countdown3 from '../assets/promo/countdown_3days.jpg';
 import countdown4 from '../assets/promo/countdown_4days.jpg';
 import countdown5 from '../assets/promo/countdown_5days.jpg';
 import countdown6 from '../assets/promo/countdown_6days.jpg';
+import countdown8 from '../assets/promo/countdown_8days.jpg';
+import countdown9 from '../assets/promo/countdown_9days.jpg';
+import countdown10 from '../assets/promo/countdown_10days.jpg';
+import countdown11 from '../assets/promo/countdown_11days.jpg';
 
 const COUNTDOWN_SLIDES = [
-  { id: 3, days: '03 DAYS TO GO', titleMl: '03 ദിനങ്ങൾ ബാക്കി', img: countdown3, date: '03 Nov 2026', tag: 'TODAY' },
-  { id: 4, days: '04 DAYS TO GO', titleMl: '04 ദിനങ്ങൾ ബാക്കി', img: countdown4, date: '02 Nov 2026', tag: 'SEASON 7' },
-  { id: 5, days: '05 DAYS TO GO', titleMl: '05 ദിനങ്ങൾ ബാക്കി', img: countdown5, date: '01 Nov 2026', tag: 'SEASON 7' },
-  { id: 6, days: '06 DAYS TO GO', titleMl: '06 ദിനങ്ങൾ ബാക്കി', img: countdown6, date: '31 Oct 2026', tag: 'SEASON 7' },
+  { id: 3, days: '03 DAYS TO GO', titleMl: '03 ദിനങ്ങൾ ബാക്കി', img: countdown3, date: '03 Nov 2026', tag: 'TODAY', highlight: 'Team Unity Floodlights' },
+  { id: 4, days: '04 DAYS TO GO', titleMl: '04 ദിനങ്ങൾ ബാക്കി', img: countdown4, date: '02 Nov 2026', tag: 'SEASON 7', highlight: 'Purple Power Striker' },
+  { id: 5, days: '05 DAYS TO GO', titleMl: '05 ദിനങ്ങൾ ബാക്കി', img: countdown5, date: '01 Nov 2026', tag: 'SEASON 7', highlight: 'Ultimate Battle Inferno' },
+  { id: 6, days: '06 DAYS TO GO', titleMl: '06 ദിനങ്ങൾ ബാക്കി', img: countdown6, date: '31 Oct 2026', tag: 'SEASON 7', highlight: 'Panchayath Office Edition' },
+  { id: 8, days: '08 DAYS TO GO', titleMl: '08 ദിനങ്ങൾ ബാക്കി', img: countdown8, date: '29 Oct 2026', tag: 'SEASON 7', highlight: 'Festiwell Jersey #10' },
+  { id: 9, days: '09 DAYS TO GO', titleMl: '09 ദിനങ്ങൾ ബാക്കി', img: countdown9, date: '28 Oct 2026', tag: 'SEASON 7', highlight: 'Inferno Gate Edition' },
+  { id: 10, days: '10 DAYS TO GO', titleMl: '10 ദിനങ്ങൾ ബാക്കി', img: countdown10, date: '27 Oct 2026', tag: 'SEASON 7', highlight: 'Fortress Defense' },
+  { id: 11, days: '11 DAYS TO GO', titleMl: '11 ദിനങ്ങൾ ബാക്കി', img: countdown11, date: '26 Oct 2026', tag: 'SEASON 7', highlight: 'Club Colors Sunset' },
 ];
 
 export default function Countdown({ lang, isDarkMode }) {
@@ -24,6 +32,7 @@ export default function Countdown({ lang, isDarkMode }) {
   const [activeSlide, setActiveSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [selectedPoster, setSelectedPoster] = useState(null);
+  const [isAllPostersOpen, setIsAllPostersOpen] = useState(false);
 
   // Live countdown clock ticker - single source of truth for time remaining
   useEffect(() => {
@@ -51,12 +60,12 @@ export default function Countdown({ lang, isDarkMode }) {
     return () => clearInterval(interval);
   }, []);
 
-  // Automatic slide rotation every 3.8 seconds
+  // Automatic slide rotation every 4 seconds
   useEffect(() => {
     if (isPaused) return;
     const slideTimer = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % COUNTDOWN_SLIDES.length);
-    }, 3800);
+    }, 4000);
 
     return () => clearInterval(slideTimer);
   }, [isPaused]);
@@ -139,6 +148,20 @@ export default function Countdown({ lang, isDarkMode }) {
                 : 'Starts Friday, 06 November 2026 at 8:00 PM IST'}
             </span>
           </div>
+
+          {/* Quick Button to View All 8 Posters */}
+          <div className="pt-2 flex justify-center md:justify-start">
+            <button
+              onClick={() => setIsAllPostersOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-slate-800 dark:hover:bg-slate-700 border border-blue-200 dark:border-slate-600 text-blue-800 dark:text-blue-300 text-xs font-bold transition active:scale-95 shadow-2xs"
+            >
+              <LayoutGrid className="w-3.5 h-3.5 text-blue-600" />
+              <span>{lang === 'ml' ? 'എല്ലാ പോസ്റ്ററുകളും കാണുക (8 Posters)' : 'View All 8 Posters'}</span>
+              <span className="px-1.5 py-0.2 rounded-full bg-blue-600 text-white text-[10px] font-mono ml-0.5">
+                {COUNTDOWN_SLIDES.length}
+              </span>
+            </button>
+          </div>
         </div>
 
         {/* Right 5 cols: Official Season 7 Countdown Poster Carousel */}
@@ -207,24 +230,97 @@ export default function Countdown({ lang, isDarkMode }) {
               </button>
             </div>
 
-            {/* Indicator Dots */}
-            <div className="flex items-center justify-center gap-1.5 mt-2">
+            {/* Horizontal Mini-Thumbnail Selector for Instant Jump to Any Poster */}
+            <div className="flex items-center justify-center gap-1 mt-2.5 overflow-x-auto py-1 px-0.5 no-scrollbar max-w-full">
               {COUNTDOWN_SLIDES.map((slide, idx) => (
                 <button
                   key={slide.id}
                   onClick={() => setActiveSlide(idx)}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                  className={`px-2 py-0.5 rounded-lg text-[10px] font-mono font-black transition-all ${
                     idx === activeSlide 
-                      ? 'w-6 bg-blue-600' 
-                      : 'w-2 bg-slate-300 hover:bg-slate-400'
+                      ? 'bg-blue-600 text-white shadow-xs scale-105' 
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
                   }`}
-                  title={slide.days}
-                />
+                  title={`${slide.days} • ${slide.highlight}`}
+                >
+                  #{slide.id}d
+                </button>
               ))}
             </div>
           </div>
         </div>
       </div>
+
+      {/* ALL POSTERS GRID MODAL */}
+      {isAllPostersOpen && (
+        <div 
+          onClick={() => setIsAllPostersOpen(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-fadeIn"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-4xl w-full bg-slate-900 text-white rounded-3xl overflow-hidden border border-slate-700 shadow-2xl flex flex-col max-h-[90vh]"
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-blue-600/30 border border-blue-500/40 text-blue-400">
+                  <Layers className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-sports font-black text-base sm:text-lg uppercase tracking-wider text-white">
+                    {lang === 'ml' ? 'ഔദ്യോഗിക കൗണ്ട്ഡൗൺ പോസ്റ്ററുകൾ' : 'OFFICIAL SEASON 7 COUNTDOWN POSTERS'}
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {lang === 'ml' ? '3 മുതൽ 11 വരെയുള്ള മുഴുവൻ പോസ്റ്ററുകൾ • ടാപ്പ് ചെയ്ത് വലുതായി കാണാം' : 'All 8 official creatives (Days 03 to 11) • Tap to view full size'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsAllPostersOpen(false)}
+                className="p-2 rounded-xl bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Grid of All 8 Posters */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                {COUNTDOWN_SLIDES.map((slide, idx) => (
+                  <div
+                    key={slide.id}
+                    onClick={() => {
+                      setSelectedPoster(slide.img);
+                      setActiveSlide(idx);
+                    }}
+                    className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 cursor-pointer shadow-md hover:border-blue-400 transition-all hover:scale-102"
+                  >
+                    <img 
+                      src={slide.img} 
+                      alt={slide.days}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    />
+                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/70 text-[10px] font-black font-sports text-amber-300 backdrop-blur-xs">
+                      #{slide.id} Days
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-2.5 text-white">
+                      <span className="text-[10px] font-mono text-slate-300">{slide.date}</span>
+                      <span className="text-xs font-bold leading-tight truncate">{slide.highlight}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-3 bg-slate-950 border-t border-slate-800 text-center text-xs text-slate-400">
+              UDAYA Parambil Peedika & KASC Peruvallur • SFA All India Sevens Season 7
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Poster Full Size Lightbox Modal (3:4 Poster Lightbox) */}
       {selectedPoster && (
