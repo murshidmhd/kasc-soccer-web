@@ -236,6 +236,13 @@ export default function PlayerOfTheMatchVote({ lang, isDarkMode }) {
           </button>
         </div>
       )}
+
+      {/* Fan Entertainment Disclaimer */}
+      <p className="text-[11px] text-slate-500 pt-3 text-center border-t border-slate-100">
+        {lang === 'ml'
+          ? 'ℹ️ ഫാൻ വിനോദാർത്ഥം മാത്രമുള്ള പോൾ ആണിത് (ഒരു ഉപകരണത്തിൽ ഒരു വോട്ട്). ഒഫീഷ്യൽ മാൻ ഓഫ് ദി മാച്ച് പുരസ്കാരം ടൂർണ്ണമെന്റ് ടെക്നിക്കൽ കമ്മിറ്റി നേരിട്ട് തെരഞ്ഞെടുക്കുന്നു.'
+          : 'ℹ️ Fan voting is strictly for community entertainment (1 vote per device). The official Player of the Match trophy is awarded by the Tournament Technical Committee.'}
+      </p>
     </div>
   );
 }

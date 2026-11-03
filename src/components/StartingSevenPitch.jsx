@@ -39,7 +39,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         pos: 'GK', 
         country: '🇮🇳 India', 
         rating: 7.8,
-        stats: { saves: 4, punches: 2, passAcc: '78%', ratingDesc: 'Solid shot-stopping performance' },
+        stats: { saves: 4, catches: 2, goalsConceded: 1, ratingDesc: 'Key 1st-half penalty dive save' },
         desc: 'Shot-stopper, Penalty Specialist' 
       },
       { 
@@ -50,7 +50,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         country: '🇮🇳 Malappuram', 
         rating: 8.6,
         goals: 1,
-        stats: { goals: 1, interceptions: 5, clearances: 4, passAcc: '84%', ratingDesc: 'Scored 24\' bullet volley goal & led defense' },
+        stats: { goals: 1, clearances: 5, cards: 'None', ratingDesc: 'Scored 24\' bullet volley goal & led defense' },
         desc: 'Vice Captain, Header threat', 
         captain: false 
       },
@@ -61,7 +61,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         pos: 'RB', 
         country: '🇮🇳 Calicut', 
         rating: 7.3,
-        stats: { tackles: 4, interceptions: 2, passAcc: '81%', ratingDesc: 'Pacy tackling on the right flank' },
+        stats: { blocks: 4, tackles: 3, cards: 'None', ratingDesc: 'Pacy tackling on the right flank' },
         desc: 'Pacy tackling defender' 
       },
       { 
@@ -72,7 +72,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         country: '🇮🇳 Malappuram', 
         rating: 8.8,
         assists: 1,
-        stats: { assists: 1, keyPasses: 4, passAcc: '91%', touches: 48, ratingDesc: 'Captain playmaker, dictated match tempo' },
+        stats: { assists: 1, keyPasses: 4, cards: 'None', ratingDesc: 'Captain playmaker, dictated match tempo' },
         desc: 'Captain & Midfield Playmaker', 
         captain: true 
       },
@@ -83,7 +83,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         pos: 'AM', 
         country: '🇮🇳 Wayanad', 
         rating: 7.5,
-        stats: { dribbles: 3, keyPasses: 2, passAcc: '82%', ratingDesc: 'Constant creative movement behind strikers' },
+        stats: { shots: 2, dribbles: 3, cards: 'None', ratingDesc: 'Constant creative movement behind strikers' },
         desc: 'Through-ball specialist' 
       },
       { 
@@ -96,7 +96,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         goals: 1,
         assists: 1,
         isMvp: true,
-        stats: { goals: 1, assists: 1, shots: 4, onTarget: 3, ratingDesc: 'Match MVP • Clinical 12\' chip & assisted goal' },
+        stats: { goals: 1, assists: 1, shots: 4, ratingDesc: 'Match MVP • Clinical 12\' chip & assisted goal' },
         desc: 'Marquee International Striker' 
       },
       { 
@@ -106,7 +106,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         pos: 'CF', 
         country: '🇮🇳 Malappuram', 
         rating: 7.9,
-        stats: { shots: 3, dribbles: 4, passAcc: '86%', ratingDesc: 'Rapid acceleration, hit the crossbar' },
+        stats: { shots: 3, dribbles: 4, cards: 'None', ratingDesc: 'Rapid acceleration, hit the crossbar' },
         desc: 'Rapid dribbler, clinical finisher' 
       }
     ],
@@ -134,7 +134,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         pos: 'GK', 
         country: '🇮🇳 Kozhikode', 
         rating: 6.9,
-        stats: { saves: 5, punches: 1, passAcc: '70%', ratingDesc: 'Denied two close-range shots' },
+        stats: { saves: 5, punches: 2, goalsConceded: 2, ratingDesc: 'Denied two goal-bound strikes' },
         desc: 'Agile Reflex Specialist' 
       },
       { 
@@ -144,7 +144,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         pos: 'CB', 
         country: '🇮🇳 Malappuram', 
         rating: 7.1,
-        stats: { aerialDuels: 4, blocks: 3, passAcc: '79%', ratingDesc: 'Strong in air duels' },
+        stats: { clearances: 4, blocks: 3, cards: 'None', ratingDesc: 'Aerial strength in box' },
         desc: 'Aerial Dominator' 
       },
       { 
@@ -154,7 +154,8 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         pos: 'SW', 
         country: '🇮🇳 Wayanad', 
         rating: 7.6,
-        stats: { clearances: 6, tackles: 3, passAcc: '85%', ratingDesc: 'Solid last-man defensive cover' },
+        goals: 1,
+        stats: { goals: 1, clearances: 5, cards: 'None', ratingDesc: 'Equalizer through penalty rebound' },
         desc: 'Defensive Anchor' 
       },
       { 
@@ -164,7 +165,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         pos: 'CM', 
         country: '🇮🇳 Kozhikode', 
         rating: 7.4,
-        stats: { interceptions: 3, tackles: 4, passAcc: '80%', ratingDesc: 'High workrate across pitch' },
+        stats: { tackles: 3, recoveries: 4, cards: 'None', ratingDesc: 'Box-to-box midfield engine' },
         desc: 'High stamina workhorse' 
       },
       { 
@@ -174,8 +175,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         pos: 'AM', 
         country: '🇮🇳 Malappuram', 
         rating: 8.4,
-        goals: 1,
-        stats: { goals: 1, freekicks: 3, passAcc: '89%', ratingDesc: 'Scored New Malaya goal from set-piece' },
+        stats: { freekicks: 3, shots: 3, cards: 'None', ratingDesc: 'Set-piece specialist & captain' },
         desc: 'Captain & freekick expert', 
         captain: true 
       },
@@ -186,7 +186,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         pos: 'WF', 
         country: '🇮🇳 Kannur', 
         rating: 7.2,
-        stats: { crosses: 4, dribbles: 3, passAcc: '77%', ratingDesc: 'Pacey runs on left flank' },
+        stats: { crosses: 4, sprints: 6, cards: 'None', ratingDesc: 'High pace winger counter' },
         desc: 'Sprint speed 32 km/h' 
       },
       { 
@@ -197,7 +197,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         country: '🇳🇬 Nigeria', 
         rating: 7.7,
         assists: 1,
-        stats: { assists: 1, shots: 3, onTarget: 2, ratingDesc: 'Target man holding up play' },
+        stats: { assists: 1, shots: 3, cards: 'None', ratingDesc: 'Physical striker holding ball' },
         desc: 'Power striker, Target Man' 
       }
     ],
@@ -243,15 +243,15 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
               <Sparkles className="w-3 h-3 text-blue-600" />
               <span>Google Sports Match Center</span>
             </span>
-            <span className="text-xs text-slate-500 font-bold">Live Player Ratings & Lineup</span>
+            <span className="text-xs text-slate-500 font-bold">Lineup & Fan Community Ratings</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black font-sports uppercase tracking-wider text-slate-950 mt-1">
-            {lang === 'ml' ? 'ലൈനപ്പും പ്ലെയർ റേറ്റിംഗും' : 'STARTING 7 & PLAYER RATINGS'}
+            {lang === 'ml' ? 'ലൈനപ്പും ഫാൻ കമ്മ്യൂണിറ്റി റേറ്റിംഗും' : 'STARTING 7 & FAN COMMUNITY RATINGS'}
           </h3>
           <p className="text-xs text-slate-500">
             {lang === 'ml' 
-              ? 'ഗൂഗിൾ മാച്ച് സെന്റർ ശൈലിയിൽ ഓരോ കളിക്കാരന്റെയും ലൈവ് റേറ്റിംഗും പിച്ചിലെ പൊസിഷനും' 
-              : 'Google Sports style live player performance ratings, match stats, and tactical turf formation'}
+              ? 'ഫാൻ വോട്ടുകളുടെയും ടൂർണ്ണമെന്റ് കമ്മിറ്റിയുടെയും നിരീക്ഷണ റേറ്റിംഗും പിച്ചിലെ ഒഫീഷ്യൽ പൊസിഷനും' 
+              : 'Fan community evaluations, tournament committee player ratings & official starting lineup'}
           </p>
         </div>
 
@@ -278,6 +278,21 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Village Sevens Authenticity Notice */}
+      <div className="p-2.5 rounded-2xl bg-blue-50/80 border border-blue-200/60 text-blue-900 text-xs flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 font-medium">
+          <Info className="w-4 h-4 text-blue-600 shrink-0" />
+          <span>
+            {lang === 'ml'
+              ? 'റേറ്റിംഗുകൾ ഫാൻ വോട്ടുകളുടെയും ടൂർണ്ണമെന്റ് കമ്മിറ്റിയുടെയും വിലയിരുത്തലാണ്. യഥാർത്ഥ മാച്ച് റെക്കോർഡുകൾ (ഗോളുകൾ, കാർഡുകൾ, സബ്‌സ്റ്റിറ്റ്യൂഷനുകൾ) ഒഫീഷ്യൽ റഫറി ഡെസ്‌ക് രേഖപ്പെടുത്തുന്നു.'
+              : 'Ratings reflect fan community votes & match observation. Official match facts (goals, assists, cards) are verified by the referee desk.'}
+          </span>
+        </div>
+        <span className="px-2 py-0.5 rounded-full bg-blue-200 text-blue-950 font-bold text-[9px] uppercase tracking-wider shrink-0">
+          Official Desk
+        </span>
       </div>
 
       {/* Team Selector & Overall Team Rating Bar */}
@@ -525,14 +540,14 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
               </div>
             </div>
 
-            {/* Google Rating Big Badge */}
+            {/* Fan Rating Big Badge */}
             <div className="flex items-center gap-3">
               <div className="text-right">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
-                  Google Rating
+                  Fan Rating
                 </span>
                 <span className={`inline-block px-3 py-1 rounded-xl font-mono font-black text-base sm:text-lg mt-0.5 ${getRatingBadgeStyle(activePlayer.rating, activePlayer.isMvp)}`}>
-                  {activePlayer.rating.toFixed(1)} <span className="text-[11px] font-normal opacity-80">/10</span>
+                  ★ {activePlayer.rating.toFixed(1)} <span className="text-[11px] font-normal opacity-80">/10</span>
                 </span>
               </div>
 
@@ -548,8 +563,10 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
           {/* Player Match Stats Breakdown */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
             <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700">
-              <span className="text-[10px] text-slate-400 block font-bold">Pass Accuracy</span>
-              <span className="text-sm font-black font-mono text-emerald-400">{activePlayer.stats?.passAcc || '85%'}</span>
+              <span className="text-[10px] text-slate-400 block font-bold">Ground Action</span>
+              <span className="text-sm font-black font-mono text-emerald-400">
+                {activePlayer.pos === 'GK' ? `${activePlayer.stats?.saves || 4} Saves` : `${activePlayer.stats?.shots || 3} Shots on Target`}
+              </span>
             </div>
             <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700">
               <span className="text-[10px] text-slate-400 block font-bold">Goals & Assists</span>
@@ -562,14 +579,14 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
               <span className="text-xs font-bold text-white truncate block">{activePlayer.desc}</span>
             </div>
             <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700">
-              <span className="text-[10px] text-slate-400 block font-bold">Match Minutes</span>
-              <span className="text-sm font-black font-mono text-blue-400">30' (Full 1st Half)</span>
+              <span className="text-[10px] text-slate-400 block font-bold">Match Period</span>
+              <span className="text-sm font-black font-mono text-blue-400">30' Active</span>
             </div>
           </div>
 
           {/* Performance Summary Text */}
           <p className="text-xs text-slate-300 bg-slate-800/50 p-2.5 rounded-xl border border-slate-700/60 leading-relaxed">
-            📝 <strong>Analyst Note:</strong> {activePlayer.stats?.ratingDesc || activePlayer.desc}
+            📝 <strong>Committee Review:</strong> {activePlayer.stats?.ratingDesc || activePlayer.desc}
           </p>
 
           {/* Live Fan Upvote Button */}
@@ -586,7 +603,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
             </button>
 
             <span className="text-[11px] text-slate-400 font-medium">
-              SFA Ground Scorer Desk Verified
+              Ground Verified Lineup
             </span>
           </div>
         </div>

@@ -1,13 +1,17 @@
-// Match State and Anti-Spam Rate Limiter for KASC Sevens
+// Match State, Offline Queue, Scorer Redundancy, and Anti-Spam Rate Limiter for KASC Sevens
 
 const MATCH_STORAGE_KEY = 'kasc_official_match_state_v2';
+const MATCH_HISTORY_KEY = 'kasc_official_match_history_v1';
+const OFFLINE_QUEUE_KEY = 'kasc_offline_event_queue_v1';
+const SCORER_ROLE_KEY = 'kasc_scorer_active_role';
 const USER_LAST_REPORT_KEY = 'kasc_user_last_report_ts';
 const USER_REPORT_COUNT_KEY = 'kasc_user_report_count';
 const ADMIN_AUTH_KEY = 'kasc_admin_session_auth';
 
-export const COOLDOWN_SECONDS = 45;
-export const MAX_REPORTS_PER_USER = 5;
-export const DEFAULT_ADMIN_PIN = '7012'; // Default Committee PIN
+export const COOLDOWN_SECONDS = 60; // 60s Anti-Spam for crowd reports
+export const MAX_REPORTS_PER_USER = 3; // Strict 3 reports max per device
+export const DEFAULT_ADMIN_PIN = '7012'; // Default Primary Scorer PIN
+export const BACKUP_ADMIN_PIN = '2026';  // Standby Backup Scorer PIN
 
 // Kerala Sevens Football: 30 minutes + 30 minutes = 60 minutes full match
 export const SEVENS_HALF_MINUTES = 30;
@@ -77,9 +81,125 @@ export function getStoredMatchState() {
   }
 }
 
-// Save official state to localStorage and trigger CustomEvent
-export function saveOfficialMatchState(newState) {
+// History Stack for Scorer Undo safety
+export function getMatchHistory() {
   try {
+    const raw = localStorage.getItem(MATCH_HISTORY_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+export function pushMatchHistory(state) {
+  try {
+    const history = getMatchHistory();
+    // Keep max 10 states for undo
+    const updated = [JSON.parse(JSON.stringify(state)), ...history].slice(0, 10);
+    localStorage.setItem(MATCH_HISTORY_KEY, JSON.stringify(updated));
+  } catch (e) {
+    console.error('Failed to push match history', e);
+  }
+}
+
+export function canUndoOfficialMatchAction() {
+  const history = getMatchHistory();
+  return history.length > 0;
+}
+
+export function undoLastOfficialMatchAction() {
+  try {
+    const history = getMatchHistory();
+    if (!history || history.length === 0) {
+      return { success: false, message: 'തിരിച്ചെടുക്കാൻ മാറ്റങ്ങളൊന്നുമില്ല (No actions to undo).' };
+    }
+    const previousState = history[0];
+    const remainingHistory = history.slice(1);
+    localStorage.setItem(MATCH_HISTORY_KEY, JSON.stringify(remainingHistory));
+    localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(previousState));
+    window.dispatchEvent(new CustomEvent('kasc_match_state_updated', { detail: previousState }));
+    return { success: true, restoredState: previousState, remainingCount: remainingHistory.length };
+  } catch (e) {
+    console.error('Failed to undo match action', e);
+    return { success: false, message: 'Undo action failed.' };
+  }
+}
+
+// Offline Event Queue for Ground Scorer Connectivity Drops
+export function getOfflineQueue() {
+  try {
+    const raw = localStorage.getItem(OFFLINE_QUEUE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+export function queueOfflineAction(action) {
+  try {
+    const queue = getOfflineQueue();
+    const item = {
+      id: `offline-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      timestamp: Date.now(),
+      action
+    };
+    const updated = [...queue, item];
+    localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent('kasc_offline_queue_changed', { detail: updated }));
+    return item;
+  } catch (e) {
+    console.error('Failed to queue offline action', e);
+    return null;
+  }
+}
+
+export function clearOfflineQueue() {
+  localStorage.removeItem(OFFLINE_QUEUE_KEY);
+  window.dispatchEvent(new CustomEvent('kasc_offline_queue_changed', { detail: [] }));
+}
+
+export function getOfflineQueueCount() {
+  return getOfflineQueue().length;
+}
+
+// Scorer Handover & Role Management
+export function verifyAdminPin(pin) {
+  const clean = (pin || '').trim();
+  if (clean === DEFAULT_ADMIN_PIN) {
+    return { isValid: true, role: 'PRIMARY', label: 'Primary Ground Scorer (പ്രധാന സ്കോറർ)' };
+  }
+  if (clean === BACKUP_ADMIN_PIN) {
+    return { isValid: true, role: 'BACKUP', label: 'Standby Backup Scorer (ബാക്കപ്പ് സ്കോറർ)' };
+  }
+  return { isValid: false, role: null, label: null };
+}
+
+export function getActiveScorerInfo() {
+  try {
+    const raw = localStorage.getItem(SCORER_ROLE_KEY);
+    if (!raw) return { role: 'PRIMARY', label: 'Primary Ground Scorer (7012)' };
+    return JSON.parse(raw);
+  } catch (e) {
+    return { role: 'PRIMARY', label: 'Primary Ground Scorer (7012)' };
+  }
+}
+
+export function setActiveScorerInfo(info) {
+  try {
+    localStorage.setItem(SCORER_ROLE_KEY, JSON.stringify(info));
+    window.dispatchEvent(new CustomEvent('kasc_scorer_role_changed', { detail: info }));
+  } catch (e) {
+    console.error('Failed to set active scorer', e);
+  }
+}
+
+// Save official state to localStorage and trigger CustomEvent
+export function saveOfficialMatchState(newState, skipHistory = false) {
+  try {
+    if (!skipHistory) {
+      const current = getStoredMatchState();
+      pushMatchHistory(current);
+    }
     const updated = {
       ...newState,
       isVerified: true,
@@ -191,7 +311,7 @@ export function submitFanCrowdGoal(team) {
     cooldownSeconds: COOLDOWN_SECONDS,
     reportsCount: newCount,
     maxReports: MAX_REPORTS_PER_USER,
-    message: `Thank you! Your goal report for ${team === 'home' ? 'UDAYA' : 'SABAN FC'} was registered.`
+    message: `Thank you! Your goal report for ${team === 'home' ? 'UDAYA' : 'NEW MALAYA'} was registered.`
   };
 }
 
@@ -205,5 +325,6 @@ export function setAdminAuthenticated(auth) {
     localStorage.setItem(ADMIN_AUTH_KEY, 'true');
   } else {
     localStorage.removeItem(ADMIN_AUTH_KEY);
+    localStorage.removeItem(SCORER_ROLE_KEY);
   }
 }

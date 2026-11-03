@@ -20,16 +20,30 @@ import {
   ArrowLeft,
   ExternalLink,
   Trash2,
-  X
+  X,
+  Wifi,
+  WifiOff,
+  UserCheck
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { 
   DEFAULT_ADMIN_PIN, 
+  BACKUP_ADMIN_PIN,
   isAdminAuthenticated, 
   setAdminAuthenticated, 
   getStoredMatchState, 
   saveOfficialMatchState,
   getCalculatedMatchTime,
+  canUndoOfficialMatchAction,
+  undoLastOfficialMatchAction,
+  getMatchHistory,
+  getOfflineQueue,
+  queueOfflineAction,
+  clearOfflineQueue,
+  getOfflineQueueCount,
+  verifyAdminPin,
+  getActiveScorerInfo,
+  setActiveScorerInfo,
   SEVENS_HALF_MINUTES,
   SEVENS_TOTAL_MINUTES
 } from '../utils/matchStateManager';
@@ -52,6 +66,22 @@ export default function AdminDeskSection({
   const [matchState, setMatchState] = useState(getStoredMatchState);
   const [clock, setClock] = useState(() => getCalculatedMatchTime(getStoredMatchState()));
   const [notification, setNotification] = useState('');
+
+  // Scorer Redundancy & Offline Resiliency
+  const [isOnline, setIsOnline] = useState(() => (typeof navigator !== 'undefined' ? navigator.onLine : true));
+  const [activeScorer, setActiveScorer] = useState(getActiveScorerInfo);
+  const [historyCount, setHistoryCount] = useState(() => getMatchHistory().length);
+  const [offlineCount, setOfflineCount] = useState(getOfflineQueueCount);
+
+  // Safety Confirmation Modal for Destructive Ground Actions
+  const [confirmModal, setConfirmModal] = useState({
+    open: false,
+    title: '',
+    message: '',
+    onConfirm: null,
+    confirmText: 'Confirm',
+    confirmColor: 'bg-red-600'
+  });
 
   // Custom Time Setter inputs (defaulting to Sevens 30:30)
   const [inputMinutes, setInputMinutes] = useState(30);
@@ -80,20 +110,57 @@ export default function AdminDeskSection({
     setIsAuthenticated(isAdminAuthenticated());
     setMatchState(stored);
     setClock(getCalculatedMatchTime(stored));
+    setHistoryCount(getMatchHistory().length);
+    setActiveScorer(getActiveScorerInfo());
+    setOfflineCount(getOfflineQueueCount());
     setPinError('');
     setPinInput('');
   }, []);
 
+  // Offline / Online network connectivity listeners for 4G ground safety
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      const pendingCount = getOfflineQueueCount();
+      if (pendingCount > 0) {
+        clearOfflineQueue();
+        setOfflineCount(0);
+        setNotification(`🟢 Back Online! Auto-synced ${pendingCount} offline score change(s) to tournament server.`);
+        setTimeout(() => setNotification(''), 4000);
+      } else {
+        setNotification('🟢 4G Network connected. Scorer desk live.');
+        setTimeout(() => setNotification(''), 2500);
+      }
+    };
+
+    const handleOffline = () => {
+      setIsOnline(false);
+      setNotification('🟡 Ground 4G Dropped! Scorer changes are safely buffered in phone storage.');
+      setTimeout(() => setNotification(''), 4000);
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   const handleLogin = (e) => {
     e?.preventDefault();
-    if (pinInput.trim() === DEFAULT_ADMIN_PIN || pinInput.trim() === '2026') {
+    const verification = verifyAdminPin(pinInput);
+    if (verification.isValid) {
       setIsAuthenticated(true);
       setAdminAuthenticated(true);
+      const scorerObj = { role: verification.role, label: verification.label, pinUsed: pinInput.trim() };
+      setActiveScorerInfo(scorerObj);
+      setActiveScorer(scorerObj);
       setPinError('');
-      setNotification('Authenticated as Official Ground Referee Desk');
+      setNotification(`Authenticated: ${verification.label}`);
       setTimeout(() => setNotification(''), 3000);
     } else {
-      setPinError('Invalid Committee PIN. Default PIN: 7012');
+      setPinError('Invalid Committee PIN. Primary Scorer: 7012 | Backup Scorer: 2026');
     }
   };
 
@@ -103,9 +170,34 @@ export default function AdminDeskSection({
     setPinInput('');
   };
 
+  // Switch between Primary and Standby Scorer
+  const handleScorerHandover = (targetRole) => {
+    const newRole = targetRole || (activeScorer.role === 'PRIMARY' ? 'BACKUP' : 'PRIMARY');
+    const label = newRole === 'PRIMARY' ? 'Primary Ground Scorer (7012)' : 'Standby Backup Scorer (2026)';
+    const info = { role: newRole, label, pinUsed: newRole === 'PRIMARY' ? DEFAULT_ADMIN_PIN : BACKUP_ADMIN_PIN };
+    setActiveScorerInfo(info);
+    setActiveScorer(info);
+    setNotification(`Scorer Handover Complete: ${label}`);
+    setTimeout(() => setNotification(''), 3000);
+  };
+
+  // Undo Last Action with instant state reversion
+  const handleUndo = () => {
+    const res = undoLastOfficialMatchAction();
+    if (res.success) {
+      setMatchState(res.restoredState);
+      setClock(getCalculatedMatchTime(res.restoredState));
+      setHistoryCount(res.remainingCount);
+      setNotification('↩️ Action Undone! Restored previous score and clock state.');
+      setTimeout(() => setNotification(''), 3000);
+    } else {
+      setNotification(res.message);
+      setTimeout(() => setNotification(''), 2500);
+    }
+  };
+
   // Sevens Football: 30 minutes 1st Half + 30 minutes 2nd Half = 60 minutes
   const handleStartMatch = (half) => {
-    // 1st Half starts at 0s (00:00); Half Time pauses at 1800s (30:00); 2nd Half resumes at 1800s (30:00)
     const totalSec = half === '1ST_HALF' ? 0 : half === 'HALF_TIME' ? 30 * 60 : 30 * 60;
     const isRunning = half === '1ST_HALF' || half === '2ND_HALF';
 
@@ -121,6 +213,11 @@ export default function AdminDeskSection({
       };
       saveOfficialMatchState(next);
       setClock(getCalculatedMatchTime(next));
+      setHistoryCount(getMatchHistory().length);
+      if (!isOnline) {
+        queueOfflineAction(next);
+        setOfflineCount(getOfflineQueueCount());
+      }
       return next;
     });
 
@@ -148,6 +245,11 @@ export default function AdminDeskSection({
       };
       saveOfficialMatchState(next);
       setClock(getCalculatedMatchTime(next));
+      setHistoryCount(getMatchHistory().length);
+      if (!isOnline) {
+        queueOfflineAction(next);
+        setOfflineCount(getOfflineQueueCount());
+      }
       return next;
     });
 
@@ -174,6 +276,11 @@ export default function AdminDeskSection({
       };
       saveOfficialMatchState(next);
       setClock(getCalculatedMatchTime(next));
+      setHistoryCount(getMatchHistory().length);
+      if (!isOnline) {
+        queueOfflineAction(next);
+        setOfflineCount(getOfflineQueueCount());
+      }
       return next;
     });
 
@@ -182,23 +289,39 @@ export default function AdminDeskSection({
     setTimeout(() => setNotification(''), 3000);
   };
 
+  // Safe Stop Match with 2-step confirmation dialog
   const handleStopMatch = () => {
-    setMatchState((prev) => {
-      const next = {
-        ...prev,
-        status: 'FULL_TIME',
-        matchSeconds: 60 * 60, // 60:00 Sevens Full Time
-        matchMinute: 60,
-        isTimerRunning: false,
-        isCrowdLocked: true
-      };
-      saveOfficialMatchState(next);
-      setClock(getCalculatedMatchTime(next));
-      return next;
+    setConfirmModal({
+      open: true,
+      title: 'Blow Final Whistle (Full Time)?',
+      message: 'Are you sure you want to end the match and lock Full Time (60:00)? This will lock the official final score across all fan mobile screens.',
+      confirmText: 'Yes, Blow Final Whistle',
+      confirmColor: 'bg-red-600',
+      onConfirm: () => {
+        setMatchState((prev) => {
+          const next = {
+            ...prev,
+            status: 'FULL_TIME',
+            matchSeconds: 60 * 60, // 60:00 Sevens Full Time
+            matchMinute: 60,
+            isTimerRunning: false,
+            isCrowdLocked: true
+          };
+          saveOfficialMatchState(next);
+          setClock(getCalculatedMatchTime(next));
+          setHistoryCount(getMatchHistory().length);
+          if (!isOnline) {
+            queueOfflineAction(next);
+            setOfflineCount(getOfflineQueueCount());
+          }
+          return next;
+        });
+        setConfirmModal((prev) => ({ ...prev, open: false }));
+        confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
+        setNotification('⏹️ Final Whistle blown! Full Time (60:00) locked.');
+        setTimeout(() => setNotification(''), 3500);
+      }
     });
-    confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
-    setNotification('⏹️ Final Whistle blown! Full Time (60:00) locked.');
-    setTimeout(() => setNotification(''), 3500);
   };
 
   const handleAdjustMinute = (delta) => {
@@ -214,45 +337,80 @@ export default function AdminDeskSection({
       };
       saveOfficialMatchState(next);
       setClock(getCalculatedMatchTime(next));
+      setHistoryCount(getMatchHistory().length);
+      if (!isOnline) {
+        queueOfflineAction(next);
+        setOfflineCount(getOfflineQueueCount());
+      }
       return next;
     });
   };
 
+  // Safe Reset Match with 2-step confirmation dialog
   const handleResetToUpcoming = () => {
-    setMatchState((prev) => {
-      const next = {
-        ...prev,
-        status: 'UPCOMING',
-        matchSeconds: 0,
-        matchMinute: 0,
-        isTimerRunning: false,
-        isCrowdLocked: false
-      };
-      saveOfficialMatchState(next);
-      setClock(getCalculatedMatchTime(next));
-      return next;
+    setConfirmModal({
+      open: true,
+      title: 'Wipe & Reset Live Score?',
+      message: 'One mis-tap on Reset with a crowd watching wipes the scoreboard! Are you completely sure you want to reset the match to Pre-Match (0-0)?',
+      confirmText: 'Yes, Reset to Pre-Match',
+      confirmColor: 'bg-red-600',
+      onConfirm: () => {
+        setMatchState((prev) => {
+          const next = {
+            ...prev,
+            officialScoreHome: 0,
+            officialScoreAway: 0,
+            status: 'UPCOMING',
+            matchSeconds: 0,
+            matchMinute: 0,
+            isTimerRunning: false,
+            isCrowdLocked: false
+          };
+          saveOfficialMatchState(next);
+          setClock(getCalculatedMatchTime(next));
+          setHistoryCount(getMatchHistory().length);
+          if (!isOnline) {
+            queueOfflineAction(next);
+            setOfflineCount(getOfflineQueueCount());
+          }
+          return next;
+        });
+        setConfirmModal((prev) => ({ ...prev, open: false }));
+        setNotification('Match safely reset to Upcoming Pre-Match status (0-0).');
+        setTimeout(() => setNotification(''), 2500);
+      }
     });
-    setNotification('Match reset to Upcoming Pre-Match status (8:00 PM).');
-    setTimeout(() => setNotification(''), 2500);
   };
 
   const handleScoreChange = (team, delta) => {
     setMatchState((prev) => {
       const nextHome = team === 'home' ? Math.max(0, prev.officialScoreHome + delta) : prev.officialScoreHome;
       const nextAway = team === 'away' ? Math.max(0, prev.officialScoreAway + delta) : prev.officialScoreAway;
-      return {
+      const next = {
         ...prev,
         officialScoreHome: nextHome,
         officialScoreAway: nextAway
       };
+      saveOfficialMatchState(next);
+      setHistoryCount(getMatchHistory().length);
+      if (!isOnline) {
+        queueOfflineAction(next);
+        setOfflineCount(getOfflineQueueCount());
+      }
+      return next;
     });
   };
 
   const handleStatusChange = (status) => {
-    setMatchState((prev) => ({
-      ...prev,
-      status
-    }));
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        status
+      };
+      saveOfficialMatchState(next);
+      setHistoryCount(getMatchHistory().length);
+      return next;
+    });
   };
 
   const handleMinuteChange = (e) => {
@@ -264,10 +422,14 @@ export default function AdminDeskSection({
   };
 
   const handleToggleCrowdLock = () => {
-    setMatchState((prev) => ({
-      ...prev,
-      isCrowdLocked: !prev.isCrowdLocked
-    }));
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        isCrowdLocked: !prev.isCrowdLocked
+      };
+      saveOfficialMatchState(next);
+      return next;
+    });
   };
 
   const handleAddOfficialEvent = () => {
@@ -283,10 +445,15 @@ export default function AdminDeskSection({
       isOfficial: true
     };
 
-    setMatchState((prev) => ({
-      ...prev,
-      events: [eventObj, ...(prev.events || [])]
-    }));
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        events: [eventObj, ...(prev.events || [])]
+      };
+      saveOfficialMatchState(next);
+      setHistoryCount(getMatchHistory().length);
+      return next;
+    });
 
     setNewEvent({
       type: 'goal',
@@ -302,16 +469,30 @@ export default function AdminDeskSection({
   };
 
   const handleDeleteEvent = (id) => {
-    setMatchState((prev) => ({
-      ...prev,
-      events: (prev.events || []).filter((e) => e.id !== id)
-    }));
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        events: (prev.events || []).filter((e) => e.id !== id)
+      };
+      saveOfficialMatchState(next);
+      setHistoryCount(getMatchHistory().length);
+      return next;
+    });
   };
 
   const handleSaveAndBroadcast = () => {
     saveOfficialMatchState(matchState);
+    setHistoryCount(getMatchHistory().length);
+    if (!isOnline) {
+      queueOfflineAction(matchState);
+      setOfflineCount(getOfflineQueueCount());
+    }
     confetti({ particleCount: 80, spread: 70, origin: { y: 0.5 } });
-    setNotification('✅ OFFICIAL SCORE SAVED & BROADCASTED TO ALL FANS!');
+    setNotification(
+      isOnline 
+        ? '✅ OFFICIAL SCORE SAVED & BROADCASTED TO ALL FANS!'
+        : '💾 SAVED IN LOCAL OFFLINE QUEUE • Will broadcast when 4G returns'
+    );
     setTimeout(() => {
       setNotification('');
       if (isModal && onClose) onClose();
@@ -319,14 +500,18 @@ export default function AdminDeskSection({
   };
 
   const handleResetCrowdSpam = () => {
-    setMatchState((prev) => ({
-      ...prev,
-      crowdReports: {
-        home: prev.officialScoreHome * 8,
-        away: prev.officialScoreAway * 8,
-        total: (prev.officialScoreHome + prev.officialScoreAway) * 8
-      }
-    }));
+    setMatchState((prev) => {
+      const next = {
+        ...prev,
+        crowdReports: {
+          home: prev.officialScoreHome * 8,
+          away: prev.officialScoreAway * 8,
+          total: (prev.officialScoreHome + prev.officialScoreAway) * 8
+        }
+      };
+      saveOfficialMatchState(next);
+      return next;
+    });
     setNotification('Crowd reports synchronized with official score!');
     setTimeout(() => setNotification(''), 2500);
   };
@@ -360,7 +545,7 @@ export default function AdminDeskSection({
                   Official Match Scorer & Admin Desk
                 </h2>
                 <span className="px-2 py-0.5 rounded-full bg-red-600 text-[10px] font-black uppercase shrink-0">
-                  PIN 7012
+                  {activeScorer.role === 'PRIMARY' ? 'PIN 7012' : 'PIN 2026 (BACKUP)'}
                 </span>
               </div>
               <p className="text-xs text-blue-200 mt-0.5">
@@ -421,8 +606,8 @@ export default function AdminDeskSection({
                   maxLength={6}
                   value={pinInput}
                   onChange={(e) => setPinInput(e.target.value)}
-                  placeholder="Enter PIN (Default: 7012)"
-                  className={`w-full p-3.5 text-center text-2xl font-mono tracking-widest rounded-2xl border font-bold shadow-xs ${
+                  placeholder="PIN: 7012 (Primary) or 2026 (Backup)"
+                  className={`w-full p-3.5 text-center text-xl font-mono tracking-widest rounded-2xl border font-bold shadow-xs ${
                     isDarkMode ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                   }`}
                   autoFocus
@@ -442,33 +627,75 @@ export default function AdminDeskSection({
                 </button>
               </form>
 
-              <div className="pt-2">
+              <div className="pt-2 flex items-center justify-center gap-3">
                 <button
                   type="button"
                   onClick={() => { setPinInput('7012'); }}
                   className="text-xs text-blue-600 hover:text-blue-700 hover:underline font-bold"
                 >
-                  Click to Auto-fill Default PIN (7012)
+                  Fill Primary PIN (7012)
+                </button>
+                <span className="text-slate-300">•</span>
+                <button
+                  type="button"
+                  onClick={() => { setPinInput('2026'); }}
+                  className="text-xs text-purple-600 hover:text-purple-700 hover:underline font-bold"
+                >
+                  Fill Standby PIN (2026)
                 </button>
               </div>
             </div>
           ) : (
             /* SCREEN 2: MAIN ADMIN CONTROLLER */
             <div className="space-y-6">
-              {/* Authenticated Status Banner */}
+              {/* Authenticated Status & Safety Redundancy Bar */}
               <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 flex flex-wrap items-center justify-between text-xs font-bold gap-2">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Authorized: Ground Match Scorer Desk (Murshid / KASC Committee)</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Role: {activeScorer.label}</span>
+                  </div>
+
+                  {/* Online / Offline Connectivity Status Pill */}
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${
+                    isOnline 
+                      ? 'bg-emerald-200 text-emerald-900' 
+                      : 'bg-amber-200 text-amber-900 animate-pulse'
+                  }`}>
+                    {isOnline ? <Wifi className="w-3 h-3 text-emerald-700" /> : <WifiOff className="w-3 h-3 text-amber-700" />}
+                    <span>{isOnline ? 'Online (4G Live)' : `Offline Queue (${offlineCount})`}</span>
+                  </span>
                 </div>
-                <div className="flex items-center gap-3">
+
+                <div className="flex items-center gap-2">
+                  {/* Undo Button with Stack Counter */}
+                  <button
+                    onClick={handleUndo}
+                    disabled={historyCount === 0}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-800 active:scale-95 transition shadow-2xs"
+                    title="Undo last recorded score or clock action"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Undo Last Action {historyCount > 0 ? `(${historyCount})` : ''}</span>
+                  </button>
+
+                  {/* Scorer Takeover Handover Switch */}
+                  <button
+                    onClick={() => handleScorerHandover()}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-900 text-xs font-bold active:scale-95 transition"
+                    title="Switch scorer role to standby backup scorer"
+                  >
+                    <UserCheck className="w-3.5 h-3.5" />
+                    <span>{activeScorer.role === 'PRIMARY' ? 'Switch to Backup' : 'Switch to Primary'}</span>
+                  </button>
+
                   {onBackToLive && (
                     <button
                       onClick={onBackToLive}
                       className="text-blue-700 hover:underline flex items-center gap-1 font-bold"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
-                      <span>View Live Match Page</span>
+                      <span>Live Site</span>
                     </button>
                   )}
                   <button
@@ -476,7 +703,7 @@ export default function AdminDeskSection({
                     className="text-red-700 hover:underline flex items-center gap-1 font-bold"
                   >
                     <LogOut className="w-3.5 h-3.5" />
-                    <span>Lock Desk</span>
+                    <span>Lock</span>
                   </button>
                 </div>
               </div>
@@ -556,7 +783,7 @@ export default function AdminDeskSection({
                     <span className="text-[10px] font-normal opacity-90">(Resume 30:00 to 60:00)</span>
                   </button>
 
-                  {/* Button 4: Stop Match (Full Time) */}
+                  {/* Button 4: Stop Match (Full Time) with 2-step confirmation */}
                   <button
                     onClick={handleStopMatch}
                     className="p-3.5 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-black text-xs flex flex-col items-center justify-center gap-1 shadow-md transition active:scale-95"
@@ -664,7 +891,7 @@ export default function AdminDeskSection({
                   </div>
                 </div>
 
-                {/* Live Minute Quick Increments */}
+                {/* Live Minute Quick Increments & Safety Reset Button */}
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-white/10 text-xs">
                   <span className="text-blue-200 font-medium">Quick Minute Nudge:</span>
                   <div className="flex items-center gap-1.5">
@@ -688,7 +915,8 @@ export default function AdminDeskSection({
                     </button>
                     <button
                       onClick={handleResetToUpcoming}
-                      className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-red-500 text-white font-medium text-[11px] active:scale-95"
+                      className="px-2.5 py-1 rounded-lg bg-red-500/30 hover:bg-red-600 text-white font-bold text-[11px] active:scale-95 border border-red-400/40"
+                      title="Safely reset to pre-match with confirmation"
                     >
                       Reset Pre-Match
                     </button>
@@ -704,9 +932,11 @@ export default function AdminDeskSection({
                   <h4 className="text-xs font-black font-sports uppercase tracking-wider text-slate-500">
                     Official Ground Scoreboard
                   </h4>
-                  <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-900 border border-blue-200">
-                    FINAL AUTHORITY OVER CROWD
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-900 border border-blue-200">
+                      FINAL AUTHORITY OVER CROWD
+                    </span>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 items-center">
@@ -771,7 +1001,14 @@ export default function AdminDeskSection({
                     return (
                       <button
                         key={preset}
-                        onClick={() => setMatchState((prev) => ({ ...prev, officialScoreHome: h, officialScoreAway: a }))}
+                        onClick={() => {
+                          setMatchState((prev) => {
+                            const next = { ...prev, officialScoreHome: h, officialScoreAway: a };
+                            saveOfficialMatchState(next);
+                            setHistoryCount(getMatchHistory().length);
+                            return next;
+                          });
+                        }}
                         className="px-3 py-1 rounded-lg text-xs font-sports font-bold bg-slate-200 hover:bg-blue-600 hover:text-white transition active:scale-95 shadow-2xs"
                       >
                         {preset}
@@ -881,8 +1118,7 @@ export default function AdminDeskSection({
                       onChange={(e) => setNewEvent({ ...newEvent, player: e.target.value })}
                       placeholder="e.g. Ibrahim Soumahoro"
                       className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white border-slate-300 shadow-2xs"
-                    >
-                    </input>
+                    />
                   </div>
 
                   <div>
@@ -954,7 +1190,7 @@ export default function AdminDeskSection({
                       Crowd Anti-Spam Governance
                     </h4>
                     <p className="text-[11px] text-slate-500">
-                      Users have a strict 45s cooldown rate limit and 5-submission cap per match.
+                      Fans have a 60s cooldown limit and a strict 3-submission maximum per device.
                     </p>
                   </div>
 
@@ -999,6 +1235,48 @@ export default function AdminDeskSection({
           )}
         </div>
       </div>
+
+      {/* Safety Confirmation Modal for Destructive Ground Actions */}
+      {confirmModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
+          <div className="w-full max-w-sm rounded-3xl bg-slate-900 border border-slate-700 text-white p-5 sm:p-6 shadow-2xl space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-red-500/20 text-red-400 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-base font-black font-sports uppercase tracking-wider text-white">
+                  {confirmModal.title}
+                </h4>
+                <span className="text-[10px] text-amber-400 uppercase font-bold tracking-wide">
+                  Referee Desk Safety Confirmation
+                </span>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              {confirmModal.message}
+            </p>
+
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setConfirmModal((prev) => ({ ...prev, open: false }))}
+                className="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition active:scale-95"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmModal.onConfirm}
+                className={`flex-1 py-2.5 rounded-xl text-white font-black text-xs uppercase tracking-wider transition active:scale-95 shadow-md ${confirmModal.confirmColor}`}
+              >
+                {confirmModal.confirmText}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, Gift, Share2, CheckCircle2, Flame, Award, Users, Sparkles, TrendingUp } from 'lucide-react';
+import { Trophy, Gift, Share2, CheckCircle2, Flame, Award, Users, Sparkles, TrendingUp, ShieldCheck, Info } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { openingMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
@@ -357,6 +357,34 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
               </button>
             </div>
           )}
+        </div>
+
+        {/* Written Contest Rules & Legal Free-Entry Disclaimers */}
+        <div className="mt-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 text-xs leading-relaxed space-y-1.5">
+          <div className="flex items-center gap-1.5 font-bold text-slate-800">
+            <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>{lang === 'ml' ? 'മത്സര നിബന്ധനകളും നിയമപരമായ വ്യക്തതയും (Terms & Fair Play)' : 'Contest Terms & Fair Play Rules'}</span>
+          </div>
+          <ul className="list-disc list-inside space-y-1 text-[11px] text-slate-500 pl-1">
+            <li>
+              <strong className="text-slate-700">{lang === 'ml' ? '100% സൗജന്യ പങ്കാളിത്തം:' : '100% Free Entry:'}</strong>{' '}
+              {lang === 'ml' 
+                ? 'യാതൊരുവിധ എൻട്രി ഫീസോ പണമിടപാടോ ആവശ്യമില്ല. ഫാൻ വിനോദാർത്ഥം മാത്രം സംഘടിപ്പിക്കുന്നത്.' 
+                : 'No purchase, entry fee, or monetary payment required. Strictly organized for fan promotional entertainment.'}
+            </li>
+            <li>
+              <strong className="text-slate-700">{lang === 'ml' ? 'സമ്മാനങ്ങൾ:' : 'Prizes:'}</strong>{' '}
+              {lang === 'ml' 
+                ? 'പ്രായോജകരായ റൈദാൻ കുഴിമന്തി നൽകുന്ന ഫുഡ് വൗച്ചറുകൾ ശരിയായ പ്രവചനം നടത്തിയവരിൽ നിന്ന് നറുക്കെടുപ്പിലൂടെ തിരഞ്ഞെടുക്കുന്നു. ഇതൊരു ചൂതാട്ടമോ വാതുവെപ്പോ അല്ല.' 
+                : 'Sponsored food vouchers by Raidhan Kuzhimanthi awarded through random lucky draw among correct entries. Not gambling or real-money gaming.'}
+            </li>
+            <li>
+              <strong className="text-slate-700">{lang === 'ml' ? 'നിയമം:' : 'Fair Play:'}</strong>{' '}
+              {lang === 'ml' 
+                ? 'ഒരു ഉപകരണത്തിൽ (Device) നിന്ന് ഒരു പ്രവചനം മാത്രം രേഖപ്പെടുത്താൻ സാധിക്കും.' 
+                : 'Limited to 1 submission per device to prevent automated voting.'}
+            </li>
+          </ul>
         </div>
       </div>
     </div>
