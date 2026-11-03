@@ -33,9 +33,6 @@ export default function HeadToHeadCard({ lang, isDarkMode }) {
               <h3 className="text-sm sm:text-base font-black font-sports uppercase tracking-wider text-slate-950">
                 {lang === 'ml' ? 'ഹെഡ്-ടു-ഹെഡ് & ടീം ഫോം (H2H)' : 'HEAD-TO-HEAD & FORM GUIDE'}
               </h3>
-              <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold">
-                FotMob Style
-              </span>
             </div>
             <p className="text-[11px] text-slate-500 font-medium">
               {lang === 'ml'

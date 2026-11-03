@@ -12,7 +12,10 @@ import {
   Lock, 
   AlertCircle, 
   CheckCircle2, 
-  Settings 
+  Settings,
+  Calendar,
+  Sparkles,
+  Info
 } from 'lucide-react';
 import { openingMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
@@ -21,6 +24,9 @@ import {
   submitFanCrowdGoal, 
   getUserRateLimitStatus,
   getCalculatedMatchTime,
+  getDaysToKickoff,
+  isDemoModeActive,
+  setDemoModeActive,
   SEVENS_HALF_MINUTES,
   SEVENS_TOTAL_MINUTES
 } from '../utils/matchStateManager';
@@ -31,8 +37,9 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
   const [rateLimit, setRateLimit] = useState(getUserRateLimitStatus);
   const [toastMessage, setToastMessage] = useState(null);
   const [timelineTab, setTimelineTab] = useState('commentary'); // 'timeline' | 'commentary'
+  const [isDemo, setIsDemo] = useState(isDemoModeActive);
 
-  // Sync with global custom event when Admin updates score
+  // Sync with global custom events
   useEffect(() => {
     const handleStateUpdate = (e) => {
       const newState = e.detail || getStoredMatchState();
@@ -40,8 +47,16 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
       setClock(getCalculatedMatchTime(newState));
     };
 
+    const handleDemoChange = (e) => {
+      setIsDemo(Boolean(e.detail));
+    };
+
     window.addEventListener('kasc_match_state_updated', handleStateUpdate);
-    return () => window.removeEventListener('kasc_match_state_updated', handleStateUpdate);
+    window.addEventListener('kasc_demo_mode_changed', handleDemoChange);
+    return () => {
+      window.removeEventListener('kasc_match_state_updated', handleStateUpdate);
+      window.removeEventListener('kasc_demo_mode_changed', handleDemoChange);
+    };
   }, []);
 
   // Continuous 1-second ticker interval for live moving clock & rate limit
@@ -65,7 +80,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
       setRateLimit(getUserRateLimitStatus());
       setToastMessage({
         type: 'success',
-        text: `✅ ${result.message} (Rate limited for 45s to stop spam)`
+        text: `✅ ${result.message}`
       });
     } else {
       setToastMessage({
@@ -79,14 +94,20 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
     }, 4000);
   };
 
+  const daysToKickoff = getDaysToKickoff();
+  const isLive = matchState.status !== 'UPCOMING';
+
   const getStatusBadge = () => {
+    if (!isLive) {
+      return (
+        <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-900 font-bold text-xs border border-blue-200 flex items-center gap-1.5">
+          <Calendar className="w-3.5 h-3.5 text-blue-700" />
+          <span>{lang === 'ml' ? `കിക്ക്ഓഫ്: ${daysToKickoff} ദിനം ബാക്കി` : `Kickoff in ${daysToKickoff} days`}</span>
+        </span>
+      );
+    }
+
     switch (matchState.status) {
-      case 'UPCOMING':
-        return (
-          <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-800 font-bold text-[10px] sm:text-xs border border-blue-200">
-            Upcoming • Nov 06, 8:00 PM
-          </span>
-        );
       case '1ST_HALF':
         return (
           <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600 text-white font-mono font-bold text-xs uppercase shadow-xs">
@@ -118,8 +139,6 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
     }
   };
 
-  const isLive = matchState.status !== 'UPCOMING';
-
   return (
     <section id="live-match" className="w-full">
       {/* Section Header */}
@@ -134,21 +153,29 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
             </h2>
           </div>
           <p className="text-xs text-slate-500 font-medium">
-            {lang === 'ml'
-              ? 'ഔദ്യോഗിക തത്സമയ സ്കോറും പന്ത് തട്ടുന്ന നിമിഷങ്ങളും'
-              : 'Official live score verified by Ground Referee Desk'}
+            {isLive
+              ? (lang === 'ml' ? 'ഔദ്യോഗിക തത്സമയ സ്കോറും പന്ത് തട്ടുന്ന നിമിഷങ്ങളും' : 'Official live score verified by Ground Referee Desk')
+              : (lang === 'ml' ? `ഉദ്ഘാടന മത്സരം: 2026 നവംബർ 06, രാത്രി 8:00 മണിക്ക് (${daysToKickoff} ദിനം ബാക്കി)` : `Opening Match: Nov 06, 2026, 8:00 PM IST (Kickoff in ${daysToKickoff} days)`)}
           </p>
         </div>
 
-        {/* Admin Desk Trigger Button */}
-        <div className="flex items-center gap-2">
+        {/* Demo Mode Toggle (Off by default) & Private Admin Link */}
+        <div className="flex items-center gap-2 self-start sm:self-auto">
           <button
-            onClick={onOpenAdminPanel}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition active:scale-95 bg-white border-blue-200 text-blue-800 hover:bg-blue-50 shadow-xs"
-            title="Open Official Scorer Desk"
+            onClick={() => {
+              const next = !isDemo;
+              setDemoModeActive(next);
+              setIsDemo(next);
+            }}
+            className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
+              isDemo 
+                ? 'bg-amber-500 text-slate-950 border-amber-600 font-black shadow-xs' 
+                : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-100 shadow-2xs'
+            }`}
+            title="Toggle sample demo match simulation (off by default)"
           >
-            <Settings className="w-3.5 h-3.5 text-blue-600" />
-            <span>Admin / Scorer Desk</span>
+            <span>⚡ Demo Simulation:</span>
+            <span className="font-black underline">{isDemo ? 'ON' : 'OFF'}</span>
           </button>
         </div>
       </div>
@@ -157,16 +184,35 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
       <div className={`rounded-3xl overflow-hidden border p-4 sm:p-7 relative shadow-xs transition-colors ${
         isDarkMode ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
       }`}>
+        {/* DEMO MODE ACTIVE WARNING BANNER */}
+        {isDemo && (
+          <div className="mb-4 p-2.5 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-900 text-xs font-bold flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5">
+              <span className="text-base">⚡</span>
+              <span>DEMO MODE ACTIVE: Showing simulated 2-1 sample match for testing. Toggle OFF for real pre-kickoff state.</span>
+            </div>
+            <button
+              onClick={() => {
+                setDemoModeActive(false);
+                setIsDemo(false);
+              }}
+              className="text-[11px] underline font-black text-amber-950 shrink-0"
+            >
+              Turn Off
+            </button>
+          </div>
+        )}
+
         {/* Top Match Ribbon with Official Verification Badge */}
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3 mb-5">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-900 font-bold text-[10px] sm:text-xs border border-blue-200">
               <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-              <span>Official Scorer Verified</span>
+              <span>Official Matchday 1</span>
             </span>
             <span className="text-[11px] text-slate-400 hidden sm:inline">•</span>
             <span className="text-[11px] text-slate-500 font-medium hidden sm:inline">
-              Day 1 Blockbuster
+              Peruvallur Panjayath Stadium
             </span>
           </div>
 
@@ -175,7 +221,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           </div>
         </div>
 
-        {/* Mobile-Perfect Scoreboard (UDAYA vs NEW MALAYA) */}
+        {/* Matchup Presentation (UDAYA vs NEW MALAYA) */}
         <div className="grid grid-cols-12 gap-2 sm:gap-4 items-center text-center py-2">
           {/* Team Home (UDAYA Parambil Peedika) */}
           <div className="col-span-4 flex flex-col items-center space-y-1.5">
@@ -188,7 +234,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
             </span>
           </div>
 
-          {/* Center Official Scores or VS */}
+          {/* Center Official Scores (if Live or Demo) OR Kickoff countdown (if Upcoming) */}
           <div className="col-span-4 flex flex-col items-center justify-center">
             {isLive ? (
               <div className="space-y-1">
@@ -203,17 +249,20 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                 </div>
                 <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-bold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span>Official Ground Score</span>
+                  <span>Ground Referee Score</span>
                 </div>
               </div>
             ) : (
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <div className="text-2xl sm:text-4xl font-black font-sports text-blue-700">
                   VS
                 </div>
-                <div className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                  8:00 PM Floodlit
+                <div className="text-[10px] sm:text-xs font-black text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                  06 Nov • 8:00 PM
                 </div>
+                <span className="text-[10px] text-slate-500 font-bold block">
+                  {lang === 'ml' ? `${daysToKickoff} ദിനം ബാക്കി` : `In ${daysToKickoff} days`}
+                </span>
               </div>
             )}
           </div>
@@ -230,6 +279,21 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           </div>
         </div>
 
+        {/* Pre-Kickoff Notice when match is not live and Demo is off */}
+        {!isLive && (
+          <div className="mt-5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-1">
+            <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-slate-800">
+              <Clock className="w-4 h-4 text-blue-600" />
+              <span>{lang === 'ml' ? `ഉദ്ഘാടന മത്സര കിക്ക്ഓഫിലേക്ക് ${daysToKickoff} ദിനങ്ങൾ ബാക്കി` : `Kickoff in ${daysToKickoff} days`}</span>
+            </div>
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              {lang === 'ml'
+                ? 'നവംബർ 6 ന് രാത്രി 8:00 ന് ഗ്രൗണ്ട് റഫറി വിസിൽ മുഴങ്ങുന്നതോടെ ഔദ്യോഗിക ലൈവ് സ്കോർബോർഡും ടൈംലൈനും സജീവമാകും.'
+                : 'Official live scoreboard, goal alerts and referee timeline will activate at match kickoff.'}
+            </p>
+          </div>
+        )}
+
         {/* Notification Toast */}
         {toastMessage && (
           <div className={`mt-4 p-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 animate-fadeIn shadow-xs ${
@@ -242,171 +306,169 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           </div>
         )}
 
-        {/* FAN CROWD GOAL REPORTING WITH ANTI-SPAM RATE LIMITER */}
-        <div className="mt-6 pt-5 border-t border-slate-200 bg-slate-50 -mx-4 -mb-4 sm:-mx-7 sm:-mb-7 p-4 sm:p-6 rounded-b-3xl space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <div className="flex items-center gap-1.5">
-                <Users className="w-4 h-4 text-slate-600" />
-                <h4 className="text-xs font-black font-sports uppercase tracking-wider text-slate-800">
-                  Fan Crowd Score Pulse
-                </h4>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-900 border border-blue-200">
-                  Anti-Spam Protected
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                Rate limited to 1 report every 45s (Max 5/match) to stop spam. Admin score remains final.
-              </p>
-            </div>
-
-            {/* Rate limit status pill */}
-            <div className="flex items-center gap-2">
-              {rateLimit.isCooldownActive ? (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-100 text-amber-900 font-mono font-bold text-xs border border-amber-300">
-                  <Clock className="w-3.5 h-3.5 text-amber-700 animate-spin" />
-                  <span>Cooldown: {rateLimit.remainingSeconds}s</span>
-                </span>
-              ) : rateLimit.isLimitReached ? (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-200 text-slate-700 font-bold text-xs">
-                  <span>Limit Reached (5/5)</span>
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-900 font-bold text-xs">
-                  <span>Ready ({rateLimit.reportsCount}/5 used)</span>
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* User Action Buttons (Rate Limited) */}
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => handleCrowdGoal('home')}
-              disabled={rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'}
-              className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs active:scale-95 ${
-                rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'
-                  ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
-                  : 'bg-sky-600 hover:bg-sky-700 text-white shadow-sm'
-              }`}
-            >
-              <span>⚽ Report Goal: UDAYA</span>
-              {rateLimit.isCooldownActive && <span className="text-[10px]">({rateLimit.remainingSeconds}s)</span>}
-            </button>
-
-            <button
-              onClick={() => handleCrowdGoal('away')}
-              disabled={rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'}
-              className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs active:scale-95 ${
-                rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'
-                  ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
-                  : 'bg-zinc-800 hover:bg-zinc-900 text-white shadow-sm'
-              }`}
-            >
-              <span>⚽ Report Goal: NEW MALAYA</span>
-              {rateLimit.isCooldownActive && <span className="text-[10px]">({rateLimit.remainingSeconds}s)</span>}
-            </button>
-          </div>
-
-          {/* Crowd Stats Counter Bar */}
-          <div className="flex items-center justify-between text-[11px] text-slate-500 bg-white p-2.5 rounded-xl border border-slate-200">
-            <span>
-              Community Reports: <strong>{matchState.crowdReports?.home || 0} Udaya</strong> vs <strong>{matchState.crowdReports?.away || 0} New Malaya</strong> ({matchState.crowdReports?.total || 0} total)
-            </span>
-            <span className="font-bold text-blue-700">
-              🛡️ Admin Score Governed
-            </span>
-          </div>
-
-          {/* Dual Tab: Official Events vs Live Commentary Feed */}
-          <div className="pt-2 space-y-2">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-              <div className="flex items-center gap-1 bg-slate-200/80 p-0.5 rounded-xl text-xs font-bold">
-                <button
-                  onClick={() => setTimelineTab('commentary')}
-                  className={`px-3 py-1 rounded-lg transition flex items-center gap-1.5 ${
-                    timelineTab === 'commentary' ? 'bg-blue-700 text-white shadow-2xs font-black' : 'text-slate-700 hover:text-blue-700'
-                  }`}
-                >
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span>{lang === 'ml' ? 'ലൈവ് കമന്ററി' : 'Live Commentary'}</span>
-                </button>
-                <button
-                  onClick={() => setTimelineTab('timeline')}
-                  className={`px-3 py-1 rounded-lg transition flex items-center gap-1.5 ${
-                    timelineTab === 'timeline' ? 'bg-blue-700 text-white shadow-2xs font-black' : 'text-slate-700 hover:text-blue-700'
-                  }`}
-                >
-                  <span>{lang === 'ml' ? 'റഫറി ഇവന്റ്സ്' : 'Referee Timeline'}</span>
-                </button>
+        {/* FAN CROWD GOAL REPORTING & COMMENTARY: SHOWN ONLY IF LIVE OR DEMO MODE IS ON */}
+        {isLive && (
+          <div className="mt-6 pt-5 border-t border-slate-200 bg-slate-50 -mx-4 -mb-4 sm:-mx-7 sm:-mb-7 p-4 sm:p-6 rounded-b-3xl space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-slate-600" />
+                  <h4 className="text-xs font-black font-sports uppercase tracking-wider text-slate-800">
+                    Fan Crowd Score Pulse
+                  </h4>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-900 border border-blue-200">
+                    Anti-Spam Protected
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  Rate limited to 1 report every 60s (Max 3/match). Referee score remains final authority.
+                </p>
               </div>
 
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider hidden xs:inline">
-                FotMob Style
+              {/* Rate limit status pill */}
+              <div className="flex items-center gap-2">
+                {rateLimit.isCooldownActive ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-100 text-amber-900 font-mono font-bold text-xs border border-amber-300">
+                    <Clock className="w-3.5 h-3.5 text-amber-700 animate-spin" />
+                    <span>Cooldown: {rateLimit.remainingSeconds}s</span>
+                  </span>
+                ) : rateLimit.isLimitReached ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-200 text-slate-700 font-bold text-xs">
+                    <span>Limit Reached (3/3)</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-900 font-bold text-xs">
+                    <span>Ready ({rateLimit.reportsCount}/3 used)</span>
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* User Action Buttons (Rate Limited) */}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => handleCrowdGoal('home')}
+                disabled={rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'}
+                className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs active:scale-95 ${
+                  rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'
+                    ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
+                    : 'bg-sky-600 hover:bg-sky-700 text-white shadow-sm'
+                }`}
+              >
+                <span>⚽ Report Goal: UDAYA</span>
+                {rateLimit.isCooldownActive && <span className="text-[10px]">({rateLimit.remainingSeconds}s)</span>}
+              </button>
+
+              <button
+                onClick={() => handleCrowdGoal('away')}
+                disabled={rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'}
+                className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs active:scale-95 ${
+                  rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'
+                    ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
+                    : 'bg-zinc-800 hover:bg-zinc-900 text-white shadow-sm'
+                }`}
+              >
+                <span>⚽ Report Goal: NEW MALAYA</span>
+                {rateLimit.isCooldownActive && <span className="text-[10px]">({rateLimit.remainingSeconds}s)</span>}
+              </button>
+            </div>
+
+            {/* Crowd Stats Counter Bar */}
+            <div className="flex items-center justify-between text-[11px] text-slate-500 bg-white p-2.5 rounded-xl border border-slate-200">
+              <span>
+                Community Reports: <strong>{matchState.crowdReports?.home || 0} Udaya</strong> vs <strong>{matchState.crowdReports?.away || 0} New Malaya</strong>
+              </span>
+              <span className="font-bold text-blue-700">
+                🛡️ Ground Desk Authority
               </span>
             </div>
 
-            {/* View 1: Ball-by-ball Text Commentary */}
-            {timelineTab === 'commentary' && (
-              <div className="space-y-2 max-h-56 overflow-y-auto pr-1 animate-fadeIn">
-                {[
-                  { min: "30'", type: "whistle", text: lang === 'ml' ? 'ഹാഫ് ടൈം വിസിൽ! ആദ്യ പകുതിയിൽ ഉദയ പറമ്പിൽ പീടിക 2 - 1 ന് മുന്നിൽ. ഗാലറിയിൽ ആവേശക്കടൽ.' : 'Half-time whistle! Udaya leads 2-1 after a breathless first half under the floodlights.' },
-                  { min: "26'", type: "card", text: lang === 'ml' ? '🟨 യെല്ലോ കാർഡ്: ന്യൂ മലയ മിഡ്ഫീൽഡർക്ക് കൗണ്ടർ തടഞ്ഞതിന് റഫറിയുടെ മുന്നറിയിപ്പ്.' : '🟨 Yellow Card: Tactical foul stopping a dangerous Udaya break.' },
-                  { min: "24'", type: "goal", text: lang === 'ml' ? '⚽ ഗോൾ!! ഷമീർ കെ. (ഉദയ). ഡി-ബോക്സിന് വെളിയിൽ നിന്നുള്ള ബുള്ളറ്റ് വോളി പോസ്റ്റിന്റെ ടോപ്പ് കോർണറിലേക്ക്!' : '⚽ GOAL!! Shameer K. (Udaya) with a screamer from 20 yards into the top corner!' },
-                  { min: "18'", type: "save", text: lang === 'ml' ? '🧤 മിന്നൽ സേവ്! ന്യൂ മലയ സ്ട്രൈക്കറുടെ ഹെഡർ ഉദയ ഗോൾകീപ്പർ ഷംസീർ പറന്നു തട്ടിയകറ്റി.' : '🧤 Sensational fingertip reflex save by Udaya keeper Shamseer to deny an equalizer!' },
-                  { min: "12'", type: "goal", text: lang === 'ml' ? '⚽ ഗോൾ!! ഇബ്രാഹിം സുമഹോറോ (ഉദയ). ഡിഫൻഡർമാരെ വെട്ടിച്ച് കിടിലൻ ചിപ്പ് ഫിനിഷ്.' : '⚽ GOAL!! Ibrahim Soumahoro (Udaya) chips the keeper with sublime composure.' },
-                  { min: "7'", type: "attack", text: lang === 'ml' ? 'ന്യൂ മലയയുടെ കൗണ്ടർ അറ്റാക്ക്! ഉദയ സെന്റർ ബാക്ക് ഫൈസൽ പന്ത് കൃത്യസമയത്ത് ക്ലിയർ ചെയ്തു.' : 'Dangerous counter-attack by New Malaya, snuffed out by Udaya defender Faisal.' },
-                  { min: "1'", type: "start", text: lang === 'ml' ? '🟢 പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയത്തിൽ ഫ്ലഡ്‌ലൈറ്റിന്റെ പ്രഭയിൽ ആവേശകരമായ ഉദ്ഘാടന മത്സരത്തിന് തുടക്കം!' : '🟢 Kickoff under electric floodlights at Peruvallur Panjayath Stadium!' }
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-start gap-2.5 p-2 rounded-xl bg-white border border-slate-100 shadow-2xs text-xs">
-                    <span className="font-sports font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md shrink-0 border border-blue-200">
-                      {item.min}
-                    </span>
-                    <p className="text-slate-800 font-medium leading-relaxed">
-                      {item.text}
-                    </p>
-                  </div>
-                ))}
+            {/* Dual Tab: Official Events vs Live Commentary Feed */}
+            <div className="pt-2 space-y-2">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                <div className="flex items-center gap-1 bg-slate-200/80 p-0.5 rounded-xl text-xs font-bold">
+                  <button
+                    onClick={() => setTimelineTab('commentary')}
+                    className={`px-3 py-1 rounded-lg transition flex items-center gap-1.5 ${
+                      timelineTab === 'commentary' ? 'bg-blue-700 text-white shadow-2xs font-black' : 'text-slate-700 hover:text-blue-700'
+                    }`}
+                  >
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>{lang === 'ml' ? 'ലൈവ് കമന്ററി' : 'Live Commentary'}</span>
+                  </button>
+                  <button
+                    onClick={() => setTimelineTab('timeline')}
+                    className={`px-3 py-1 rounded-lg transition flex items-center gap-1.5 ${
+                      timelineTab === 'timeline' ? 'bg-blue-700 text-white shadow-2xs font-black' : 'text-slate-700 hover:text-blue-700'
+                    }`}
+                  >
+                    <span>{lang === 'ml' ? 'റഫറി ഇവന്റ്സ്' : 'Referee Timeline'}</span>
+                  </button>
+                </div>
               </div>
-            )}
 
-            {/* View 2: Official Referee Events */}
-            {timelineTab === 'timeline' && (
-              <div className="space-y-1.5 max-h-48 overflow-y-auto animate-fadeIn">
-                {matchState.events && matchState.events.length > 0 ? (
-                  matchState.events.map((evt) => (
-                    <div
-                      key={evt.id}
-                      className="flex items-center justify-between text-xs py-2 px-3 rounded-xl bg-white border border-slate-200 shadow-xs"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="font-black text-blue-800 font-sports">
-                          {evt.minute}'
-                        </span>
-                        <span>
-                          {evt.type === 'goal' ? '⚽' : evt.type === 'yellow_card' ? '🟨' : evt.type === 'red_card' ? '🟥' : '🥅'}
-                        </span>
-                        <span className="font-bold text-slate-900 truncate">
-                          {evt.player}
-                        </span>
-                        <span className="text-[11px] text-slate-500 hidden sm:inline">
-                          ({evt.text})
+              {/* View 1: Ball-by-ball Text Commentary */}
+              {timelineTab === 'commentary' && (
+                <div className="space-y-2 max-h-56 overflow-y-auto pr-1 animate-fadeIn">
+                  {[
+                    { min: "30'", type: "whistle", text: lang === 'ml' ? 'ഹാഫ് ടൈം വിസിൽ! ആദ്യ പകുതിയിൽ ഉദയ പറമ്പിൽ പീടിക 2 - 1 ന് മുന്നിൽ. ഗാലറിയിൽ ആവേശക്കടൽ.' : 'Half-time whistle! Udaya leads 2-1 after a breathless first half under the floodlights.' },
+                    { min: "26'", type: "card", text: lang === 'ml' ? '🟨 യെല്ലോ കാർഡ്: ന്യൂ മലയ മിഡ്ഫീൽഡർക്ക് കൗണ്ടർ തടഞ്ഞതിന് റഫറിയുടെ മുന്നറിയിപ്പ്.' : '🟨 Yellow Card: Tactical foul stopping a dangerous break.' },
+                    { min: "24'", type: "goal", text: lang === 'ml' ? '⚽ ഗോൾ!! ഷമീർ കെ. (ഉദയ). ഡി-ബോക്സിന് വെളിയിൽ നിന്നുള്ള ബുള്ളറ്റ് വോളി പോസ്റ്റിന്റെ ടോപ്പ് കോർണറിലേക്ക്!' : '⚽ GOAL!! Shameer K. (Udaya) with a screamer into the top corner!' },
+                    { min: "18'", type: "save", text: lang === 'ml' ? '🧤 മിന്നൽ സേവ്! ന്യൂ മലയ സ്ട്രൈക്കറുടെ ഹെഡർ ഉദയ ഗോൾകീപ്പർ ഷംസീർ പറന്നു തട്ടിയകറ്റി.' : '🧤 Sensational reflex save by Udaya keeper Shamseer to deny an equalizer!' },
+                    { min: "12'", type: "goal", text: lang === 'ml' ? '⚽ ഗോൾ!! ഇബ്രാഹിം സുമഹോറോ (ഉദയ). ഡിഫൻഡർമാരെ വെട്ടിച്ച് കിടിലൻ ചിപ്പ് ഫിനിഷ്.' : '⚽ GOAL!! Ibrahim Soumahoro (Udaya) chips the keeper with sublime composure.' },
+                    { min: "7'", type: "attack", text: lang === 'ml' ? 'ന്യൂ മലയയുടെ കൗണ്ടർ അറ്റാക്ക്! ഉദയ സെന്റർ ബാക്ക് ഫൈസൽ പന്ത് കൃത്യസമയത്ത് ക്ലിയർ ചെയ്തു.' : 'Dangerous counter-attack by New Malaya, snuffed out by Udaya defense.' },
+                    { min: "1'", type: "start", text: lang === 'ml' ? '🟢 പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയത്തിൽ ഫ്ലഡ്‌ലൈറ്റിന്റെ പ്രഭയിൽ ആവേശകരമായ ഉദ്ഘാടന മത്സരത്തിന് തുടക്കം!' : '🟢 Kickoff under floodlights at Peruvallur Panjayath Stadium!' }
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-2.5 p-2 rounded-xl bg-white border border-slate-100 shadow-2xs text-xs">
+                      <span className="font-sports font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md shrink-0 border border-blue-200">
+                        {item.min}
+                      </span>
+                      <p className="text-slate-800 font-medium leading-relaxed">
+                        {item.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* View 2: Official Referee Events */}
+              {timelineTab === 'timeline' && (
+                <div className="space-y-1.5 max-h-48 overflow-y-auto animate-fadeIn">
+                  {matchState.events && matchState.events.length > 0 ? (
+                    matchState.events.map((evt) => (
+                      <div
+                        key={evt.id}
+                        className="flex items-center justify-between text-xs py-2 px-3 rounded-xl bg-white border border-slate-200 shadow-xs"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="font-black text-blue-800 font-sports">
+                            {evt.minute}'
+                          </span>
+                          <span>
+                            {evt.type === 'goal' ? '⚽' : evt.type === 'yellow_card' ? '🟨' : evt.type === 'red_card' ? '🟥' : '🥅'}
+                          </span>
+                          <span className="font-bold text-slate-900">
+                            {evt.player}
+                          </span>
+                          <span className="text-[11px] text-slate-500 hidden sm:inline">
+                            ({evt.text})
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                          Official
                         </span>
                       </div>
-                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                        Official
-                      </span>
+                    ))
+                  ) : (
+                    <div className="text-center py-4 text-xs text-slate-500">
+                      No official referee events recorded yet.
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center py-4 text-xs text-slate-500">
-                    No official referee events recorded yet.
-                  </div>
-                )}
-              </div>
-            )}
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

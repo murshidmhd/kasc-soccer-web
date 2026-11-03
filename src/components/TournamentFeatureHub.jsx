@@ -42,7 +42,7 @@ export default function TournamentFeatureHub({
     },
     {
       id: 'lineup',
-      title: lang === 'ml' ? 'സ്റ്റാർട്ടിംഗ് 7 ടാക്റ്റിക്കൽ പിച്ച്' : 'Starting 7 Pitch Lineup',
+      title: lang === 'ml' ? 'സ്റ്റാർട്ടിംഗ് 7 ലൈനപ്പ്' : 'Starting 7 Lineup',
       desc: lang === 'ml' ? 'പച്ചപ്പുള്ള പിച്ചിലെ കളിക്കാരുടെ പൊസിഷനുകൾ' : 'Interactive turf formation & jersey numbers',
       icon: Flame,
       badge: '★ Hot Tactical',
@@ -51,7 +51,7 @@ export default function TournamentFeatureHub({
     },
     {
       id: 'pass',
-      title: lang === 'ml' ? 'വി.ഐ.പി മാച്ച് പാസ്സ് ജനറേറ്റർ' : 'VIP Digital Fan Pass',
+      title: lang === 'ml' ? 'വി.ഐ.പി ഫാൻ പാസ്സ്' : 'VIP Digital Fan Pass',
       desc: lang === 'ml' ? 'നിങ്ങളുടെ പേരിലുള്ള ഒഫീഷ്യൽ ഡിജിറ്റൽ പാസ്സ്' : 'Personalized match ticket for WhatsApp Status',
       icon: Sparkles,
       badge: 'Free VIP Pass',
@@ -60,7 +60,7 @@ export default function TournamentFeatureHub({
     },
     {
       id: 'vote',
-      title: lang === 'ml' ? '24 ക്ലബ് ഫാൻ പോൾ ബാറ്റിൽ' : '24 Club Fan Battle',
+      title: lang === 'ml' ? '24 ക്ലബ് ഫാൻ വോട്ട്' : '24 Club Fan Battle',
       desc: lang === 'ml' ? 'ഏറ്റവും കൂടുതൽ ആരാധകരുള്ള ക്ലബ്ബിന് വോട്ട്' : 'Vote for your favorite team & live rankings',
       icon: Users,
       badge: 'Live Poll',
@@ -69,7 +69,7 @@ export default function TournamentFeatureHub({
     },
     {
       id: 'stats',
-      title: lang === 'ml' ? 'ഗോൾഡൻ ബൂട്ട് & നോക്കൗട്ട് ട്രീ' : 'Golden Boot & Bracket',
+      title: lang === 'ml' ? 'ഗോൾഡൻ ബൂട്ട് & ട്രീ' : 'Golden Boot & Bracket',
       desc: lang === 'ml' ? 'ടോപ്പ് സ്കോറർമാരും ഫൈനൽ പാതയും' : 'Top scorers leaderboard & road to the final',
       icon: Trophy,
       badge: 'Knockout Tree',
@@ -78,7 +78,7 @@ export default function TournamentFeatureHub({
     },
     {
       id: 'game',
-      title: lang === 'ml' ? 'സെവൻസ് പെനാൽറ്റി ഷൂട്ടൗട്ട്' : 'Penalty Shootout Game',
+      title: lang === 'ml' ? 'പെനാൽറ്റി ഷൂട്ടൗട്ട്' : 'Penalty Shootout Game',
       desc: lang === 'ml' ? 'കീപ്പറെ വെട്ടിച്ച് ഗോൾ നേടൂ' : 'Interactive mini-game with 3D goalkeeper',
       icon: Gamepad2,
       badge: 'Play Live',
@@ -90,7 +90,7 @@ export default function TournamentFeatureHub({
     },
     {
       id: 'promo',
-      title: lang === 'ml' ? '8 KM മിനി മാരത്തോൺ ഗാലറി' : '8 KM Marathon Media',
+      title: lang === 'ml' ? 'മിനി മാരത്തോൺ ഗാലറി' : '8 KM Marathon Media',
       desc: lang === 'ml' ? 'പഞ്ചായത്ത് പ്രസിഡന്റ് ഫ്ലാഗ് ഓഫും വിജയികളും' : 'Official marathon flag-off & podium winners',
       icon: Award,
       badge: 'Photo Gallery',
@@ -109,7 +109,7 @@ export default function TournamentFeatureHub({
     {
       id: 'venue',
       title: lang === 'ml' ? 'സ്റ്റേഡിയം GPS & പാർക്കിംഗ്' : 'Stadium GPS & Parking',
-      desc: lang === 'ml' ? 'പെരുവള്ളൂർ സ്റ്റേഡിയത്തിലേക്ക് നേരിട്ട് റൂട്ട്' : 'One-tap Google Maps route & gate details',
+      desc: lang === 'ml' ? 'പെരുവള്ളൂർ സ്റ്റേഡിയത്തിലേക്ക് നേരിട്ട് റൂട്ട്' : 'One-tap stadium route & gate details',
       icon: MapPin,
       badge: 'Directions',
       badgeColor: 'bg-slate-100 text-slate-800 border-slate-200',
@@ -165,7 +165,7 @@ export default function TournamentFeatureHub({
                   </span>
                 </div>
 
-                <h3 className="text-xs sm:text-sm font-black font-sports text-slate-950 group-hover:text-blue-700 transition leading-snug line-clamp-1">
+                <h3 className="text-xs sm:text-sm font-black font-sports text-slate-950 group-hover:text-blue-700 transition leading-snug line-clamp-2 min-h-[2.25rem]">
                   {item.title}
                 </h3>
                 <p className="text-[10px] text-slate-500 line-clamp-2 mt-1 leading-relaxed">

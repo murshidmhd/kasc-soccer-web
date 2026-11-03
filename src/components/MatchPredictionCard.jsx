@@ -133,7 +133,7 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
         </div>
       </div>
 
-      {/* Part 1: Sofascore-Style Win Probability Community Poll */}
+      {/* Part 1: Win Probability Community Poll */}
       <div className="mt-5 space-y-3">
         <div className="flex items-center justify-between text-xs font-bold text-slate-600 uppercase tracking-wider">
           <span className="flex items-center gap-1">
@@ -237,7 +237,7 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
         </div>
       </div>
 
-      {/* Part 2: Exact Scoreline Stepper (FotMob Style) */}
+      {/* Part 2: Exact Scoreline Stepper */}
       <div className="mt-6 pt-5 border-t border-slate-100 space-y-4">
         <div className="text-center">
           <span className="text-xs font-black font-sports text-slate-900 uppercase tracking-wider">

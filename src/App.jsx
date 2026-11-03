@@ -5,7 +5,6 @@ import StadiumAnnouncementBanner from './components/StadiumAnnouncementBanner';
 import LiveMatchCard from './components/LiveMatchCard';
 import MatchPredictionCard from './components/MatchPredictionCard';
 import PlayerOfTheMatchVote from './components/PlayerOfTheMatchVote';
-import FanHypeMeter from './components/FanHypeMeter';
 import HeadToHeadCard from './components/HeadToHeadCard';
 import FixturesSection from './components/FixturesSection';
 import TeamsSection from './components/TeamsSection';
@@ -169,7 +168,6 @@ export default function App() {
         setLang={setLang}
         isDarkMode={isDarkMode}
         setIsDarkMode={setIsDarkMode}
-        onOpenScorerDemo={() => handleTabChange('admin')}
         onOpenTicketModal={() => setIsTicketModalOpen(true)}
       />
 
@@ -220,7 +218,7 @@ export default function App() {
                           }`}
                         >
                           <span>⚽</span>
-                          <span>{lang === 'ml' ? 'ലൈനപ്പും റേറ്റിംഗും' : 'Lineup & Ratings'}</span>
+                          <span>{lang === 'ml' ? 'സ്റ്റാർട്ടിംഗ് 7 ലൈനപ്പ്' : 'Starting 7 Lineup'}</span>
                         </button>
 
                         <button
@@ -277,7 +275,7 @@ export default function App() {
                       </button>
                     </div>
 
-                    {/* Section 1: Starting 7 Tactical Turf Pitch & Google Player Ratings */}
+                    {/* Section 1: Starting 7 Tactical Turf Pitch */}
                     {(matchSubTab === 'lineup' || matchSubTab === 'all') && (
                       <div className="animate-fadeIn">
                         <StartingSevenPitch
@@ -307,12 +305,6 @@ export default function App() {
                           lang={lang}
                           isDarkMode={isDarkMode}
                           onOpenVotingPage={() => handleTabChange('vote')}
-                        />
-
-                        {/* Gallery Hype Meter & Soundboard */}
-                        <FanHypeMeter
-                          lang={lang}
-                          isDarkMode={isDarkMode}
                         />
                       </div>
                     )}
@@ -363,6 +355,14 @@ export default function App() {
                   onOpenTicketModal={() => setIsTicketModalOpen(true)}
                   onOpenDemo={() => setIsScorerDemoOpen(true)}
                 />
+
+                {/* Marathon Section (Moved to the bottom of the page) */}
+                <div id="marathon-section" className="pt-6 border-t border-slate-200 dark:border-slate-800">
+                  <PromoEventsSection 
+                    lang={lang} 
+                    isDarkMode={isDarkMode} 
+                  />
+                </div>
               </div>
             </div>
           )}
@@ -455,7 +455,7 @@ export default function App() {
         lang={lang}
       />
 
-      {/* Floating / Sticky Live Score Widget (FotMob & Flashscore Style) */}
+      {/* Floating / Sticky Live Score Widget */}
       <StickyScoreWidget
         activeTab={activeTab}
         setActiveTab={handleTabChange}

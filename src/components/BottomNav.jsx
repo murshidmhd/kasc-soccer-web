@@ -6,9 +6,8 @@ export default function BottomNav({ activeTab, setActiveTab, isDarkMode, lang })
     { id: 'live', label: lang === 'ml' ? 'ലൈവ്' : 'Live', icon: Flame, color: 'text-red-600' },
     { id: 'fixtures', label: lang === 'ml' ? 'ഫിക്സ്ചർ' : 'Fixtures', icon: Calendar, color: 'text-blue-600' },
     { id: 'teams', label: lang === 'ml' ? 'ക്ലബ്ബുകൾ' : 'Clubs', icon: Shield, color: 'text-blue-600' },
-    { id: 'promo', label: lang === 'ml' ? 'മാരത്തോൺ' : 'Buzz', icon: Award, color: 'text-amber-600' },
     { id: 'stats', label: lang === 'ml' ? 'സ്റ്റാറ്റ്സ്' : 'Stats', icon: Trophy, color: 'text-indigo-600' },
-    { id: 'admin', label: lang === 'ml' ? 'അഡ്മിൻ' : 'Admin', icon: ShieldCheck, color: 'text-amber-500' }
+    { id: 'promo', label: lang === 'ml' ? 'മാരത്തോൺ' : 'Marathon', icon: Award, color: 'text-amber-600' }
   ];
 
   const handleTabClick = (tabId) => {
@@ -23,7 +22,7 @@ export default function BottomNav({ activeTab, setActiveTab, isDarkMode, lang })
         ? 'bg-slate-950/95 border-slate-800 text-slate-400' 
         : 'bg-white/95 border-slate-200 text-slate-600 shadow-lg'
     }`}>
-      <div className="grid grid-cols-6 items-center w-full max-w-md mx-auto">
+      <div className="grid grid-cols-5 items-center w-full max-w-md mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;

@@ -6,23 +6,17 @@ import {
   ChevronRight, 
   Info, 
   X, 
-  Star, 
-  Sparkles, 
   BarChart3, 
   LayoutGrid, 
-  TrendingUp, 
   Flame, 
-  Award,
-  ThumbsUp
+  Award
 } from 'lucide-react';
 import TeamLogo from './TeamLogo';
-import confetti from 'canvas-confetti';
 
 export default function StartingSevenPitch({ lang, isDarkMode }) {
   const [selectedTeam, setSelectedTeam] = useState('home'); // 'home' | 'away'
   const [viewMode, setViewMode] = useState('pitch'); // 'pitch' | 'table'
   const [activePlayer, setActivePlayer] = useState(null);
-  const [fanVotes, setFanVotes] = useState({});
 
   const homeSquad = {
     name: 'UDAYA Parambil Peedika',
@@ -30,7 +24,6 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
     manager: 'K. M. Basheer',
     coach: 'Majeed Master',
     kit: 'Purple & Red Stripes',
-    teamRating: 8.1,
     starting: [
       { 
         num: 1, 
@@ -38,8 +31,8 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         role: 'Goalkeeper', 
         pos: 'GK', 
         country: '🇮🇳 India', 
-        rating: 7.8,
-        stats: { saves: 4, catches: 2, goalsConceded: 1, ratingDesc: 'Key 1st-half penalty dive save' },
+        goals: 0,
+        cards: 'None',
         desc: 'Shot-stopper, Penalty Specialist' 
       },
       { 
@@ -48,10 +41,9 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         role: 'Center Back', 
         pos: 'CB', 
         country: '🇮🇳 Malappuram', 
-        rating: 8.6,
         goals: 1,
-        stats: { goals: 1, clearances: 5, cards: 'None', ratingDesc: 'Scored 24\' bullet volley goal & led defense' },
-        desc: 'Vice Captain, Header threat', 
+        cards: 'None',
+        desc: 'Vice Captain, Aerial Defender', 
         captain: false 
       },
       { 
@@ -60,9 +52,9 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         role: 'Right Back', 
         pos: 'RB', 
         country: '🇮🇳 Calicut', 
-        rating: 7.3,
-        stats: { blocks: 4, tackles: 3, cards: 'None', ratingDesc: 'Pacy tackling on the right flank' },
-        desc: 'Pacy tackling defender' 
+        goals: 0,
+        cards: 'None',
+        desc: 'Pacy tackling flank defender' 
       },
       { 
         num: 7, 
@@ -70,9 +62,8 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         role: 'Central Midfielder', 
         pos: 'CM', 
         country: '🇮🇳 Malappuram', 
-        rating: 8.8,
-        assists: 1,
-        stats: { assists: 1, keyPasses: 4, cards: 'None', ratingDesc: 'Captain playmaker, dictated match tempo' },
+        goals: 0,
+        cards: 'None',
         desc: 'Captain & Midfield Playmaker', 
         captain: true 
       },
@@ -82,9 +73,9 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         role: 'Attacking Midfielder', 
         pos: 'AM', 
         country: '🇮🇳 Wayanad', 
-        rating: 7.5,
-        stats: { shots: 2, dribbles: 3, cards: 'None', ratingDesc: 'Constant creative movement behind strikers' },
-        desc: 'Through-ball specialist' 
+        goals: 0,
+        cards: 'None',
+        desc: 'Creative play distributor' 
       },
       { 
         num: 9, 
@@ -92,11 +83,8 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         role: 'Center Forward', 
         pos: 'ST', 
         country: '🇨🇮 Ivory Coast', 
-        rating: 9.2,
         goals: 1,
-        assists: 1,
-        isMvp: true,
-        stats: { goals: 1, assists: 1, shots: 4, ratingDesc: 'Match MVP • Clinical 12\' chip & assisted goal' },
+        cards: 'None',
         desc: 'Marquee International Striker' 
       },
       { 
@@ -105,17 +93,17 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         role: 'Second Striker', 
         pos: 'CF', 
         country: '🇮🇳 Malappuram', 
-        rating: 7.9,
-        stats: { shots: 3, dribbles: 4, cards: 'None', ratingDesc: 'Rapid acceleration, hit the crossbar' },
+        goals: 0,
+        cards: 'None',
         desc: 'Rapid dribbler, clinical finisher' 
       }
     ],
     subs: [
-      { num: 13, name: 'Junaid', role: 'GK', rating: 6.8 },
-      { num: 11, name: 'Salman', role: 'MF', rating: 7.0 },
-      { num: 14, name: 'Anas', role: 'DF', rating: 6.9 },
-      { num: 15, name: 'Haris', role: 'FW', rating: 7.1 },
-      { num: 18, name: 'Rahul', role: 'MF', rating: 6.7 }
+      { num: 13, name: 'Junaid', role: 'GK' },
+      { num: 11, name: 'Salman', role: 'MF' },
+      { num: 14, name: 'Anas', role: 'DF' },
+      { num: 15, name: 'Haris', role: 'FW' },
+      { num: 18, name: 'Rahul', role: 'MF' }
     ]
   };
 
@@ -125,7 +113,6 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
     manager: 'Aboobacker Master',
     coach: 'Siddique Master',
     kit: 'Black & White Stripes',
-    teamRating: 7.5,
     starting: [
       { 
         num: 1, 
@@ -133,8 +120,8 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         role: 'Goalkeeper', 
         pos: 'GK', 
         country: '🇮🇳 Kozhikode', 
-        rating: 6.9,
-        stats: { saves: 5, punches: 2, goalsConceded: 2, ratingDesc: 'Denied two goal-bound strikes' },
+        goals: 0,
+        cards: 'None',
         desc: 'Agile Reflex Specialist' 
       },
       { 
@@ -143,8 +130,8 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         role: 'Center Back', 
         pos: 'CB', 
         country: '🇮🇳 Malappuram', 
-        rating: 7.1,
-        stats: { clearances: 4, blocks: 3, cards: 'None', ratingDesc: 'Aerial strength in box' },
+        goals: 0,
+        cards: 'None',
         desc: 'Aerial Dominator' 
       },
       { 
@@ -153,9 +140,8 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         role: 'Sweeper Back', 
         pos: 'SW', 
         country: '🇮🇳 Wayanad', 
-        rating: 7.6,
         goals: 1,
-        stats: { goals: 1, clearances: 5, cards: 'None', ratingDesc: 'Equalizer through penalty rebound' },
+        cards: 'None',
         desc: 'Defensive Anchor' 
       },
       { 
@@ -164,9 +150,9 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         role: 'Box-to-Box MF', 
         pos: 'CM', 
         country: '🇮🇳 Kozhikode', 
-        rating: 7.4,
-        stats: { tackles: 3, recoveries: 4, cards: 'None', ratingDesc: 'Box-to-box midfield engine' },
-        desc: 'High stamina workhorse' 
+        goals: 0,
+        cards: 'None',
+        desc: 'High stamina midfield workhorse' 
       },
       { 
         num: 10, 
@@ -174,9 +160,9 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         role: 'Creative Playmaker', 
         pos: 'AM', 
         country: '🇮🇳 Malappuram', 
-        rating: 8.4,
-        stats: { freekicks: 3, shots: 3, cards: 'None', ratingDesc: 'Set-piece specialist & captain' },
-        desc: 'Captain & freekick expert', 
+        goals: 0,
+        cards: 'Yellow',
+        desc: 'Captain & set-piece taker', 
         captain: true 
       },
       { 
@@ -185,9 +171,9 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         role: 'Winger Forward', 
         pos: 'WF', 
         country: '🇮🇳 Kannur', 
-        rating: 7.2,
-        stats: { crosses: 4, sprints: 6, cards: 'None', ratingDesc: 'High pace winger counter' },
-        desc: 'Sprint speed 32 km/h' 
+        goals: 0,
+        cards: 'None',
+        desc: 'Pacy counter-attack winger' 
       },
       { 
         num: 9, 
@@ -195,67 +181,45 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         role: 'Striker', 
         pos: 'ST', 
         country: '🇳🇬 Nigeria', 
-        rating: 7.7,
-        assists: 1,
-        stats: { assists: 1, shots: 3, cards: 'None', ratingDesc: 'Physical striker holding ball' },
+        goals: 0,
+        cards: 'None',
         desc: 'Power striker, Target Man' 
       }
     ],
     subs: [
-      { num: 22, name: 'Suhair', role: 'GK', rating: 6.8 },
-      { num: 7, name: 'Shafeeq', role: 'MF', rating: 7.0 },
-      { num: 14, name: 'Nizar', role: 'DF', rating: 6.9 },
-      { num: 17, name: 'Ajmal', role: 'FW', rating: 7.1 },
-      { num: 19, name: 'Irfan', role: 'MF', rating: 6.7 }
+      { num: 22, name: 'Suhair', role: 'GK' },
+      { num: 7, name: 'Shafeeq', role: 'MF' },
+      { num: 14, name: 'Nizar', role: 'DF' },
+      { num: 17, name: 'Ajmal', role: 'FW' },
+      { num: 19, name: 'Irfan', role: 'MF' }
     ]
   };
 
   const currentSquad = selectedTeam === 'home' ? homeSquad : awaySquad;
 
-  const handleVotePlayer = (playerNum) => {
-    const key = `${selectedTeam}-${playerNum}`;
-    setFanVotes(prev => ({
-      ...prev,
-      [key]: (prev[key] || 0) + 1
-    }));
-    confetti({
-      particleCount: 40,
-      spread: 50,
-      origin: { y: 0.7 }
-    });
-  };
-
-  const getRatingBadgeStyle = (rating, isMvp = false) => {
-    if (isMvp) return 'bg-amber-400 text-slate-950 font-black ring-2 ring-yellow-200 shadow-md';
-    if (rating >= 8.5) return 'bg-emerald-500 text-white font-black shadow-xs';
-    if (rating >= 7.5) return 'bg-emerald-600 text-white font-bold shadow-xs';
-    if (rating >= 7.0) return 'bg-blue-600 text-white font-bold shadow-xs';
-    return 'bg-amber-500 text-slate-950 font-bold shadow-xs';
-  };
-
   return (
     <section id="pitch-lineup" className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-7 shadow-xs space-y-5">
-      {/* Header with Google Sports Style Badges */}
+      {/* Official Lineup Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-blue-600" />
-              <span>Google Sports Match Center</span>
+              <Shield className="w-3 h-3 text-blue-600" />
+              <span>Official Matchday Lineup</span>
             </span>
-            <span className="text-xs text-slate-500 font-bold">Lineup & Fan Community Ratings</span>
+            <span className="text-xs text-slate-500 font-bold">Referee Desk Records</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black font-sports uppercase tracking-wider text-slate-950 mt-1">
-            {lang === 'ml' ? 'ലൈനപ്പും ഫാൻ കമ്മ്യൂണിറ്റി റേറ്റിംഗും' : 'STARTING 7 & FAN COMMUNITY RATINGS'}
+            {lang === 'ml' ? 'സ്റ്റാർട്ടിംഗ് 7 ലൈനപ്പ്' : 'STARTING 7 LINEUP'}
           </h3>
           <p className="text-xs text-slate-500">
             {lang === 'ml' 
-              ? 'ഫാൻ വോട്ടുകളുടെയും ടൂർണ്ണമെന്റ് കമ്മിറ്റിയുടെയും നിരീക്ഷണ റേറ്റിംഗും പിച്ചിലെ ഒഫീഷ്യൽ പൊസിഷനും' 
-              : 'Fan community evaluations, tournament committee player ratings & official starting lineup'}
+              ? 'ഒഫീഷ്യൽ റഫറി ഡെസ്‌ക് രേഖപ്പെടുത്തിയ കളിക്കാരും പകരക്കാരും (ഗോളുകൾ, കാർഡുകൾ, സബ്‌സ്റ്റിറ്റ്യൂഷനുകൾ)' 
+              : 'Official starting seven, substitutes bench, match goals and cards verified at the referee desk'}
           </p>
         </div>
 
-        {/* View Mode Toggle: Pitch vs Google Ratings Table */}
+        {/* View Mode Toggle: Pitch vs Squad List */}
         <div className="flex items-center gap-1.5 self-start sm:self-auto">
           <div className="bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-xs font-bold flex items-center">
             <button
@@ -274,20 +238,20 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
               }`}
             >
               <BarChart3 className="w-3.5 h-3.5" />
-              <span>{lang === 'ml' ? 'റേറ്റിംഗ് ലിസ്റ്റ്' : 'Ratings List'}</span>
+              <span>{lang === 'ml' ? 'സ്ക്വാഡ് ലിസ്റ്റ്' : 'Squad List'}</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Village Sevens Authenticity Notice */}
+      {/* Official Match Authority Notice */}
       <div className="p-2.5 rounded-2xl bg-blue-50/80 border border-blue-200/60 text-blue-900 text-xs flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 font-medium">
           <Info className="w-4 h-4 text-blue-600 shrink-0" />
           <span>
             {lang === 'ml'
-              ? 'റേറ്റിംഗുകൾ ഫാൻ വോട്ടുകളുടെയും ടൂർണ്ണമെന്റ് കമ്മിറ്റിയുടെയും വിലയിരുത്തലാണ്. യഥാർത്ഥ മാച്ച് റെക്കോർഡുകൾ (ഗോളുകൾ, കാർഡുകൾ, സബ്‌സ്റ്റിറ്റ്യൂഷനുകൾ) ഒഫീഷ്യൽ റഫറി ഡെസ്‌ക് രേഖപ്പെടുത്തുന്നു.'
-              : 'Ratings reflect fan community votes & match observation. Official match facts (goals, assists, cards) are verified by the referee desk.'}
+              ? 'യഥാർത്ഥ മാച്ച് റെക്കോർഡുകൾ (ഗോളുകൾ, കാർഡുകൾ, സബ്‌സ്റ്റിറ്റ്യൂഷനുകൾ) ഒഫീഷ്യൽ റഫറി ഡെസ്‌ക് രേഖപ്പെടുത്തുന്നു.'
+              : 'Official match facts (goals, cards, substitutions) recorded directly by the referee desk.'}
           </span>
         </div>
         <span className="px-2 py-0.5 rounded-full bg-blue-200 text-blue-950 font-bold text-[9px] uppercase tracking-wider shrink-0">
@@ -295,7 +259,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         </span>
       </div>
 
-      {/* Team Selector & Overall Team Rating Bar */}
+      {/* Team Selector Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
         <div className="flex items-center gap-2">
           <button
@@ -306,9 +270,6 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
           >
             <TeamLogo teamName="UDAYA PARAMBIL PEEDIKA" className="w-5 h-5 rounded-md" />
             <span>UDAYA</span>
-            <span className="px-1.5 py-0.2 rounded bg-purple-900 text-white text-[10px] font-mono">
-              ★ {homeSquad.teamRating}
-            </span>
           </button>
           <button
             onClick={() => { setSelectedTeam('away'); setActivePlayer(null); }}
@@ -318,21 +279,18 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
           >
             <TeamLogo teamName="NEW MALAYA MALABAR FC" className="w-5 h-5 rounded-md" />
             <span>NEW MALAYA</span>
-            <span className="px-1.5 py-0.2 rounded bg-zinc-800 text-white text-[10px] font-mono">
-              ★ {awaySquad.teamRating}
-            </span>
           </button>
         </div>
 
-        <div className="text-xs text-slate-500 font-bold flex items-center gap-2">
-          <span className="text-[10px] uppercase tracking-wider text-slate-400">Team Avg Rating:</span>
-          <span className="px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-900 font-black font-mono">
-            {currentSquad.teamRating} / 10
+        <div className="text-xs text-slate-600 font-bold flex items-center gap-2">
+          <span className="text-[11px] uppercase tracking-wider text-slate-500">Formation:</span>
+          <span className="px-2 py-0.5 rounded-lg bg-slate-200 text-slate-800 font-mono text-[11px]">
+            {currentSquad.formation}
           </span>
         </div>
       </div>
 
-      {/* VIEW 1: GOOGLE SPORTS PITCH VIEW WITH RATINGS ON EACH PLAYER */}
+      {/* VIEW 1: TACTICAL TURF PITCH VIEW */}
       {viewMode === 'pitch' && (
         <div className="relative w-full max-w-2xl mx-auto rounded-3xl overflow-hidden border-4 border-emerald-950 shadow-2xl bg-gradient-to-b from-emerald-800 via-emerald-700 to-emerald-800 p-4 sm:p-6 text-white min-h-[500px] sm:min-h-[540px] flex flex-col justify-between select-none animate-fadeIn">
           {/* Pitch Markings */}
@@ -363,17 +321,16 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
             </div>
           </div>
 
-          {/* Player Nodes on Pitch with Google Ratings */}
+          {/* Player Nodes on Pitch */}
           <div className="relative z-10 flex flex-col justify-around py-2 h-[410px]">
             {/* 1. Attackers */}
             <div className="flex items-center justify-around px-8">
               {currentSquad.starting.filter(p => p.pos === 'ST' || p.pos === 'CF' || p.pos === 'WF').map(player => (
-                <GooglePitchPlayerNode 
+                <TurfPlayerNode 
                   key={player.num} 
                   player={player} 
                   isHome={selectedTeam === 'home'} 
                   isActive={activePlayer?.num === player.num}
-                  badgeStyle={getRatingBadgeStyle(player.rating, player.isMvp)}
                   onClick={() => setActivePlayer(player)} 
                 />
               ))}
@@ -382,12 +339,11 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
             {/* 2. Midfielders */}
             <div className="flex items-center justify-around px-12">
               {currentSquad.starting.filter(p => p.pos === 'CM' || p.pos === 'AM').map(player => (
-                <GooglePitchPlayerNode 
+                <TurfPlayerNode 
                   key={player.num} 
                   player={player} 
                   isHome={selectedTeam === 'home'} 
                   isActive={activePlayer?.num === player.num}
-                  badgeStyle={getRatingBadgeStyle(player.rating, player.isMvp)}
                   onClick={() => setActivePlayer(player)} 
                 />
               ))}
@@ -396,12 +352,11 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
             {/* 3. Defenders */}
             <div className="flex items-center justify-around px-6">
               {currentSquad.starting.filter(p => p.pos === 'CB' || p.pos === 'RB' || p.pos === 'SW').map(player => (
-                <GooglePitchPlayerNode 
+                <TurfPlayerNode 
                   key={player.num} 
                   player={player} 
                   isHome={selectedTeam === 'home'} 
                   isActive={activePlayer?.num === player.num}
-                  badgeStyle={getRatingBadgeStyle(player.rating, player.isMvp)}
                   onClick={() => setActivePlayer(player)} 
                 />
               ))}
@@ -410,32 +365,31 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
             {/* 4. Goalkeeper */}
             <div className="flex items-center justify-center">
               {currentSquad.starting.filter(p => p.pos === 'GK').map(player => (
-                <GooglePitchPlayerNode 
+                <TurfPlayerNode 
                   key={player.num} 
                   player={player} 
                   isGK={true} 
                   isHome={selectedTeam === 'home'} 
                   isActive={activePlayer?.num === player.num}
-                  badgeStyle={getRatingBadgeStyle(player.rating, player.isMvp)}
                   onClick={() => setActivePlayer(player)} 
                 />
               ))}
             </div>
           </div>
 
-          {/* Rating Legend Bar */}
+          {/* Legend Bar */}
           <div className="relative z-10 flex items-center justify-between text-[10px] text-emerald-100/90 bg-black/50 backdrop-blur-xs py-1.5 px-3 rounded-full border border-white/10">
-            <span>💡 Tap any player for stats</span>
+            <span>💡 Tap any player for profile</span>
             <div className="flex items-center gap-2 font-bold font-mono">
-              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-400"></span>⭐ 9.0+ MVP</span>
-              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500"></span>8.0+ Great</span>
-              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500"></span>7.0+ Solid</span>
+              <span className="flex items-center gap-1">⚽ Goal Scorer</span>
+              <span className="flex items-center gap-1">🟨 Card</span>
+              <span className="flex items-center gap-1">C Captain</span>
             </div>
           </div>
         </div>
       )}
 
-      {/* VIEW 2: GOOGLE SPORTS RATINGS TABLE / LIST */}
+      {/* VIEW 2: OFFICIAL SQUAD TABLE */}
       {viewMode === 'table' && (
         <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white animate-fadeIn">
           <table className="w-full text-left border-collapse text-xs">
@@ -443,10 +397,9 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
               <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[10px]">
                 <th className="py-2.5 px-3">Player</th>
                 <th className="py-2.5 px-2">Pos</th>
-                <th className="py-2.5 px-2 text-center">Rating</th>
                 <th className="py-2.5 px-2 text-center">Goals</th>
-                <th className="py-2.5 px-2 text-center">Assists</th>
-                <th className="py-2.5 px-3 text-right">Key Highlight</th>
+                <th className="py-2.5 px-2 text-center">Cards</th>
+                <th className="py-2.5 px-3 text-right">Role</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -471,11 +424,6 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                                 C
                               </span>
                             )}
-                            {p.isMvp && (
-                              <span className="px-1.5 py-0.2 bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 text-[9px] font-black rounded uppercase">
-                                ⭐ MVP
-                              </span>
-                            )}
                           </div>
                           <span className="text-[10px] text-slate-400">{p.country}</span>
                         </div>
@@ -486,19 +434,14 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                         {p.pos}
                       </span>
                     </td>
-                    <td className="py-2.5 px-2 text-center">
-                      <span className={`inline-block px-2 py-0.5 rounded-lg font-mono font-black text-xs ${getRatingBadgeStyle(p.rating, p.isMvp)}`}>
-                        {p.rating.toFixed(1)}
-                      </span>
-                    </td>
                     <td className="py-2.5 px-2 text-center font-bold text-slate-900">
                       {p.goals ? `⚽ ${p.goals}` : '-'}
                     </td>
                     <td className="py-2.5 px-2 text-center font-bold text-slate-900">
-                      {p.assists ? `🎯 ${p.assists}` : '-'}
+                      {p.cards !== 'None' ? (p.cards === 'Yellow' ? '🟨' : '🟥') : '-'}
                     </td>
                     <td className="py-2.5 px-3 text-right text-[11px] text-slate-600 font-medium">
-                      {p.stats?.ratingDesc || p.desc}
+                      {p.desc}
                     </td>
                   </tr>
                 );
@@ -508,13 +451,13 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         </div>
       )}
 
-      {/* GOOGLE SPORTS STYLE DETAILED PLAYER MODAL / CARD */}
+      {/* OFFICIAL PLAYER MODAL / CARD */}
       {activePlayer && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 text-white border-2 border-amber-400/80 shadow-2xl space-y-4 animate-fadeIn select-none">
+        <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 text-white border-2 border-slate-700 shadow-2xl space-y-4 animate-fadeIn select-none">
           {/* Top Bar */}
           <div className="flex items-start justify-between gap-3 border-b border-slate-800 pb-3">
             <div className="flex items-center gap-3">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-600 text-slate-950 font-black font-sports text-2xl flex items-center justify-center shadow-lg shrink-0">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-800 text-white font-black font-sports text-2xl flex items-center justify-center shadow-lg shrink-0">
                 #{activePlayer.num}
               </div>
               <div>
@@ -527,85 +470,45 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                       Captain (C)
                     </span>
                   )}
-                  {activePlayer.isMvp && (
-                    <span className="px-2 py-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 text-[10px] font-black rounded-full uppercase flex items-center gap-1 shadow-xs">
-                      <Star className="w-3 h-3 fill-current" />
-                      <span>Match MVP</span>
-                    </span>
-                  )}
                 </div>
-                <p className="text-xs text-amber-300 font-bold mt-0.5">
+                <p className="text-xs text-slate-300 font-bold mt-0.5">
                   {activePlayer.role} ({activePlayer.pos}) • {activePlayer.country}
                 </p>
               </div>
             </div>
 
-            {/* Fan Rating Big Badge */}
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
-                  Fan Rating
-                </span>
-                <span className={`inline-block px-3 py-1 rounded-xl font-mono font-black text-base sm:text-lg mt-0.5 ${getRatingBadgeStyle(activePlayer.rating, activePlayer.isMvp)}`}>
-                  ★ {activePlayer.rating.toFixed(1)} <span className="text-[11px] font-normal opacity-80">/10</span>
-                </span>
-              </div>
-
-              <button
-                onClick={() => setActivePlayer(null)}
-                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Player Match Stats Breakdown */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-            <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700">
-              <span className="text-[10px] text-slate-400 block font-bold">Ground Action</span>
-              <span className="text-sm font-black font-mono text-emerald-400">
-                {activePlayer.pos === 'GK' ? `${activePlayer.stats?.saves || 4} Saves` : `${activePlayer.stats?.shots || 3} Shots on Target`}
-              </span>
-            </div>
-            <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700">
-              <span className="text-[10px] text-slate-400 block font-bold">Goals & Assists</span>
-              <span className="text-sm font-black font-mono text-amber-300">
-                {activePlayer.goals ? `${activePlayer.goals}G ` : ''}{activePlayer.assists ? `${activePlayer.assists}A` : activePlayer.goals ? '' : '0G / 0A'}
-              </span>
-            </div>
-            <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700">
-              <span className="text-[10px] text-slate-400 block font-bold">Role Speciality</span>
-              <span className="text-xs font-bold text-white truncate block">{activePlayer.desc}</span>
-            </div>
-            <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700">
-              <span className="text-[10px] text-slate-400 block font-bold">Match Period</span>
-              <span className="text-sm font-black font-mono text-blue-400">30' Active</span>
-            </div>
-          </div>
-
-          {/* Performance Summary Text */}
-          <p className="text-xs text-slate-300 bg-slate-800/50 p-2.5 rounded-xl border border-slate-700/60 leading-relaxed">
-            📝 <strong>Committee Review:</strong> {activePlayer.stats?.ratingDesc || activePlayer.desc}
-          </p>
-
-          {/* Live Fan Upvote Button */}
-          <div className="flex items-center justify-between pt-1">
             <button
-              onClick={() => handleVotePlayer(activePlayer.num)}
-              className="py-2 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 transition active:scale-95 shadow-md"
+              onClick={() => setActivePlayer(null)}
+              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition"
             >
-              <ThumbsUp className="w-3.5 h-3.5" />
-              <span>{lang === 'ml' ? 'പ്ലെയറെ റേറ്റ് ചെയ്യുക (Upvote)' : 'Upvote Player Rating'}</span>
-              <span className="px-1.5 py-0.2 rounded-full bg-white/20 text-[10px] font-mono ml-1">
-                +{fanVotes[`${selectedTeam}-${activePlayer.num}`] || 0}
-              </span>
+              <X className="w-4 h-4" />
             </button>
-
-            <span className="text-[11px] text-slate-400 font-medium">
-              Ground Verified Lineup
-            </span>
           </div>
+
+          {/* Official Match Records */}
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700">
+              <span className="text-[10px] text-slate-400 block font-bold">Goals</span>
+              <span className="text-sm font-black font-mono text-emerald-400">
+                {activePlayer.goals ? `⚽ ${activePlayer.goals}` : '0'}
+              </span>
+            </div>
+            <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700">
+              <span className="text-[10px] text-slate-400 block font-bold">Cards</span>
+              <span className="text-sm font-black font-mono text-amber-300">
+                {activePlayer.cards !== 'None' ? activePlayer.cards : 'None'}
+              </span>
+            </div>
+            <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700">
+              <span className="text-[10px] text-slate-400 block font-bold">Squad Status</span>
+              <span className="text-xs font-bold text-white block mt-0.5">Starting 7</span>
+            </div>
+          </div>
+
+          {/* Profile Note */}
+          <p className="text-xs text-slate-300 bg-slate-800/50 p-2.5 rounded-xl border border-slate-700/60 leading-relaxed">
+            📋 <strong>Role:</strong> {activePlayer.desc}
+          </p>
         </div>
       )}
 
@@ -613,14 +516,14 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
       <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
         <div className="flex items-center justify-between text-xs font-bold text-slate-600 mb-2">
           <span className="uppercase tracking-wider">Substitutes Bench (പകരക്കാർ):</span>
-          <span className="text-[10px] text-blue-700 font-bold">5 Subs Ready</span>
+          <span className="text-[10px] text-blue-700 font-bold">{currentSquad.subs.length} Subs Registered</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {currentSquad.subs.map(s => (
             <span key={s.num} className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-800 shadow-2xs flex items-center gap-1.5">
               <span>#{s.num} {s.name}</span>
               <span className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 text-[10px] font-mono">
-                ★ {s.rating}
+                {s.role}
               </span>
             </span>
           ))}
@@ -630,13 +533,13 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
   );
 }
 
-// Google Style Player Node on Turf Pitch
-function GooglePitchPlayerNode({ player, isGK = false, isHome, isActive, badgeStyle, onClick }) {
+// Tactical Player Node on Turf Pitch
+function TurfPlayerNode({ player, isGK = false, isHome, isActive, onClick }) {
   return (
     <div 
       onClick={onClick}
-      className={`group cursor-pointer flex flex-col items-center transition-all hover:scale-115 active:scale-95 ${
-        isActive ? 'scale-120' : ''
+      className={`group cursor-pointer flex flex-col items-center transition-all hover:scale-110 active:scale-95 ${
+        isActive ? 'scale-115' : ''
       }`}
     >
       <div className="relative">
@@ -656,15 +559,23 @@ function GooglePitchPlayerNode({ player, isGK = false, isHome, isActive, badgeSt
           )}
         </div>
 
-        {/* Google Sports Rating Badge floating on top right */}
-        <div className={`absolute -bottom-1 -right-2 px-1.5 py-0.2 rounded-full font-mono text-[9px] sm:text-[10px] border border-white/40 ${badgeStyle}`}>
-          {player.rating.toFixed(1)}
-        </div>
+        {/* Goal Badge if player scored */}
+        {player.goals > 0 && (
+          <div className="absolute -bottom-1 -right-2 px-1 rounded-full font-mono text-[9px] bg-emerald-600 text-white border border-white/60 font-bold shadow-xs">
+            ⚽ {player.goals}
+          </div>
+        )}
+
+        {/* Card Badge if player received card */}
+        {player.cards === 'Yellow' && (
+          <div className="absolute -top-1 -right-1 text-[10px]">
+            🟨
+          </div>
+        )}
       </div>
 
       {/* Player Name Tag */}
       <div className="mt-1.5 px-1.5 py-0.2 rounded bg-black/80 backdrop-blur-xs text-[10px] font-bold text-white tracking-tight truncate max-w-[80px] sm:max-w-[95px] text-center border border-white/10 shadow-xs flex items-center justify-center gap-0.5">
-        {player.isMvp && <span className="text-amber-400 text-[9px]">⭐</span>}
         <span>{player.name.split(' ')[0]}</span>
       </div>
     </div>

@@ -60,7 +60,7 @@ export default function VenueSection({ lang, isDarkMode }) {
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-red-600 hover:bg-red-700 text-white shadow transition"
               >
                 <Navigation className="w-4 h-4" />
-                <span>Get Google Maps Directions</span>
+                <span>{lang === 'ml' ? 'സ്റ്റേഡിയം റൂട്ട് മാപ്പ്' : 'Get Stadium Directions'}</span>
               </a>
 
               <a

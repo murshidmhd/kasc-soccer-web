@@ -83,9 +83,10 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
     return () => window.removeEventListener('scroll', checkScroll);
   }, [activeTab, isDismissed]);
 
-  if (!isVisible || isDismissed) {
-    // If dismissed, render a tiny recall pill button
-    if (isDismissed) {
+  // Before kickoff, hide the sticky score widget completely unless live match or demo is active
+  if (!isVisible || isDismissed || matchState.status === 'UPCOMING') {
+    // If dismissed during live match, render a tiny recall pill button
+    if (isDismissed && matchState.status !== 'UPCOMING') {
       return (
         <button
           onClick={() => { setIsDismissed(false); setIsMinimized(false); }}

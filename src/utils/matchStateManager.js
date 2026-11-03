@@ -17,17 +17,39 @@ export const BACKUP_ADMIN_PIN = '2026';  // Standby Backup Scorer PIN
 export const SEVENS_HALF_MINUTES = 30;
 export const SEVENS_TOTAL_MINUTES = 60;
 
-export const initialOfficialMatchState = {
-  officialScoreHome: 2,
-  officialScoreAway: 1,
-  matchSeconds: 30 * 60 + 30, // 30:30 in 2nd Half (Sevens 30+30 rule)
-  matchMinute: 31,
-  isTimerRunning: true,
-  timerStartedAt: Date.now(),
-  status: '2ND_HALF', // 'UPCOMING' | '1ST_HALF' | 'HALF_TIME' | '2ND_HALF' | 'FULL_TIME'
+// Real Official Match State (Pre-Kickoff, authentic state before Nov 6, 2026, 8:00 PM IST)
+export const realOfficialMatchState = {
+  officialScoreHome: 0,
+  officialScoreAway: 0,
+  matchSeconds: 0,
+  matchMinute: 0,
+  isTimerRunning: false,
+  timerStartedAt: null,
+  status: 'UPCOMING',
   isVerified: true,
   lastUpdated: new Date().toISOString(),
   updatedBy: 'Committee Ground Desk (Official)',
+  isCrowdLocked: true,
+  crowdReports: {
+    home: 0,
+    away: 0,
+    total: 0
+  },
+  events: []
+};
+
+// Demo Simulation Data (Accessible strictly via DEMO Mode toggle, OFF by default)
+export const demoOfficialMatchState = {
+  officialScoreHome: 2,
+  officialScoreAway: 1,
+  matchSeconds: 30 * 60 + 30, // 30:30 in 2nd Half
+  matchMinute: 31,
+  isTimerRunning: true,
+  timerStartedAt: Date.now(),
+  status: '2ND_HALF',
+  isVerified: true,
+  lastUpdated: new Date().toISOString(),
+  updatedBy: 'Demo Simulation Mode',
   isCrowdLocked: false,
   crowdReports: {
     home: 18,
@@ -35,11 +57,47 @@ export const initialOfficialMatchState = {
     total: 27
   },
   events: [
-    { id: 'evt-1', minute: 12, team: 'home', player: 'Ibrahim Soumahoro', type: 'goal', text: 'Stunning curler into top right corner', isOfficial: true },
-    { id: 'evt-2', minute: 24, team: 'away', player: 'Jameel (New Malaya #6)', type: 'goal', text: 'Equalizer through penalty rebound for New Malaya Malabar', isOfficial: true },
+    { id: 'evt-1', minute: 12, team: 'home', player: 'Ibrahim Soumahoro', type: 'goal', text: 'Curler into top corner', isOfficial: true },
+    { id: 'evt-2', minute: 24, team: 'away', player: 'Jameel (New Malaya #6)', type: 'goal', text: 'Equalizer through penalty rebound', isOfficial: true },
     { id: 'evt-3', minute: 30, team: 'home', player: 'Riyas K. (Captain)', type: 'goal', text: 'Header right before Half-Time whistle', isOfficial: true }
   ]
 };
+
+export const DEMO_MODE_KEY = 'kasc_demo_mode_active';
+
+export function isDemoModeActive() {
+  try {
+    return localStorage.getItem(DEMO_MODE_KEY) === 'true';
+  } catch (e) {
+    return false;
+  }
+}
+
+export function setDemoModeActive(enabled) {
+  try {
+    if (enabled) {
+      localStorage.setItem(DEMO_MODE_KEY, 'true');
+      localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(demoOfficialMatchState));
+      window.dispatchEvent(new CustomEvent('kasc_match_state_updated', { detail: demoOfficialMatchState }));
+    } else {
+      localStorage.removeItem(DEMO_MODE_KEY);
+      localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(realOfficialMatchState));
+      window.dispatchEvent(new CustomEvent('kasc_match_state_updated', { detail: realOfficialMatchState }));
+    }
+    window.dispatchEvent(new CustomEvent('kasc_demo_mode_changed', { detail: Boolean(enabled) }));
+  } catch (e) {
+    console.error('Failed to toggle demo mode', e);
+  }
+}
+
+export function getDaysToKickoff() {
+  const kickoff = new Date('2026-11-06T20:00:00+05:30').getTime();
+  const diff = kickoff - Date.now();
+  if (diff <= 0) return 0;
+  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+}
+
+export const initialOfficialMatchState = realOfficialMatchState;
 
 // Calculate real-time ticking match time (MM:SS)
 export function getCalculatedMatchTime(matchState) {
@@ -69,15 +127,21 @@ export function getCalculatedMatchTime(matchState) {
   };
 }
 
-// Retrieve stored state or fallback to default
+// Retrieve stored state or fallback to real pre-match default
 export function getStoredMatchState() {
   try {
     const raw = localStorage.getItem(MATCH_STORAGE_KEY);
-    if (!raw) return initialOfficialMatchState;
-    return JSON.parse(raw);
+    if (!raw) {
+      return isDemoModeActive() ? demoOfficialMatchState : realOfficialMatchState;
+    }
+    const parsed = JSON.parse(raw);
+    if (!isDemoModeActive() && (parsed.updatedBy === 'Demo Simulation Mode' || (parsed.status === '2ND_HALF' && parsed.officialScoreHome === 2 && parsed.officialScoreAway === 1))) {
+      return realOfficialMatchState;
+    }
+    return parsed;
   } catch (err) {
     console.error('Failed to read match state from localStorage', err);
-    return initialOfficialMatchState;
+    return realOfficialMatchState;
   }
 }
 

@@ -11,12 +11,8 @@ import tournamentTeaser from '../assets/tournament_teaser.mp4';
 import tournamentTeaserPoster from '../assets/tournament_teaser_poster.jpg';
 import teaserVideoBtnThumb from '../assets/teaser_video_btn_thumb.jpg';
 import countdown6 from '../assets/promo/countdown_6days.jpg';
-import countdown8 from '../assets/promo/countdown_8days.jpg';
-import countdown9 from '../assets/promo/countdown_9days.jpg';
-import countdown10 from '../assets/promo/countdown_10days.jpg';
-import countdown11 from '../assets/promo/countdown_11days.jpg';
 
-const AMBIENT_COUNTDOWN_POSTERS = [countdown6, countdown8, countdown9, countdown10, countdown11];
+const AMBIENT_COUNTDOWN_POSTERS = [countdown6];
 
 export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketModal }) {
   const [activeBannerTab, setActiveBannerTab] = React.useState('action');
@@ -198,16 +194,16 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                 <div className={`p-2.5 sm:p-3 rounded-2xl border shadow-2xs ${
                   isDarkMode ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-50 border-slate-200'
                 }`}>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2">
-                    <span className="font-sports font-black text-sm sm:text-base text-slate-950 dark:text-white tracking-wide truncate">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
+                    <span className="font-sports font-black text-xs sm:text-base text-slate-950 dark:text-white tracking-wide text-center sm:text-left">
                       UDAYA PARAMBIL PEEDIKA
                     </span>
                     <div className="flex items-center justify-center my-0.5 sm:my-0">
-                      <span className="px-2 py-0.5 rounded-md bg-blue-700 text-white font-black font-sports text-[11px] shadow-xs">
+                      <span className="px-2 py-0.5 rounded-md bg-blue-700 text-white font-black font-sports text-[10px] sm:text-[11px] shadow-xs">
                         VS
                       </span>
                     </div>
-                    <span className="font-sports font-black text-sm sm:text-base text-slate-950 dark:text-white tracking-wide truncate sm:text-right">
+                    <span className="font-sports font-black text-xs sm:text-base text-slate-950 dark:text-white tracking-wide text-center sm:text-right">
                       NEW MALAYA MALABAR FC
                     </span>
                   </div>
