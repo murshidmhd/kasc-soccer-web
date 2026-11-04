@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
-import { Shield, Search, Users, CheckCircle2, UserCheck, Eye, X, Image as ImageIcon } from 'lucide-react';
+import { Search, Eye, X } from 'lucide-react';
 import { participatingTeams } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
+import { EmptyState } from './SkeletonLoader';
+import ClubBottomSheet from './ClubBottomSheet';
 import teamsOfficialPoster from '../assets/teams_official_poster.jpg';
+
+export const SHOW_SFA_CLAIMS = false;
+
+const getTownName = (cityString) => {
+  if (!cityString) return '';
+  return cityString.split(',')[0].trim();
+};
 
 export default function TeamsSection({ lang, isDarkMode }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('all'); // 'all' | 'permanent' | 'malappuram'
+  const [selectedFilter, setSelectedFilter] = useState('all'); // 'all' | 'malappuram' | 'other'
   const [isPosterModalOpen, setIsPosterModalOpen] = useState(false);
+  const [selectedClub, setSelectedClub] = useState(null);
 
   const filteredTeams = participatingTeams.filter((team) => {
     const matchesSearch =
@@ -19,217 +29,201 @@ export default function TeamsSection({ lang, isDarkMode }) {
 
     if (!matchesSearch) return false;
 
-    if (selectedFilter === 'permanent') {
-      return team.category.includes('Permanent') || team.category.includes('Host');
-    }
     if (selectedFilter === 'malappuram') {
       return team.city.toLowerCase().includes('malappuram') || team.name.toLowerCase().includes('malappuram');
+    }
+    if (selectedFilter === 'other') {
+      return !team.city.toLowerCase().includes('malappuram') && !team.name.toLowerCase().includes('malappuram');
     }
     return true;
   });
 
   return (
-    <section id="teams" className="py-10 px-3 sm:px-6 max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="text-center max-w-2xl mx-auto mb-6 space-y-2">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold uppercase tracking-wider">
-          <Shield className="w-3.5 h-3.5 text-blue-600" />
-          <span>SFA Official Registered Clubs (24 Confirmed Teams)</span>
+    <section id="teams" className="py-2 px-3 sm:px-6 max-w-6xl mx-auto space-y-3 sm:space-y-4">
+      {/* 1. Slim Header: Title and One Line of Text (Rule 4: Neutral claims) */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-surface-border dark:border-navy-700 pb-3">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-black font-sports tracking-wide uppercase leading-[1.3] text-card-title">
+            {SHOW_SFA_CLAIMS
+              ? (lang === 'ml' ? '24 ഔദ്യോഗിക ക്ലബ്ബുകൾ' : 'SFA REGISTERED CLUBS (24)')
+              : (lang === 'ml' ? '24 ക്ലബ്ബുകൾ' : 'TOURNAMENT CLUBS (24)')}
+          </h2>
+          <p className="text-xs text-card-muted leading-[1.5] mt-0.5">
+            {SHOW_SFA_CLAIMS
+              ? (lang === 'ml' ? 'സെവൻസ് ഫുട്ബോൾ അസോസിയേഷൻ അംഗീകൃത 24 ടീമുകൾ' : 'Official confirmed tournament squads')
+              : (lang === 'ml' ? 'സീസൺ 7 ൽ പങ്കെടുക്കുന്ന 24 ടീമുകൾ' : '24 participating clubs • Season 7')}
+          </p>
         </div>
-        <h2 className="text-2xl sm:text-4xl font-black font-sports text-slate-950 tracking-wide uppercase">
-          {lang === 'ml' ? 'ടീമുകളും മാനേജർമാരും' : 'CLUBS & MANAGEMENT'}
-        </h2>
-        <p className="text-xs sm:text-sm text-slate-600">
-          {lang === 'ml'
-            ? 'സെവൻസ് ഫുട്ബോൾ അസോസിയേഷൻ (SFA) അംഗീകൃത 24 ഔദ്യോഗിക ടീമുകളും അവയുടെ മാനേജ്‌മെന്റ് വിവരങ്ങളും'
-            : 'Official Sevens Football Association (SFA) confirmed 24 tournament teams & official crests'}
-        </p>
-      </div>
 
-      {/* Official Poster Spotlight Banner */}
-      <div className={`mb-8 p-4 sm:p-5 rounded-3xl border shadow-md flex flex-col md:flex-row items-center justify-between gap-4 transition-colors ${
-        isDarkMode ? 'bg-slate-900 border-slate-800 text-white' : 'bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white border-blue-800'
-      }`}>
-        <div className="flex items-center gap-3.5">
-          <div 
-            onClick={() => setIsPosterModalOpen(true)}
-            className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-amber-400 shrink-0 cursor-pointer shadow-md hover:scale-105 transition"
-          >
-            <img 
-              src={teamsOfficialPoster} 
-              alt="Official Confirmed 24 Teams Poster" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black uppercase">
-                Official Release
-              </span>
-              <span className="text-xs text-blue-200 font-bold">Season 7 Confirmed List</span>
+        {/* 2. Slim Poster Row: Thumbnail + Short Label + View Poster Button */}
+        <div className="flex items-center justify-between sm:justify-end gap-3 p-2 rounded-xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700">
+          <div className="flex items-center gap-2 min-w-0">
+            <div 
+              onClick={() => setIsPosterModalOpen(true)}
+              className="w-9 h-9 rounded-lg overflow-hidden border border-gold shrink-0 cursor-pointer shadow-xs"
+            >
+              <img 
+                src={teamsOfficialPoster} 
+                alt="Poster Thumbnail" 
+                width="36"
+                height="36"
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-white mt-0.5">
-              {lang === 'ml' ? 'പങ്കെടുക്കുന്ന 24 ഔദ്യോഗിക ടീമുകൾ' : 'OFFICIAL 24 CONFIRMED TEAMS POSTER'}
-            </h3>
-            <p className="text-xs text-slate-300 font-malayalam">
-              {lang === 'ml' 
-                ? 'ഉദയ & KASC സംയുക്തമായി സംഘടിപ്പിക്കുന്ന ടൂർണ്ണമെന്റിൽ പങ്കെടുക്കുന്ന ടീമുകളുടെ ഒഫീഷ്യൽ പോസ്റ്റർ' 
-                : 'Udaya KASC Soccer Season 7 official poster featuring all 24 participating clubs and logos.'}
-            </p>
+            <span className="text-[11px] font-bold text-card-title truncate">
+              {lang === 'ml' ? 'ടൂർണ്ണമെന്റ് പോസ്റ്റർ' : 'Tournament Poster'}
+            </span>
           </div>
-        </div>
 
-        <button
-          onClick={() => setIsPosterModalOpen(true)}
-          className="w-full md:w-auto px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 transition active:scale-95 shrink-0"
-        >
-          <Eye className="w-4 h-4" />
-          <span>{lang === 'ml' ? 'പോസ്റ്റർ കാണുക (HD)' : 'View Full Poster (HD)'}</span>
-        </button>
+          <button
+            onClick={() => setIsPosterModalOpen(true)}
+            className="min-h-[44px] px-3 py-1.5 rounded-lg btn-royal text-white font-bold text-[11px] uppercase tracking-wider shadow-xs flex items-center gap-1.5 transition active:scale-95 shrink-0"
+            aria-label="View tournament poster"
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>{lang === 'ml' ? 'പോസ്റ്റർ കാണുക' : 'View Poster'}</span>
+          </button>
+        </div>
       </div>
 
-      {/* Search & Filter Bar */}
-      <div className="max-w-xl mx-auto mb-6 space-y-2.5">
+      {/* 3. Sticky Search Box and Filter Chips Bar with Soft Fade on Right Edge (Rule 7) */}
+      <div className="sticky top-14 sm:top-16 z-20 py-2 space-y-2 bg-surface-light dark:bg-navy-900 border-b border-surface-border dark:border-navy-800 -mx-3 px-3 sm:mx-0 sm:px-0">
         <div className="relative">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-card-muted" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={lang === 'ml' ? 'ടീം അല്ലെങ്കിൽ മാനേജറുടെ പേര് തിരയുക...' : 'Search club, city, or manager...'}
-            className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-xs sm:text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 shadow-xs"
+            placeholder={lang === 'ml' ? 'ക്ലബ്ബ് അല്ലെങ്കിൽ സ്ഥലം തിരയുക...' : 'Search club, city or district...'}
+            className="w-full pl-10 pr-4 min-h-[44px] py-2 rounded-xl border text-xs sm:text-sm surface-card border-surface-border dark:border-navy-700 text-card-title placeholder-card-muted transition focus:outline-hidden focus:ring-2 focus:ring-royal"
           />
         </div>
 
-        <div className="flex items-center justify-center gap-1.5 flex-wrap">
-          <button
-            onClick={() => setSelectedFilter('all')}
-            className={`px-3 py-1 rounded-xl text-xs font-bold transition active:scale-95 ${
-              selectedFilter === 'all'
-                ? 'bg-blue-700 text-white shadow-xs'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
-          >
-            All 24 Clubs
-          </button>
-          <button
-            onClick={() => setSelectedFilter('permanent')}
-            className={`px-3 py-1 rounded-xl text-xs font-bold transition active:scale-95 ${
-              selectedFilter === 'permanent'
-                ? 'bg-blue-700 text-white shadow-xs'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
-          >
-            {lang === 'ml' ? 'സ്ഥിരം ടീമുകൾ' : 'Permanent SFA'}
-          </button>
-          <button
-            onClick={() => setSelectedFilter('malappuram')}
-            className={`px-3 py-1 rounded-xl text-xs font-bold transition active:scale-95 ${
-              selectedFilter === 'malappuram'
-                ? 'bg-blue-700 text-white shadow-xs'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
-          >
-            Malappuram Belt
-          </button>
+        {/* Filter chip container with soft edge fade */}
+        <div className="relative">
+          <div className="flex items-center gap-1.5 overflow-x-auto horizontal-scroll-container py-0.5 pr-8">
+            <button
+              onClick={() => setSelectedFilter('all')}
+              className={`min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-bold transition active:scale-95 whitespace-nowrap shrink-0 ${
+                selectedFilter === 'all'
+                  ? 'btn-royal text-white font-black shadow-xs'
+                  : 'surface-card text-card-title border border-surface-border dark:border-navy-700'
+              }`}
+            >
+              {lang === 'ml' ? 'എല്ലാം (24)' : 'All 24'}
+            </button>
+            <button
+              onClick={() => setSelectedFilter('malappuram')}
+              className={`min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-bold transition active:scale-95 whitespace-nowrap shrink-0 ${
+                selectedFilter === 'malappuram'
+                  ? 'btn-royal text-white font-black shadow-xs'
+                  : 'surface-card text-card-title border border-surface-border dark:border-navy-700'
+              }`}
+            >
+              {lang === 'ml' ? 'മലപ്പുറം ബെൽറ്റ്' : 'Malappuram Belt'}
+            </button>
+            <button
+              onClick={() => setSelectedFilter('other')}
+              className={`min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-bold transition active:scale-95 whitespace-nowrap shrink-0 ${
+                selectedFilter === 'other'
+                  ? 'btn-royal text-white font-black shadow-xs'
+                  : 'surface-card text-card-title border border-surface-border dark:border-navy-700'
+              }`}
+            >
+              {lang === 'ml' ? 'മറ്റു ജില്ലകൾ' : 'Other Districts'}
+            </button>
+          </div>
+          {/* Soft fade on right edge indicating scrollability */}
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-surface-light dark:from-navy-900 to-transparent" />
         </div>
       </div>
 
-      {/* Teams Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredTeams.map((team) => (
-          <div
-            key={team.id}
-            className={`rounded-2xl p-4 sm:p-5 border transition duration-200 group relative hover:-translate-y-0.5 ${
-              isDarkMode
-                ? 'bg-slate-900 border-slate-800 text-white'
-                : 'bg-white border-slate-200 text-slate-900 shadow-xs hover:border-blue-400 hover:shadow-md'
-            }`}
-          >
-            {/* Top Row: Logo & Badge */}
-            <div className="flex items-start justify-between gap-2 mb-3">
-              <TeamLogo teamName={team.name} className="w-12 h-12 shadow-xs" />
-              <div className="text-right">
-                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 inline-block">
-                  NO. {team.id}
-                </span>
-                <span className={`block text-[9px] font-bold mt-1 ${
-                  team.category.includes('Permanent') || team.category.includes('Host')
-                    ? 'text-emerald-700'
-                    : 'text-slate-500'
-                }`}>
-                  {team.category.includes('Permanent') ? '★ Permanent SFA' : 'SFA Registered'}
-                </span>
-              </div>
-            </div>
-
-            {/* Team Titles */}
-            <h3 className="text-base sm:text-lg font-black font-sports text-slate-950 group-hover:text-blue-700 transition leading-tight">
-              {team.name}
-            </h3>
-            <p className="text-xs font-bold text-slate-500 mb-1">
-              {team.nameMl}
-            </p>
-            <p className="text-[11px] text-blue-700 font-bold mb-3">
-              📍 {team.city}
-            </p>
-
-            {/* Official Management Information (Clean & Private) */}
-            <div className="space-y-1.5 text-xs border-t border-slate-100 pt-3">
-              {/* Manager */}
-              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
-                <span className="text-[10px] font-bold text-slate-400 uppercase">Manager</span>
-                <span className="font-bold text-slate-900 text-xs">{team.manager}</span>
-              </div>
-
-              {/* Assistant Manager */}
-              {team.asstManager && (
-                <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50/70 border border-slate-100">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">Asst Manager</span>
-                  <span className="font-bold text-slate-800 text-xs">{team.asstManager}</span>
+      {/* 4. Compact 2-Column Grid (Rule 5: ~130px tall, logo 44px, name max 2 lines, town only, no gold stars per Rule 3) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3">
+        {filteredTeams.map((team) => {
+          const town = getTownName(team.city);
+          return (
+            <div
+              key={team.id}
+              onClick={() => setSelectedClub(team)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedClub(team);
+                }
+              }}
+              className="h-[128px] p-2.5 sm:p-3 rounded-2xl border border-surface-border dark:border-navy-700 surface-card shadow-card hover:border-royal dark:hover:border-sky transition duration-150 flex flex-col justify-between cursor-pointer active:scale-95 group text-left relative focus:outline-hidden focus:ring-2 focus:ring-royal"
+            >
+              {/* Top row: 44px Logo in clean circle */}
+              <div className="flex items-center justify-between">
+                <div className="w-11 h-11 rounded-full bg-white p-1 border border-surface-border dark:border-navy-700 shadow-xs flex items-center justify-center shrink-0">
+                  <TeamLogo teamName={team.name} className="w-full h-full rounded-full object-contain" />
                 </div>
-              )}
+              </div>
+
+              {/* Club name (max 2 lines, no ellipsis) & Town (Rule 2: town only, never truncated) */}
+              <div className="min-w-0 mt-1">
+                <h3 className="text-xs sm:text-sm font-bold font-sports line-clamp-2 leading-tight text-card-title group-hover:text-royal dark:group-hover:text-sky transition-colors">
+                  {team.name}
+                </h3>
+                <p className="text-[11px] text-card-muted font-medium mt-0.5 leading-none">
+                  📍 {town}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {filteredTeams.length === 0 && (
-        <div className="text-center py-12 text-slate-400 text-sm">
-          No clubs found matching your search.
-        </div>
+        <EmptyState
+          title={lang === 'ml' ? 'ടീമുകൾ ഒന്നും കണ്ടെത്തിയില്ല' : 'No clubs found'}
+          subtitle={lang === 'ml' ? 'നിങ്ങൾ തിരഞ്ഞ പേരിൽ ക്ലബ്ബുകൾ ലഭ്യമല്ല.' : 'No teams match your search or filter.'}
+          actionLabel={lang === 'ml' ? 'ഫിൽട്ടർ മാറ്റുക' : 'Clear search'}
+          onAction={() => { setSearchQuery(''); setSelectedFilter('all'); }}
+        />
       )}
 
-      {/* Official 24 Teams Poster Full-View Lightbox Modal */}
+      {/* 5. Club Bottom Sheet Details Viewer */}
+      <ClubBottomSheet
+        isOpen={!!selectedClub}
+        club={selectedClub}
+        onClose={() => setSelectedClub(null)}
+        lang={lang}
+        isDarkMode={isDarkMode}
+      />
+
+      {/* 6. Tournament Poster Lightbox Modal (No backdrop-filter/blur) */}
       {isPosterModalOpen && (
         <div 
           onClick={() => setIsPosterModalOpen(false)}
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-fadeIn"
+          className="fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-6 bg-navy-900/95 animate-fadeIn"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="relative max-w-4xl max-h-[92vh] flex flex-col rounded-3xl bg-slate-950 border border-slate-800 shadow-2xl overflow-hidden"
+            className="relative max-w-4xl max-h-[92vh] flex flex-col rounded-3xl bg-navy-900 border border-navy-700 shadow-2xl overflow-hidden"
           >
-            <div className="p-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-white">
-              <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-amber-400" />
-                <h4 className="font-sports font-black text-sm sm:text-base uppercase tracking-wider">
-                  Official 24 Confirmed Teams • Udaya KASC Soccer Season 7
-                </h4>
-              </div>
+            <div className="p-3.5 bg-navy-800 border-b border-navy-700 flex items-center justify-between text-white">
+              <h4 className="font-sports font-black text-xs sm:text-sm uppercase tracking-wider text-white">
+                24 Teams • Udaya KASC Soccer Season 7
+              </h4>
               <button
                 onClick={() => setIsPosterModalOpen(false)}
-                className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition active:scale-95"
+                className="w-11 h-11 rounded-xl bg-navy-700 hover:bg-navy-600 text-white flex items-center justify-center transition active:scale-95"
+                aria-label="Close poster view"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="overflow-auto p-2 sm:p-4 flex items-center justify-center bg-black/40">
+            <div className="overflow-auto p-2 sm:p-4 flex items-center justify-center bg-navy-950">
               <img 
                 src={teamsOfficialPoster} 
-                alt="Official 24 Confirmed Teams Poster" 
-                className="max-h-[78vh] w-auto rounded-2xl object-contain shadow-2xl border border-white/10"
+                alt="24 Teams Poster" 
+                className="max-h-[78vh] w-auto rounded-xl object-contain shadow-2xl border border-navy-800"
               />
             </div>
           </div>

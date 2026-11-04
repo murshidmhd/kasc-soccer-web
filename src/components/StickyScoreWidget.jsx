@@ -126,12 +126,13 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
   if (isMinimized) {
     return (
       <aside 
-        className="fixed bottom-[74px] left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-[320px] sm:bottom-6 sm:right-6 sm:left-auto sm:translate-x-0 sm:w-[320px] transition-all select-none animate-fadeIn"
+        className="fixed left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-[340px] sm:bottom-6 sm:right-6 sm:left-auto sm:translate-x-0 sm:w-[320px] transition-all select-none animate-fadeIn"
+        style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))' }}
         aria-label="Sticky Live Score Mini Pill"
       >
         <div 
           onClick={() => setIsMinimized(false)}
-          className="bg-slate-950/95 backdrop-blur-xl border border-slate-700 text-white rounded-full shadow-2xl px-3 py-1.5 flex items-center justify-between gap-2 cursor-pointer hover:border-slate-500 transition active:scale-98"
+          className="bg-slate-950/95 backdrop-blur-xl border border-slate-700 text-white rounded-full shadow-2xl px-3.5 py-2 flex items-center justify-between gap-2 cursor-pointer hover:border-slate-500 transition active:scale-98 min-h-[44px]"
         >
           <div className="flex items-center gap-1.5 text-xs truncate min-w-0">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-ping shrink-0"></span>
@@ -141,20 +142,22 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
             <span className="text-[10px] text-amber-400 font-mono shrink-0">({clock.display})</span>
           </div>
 
-          <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setIsMinimized(false)}
-              className="p-1 rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition"
+              className="min-w-[36px] min-h-[36px] flex items-center justify-center p-1.5 rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition active:scale-95"
               title="Expand scoreboard"
+              aria-label="Expand scoreboard"
             >
-              <Maximize2 className="w-3.5 h-3.5" />
+              <Maximize2 className="w-4 h-4" />
             </button>
             <button
               onClick={() => setIsDismissed(true)}
-              className="p-1 rounded-full hover:bg-slate-800 text-slate-400 hover:text-rose-400 transition"
+              className="min-w-[36px] min-h-[36px] flex items-center justify-center p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-rose-400 transition active:scale-95"
               title="Close"
+              aria-label="Close"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -164,9 +167,10 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
 
   return (
     <aside 
-      className={`fixed bottom-[74px] left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-[320px] sm:bottom-6 sm:right-6 sm:left-auto sm:translate-x-0 sm:w-[320px] transition-all duration-200 select-none ${
+      className={`fixed left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-[340px] sm:bottom-6 sm:right-6 sm:left-auto sm:translate-x-0 sm:w-[320px] transition-all duration-200 select-none ${
         goalAlert ? 'scale-105 ring-4 ring-amber-400' : ''
       }`}
+      style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))' }}
       aria-label="Sticky Live Score Widget"
     >
       {/* Top Goal Flash Banner if newly scored */}

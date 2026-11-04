@@ -1,0 +1,59 @@
+[
+  {
+    "clubId": "udaya",
+    "name": "Udaya Parambil Peedika",
+    "founded": null,
+    "homeGround": null,
+    "district": "Malappuram",
+    "town": "Parambilpeedika",
+    "colours": null,
+    "nickname": null,
+    "honours": [],
+    "notablePeople": [],
+    "summary": "Grassroots football and sports club based in Parambilpeedika, Malappuram district, Kerala. Known for competing in regional floodlit sevens football tournaments.",
+    "sources": [
+      {
+        "url": "https://www.justdial.com/Malappuram/Udaya-Arts-Sports-Club-Near-Parambilpeedika/9999PX483-X483-180129181958-U2J8_BZDET",
+        "title": "Justdial Directory - Udaya Arts & Sports Club, Parambilpeedika",
+        "checkedOn": "2026-11-04"
+      }
+    ],
+    "status": "draft",
+    "needsClubConfirmation": true,
+    "conflicts": [],
+    "missing": [
+      "founded",
+      "homeGround",
+      "colours",
+      "nickname",
+      "honours",
+      "notablePeople"
+    ]
+  },
+  {
+    "clubId": "new_malaya",
+    "name": "New Malaya Malabar FC",
+    "founded": null,
+    "homeGround": null,
+    "district": "Kozhikode",
+    "town": "Kozhikode",
+    "colours": null,
+    "nickname": null,
+    "honours": [],
+    "notablePeople": [],
+    "summary": "Football club associated with Kozhikode, participating in local and regional sevens football events in the Malabar circuit.",
+    "sources": [],
+    "status": "draft",
+    "needsClubConfirmation": true,
+    "conflicts": [],
+    "missing": [
+      "founded",
+      "homeGround",
+      "colours",
+      "nickname",
+      "honours",
+      "notablePeople",
+      "independentVerificationSources"
+    ]
+  }
+]

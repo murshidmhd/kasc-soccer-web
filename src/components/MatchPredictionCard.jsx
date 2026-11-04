@@ -111,14 +111,16 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-base sm:text-xl font-black font-sports uppercase tracking-wider text-slate-950">
+              <h3 className={`text-base sm:text-xl font-black font-sports uppercase tracking-wider ${
+                isDarkMode ? 'text-white' : 'text-slate-950'
+              }`}>
                 {lang === 'ml' ? 'സ്കോർ പ്രവചിക്കൂ... സമ്മാനം നേടൂ!' : 'PREDICT & WIN CONTEST'}
               </h3>
-              <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-800 text-[10px] font-black uppercase tracking-wider animate-pulse">
+              <span className="px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-800 dark:text-red-300 text-[10px] font-black uppercase tracking-wider animate-pulse">
                 Live Poll
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-medium">
+            <p className={`text-xs font-medium mt-0.5 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
               {lang === 'ml' 
                 ? 'മത്സരഫലവും കൃത്യമായ സ്കോറും പ്രവചിക്കുന്നവരിൽ നിന്നും നറുക്കെടുപ്പിലൂടെ വമ്പൻ സമ്മാനം!'
                 : 'Predict match winner & exact scoreline to enter the Matchday Lucky Draw!'}
@@ -127,20 +129,22 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
         </div>
 
         {/* Sponsor Tag */}
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-50 border border-amber-200 text-[11px] font-bold text-amber-900 self-start sm:self-auto">
-          <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 text-[11px] font-bold text-amber-900 dark:text-amber-300 self-start sm:self-auto">
+          <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
           <span>Sponsored by <strong>Raidhan Kuzhimanthi</strong></span>
         </div>
       </div>
 
       {/* Part 1: Win Probability Community Poll */}
       <div className="mt-5 space-y-3">
-        <div className="flex items-center justify-between text-xs font-bold text-slate-600 uppercase tracking-wider">
+        <div className={`flex items-center justify-between text-xs font-bold uppercase tracking-wider ${
+          isDarkMode ? 'text-slate-400' : 'text-slate-600'
+        }`}>
           <span className="flex items-center gap-1">
-            <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
+            <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             <span>{lang === 'ml' ? 'ആര് വിജയിക്കും? (ഫാൻ പോൾ)' : 'Who Will Win? (Fan Poll)'}</span>
           </span>
-          <span className="flex items-center gap-1 text-[11px] text-slate-400 font-normal">
+          <span className={`flex items-center gap-1 text-[11px] font-normal ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             <Users className="w-3 h-3" />
             <span>{totalVotes.toLocaleString()} {lang === 'ml' ? 'വോട്ടുകൾ' : 'votes'}</span>
           </span>
@@ -152,18 +156,18 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
           <button
             onClick={() => handleVoteOutcome('home')}
             disabled={isSubmitted}
-            className={`p-2.5 sm:p-3 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-1 ${
+            className={`min-h-touch p-2.5 sm:p-3 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-1 ${
               isSubmitted ? 'cursor-not-allowed opacity-90' : 'active:scale-95'
             } ${
               selectedOutcome === 'home'
                 ? 'bg-blue-600 border-blue-600 text-white shadow-xs font-black'
-                : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800 font-bold'
+                : isDarkMode ? 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200 font-bold' : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800 font-bold'
             }`}
           >
             <span className="text-xs sm:text-sm font-black font-sports">
               {openingMatch.teamHome.shortName}
             </span>
-            <span className={`text-[10px] ${selectedOutcome === 'home' ? 'text-blue-100' : 'text-slate-500'}`}>
+            <span className={`text-[10px] ${selectedOutcome === 'home' ? 'text-blue-100' : isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
               {lang === 'ml' ? 'വിജയം' : 'Win (1)'}
             </span>
           </button>
@@ -172,18 +176,18 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
           <button
             onClick={() => handleVoteOutcome('draw')}
             disabled={isSubmitted}
-            className={`p-2.5 sm:p-3 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-1 ${
+            className={`min-h-touch p-2.5 sm:p-3 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-1 ${
               isSubmitted ? 'cursor-not-allowed opacity-90' : 'active:scale-95'
             } ${
               selectedOutcome === 'draw'
-                ? 'bg-slate-800 border-slate-800 text-white shadow-xs font-black'
-                : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800 font-bold'
+                ? 'bg-slate-700 border-slate-600 text-white shadow-xs font-black'
+                : isDarkMode ? 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200 font-bold' : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800 font-bold'
             }`}
           >
             <span className="text-xs sm:text-sm font-black font-sports">
               DRAW
             </span>
-            <span className={`text-[10px] ${selectedOutcome === 'draw' ? 'text-slate-300' : 'text-slate-500'}`}>
+            <span className={`text-[10px] ${selectedOutcome === 'draw' ? 'text-slate-300' : isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
               {lang === 'ml' ? 'സമനില' : 'Draw (X)'}
             </span>
           </button>
@@ -192,18 +196,18 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
           <button
             onClick={() => handleVoteOutcome('away')}
             disabled={isSubmitted}
-            className={`p-2.5 sm:p-3 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-1 ${
+            className={`min-h-touch p-2.5 sm:p-3 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-1 ${
               isSubmitted ? 'cursor-not-allowed opacity-90' : 'active:scale-95'
             } ${
               selectedOutcome === 'away'
                 ? 'bg-amber-500 border-amber-500 text-slate-950 shadow-xs font-black'
-                : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800 font-bold'
+                : isDarkMode ? 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200 font-bold' : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800 font-bold'
             }`}
           >
             <span className="text-xs sm:text-sm font-black font-sports">
               {openingMatch.teamAway.shortName}
             </span>
-            <span className={`text-[10px] ${selectedOutcome === 'away' ? 'text-amber-950' : 'text-slate-500'}`}>
+            <span className={`text-[10px] ${selectedOutcome === 'away' ? 'text-amber-950' : isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
               {lang === 'ml' ? 'വിജയം' : 'Win (2)'}
             </span>
           </button>
@@ -211,7 +215,9 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
 
         {/* Community Percentage Progress Bar */}
         <div className="pt-1 space-y-1.5">
-          <div className="h-3 rounded-full bg-slate-100 overflow-hidden flex border border-slate-200 p-0.5 gap-0.5">
+          <div className={`h-3 rounded-full overflow-hidden flex border p-0.5 gap-0.5 ${
+            isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-100 border-slate-200'
+          }`}>
             <div 
               style={{ width: `${homePercent}%` }} 
               className="bg-blue-600 rounded-l-full transition-all duration-700"
@@ -229,21 +235,25 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
             />
           </div>
 
-          <div className="flex items-center justify-between text-[11px] font-bold text-slate-600 px-1">
-            <span className="text-blue-700">{openingMatch.teamHome.shortName}: {homePercent}%</span>
-            <span className="text-slate-500">Draw: {drawPercent}%</span>
-            <span className="text-amber-700">{openingMatch.teamAway.shortName}: {awayPercent}%</span>
+          <div className={`flex items-center justify-between text-[11px] font-bold px-1 ${
+            isDarkMode ? 'text-slate-300' : 'text-slate-600'
+          }`}>
+            <span className="text-blue-600 dark:text-blue-400">{openingMatch.teamHome.shortName}: {homePercent}%</span>
+            <span className={isDarkMode ? 'text-slate-400' : 'text-slate-500'}>Draw: {drawPercent}%</span>
+            <span className="text-amber-600 dark:text-amber-400">{openingMatch.teamAway.shortName}: {awayPercent}%</span>
           </div>
         </div>
       </div>
 
       {/* Part 2: Exact Scoreline Stepper */}
-      <div className="mt-6 pt-5 border-t border-slate-100 space-y-4">
+      <div className={`mt-6 pt-5 border-t space-y-4 ${isDarkMode ? 'border-slate-800' : 'border-slate-100'}`}>
         <div className="text-center">
-          <span className="text-xs font-black font-sports text-slate-900 uppercase tracking-wider">
+          <span className={`text-xs font-black font-sports uppercase tracking-wider ${
+            isDarkMode ? 'text-slate-100' : 'text-slate-900'
+          }`}>
             {lang === 'ml' ? 'കൃത്യമായ സ്കോർ പ്രവചിക്കൂ (Exact Scoreline)' : 'Predict Exact Full-Time Score'}
           </span>
-          <p className="text-[11px] text-slate-500">
+          <p className={`text-[11px] mt-0.5 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             {lang === 'ml' 
               ? '+ അല്ലെങ്കിൽ - ടാപ്പ് ചെയ്ത് ഫൈനൽ സ്കോർ സെറ്റ് ചെയ്യാം' 
               : 'Tap + / - to set your predicted full-time score'}
@@ -255,7 +265,9 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
           <div className="flex flex-col items-center space-y-2">
             <div className="flex items-center gap-1.5">
               <TeamLogo teamName={openingMatch.teamHome.name} className="w-6 h-6" />
-              <span className="font-black font-sports text-xs sm:text-sm text-slate-900">
+              <span className={`font-black font-sports text-xs sm:text-sm ${
+                isDarkMode ? 'text-white' : 'text-slate-900'
+              }`}>
                 {openingMatch.teamHome.shortName}
               </span>
             </div>
@@ -264,17 +276,21 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
               <button
                 onClick={() => handleScoreChange('home', -1)}
                 disabled={isSubmitted || predictedScoreHome <= 0}
-                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-slate-800 font-black text-base flex items-center justify-center active:scale-95 transition"
+                className={`w-11 h-11 min-w-touch min-h-touch rounded-xl disabled:opacity-30 disabled:cursor-not-allowed font-black text-lg flex items-center justify-center active:scale-95 transition ${
+                  isDarkMode ? 'bg-slate-800 hover:bg-slate-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
+                }`}
               >
                 -
               </button>
-              <span className="w-10 text-center text-3xl sm:text-4xl font-black font-sports text-blue-700">
+              <span className="w-10 text-center text-3xl sm:text-4xl font-black font-sports text-blue-600 dark:text-blue-400">
                 {predictedScoreHome}
               </span>
               <button
                 onClick={() => handleScoreChange('home', 1)}
                 disabled={isSubmitted || predictedScoreHome >= 10}
-                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-slate-800 font-black text-base flex items-center justify-center active:scale-95 transition"
+                className={`w-11 h-11 min-w-touch min-h-touch rounded-xl disabled:opacity-30 disabled:cursor-not-allowed font-black text-lg flex items-center justify-center active:scale-95 transition ${
+                  isDarkMode ? 'bg-slate-800 hover:bg-slate-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
+                }`}
               >
                 +
               </button>
@@ -282,7 +298,7 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
           </div>
 
           {/* Divider */}
-          <div className="text-2xl font-black text-slate-300 pt-5">
+          <div className="text-2xl font-black text-slate-300 dark:text-slate-600 pt-5">
             :
           </div>
 
@@ -290,7 +306,9 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
           <div className="flex flex-col items-center space-y-2">
             <div className="flex items-center gap-1.5">
               <TeamLogo teamName={openingMatch.teamAway.name} className="w-6 h-6" />
-              <span className="font-black font-sports text-xs sm:text-sm text-slate-900">
+              <span className={`font-black font-sports text-xs sm:text-sm ${
+                isDarkMode ? 'text-white' : 'text-slate-900'
+              }`}>
                 {openingMatch.teamAway.shortName}
               </span>
             </div>
@@ -299,17 +317,21 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
               <button
                 onClick={() => handleScoreChange('away', -1)}
                 disabled={isSubmitted || predictedScoreAway <= 0}
-                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-slate-800 font-black text-base flex items-center justify-center active:scale-95 transition"
+                className={`w-11 h-11 min-w-touch min-h-touch rounded-xl disabled:opacity-30 disabled:cursor-not-allowed font-black text-lg flex items-center justify-center active:scale-95 transition ${
+                  isDarkMode ? 'bg-slate-800 hover:bg-slate-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
+                }`}
               >
                 -
               </button>
-              <span className="w-10 text-center text-3xl sm:text-4xl font-black font-sports text-amber-600">
+              <span className="w-10 text-center text-3xl sm:text-4xl font-black font-sports text-amber-600 dark:text-amber-400">
                 {predictedScoreAway}
               </span>
               <button
                 onClick={() => handleScoreChange('away', 1)}
                 disabled={isSubmitted || predictedScoreAway >= 10}
-                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed text-slate-800 font-black text-base flex items-center justify-center active:scale-95 transition"
+                className={`w-11 h-11 min-w-touch min-h-touch rounded-xl disabled:opacity-30 disabled:cursor-not-allowed font-black text-lg flex items-center justify-center active:scale-95 transition ${
+                  isDarkMode ? 'bg-slate-800 hover:bg-slate-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
+                }`}
               >
                 +
               </button>
@@ -322,15 +344,19 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
           {!isSubmitted ? (
             <button
               onClick={handleSubmitPrediction}
-              className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs sm:text-sm shadow-xs transition active:scale-95 flex items-center justify-center gap-2"
+              className="w-full sm:w-auto min-h-touch px-6 py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs sm:text-sm shadow-xs transition active:scale-95 flex items-center justify-center gap-2"
             >
               <CheckCircle2 className="w-4 h-4 text-emerald-300" />
               <span>{lang === 'ml' ? 'പ്രവചനം സമർപ്പിക്കുക (Submit Vote)' : 'Lock In My Prediction'}</span>
             </button>
           ) : (
-            <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900">
+            <div className={`w-full flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 rounded-2xl border ${
+              isDarkMode 
+                ? 'bg-emerald-950/40 border-emerald-800 text-emerald-200' 
+                : 'bg-emerald-50 border-emerald-200 text-emerald-900'
+            }`}>
               <div className="flex items-center gap-2 text-xs font-bold">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                 <div>
                   <div className="flex items-center gap-1.5">
                     <span>
@@ -338,11 +364,11 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
                         ? `പ്രവചനം: ${openingMatch.teamHome.shortName} ${predictedScoreHome} - ${predictedScoreAway} ${openingMatch.teamAway.shortName}` 
                         : `Prediction: ${openingMatch.teamHome.shortName} ${predictedScoreHome} - ${predictedScoreAway} ${openingMatch.teamAway.shortName}`}
                     </span>
-                    <span className="px-1.5 py-0.2 rounded-md bg-emerald-200 text-emerald-900 text-[10px] font-black uppercase tracking-wider">
+                    <span className="px-1.5 py-0.2 rounded-md bg-emerald-200 dark:bg-emerald-800 text-emerald-900 dark:text-emerald-100 text-[10px] font-black uppercase tracking-wider">
                       🔒 LOCKED
                     </span>
                   </div>
-                  <span className="text-[10px] text-emerald-700 font-medium block">
+                  <span className={`text-[10px] font-medium block ${isDarkMode ? 'text-emerald-300/80' : 'text-emerald-700'}`}>
                     {lang === 'ml' ? 'ഒരിക്കൽ രേഖപ്പെടുത്തിയ പ്രവചനം മാറ്റാനാകില്ല' : 'Your prediction is locked and cannot be edited'}
                   </span>
                 </div>
@@ -350,7 +376,7 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
 
               <button
                 onClick={handleShareToWhatsApp}
-                className="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5"
+                className="w-full sm:w-auto min-h-touch px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5"
               >
                 <Share2 className="w-3.5 h-3.5" />
                 <span>Share Status</span>
@@ -360,26 +386,28 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
         </div>
 
         {/* Written Contest Rules & Legal Free-Entry Disclaimers */}
-        <div className="mt-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 text-xs leading-relaxed space-y-1.5">
-          <div className="flex items-center gap-1.5 font-bold text-slate-800">
-            <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0" />
+        <div className={`mt-4 p-3.5 rounded-2xl border text-xs leading-relaxed space-y-1.5 ${
+          isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-600'
+        }`}>
+          <div className={`flex items-center gap-1.5 font-bold ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>
+            <ShieldCheck className="w-4 h-4 text-amber-500 shrink-0" />
             <span>{lang === 'ml' ? 'മത്സര നിബന്ധനകളും നിയമപരമായ വ്യക്തതയും (Terms & Fair Play)' : 'Contest Terms & Fair Play Rules'}</span>
           </div>
-          <ul className="list-disc list-inside space-y-1 text-[11px] text-slate-500 pl-1">
+          <ul className={`list-disc list-inside space-y-1 text-[11px] pl-1 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             <li>
-              <strong className="text-slate-700">{lang === 'ml' ? '100% സൗജന്യ പങ്കാളിത്തം:' : '100% Free Entry:'}</strong>{' '}
+              <strong className={isDarkMode ? 'text-slate-300' : 'text-slate-700'}>{lang === 'ml' ? '100% സൗജന്യ പങ്കാളിത്തം:' : '100% Free Entry:'}</strong>{' '}
               {lang === 'ml' 
                 ? 'യാതൊരുവിധ എൻട്രി ഫീസോ പണമിടപാടോ ആവശ്യമില്ല. ഫാൻ വിനോദാർത്ഥം മാത്രം സംഘടിപ്പിക്കുന്നത്.' 
                 : 'No purchase, entry fee, or monetary payment required. Strictly organized for fan promotional entertainment.'}
             </li>
             <li>
-              <strong className="text-slate-700">{lang === 'ml' ? 'സമ്മാനങ്ങൾ:' : 'Prizes:'}</strong>{' '}
+              <strong className={isDarkMode ? 'text-slate-300' : 'text-slate-700'}>{lang === 'ml' ? 'സമ്മാനങ്ങൾ:' : 'Prizes:'}</strong>{' '}
               {lang === 'ml' 
                 ? 'പ്രായോജകരായ റൈദാൻ കുഴിമന്തി നൽകുന്ന ഫുഡ് വൗച്ചറുകൾ ശരിയായ പ്രവചനം നടത്തിയവരിൽ നിന്ന് നറുക്കെടുപ്പിലൂടെ തിരഞ്ഞെടുക്കുന്നു. ഇതൊരു ചൂതാട്ടമോ വാതുവെപ്പോ അല്ല.' 
                 : 'Sponsored food vouchers by Raidhan Kuzhimanthi awarded through random lucky draw among correct entries. Not gambling or real-money gaming.'}
             </li>
             <li>
-              <strong className="text-slate-700">{lang === 'ml' ? 'നിയമം:' : 'Fair Play:'}</strong>{' '}
+              <strong className={isDarkMode ? 'text-slate-300' : 'text-slate-700'}>{lang === 'ml' ? 'നിയമം:' : 'Fair Play:'}</strong>{' '}
               {lang === 'ml' 
                 ? 'ഒരു ഉപകരണത്തിൽ (Device) നിന്ന് ഒരു പ്രവചനം മാത്രം രേഖപ്പെടുത്താൻ സാധിക്കും.' 
                 : 'Limited to 1 submission per device to prevent automated voting.'}

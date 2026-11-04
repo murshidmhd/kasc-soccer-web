@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Calendar, Trophy } from 'lucide-react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import StadiumAnnouncementBanner from './components/StadiumAnnouncementBanner';
@@ -7,7 +8,10 @@ import MatchPredictionCard from './components/MatchPredictionCard';
 import PlayerOfTheMatchVote from './components/PlayerOfTheMatchVote';
 import HeadToHeadCard from './components/HeadToHeadCard';
 import FixturesSection from './components/FixturesSection';
+import TournamentBracket from './components/TournamentBracket';
+import TeamLogo from './components/TeamLogo';
 import TeamsSection from './components/TeamsSection';
+import HomeClubsStrip from './components/HomeClubsStrip';
 import TopScorers from './components/TopScorers';
 import VenueSection from './components/VenueSection';
 import SponsorsSection from './components/SponsorsSection';
@@ -25,9 +29,12 @@ import TicketCounterModal from './components/TicketCounterModal';
 import StickyScoreWidget from './components/StickyScoreWidget';
 import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
+import { fixtures } from './data/tournamentData';
 
 // Lazy-load heavy interactive mini-game to optimize 4G mobile page load speeds
 const SevensPenaltyGame = React.lazy(() => import('./components/SevensPenaltyGame'));
+// Lazy-load Squad Spotlight video showcase (Rule 12: does not delay live score or fixtures)
+const SquadSpotlightSection = React.lazy(() => import('./components/SquadSpotlightSection'));
 
 // Global React Error Boundary to prevent blank page on connection failures
 class GlobalErrorBoundary extends React.Component {
@@ -150,11 +157,11 @@ export default function App() {
 
   return (
     <div className={`min-h-screen flex flex-col font-sans transition-colors duration-200 overflow-x-hidden w-full max-w-full ${
-      isDarkMode ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'
+      isDarkMode ? 'surface-navy' : 'surface-light'
     }`}>
       {/* Offline Connectivity Notification Banner */}
       {!isOnline && (
-        <div className="sticky top-0 z-50 bg-amber-500 text-slate-950 px-4 py-2 text-xs font-bold text-center flex items-center justify-center gap-2 shadow-md">
+        <div className="sticky top-0 z-50 bg-gold text-navy-900 px-4 py-2 text-xs font-bold text-center flex items-center justify-center gap-2 shadow-xs">
           <span>📡</span>
           <span>നിങ്ങൾ ഇപ്പോൾ ഓഫ്‌ലൈനിലാണ് (Offline Mode) • പേജ് ലഭ്യമാണ്. കണക്ഷൻ തിരിച്ചുവരുമ്പോൾ ലൈവ് സ്കോർ തത്സമയം അപ്‌ഡേറ്റ് ആകും.</span>
         </div>
@@ -173,7 +180,7 @@ export default function App() {
 
       {/* Main Content Rendered by Page/Tab Wrapped in Error Boundary */}
       <GlobalErrorBoundary>
-        <main className="flex-1 pb-20 sm:pb-8">
+        <main className="flex-1 pb-28 sm:pb-12">
           {/* Page 1: LIVE MATCH CENTER (Home) */}
           {activeTab === 'live' && (
             <div className="animate-fadeIn">
@@ -185,13 +192,7 @@ export default function App() {
               />
               
               <div className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-6">
-                {/* Official Malayalam Stadium Announcement Player */}
-                <StadiumAnnouncementBanner 
-                  lang={lang} 
-                  isDarkMode={isDarkMode} 
-                />
-
-                {/* Main Event Live Match Card with Real-time Clock, Crowd Goals, & Instant Share */}
+                {/* 1. Next / Live Match Center */}
                 <LiveMatchCard
                   lang={lang}
                   isDarkMode={isDarkMode}
@@ -202,18 +203,155 @@ export default function App() {
                   onNavigateTab={handleTabChange}
                 />
 
+                {/* 2. Today's & Upcoming Fixtures (Rule 1 & Rule 2: White cards, Gold next match accent) */}
+                <section className="space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-surface-border dark:border-navy-700">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-navy-800 text-gold flex items-center justify-center font-bold shadow-xs">
+                        <Calendar className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title leading-[1.3]">
+                          {lang === 'ml' ? 'ഇന്നത്തെ & വരാനിരിക്കുന്ന മത്സരങ്ങൾ' : "TODAY'S & UPCOMING FIXTURES"}
+                        </h3>
+                        <p className="text-xs text-card-muted font-medium leading-[1.5]">
+                          {lang === 'ml' ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം • രാത്രി 8:00 PM IST' : 'Peruvallur Panjayath Stadium • 8:00 PM IST'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handleTabChange('fixtures')}
+                      className="self-start sm:self-auto min-h-touch px-3.5 py-2 rounded-xl bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700 text-royal dark:text-sky font-bold text-xs uppercase transition active:scale-95 flex items-center gap-1.5 shadow-xs"
+                    >
+                      <span>{lang === 'ml' ? 'മുഴുവൻ ഫിക്സ്ചറുകളും കാണുക' : 'View Full Schedule'}</span>
+                      <span>→</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                    {fixtures.slice(0, 3).map((match) => {
+                      const isNextMatch = match.id === 'm1' && match.status === 'Upcoming';
+                      const isMatchLive = match.status === 'LIVE';
+                      const shortTag = match.id === 'm1' 
+                        ? (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം' : 'Opening match')
+                        : (lang === 'ml' ? 'റൗണ്ട് 1' : 'Round 1');
+
+                      return (
+                        <div
+                          key={match.id}
+                          className={`rounded-2xl p-4 transition-all shadow-card ${
+                            isNextMatch
+                              ? 'border-2 border-gold ring-1 ring-gold/40 bg-white dark:bg-navy-800'
+                              : 'bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700'
+                          }`}
+                        >
+                          {/* Header */}
+                          <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-surface-border dark:border-navy-700 text-xs font-semibold">
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
+                              isNextMatch 
+                                ? 'bg-gold text-navy-900' 
+                                : 'bg-surface-light dark:bg-navy-700 text-card-title'
+                            }`}>
+                              {shortTag}
+                            </span>
+                            <span className="font-mono text-card-muted text-[11px]">
+                              {match.dateFormatted || match.date}
+                            </span>
+                          </div>
+
+                          {/* Teams */}
+                          <div className="space-y-2.5">
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <TeamLogo teamName={match.team1} size="sm" isDark={isDarkMode} />
+                                <span className="text-xs font-bold text-card-title line-clamp-2 leading-[1.3]">
+                                  {match.team1}
+                                </span>
+                              </div>
+                              <span className="text-xs font-black font-mono text-card-title shrink-0">
+                                {match.score1 !== null ? match.score1 : match.time}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <TeamLogo teamName={match.team2} size="sm" isDark={isDarkMode} />
+                                <span className="text-xs font-bold text-card-title line-clamp-2 leading-[1.3]">
+                                  {match.team2}
+                                </span>
+                              </div>
+                              <span className="text-xs font-black font-mono text-card-title shrink-0">
+                                {match.score2 !== null ? match.score2 : match.time}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Footer Status */}
+                          <div className="mt-3 pt-2 border-t border-surface-border dark:border-navy-700 flex items-center justify-between text-[11px]">
+                            <span className={`inline-flex items-center gap-1 font-black uppercase ${
+                              isMatchLive 
+                                ? 'text-gold' 
+                                : isNextMatch 
+                                  ? 'text-gold' 
+                                  : 'text-card-muted'
+                            }`}>
+                              {isMatchLive && <span className="w-1.5 h-1.5 rounded-full bg-gold animate-ping"></span>}
+                              {isMatchLive ? 'LIVE' : (isNextMatch ? (lang === 'ml' ? 'അടുത്ത മത്സരം' : 'Next Match') : (lang === 'ml' ? 'വരാനിരിക്കുന്നു' : 'Upcoming'))}
+                            </span>
+                            <span className="text-card-muted font-mono">8:00 PM IST</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+
+                {/* 3. Table or Knockout Bracket (Change 1 Rule 4) */}
+                <section className="space-y-3">
+                  <TournamentBracket lang={lang} isDarkMode={isDarkMode} />
+                </section>
+
+                {/* 4. Clubs Strip (Home compact scroll-snap strip with View All 24) */}
+                <HomeClubsStrip 
+                  lang={lang} 
+                  isDarkMode={isDarkMode} 
+                  onNavigateToTeams={() => handleTabChange('teams')} 
+                />
+
+                {/* 5. Squad Spotlight Section (Rule 12 & 13: Lazy loaded after teams, does not delay live score) */}
+                <React.Suspense fallback={
+                  <div className="py-8 px-3 sm:px-6 max-w-6xl mx-auto space-y-4 animate-pulse">
+                    <div className="h-6 w-48 skeleton-box"></div>
+                    <div className="flex gap-3 overflow-hidden">
+                      {[1, 2, 3, 4].map(i => (
+                        <div key={i} className="w-[170px] aspect-[3/4] skeleton-box rounded-2xl shrink-0"></div>
+                      ))}
+                    </div>
+                  </div>
+                }>
+                  <SquadSpotlightSection lang={lang} isDarkMode={isDarkMode} />
+                </React.Suspense>
+
+                {/* 6. Then Everything Else (Matchday Hub, Stadium Announcement, Features & Promos) */}
+                {/* Official Malayalam Stadium Announcement Player */}
+                <StadiumAnnouncementBanner 
+                  lang={lang} 
+                  isDarkMode={isDarkMode} 
+                />
+
                 {/* 2-Column Responsive Layout: Left 8 cols Main Content, Right 4 cols Sponsor Ads */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                   {/* Left 8 cols: Matchday Hub with Sub-tabs to reduce scroll & clutter */}
                   <div className="lg:col-span-8 space-y-6">
-                    {/* Matchday Sub-Tabs Controller (Lineup | Predict | Penalty Game | H2H) */}
-                    <div id="match-subtabs" className="flex items-center justify-between p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-x-auto no-scrollbar scroll-smooth">
-                      <div className="flex items-center gap-1 shrink-0">
+                    {/* Matchday Sub-Tabs Controller (Rule 1 & Rule 4: Touch-friendly 44px tabs, horizontal scroll) */}
+                    <div id="match-subtabs" className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 horizontal-scroll-container">
+                      <div className="flex items-center gap-1.5 shrink-0 py-0.5">
                         <button
                           onClick={() => setMatchSubTab('lineup')}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                          className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
                             matchSubTab === 'lineup' 
-                              ? 'bg-blue-700 text-white shadow-xs font-black' 
+                              ? 'bg-blue-700 text-white shadow-card font-black' 
                               : 'text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
                           }`}
                         >
@@ -223,24 +361,24 @@ export default function App() {
 
                         <button
                           onClick={() => setMatchSubTab('predict')}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                          className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
                             matchSubTab === 'predict' 
-                              ? 'bg-amber-500 text-slate-950 shadow-xs font-black' 
+                              ? 'bg-amber-500 text-slate-950 shadow-card font-black' 
                               : 'text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
                           }`}
                         >
                           <span>🎯</span>
                           <span>{lang === 'ml' ? 'പ്രവചന മത്സരങ്ങൾ' : 'Predict & Win'}</span>
-                          <span className="px-1.5 py-0.2 rounded-full bg-red-600 text-white text-[9px] font-black uppercase">
+                          <span className="px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[9px] font-black uppercase">
                             Live
                           </span>
                         </button>
 
                         <button
                           onClick={() => setMatchSubTab('game')}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                          className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
                             matchSubTab === 'game' 
-                              ? 'bg-emerald-600 text-white shadow-xs font-black' 
+                              ? 'bg-emerald-600 text-white shadow-card font-black' 
                               : 'text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
                           }`}
                         >
@@ -250,29 +388,28 @@ export default function App() {
 
                         <button
                           onClick={() => setMatchSubTab('h2h')}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                          className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
                             matchSubTab === 'h2h' 
-                              ? 'bg-indigo-600 text-white shadow-xs font-black' 
+                              ? 'bg-indigo-600 text-white shadow-card font-black' 
                               : 'text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
                           }`}
                         >
                           <span>📊</span>
                           <span>{lang === 'ml' ? 'H2H & ഫോം' : 'H2H'}</span>
                         </button>
-                      </div>
 
-                      {/* Toggle All Continuous View */}
-                      <button
-                        onClick={() => setMatchSubTab(matchSubTab === 'all' ? 'lineup' : 'all')}
-                        className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition shrink-0 ml-1 ${
-                          matchSubTab === 'all'
-                            ? 'bg-slate-950 text-white font-black'
-                            : 'text-slate-500 hover:text-slate-800'
-                        }`}
-                        title="Toggle full continuous view of all components"
-                      >
-                        {matchSubTab === 'all' ? (lang === 'ml' ? 'ചുരുക്കുക' : 'Tabs View') : (lang === 'ml' ? 'എല്ലാം കാണുക' : 'View All')}
-                      </button>
+                        <button
+                          onClick={() => setMatchSubTab(matchSubTab === 'all' ? 'lineup' : 'all')}
+                          className={`min-h-[44px] px-3 py-2 rounded-xl text-xs font-bold transition shrink-0 ${
+                            matchSubTab === 'all'
+                              ? 'bg-slate-950 text-white font-black'
+                              : 'text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800'
+                          }`}
+                          title="Toggle full continuous view of all components"
+                        >
+                          {matchSubTab === 'all' ? (lang === 'ml' ? 'ചുരുക്കുക' : 'Tabs View') : (lang === 'ml' ? 'എല്ലാം' : 'View All')}
+                        </button>
+                      </div>
                     </div>
 
                     {/* Section 1: Starting 7 Tactical Turf Pitch */}
@@ -389,7 +526,7 @@ export default function App() {
 
           {/* Page 4: 24 SFA PARTICIPATING CLUBS */}
           {activeTab === 'teams' && (
-            <div className="animate-fadeIn py-6 max-w-6xl mx-auto px-3 sm:px-6">
+            <div className="animate-fadeIn py-6 max-w-6xl mx-auto px-3 sm:px-6 pb-28 sm:pb-12">
               <TeamsSection 
                 lang={lang} 
                 isDarkMode={isDarkMode} 

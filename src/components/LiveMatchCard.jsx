@@ -112,27 +112,27 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
     switch (matchState.status) {
       case '1ST_HALF':
         return (
-          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600 text-white font-mono font-bold text-xs uppercase shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-white animate-ping"></span>
+          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold text-navy-900 font-mono font-black text-xs uppercase shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-navy-900 animate-ping"></span>
             <span>LIVE 1ST HALF • {clock.display}</span>
           </span>
         );
       case 'HALF_TIME':
         return (
-          <span className="px-3 py-1 rounded-full bg-amber-500 text-slate-950 font-black text-xs uppercase shadow-xs">
+          <span className="px-3 py-1 rounded-full bg-navy-700 text-white font-black text-xs uppercase shadow-xs border border-navy-600">
             ⏸️ Half Time (30:00 Break)
           </span>
         );
       case '2ND_HALF':
         return (
-          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600 text-white font-mono font-bold text-xs uppercase shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-white animate-ping"></span>
+          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold text-navy-900 font-mono font-black text-xs uppercase shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-navy-900 animate-ping"></span>
             <span>LIVE 2ND HALF • {clock.display}</span>
           </span>
         );
       case 'FULL_TIME':
         return (
-          <span className="px-3 py-1 rounded-full bg-slate-950 text-white font-black text-xs uppercase shadow-xs border border-slate-700">
+          <span className="px-3 py-1 rounded-full bg-navy-900 text-white font-black text-xs uppercase shadow-xs border border-navy-700">
             🏁 FULL TIME • 60:00 (FINAL)
           </span>
         );
@@ -147,14 +147,14 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
           <div className="flex items-center gap-1.5">
-            <span className="p-1 rounded-md bg-red-600 text-white">
+            <span className="p-1 rounded-md bg-royal text-white">
               <Flame className="w-3.5 h-3.5" />
             </span>
-            <h2 className="text-xl sm:text-2xl font-black font-sports uppercase tracking-wider text-slate-950">
+            <h2 className="text-xl sm:text-2xl font-black font-sports uppercase tracking-wider text-navy-900 dark:text-white leading-[1.3]">
               {lang === 'ml' ? 'മാച്ച് സെന്റർ' : 'MATCH CENTER'}
             </h2>
           </div>
-          <p className="text-xs text-slate-500 font-medium">
+          <p className="text-xs text-slate-500 dark:text-muted-on-navy font-medium leading-[1.5]">
             {isLive
               ? (lang === 'ml' ? 'ഔദ്യോഗിക തത്സമയ സ്കോറും പന്ത് തട്ടുന്ന നിമിഷങ്ങളും' : 'Official live score verified by Ground Referee Desk')
               : (lang === 'ml' ? `ഉദ്ഘാടന മത്സരം: 2026 നവംബർ 06, രാത്രി 8:00 മണിക്ക് (${daysToKickoff} ദിനം ബാക്കി)` : `Opening Match: Nov 06, 2026, 8:00 PM IST (Kickoff in ${daysToKickoff} days)`)}
@@ -171,8 +171,8 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
             }}
             className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
               isDemo 
-                ? 'bg-amber-500 text-slate-950 border-amber-600 font-black shadow-xs' 
-                : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-100 shadow-2xs'
+                ? 'bg-gold text-navy-900 border-gold font-black shadow-xs' 
+                : 'bg-white dark:bg-navy-700 border-surface-border dark:border-navy-600 text-navy-900 dark:text-muted-on-navy hover:bg-surface-light dark:hover:bg-navy-600'
             }`}
             title="Toggle sample demo match simulation (off by default)"
           >
@@ -183,9 +183,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
       </div>
 
       {/* Main Match Scorecard */}
-      <div className={`rounded-3xl overflow-hidden border p-4 sm:p-7 relative shadow-xs transition-colors ${
-        isDarkMode ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
-      }`}>
+      <div className="rounded-3xl overflow-hidden border p-4 sm:p-7 relative shadow-card transition-colors surface-card">
         {/* DEMO MODE ACTIVE WARNING BANNER */}
         {isDemo && (
           <div className="mb-4 p-2.5 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-900 text-xs font-bold flex items-center justify-between gap-2">
@@ -206,14 +204,14 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
         )}
 
         {/* Top Match Ribbon with Official Verification Badge */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3 mb-5">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-surface-border dark:border-navy-700 pb-3 mb-5">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-900 font-bold text-[10px] sm:text-xs border border-blue-200">
               <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
               <span>Official Matchday 1</span>
             </span>
-            <span className="text-[11px] text-slate-400 hidden sm:inline">•</span>
-            <span className="text-[11px] text-slate-500 font-medium hidden sm:inline">
+            <span className="text-[11px] text-card-muted hidden sm:inline">•</span>
+            <span className="text-[11px] text-card-muted font-medium hidden sm:inline">
               Peruvallur Panjayath Stadium
             </span>
           </div>
@@ -228,10 +226,10 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           {/* Team Home (UDAYA Parambil Peedika) */}
           <div className="col-span-4 flex flex-col items-center space-y-1.5">
             <TeamLogo teamName={openingMatch.teamHome.name} className="w-16 h-16 sm:w-20 sm:h-20 shadow-xs" />
-            <h3 className="text-sm sm:text-lg font-black font-sports text-slate-950 leading-tight">
+            <h3 className="text-sm sm:text-lg font-black font-sports text-card-title leading-tight">
               UDAYA
             </h3>
-            <span className="text-[10px] sm:text-xs text-blue-700 font-bold">
+            <span className="text-[10px] sm:text-xs text-royal dark:text-sky font-bold">
               Parambil Peedika
             </span>
           </div>
@@ -241,11 +239,11 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
             {isLive ? (
               <div className="space-y-1">
                 <div className="flex items-center justify-center gap-2 sm:gap-3">
-                  <span className="text-4xl sm:text-6xl font-black font-sports text-slate-950">
+                  <span className="text-4xl sm:text-6xl font-black font-sports text-card-title">
                     {matchState.officialScoreHome}
                   </span>
-                  <span className="text-2xl sm:text-4xl font-black text-slate-300">-</span>
-                  <span className="text-4xl sm:text-6xl font-black font-sports text-slate-950">
+                  <span className="text-2xl sm:text-4xl font-black text-card-muted">-</span>
+                  <span className="text-4xl sm:text-6xl font-black font-sports text-card-title">
                     {matchState.officialScoreAway}
                   </span>
                 </div>
@@ -269,7 +267,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                         goalText: 'Official Live Match Score'
                       }
                     })}
-                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 text-[10px] font-bold border border-blue-200 transition active:scale-95"
+                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 hover:bg-blue-100 text-royal text-[10px] font-bold border border-blue-200 transition active:scale-95"
                     title="Generate WhatsApp Status Card"
                   >
                     <Share2 className="w-3 h-3" />
@@ -279,13 +277,13 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
               </div>
             ) : (
               <div className="space-y-1.5">
-                <div className="text-2xl sm:text-4xl font-black font-sports text-blue-700">
+                <div className="text-2xl sm:text-4xl font-black font-sports text-royal dark:text-sky">
                   VS
                 </div>
-                <div className="text-[10px] sm:text-xs font-black text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                <div className="text-[10px] sm:text-xs font-black text-card-title bg-surface-light dark:bg-navy-900 px-2.5 py-1 rounded-lg border border-surface-border dark:border-navy-700">
                   06 Nov • 8:00 PM
                 </div>
-                <span className="text-[10px] text-slate-500 font-bold block">
+                <span className="text-[10px] text-card-muted font-bold block">
                   {lang === 'ml' ? `${daysToKickoff} ദിനം ബാക്കി` : `In ${daysToKickoff} days`}
                 </span>
               </div>
@@ -295,10 +293,10 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           {/* Team Away (NEW MALAYA MALABAR FC) */}
           <div className="col-span-4 flex flex-col items-center space-y-1.5">
             <TeamLogo teamName={openingMatch.teamAway.name} className="w-16 h-16 sm:w-20 sm:h-20 shadow-xs" />
-            <h3 className="text-sm sm:text-lg font-black font-sports text-slate-950 leading-tight">
+            <h3 className="text-sm sm:text-lg font-black font-sports text-card-title leading-tight">
               NEW MALAYA
             </h3>
-            <span className="text-[10px] sm:text-xs text-zinc-700 font-bold">
+            <span className="text-[10px] sm:text-xs text-card-muted font-bold">
               Kozhikode
             </span>
           </div>
@@ -306,12 +304,12 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
 
         {/* Pre-Kickoff Notice when match is not live and Demo is off */}
         {!isLive && (
-          <div className="mt-5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-1">
-            <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-slate-800">
-              <Clock className="w-4 h-4 text-blue-600" />
+          <div className="mt-5 p-3.5 rounded-2xl surface-card-subtle text-center space-y-1">
+            <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-card-title">
+              <Clock className="w-4 h-4 text-royal dark:text-sky" />
               <span>{lang === 'ml' ? `ഉദ്ഘാടന മത്സര കിക്ക്ഓഫിലേക്ക് ${daysToKickoff} ദിനങ്ങൾ ബാക്കി` : `Kickoff in ${daysToKickoff} days`}</span>
             </div>
-            <p className="text-[11px] text-slate-500 leading-relaxed">
+            <p className="text-[11px] text-card-muted leading-relaxed">
               {lang === 'ml'
                 ? 'നവംബർ 6 ന് രാത്രി 8:00 ന് ഗ്രൗണ്ട് റഫറി വിസിൽ മുഴങ്ങുന്നതോടെ ഔദ്യോഗിക ലൈവ് സ്കോർബോർഡും ടൈംലൈനും സജീവമാകും.'
                 : 'Official live scoreboard, goal alerts and referee timeline will activate at match kickoff.'}
@@ -369,12 +367,12 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
               </div>
             </div>
 
-            {/* User Action Buttons (Rate Limited) */}
+            {/* User Action Buttons (Rule 4: Minimum 44px tap targets) */}
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => handleCrowdGoal('home')}
                 disabled={rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'}
-                className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs active:scale-95 ${
+                className={`min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-card active:scale-95 ${
                   rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'
                     ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
                     : 'bg-sky-600 hover:bg-sky-700 text-white shadow-sm'
@@ -387,7 +385,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
               <button
                 onClick={() => handleCrowdGoal('away')}
                 disabled={rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'}
-                className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs active:scale-95 ${
+                className={`min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-card active:scale-95 ${
                   rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'
                     ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
                     : 'bg-zinc-800 hover:bg-zinc-900 text-white shadow-sm'
@@ -399,23 +397,23 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
             </div>
 
             {/* Crowd Stats Counter Bar */}
-            <div className="flex items-center justify-between text-[11px] text-slate-500 bg-white p-2.5 rounded-xl border border-slate-200">
+            <div className="flex items-center justify-between text-xs text-slate-600 bg-white dark:bg-slate-800 dark:text-slate-300 p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-card">
               <span>
                 Community Reports: <strong>{matchState.crowdReports?.home || 0} Udaya</strong> vs <strong>{matchState.crowdReports?.away || 0} New Malaya</strong>
               </span>
-              <span className="font-bold text-blue-700">
+              <span className="font-bold text-blue-700 dark:text-blue-400">
                 🛡️ Ground Desk Authority
               </span>
             </div>
 
             {/* Dual Tab: Official Events vs Live Commentary Feed */}
             <div className="pt-2 space-y-2">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                <div className="flex items-center gap-1 bg-slate-200/80 p-0.5 rounded-xl text-xs font-bold">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                <div className="flex items-center gap-1 bg-slate-200/80 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold">
                   <button
                     onClick={() => setTimelineTab('commentary')}
-                    className={`px-3 py-1 rounded-lg transition flex items-center gap-1.5 ${
-                      timelineTab === 'commentary' ? 'bg-blue-700 text-white shadow-2xs font-black' : 'text-slate-700 hover:text-blue-700'
+                    className={`min-h-[44px] px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 active:scale-95 ${
+                      timelineTab === 'commentary' ? 'bg-blue-700 text-white shadow-card font-black' : 'text-slate-700 dark:text-slate-300 hover:text-blue-700'
                     }`}
                   >
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -423,8 +421,8 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                   </button>
                   <button
                     onClick={() => setTimelineTab('timeline')}
-                    className={`px-3 py-1 rounded-lg transition flex items-center gap-1.5 ${
-                      timelineTab === 'timeline' ? 'bg-blue-700 text-white shadow-2xs font-black' : 'text-slate-700 hover:text-blue-700'
+                    className={`min-h-[44px] px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 active:scale-95 ${
+                      timelineTab === 'timeline' ? 'bg-blue-700 text-white shadow-card font-black' : 'text-slate-700 dark:text-slate-300 hover:text-blue-700'
                     }`}
                   >
                     <span>{lang === 'ml' ? 'റഫറി ഇവന്റ്സ്' : 'Referee Timeline'}</span>

@@ -96,12 +96,12 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                 Parambil Peedika & Schools
               </span>
             </div>
-            <h2 className={`font-black uppercase tracking-tight ${
+            <h2 className={`font-black uppercase tracking-tight leading-[1.3] ${
               lang === 'ml' ? 'font-malayalam text-xl sm:text-2xl' : 'font-sports text-2xl sm:text-3xl'
             }`}>
               {lang === 'ml' ? 'പ്രചാരണ പരിപാടികൾ' : 'PROMOTIONS & CELEBRATIONS'}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl font-malayalam">
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl font-malayalam leading-[1.5]">
               {lang === 'ml' 
                 ? 'ഉദയ ഗോൾ വണ്ടി ഷൂട്ട് ഔട്ട് മത്സരം, 8 കി.മീ മിനി മാരത്തോൺ & ഒഫീഷ്യൽ കൗണ്ട്ഡൗൺ പരമ്പര' 
                 : 'Udaya Goal Vandi Shootout Challenge, 8 KM Mini Marathon & Official Countdown Series.'}
@@ -109,16 +109,18 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
           </div>
 
           {/* Sub-tab Pill Switcher */}
-          <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-100 border border-slate-200 self-start sm:self-center overflow-x-auto max-w-full">
+          <div className={`horizontal-scroll-container flex items-center gap-1.5 p-1 rounded-2xl border self-start sm:self-center overflow-x-auto max-w-full ${
+            isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-100 border-slate-200'
+          }`}>
             <button
               onClick={() => setActiveSubTab('goalvandi')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition active:scale-95 ${
+              className={`min-h-touch px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-2 transition active:scale-95 ${
                 activeSubTab === 'goalvandi'
                   ? 'bg-blue-700 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  : isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Target className="w-3.5 h-3.5 text-amber-300" />
+              <Target className="w-4 h-4 text-amber-300" />
               <span>{lang === 'ml' ? 'ഉദയ ഗോൾ വണ്ടി' : 'Goal Vandi Shootout'}</span>
               <span className="px-1.5 py-0.2 rounded-full bg-red-600 text-white text-[9px] font-black uppercase">
                 New
@@ -126,24 +128,24 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
             </button>
             <button
               onClick={() => setActiveSubTab('marathon')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition active:scale-95 ${
+              className={`min-h-touch px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-2 transition active:scale-95 ${
                 activeSubTab === 'marathon'
                   ? 'bg-blue-700 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  : isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Trophy className="w-3.5 h-3.5 text-amber-300" />
+              <Trophy className="w-4 h-4 text-amber-300" />
               <span>{lang === 'ml' ? 'മിനി മാരത്തോൺ' : 'Mini Marathon (8 KM)'}</span>
             </button>
             <button
               onClick={() => setActiveSubTab('countdown')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition active:scale-95 ${
+              className={`min-h-touch px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-2 transition active:scale-95 ${
                 activeSubTab === 'countdown'
                   ? 'bg-blue-700 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  : isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Calendar className="w-3.5 h-3.5 text-red-300" />
+              <Calendar className="w-4 h-4 text-red-300" />
               <span>{lang === 'ml' ? 'കൗണ്ട്ഡൗൺ' : 'Countdown Posters'}</span>
             </button>
           </div>
@@ -173,13 +175,13 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                   </span>
                 </div>
 
-                <h3 className={`font-black uppercase tracking-tight text-slate-950 ${
+                <h3 className={`font-black uppercase tracking-tight text-slate-950 leading-[1.3] ${
                   lang === 'ml' ? 'font-malayalam text-xl sm:text-2xl' : 'font-sports text-2xl sm:text-3xl'
                 }`}>
                   {lang === 'ml' ? goalVandi.titleMl : goalVandi.title}
                 </h3>
 
-                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-malayalam">
+                <p className="text-xs sm:text-sm text-slate-700 font-malayalam leading-[1.5]">
                   {lang === 'ml' ? goalVandi.descMl : goalVandi.desc}
                 </p>
 
@@ -237,11 +239,13 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
           {/* Photo Gallery Grid */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-black font-sports uppercase tracking-wider text-slate-900 flex items-center gap-2">
-                <ImageIcon className="w-5 h-5 text-blue-600" />
+              <h3 className={`text-lg font-black font-sports uppercase tracking-wider flex items-center gap-2 ${
+                isDarkMode ? 'text-white' : 'text-slate-900'
+              }`}>
+                <ImageIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 <span>{lang === 'ml' ? 'ഷൂട്ട് ഔട്ട് ചിത്രങ്ങൾ (Event Gallery)' : 'Shootout Action & Ceremony Photos'}</span>
               </h3>
-              <span className="text-xs text-slate-500 font-medium">Tap photo to enlarge</span>
+              <span className={`text-xs font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Tap photo to enlarge</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -259,10 +263,11 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                       isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
                     }`}
                   >
-                    <div className="relative aspect-4/3 overflow-hidden bg-slate-100">
+                    <div className="relative aspect-4/3 overflow-hidden bg-slate-100 dark:bg-slate-800">
                       <img
                         src={img}
                         alt={item.title}
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                       />
                       <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/60 text-white text-[10px] font-bold backdrop-blur-xs">
@@ -275,10 +280,10 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                       </div>
                     </div>
                     <div className="p-3.5 space-y-1">
-                      <h4 className="font-bold text-sm text-slate-900 leading-snug">
+                      <h4 className={`font-bold text-sm leading-snug ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                         {lang === 'ml' ? item.titleMl : item.title}
                       </h4>
-                      <p className="text-xs text-slate-500 line-clamp-2">
+                      <p className={`text-xs line-clamp-2 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                         {lang === 'ml' ? item.descMl : item.desc}
                       </p>
                     </div>
@@ -618,14 +623,14 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleShare(selectedImage.title)}
-                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition"
+                  className="w-11 h-11 min-w-touch min-h-touch rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center justify-center active:scale-95"
                   title="Share"
                 >
-                  <Share2 className="w-4 h-4" />
+                  <Share2 className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => setSelectedImage(null)}
-                  className="p-2 rounded-xl bg-slate-800 hover:bg-red-600 text-slate-200 transition"
+                  className="w-11 h-11 min-w-touch min-h-touch rounded-xl bg-slate-800 hover:bg-red-600 text-slate-200 transition flex items-center justify-center active:scale-95"
                   title="Close"
                 >
                   <X className="w-5 h-5" />

@@ -198,21 +198,27 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
   const currentSquad = selectedTeam === 'home' ? homeSquad : awaySquad;
 
   return (
-    <section id="pitch-lineup" className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-7 shadow-xs space-y-5">
+    <section id="pitch-lineup" className={`rounded-3xl border p-4 sm:p-7 shadow-xs space-y-5 transition-colors ${
+      isDarkMode ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+    }`}>
       {/* Official Lineup Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4 ${
+        isDarkMode ? 'border-slate-800' : 'border-slate-100'
+      }`}>
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
-              <Shield className="w-3 h-3 text-blue-600" />
+            <span className="px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
+              <Shield className="w-3 h-3 text-blue-600 dark:text-blue-400" />
               <span>Official Matchday Lineup</span>
             </span>
-            <span className="text-xs text-slate-500 font-bold">Referee Desk Records</span>
+            <span className={`text-xs font-bold ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Referee Desk Records</span>
           </div>
-          <h3 className="text-xl sm:text-2xl font-black font-sports uppercase tracking-wider text-slate-950 mt-1">
+          <h3 className={`text-xl sm:text-2xl font-black font-sports uppercase tracking-wider mt-1 ${
+            isDarkMode ? 'text-white' : 'text-slate-950'
+          }`}>
             {lang === 'ml' ? 'സ്റ്റാർട്ടിംഗ് 7 ലൈനപ്പ്' : 'STARTING 7 LINEUP'}
           </h3>
-          <p className="text-xs text-slate-500">
+          <p className={`text-xs mt-0.5 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             {lang === 'ml' 
               ? 'ഒഫീഷ്യൽ റഫറി ഡെസ്‌ക് രേഖപ്പെടുത്തിയ കളിക്കാരും പകരക്കാരും (ഗോളുകൾ, കാർഡുകൾ, സബ്‌സ്റ്റിറ്റ്യൂഷനുകൾ)' 
               : 'Official starting seven, substitutes bench, match goals and cards verified at the referee desk'}
@@ -221,23 +227,29 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
 
         {/* View Mode Toggle: Pitch vs Squad List */}
         <div className="flex items-center gap-1.5 self-start sm:self-auto">
-          <div className="bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-xs font-bold flex items-center">
+          <div className={`p-1 rounded-2xl border text-xs font-bold flex items-center shadow-xs ${
+            isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-100 border-slate-200'
+          }`}>
             <button
               onClick={() => setViewMode('pitch')}
-              className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 ${
-                viewMode === 'pitch' ? 'bg-white text-blue-700 shadow-2xs font-black' : 'text-slate-600 hover:text-slate-900'
+              className={`min-h-touch px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 active:scale-95 ${
+                viewMode === 'pitch' 
+                  ? 'bg-blue-700 text-white shadow-xs font-bold' 
+                  : isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <LayoutGrid className="w-3.5 h-3.5" />
+              <LayoutGrid className="w-4 h-4" />
               <span>{lang === 'ml' ? 'ഗ്രൗണ്ട് പിച്ച്' : 'Pitch'}</span>
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 ${
-                viewMode === 'table' ? 'bg-white text-blue-700 shadow-2xs font-black' : 'text-slate-600 hover:text-slate-900'
+              className={`min-h-touch px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 active:scale-95 ${
+                viewMode === 'table' 
+                  ? 'bg-blue-700 text-white shadow-xs font-bold' 
+                  : isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <BarChart3 className="w-3.5 h-3.5" />
+              <BarChart3 className="w-4 h-4" />
               <span>{lang === 'ml' ? 'സ്ക്വാഡ് ലിസ്റ്റ്' : 'Squad List'}</span>
             </button>
           </div>
@@ -245,46 +257,52 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
       </div>
 
       {/* Official Match Authority Notice */}
-      <div className="p-2.5 rounded-2xl bg-blue-50/80 border border-blue-200/60 text-blue-900 text-xs flex items-center justify-between gap-2">
+      <div className={`p-3 rounded-2xl border text-xs flex items-center justify-between gap-2 ${
+        isDarkMode ? 'bg-blue-950/40 border-blue-900/50 text-blue-200' : 'bg-blue-50/80 border-blue-200/60 text-blue-900'
+      }`}>
         <div className="flex items-center gap-2 font-medium">
-          <Info className="w-4 h-4 text-blue-600 shrink-0" />
+          <Info className="w-4 h-4 text-blue-500 shrink-0" />
           <span>
             {lang === 'ml'
               ? 'യഥാർത്ഥ മാച്ച് റെക്കോർഡുകൾ (ഗോളുകൾ, കാർഡുകൾ, സബ്‌സ്റ്റിറ്റ്യൂഷനുകൾ) ഒഫീഷ്യൽ റഫറി ഡെസ്‌ക് രേഖപ്പെടുത്തുന്നു.'
               : 'Official match facts (goals, cards, substitutions) recorded directly by the referee desk.'}
           </span>
         </div>
-        <span className="px-2 py-0.5 rounded-full bg-blue-200 text-blue-950 font-bold text-[9px] uppercase tracking-wider shrink-0">
+        <span className="px-2 py-0.5 rounded-full bg-blue-200 dark:bg-blue-900 text-blue-950 dark:text-blue-100 font-bold text-[9px] uppercase tracking-wider shrink-0">
           Official Desk
         </span>
       </div>
 
       {/* Team Selector Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+      <div className={`flex flex-wrap items-center justify-between gap-3 p-2.5 rounded-2xl border ${
+        isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+      }`}>
         <div className="flex items-center gap-2">
           <button
             onClick={() => { setSelectedTeam('home'); setActivePlayer(null); }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
-              selectedTeam === 'home' ? 'bg-purple-700 text-white shadow-xs font-black' : 'text-slate-700 hover:bg-slate-200'
+            className={`min-h-touch px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 active:scale-95 ${
+              selectedTeam === 'home' ? 'bg-purple-700 text-white shadow-xs font-black' : isDarkMode ? 'text-slate-300 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-200'
             }`}
           >
-            <TeamLogo teamName="UDAYA PARAMBIL PEEDIKA" className="w-5 h-5 rounded-md" />
+            <TeamLogo teamName="UDAYA PARAMBIL PEEDIKA" className="w-5 h-5 rounded-md shrink-0" />
             <span>UDAYA</span>
           </button>
           <button
             onClick={() => { setSelectedTeam('away'); setActivePlayer(null); }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
-              selectedTeam === 'away' ? 'bg-zinc-900 text-white shadow-xs font-black' : 'text-slate-700 hover:bg-slate-200'
+            className={`min-h-touch px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 active:scale-95 ${
+              selectedTeam === 'away' ? 'bg-zinc-800 text-white shadow-xs font-black' : isDarkMode ? 'text-slate-300 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-200'
             }`}
           >
-            <TeamLogo teamName="NEW MALAYA MALABAR FC" className="w-5 h-5 rounded-md" />
+            <TeamLogo teamName="NEW MALAYA MALABAR FC" className="w-5 h-5 rounded-md shrink-0" />
             <span>NEW MALAYA</span>
           </button>
         </div>
 
-        <div className="text-xs text-slate-600 font-bold flex items-center gap-2">
-          <span className="text-[11px] uppercase tracking-wider text-slate-500">Formation:</span>
-          <span className="px-2 py-0.5 rounded-lg bg-slate-200 text-slate-800 font-mono text-[11px]">
+        <div className={`text-xs font-bold flex items-center gap-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+          <span className={`text-[11px] uppercase tracking-wider ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Formation:</span>
+          <span className={`px-2 py-0.5 rounded-lg font-mono text-[11px] ${
+            isDarkMode ? 'bg-slate-800 text-slate-200' : 'bg-slate-200 text-slate-800'
+          }`}>
             {currentSquad.formation}
           </span>
         </div>
@@ -513,16 +531,26 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
       )}
 
       {/* Bench Substitutes */}
-      <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-        <div className="flex items-center justify-between text-xs font-bold text-slate-600 mb-2">
+      <div className={`p-3.5 rounded-2xl border ${
+        isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+      }`}>
+        <div className={`flex items-center justify-between text-xs font-bold mb-2 ${
+          isDarkMode ? 'text-slate-400' : 'text-slate-600'
+        }`}>
           <span className="uppercase tracking-wider">Substitutes Bench (പകരക്കാർ):</span>
-          <span className="text-[10px] text-blue-700 font-bold">{currentSquad.subs.length} Subs Registered</span>
+          <span className="text-[10px] text-blue-600 dark:text-blue-400 font-bold">{currentSquad.subs.length} Subs Registered</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {currentSquad.subs.map(s => (
-            <span key={s.num} className="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-800 shadow-2xs flex items-center gap-1.5">
+            <span key={s.num} className={`px-2.5 py-1 rounded-xl border text-xs font-bold shadow-2xs flex items-center gap-1.5 ${
+              isDarkMode 
+                ? 'bg-slate-900 border-slate-700 text-slate-200' 
+                : 'bg-white border-slate-200 text-slate-800'
+            }`}>
               <span>#{s.num} {s.name}</span>
-              <span className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 text-[10px] font-mono">
+              <span className={`px-1.5 py-0.2 rounded text-[10px] font-mono ${
+                isDarkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-600'
+              }`}>
                 {s.role}
               </span>
             </span>
@@ -538,13 +566,16 @@ function TurfPlayerNode({ player, isGK = false, isHome, isActive, onClick }) {
   return (
     <div 
       onClick={onClick}
-      className={`group cursor-pointer flex flex-col items-center transition-all hover:scale-110 active:scale-95 ${
+      role="button"
+      tabIndex={0}
+      aria-label={`${player.name} #${player.num} ${player.role}`}
+      className={`group cursor-pointer min-w-touch min-h-touch flex flex-col items-center justify-center transition-all hover:scale-110 active:scale-95 ${
         isActive ? 'scale-115' : ''
       }`}
     >
       <div className="relative">
         {/* Jersey Circle */}
-        <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center font-sports font-black text-sm sm:text-base border-2 shadow-lg transition-all ${
+        <div className={`w-11 h-11 rounded-full flex items-center justify-center font-sports font-black text-sm sm:text-base border-2 shadow-lg transition-all ${
           isGK 
             ? 'bg-amber-400 text-slate-950 border-white'
             : isHome

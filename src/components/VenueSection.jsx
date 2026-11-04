@@ -16,15 +16,17 @@ export default function VenueSection({ lang, isDarkMode }) {
               <span>{lang === 'ml' ? 'വേദി വിവരങ്ങൾ' : 'OFFICIAL VENUE'}</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl font-black font-sports text-slate-950 uppercase">
+            <h2 className={`text-3xl sm:text-4xl font-black font-sports uppercase ${
+              isDarkMode ? 'text-white' : 'text-slate-950'
+            }`}>
               {tournamentInfo.venue}
             </h2>
 
-            <p className="text-sm sm:text-base text-blue-700 font-bold font-malayalam">
+            <p className="text-sm sm:text-base text-blue-700 dark:text-blue-400 font-bold font-malayalam">
               {tournamentInfo.venueMalayalam}
             </p>
 
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            <p className={`text-xs sm:text-sm leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
               {lang === 'ml'
                 ? 'ഹൈ-മാസ്റ്റ് ഫ്ലഡ് ലൈറ്റുകളുടെ പ്രഭയിൽ ആയിരക്കണക്കിന് ഫുട്ബോൾ പ്രേമികൾക്ക് ഇരിക്കാവുന്ന ഗാലറിയോടെ സജ്ജീകരിച്ചിരിക്കുന്ന സ്റ്റേഡിയം. കുടുംബങ്ങൾക്കും പ്രത്യേക ഇരിപ്പിടങ്ങൾ ഒരുക്കിയിരിക്കുന്നു.'
                 : 'Sevens arena under high-mast floodlights with covered grandstands, family enclosures, and extensive parking facilities.'}
@@ -32,22 +34,28 @@ export default function VenueSection({ lang, isDarkMode }) {
 
             {/* Stadium Key Features */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center text-center">
+              <div className={`p-3.5 rounded-xl border flex flex-col items-center text-center ${
+                isDarkMode ? 'bg-slate-800/60 border-slate-700/60' : 'bg-slate-50 border-slate-200'
+              }`}>
                 <Lightbulb className="w-5 h-5 text-amber-500 mb-1" />
-                <span className="text-xs font-bold text-slate-900">High-Mast Lights</span>
-                <span className="text-[10px] text-slate-500">Night Matches</span>
+                <span className={`text-xs font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>High-Mast Lights</span>
+                <span className="text-[10px] text-slate-400">Night Matches</span>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center text-center">
-                <Users className="w-5 h-5 text-blue-600 mb-1" />
-                <span className="text-xs font-bold text-slate-900">Covered Stands</span>
-                <span className="text-[10px] text-slate-500">5,000+ Capacity</span>
+              <div className={`p-3.5 rounded-xl border flex flex-col items-center text-center ${
+                isDarkMode ? 'bg-slate-800/60 border-slate-700/60' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <Users className="w-5 h-5 text-blue-600 dark:text-blue-400 mb-1" />
+                <span className={`text-xs font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Covered Stands</span>
+                <span className="text-[10px] text-slate-400">5,000+ Capacity</span>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center text-center col-span-2 sm:col-span-1">
-                <Car className="w-5 h-5 text-emerald-600 mb-1" />
-                <span className="text-xs font-bold text-slate-900">Parking Area</span>
-                <span className="text-[10px] text-slate-500">Bikes & Cars</span>
+              <div className={`p-3.5 rounded-xl border flex flex-col items-center text-center col-span-2 sm:col-span-1 ${
+                isDarkMode ? 'bg-slate-800/60 border-slate-700/60' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <Car className="w-5 h-5 text-emerald-600 dark:text-emerald-400 mb-1" />
+                <span className={`text-xs font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Parking Area</span>
+                <span className="text-[10px] text-slate-400">Bikes & Cars</span>
               </div>
             </div>
 
@@ -57,7 +65,7 @@ export default function VenueSection({ lang, isDarkMode }) {
                 href={tournamentInfo.googleMapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-red-600 hover:bg-red-700 text-white shadow transition"
+                className="inline-flex items-center gap-2 min-h-touch px-5 py-3 rounded-xl font-bold text-xs sm:text-sm bg-red-600 hover:bg-red-700 text-white shadow transition active:scale-95"
               >
                 <Navigation className="w-4 h-4" />
                 <span>{lang === 'ml' ? 'സ്റ്റേഡിയം റൂട്ട് മാപ്പ്' : 'Get Stadium Directions'}</span>
@@ -65,9 +73,13 @@ export default function VenueSection({ lang, isDarkMode }) {
 
               <a
                 href={`tel:${tournamentInfo.mediaContact}`}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition"
+                className={`inline-flex items-center gap-2 min-h-touch px-4 py-3 rounded-xl font-bold text-xs sm:text-sm border transition active:scale-95 ${
+                  isDarkMode 
+                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700' 
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
+                }`}
               >
-                <Phone className="w-4 h-4 text-emerald-600" />
+                <Phone className="w-4 h-4 text-emerald-500" />
                 <span>Desk: {tournamentInfo.mediaContact}</span>
               </a>
             </div>
@@ -75,21 +87,25 @@ export default function VenueSection({ lang, isDarkMode }) {
 
           {/* Right Stadium Card Graphic */}
           <div className="lg:col-span-5">
-            <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50 p-6 text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-blue-100 border border-blue-300 flex items-center justify-center mx-auto text-blue-700">
+            <div className={`relative rounded-2xl overflow-hidden border shadow-sm p-6 text-center space-y-4 ${
+              isDarkMode ? 'bg-slate-950 border-slate-800 text-white' : 'bg-slate-50 border-slate-200'
+            }`}>
+              <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/40 border border-blue-300 dark:border-blue-700/50 flex items-center justify-center mx-auto text-blue-700 dark:text-blue-400">
                 <MapPin className="w-8 h-8" />
               </div>
 
               <div>
-                <h4 className="text-xl font-black font-sports text-slate-950">
+                <h4 className={`text-xl font-black font-sports ${isDarkMode ? 'text-white' : 'text-slate-950'}`}>
                   PARAMBIL PEEDIKA
                 </h4>
-                <p className="text-xs text-blue-700 font-bold">
+                <p className="text-xs text-blue-700 dark:text-blue-400 font-bold">
                   Peruvallur, Malappuram Dt., Kerala
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 space-y-1.5 shadow-sm">
+              <div className={`p-3.5 rounded-xl border text-xs space-y-1.5 shadow-sm ${
+                isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-300' : 'bg-white border-slate-200 text-slate-700'
+              }`}>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Kickoff Time:</span>
                   <span className="font-bold text-amber-700">8:00 PM Sharp</span>

@@ -17,11 +17,10 @@ export default function BottomNav({ activeTab, setActiveTab, isDarkMode, lang })
   };
 
   return (
-    <nav className={`fixed bottom-0 inset-x-0 z-50 sm:hidden border-t backdrop-blur-lg px-0.5 py-1 transition-colors ${
-      isDarkMode 
-        ? 'bg-slate-950/95 border-slate-800 text-slate-400' 
-        : 'bg-white/95 border-slate-200 text-slate-600 shadow-lg'
-    }`}>
+    <nav 
+      className="fixed bottom-0 inset-x-0 z-50 sm:hidden border-t border-navy-700 surface-navy px-1 transition-colors"
+      style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom, 0px))' }}
+    >
       <div className="grid grid-cols-5 items-center w-full max-w-md mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -30,18 +29,20 @@ export default function BottomNav({ activeTab, setActiveTab, isDarkMode, lang })
             <button
               key={item.id}
               onClick={() => handleTabClick(item.id)}
-              className={`flex flex-col items-center justify-center py-1 px-0.5 rounded-lg transition active:scale-90 w-full min-w-0 ${
-                isActive
-                  ? isDarkMode
-                    ? 'bg-blue-950/80 text-blue-400 font-bold'
-                    : 'bg-blue-50 text-blue-800 font-bold'
-                  : 'hover:text-slate-900 font-medium'
-              }`}
+              className="min-h-[52px] flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition active:scale-95 w-full min-w-0 relative"
+              aria-label={item.label}
             >
-              <Icon className={`w-4 h-4 sm:w-5 sm:h-5 shrink-0 ${isActive ? item.color : 'text-slate-400'}`} />
-              <span className={`text-[9.5px] mt-0.5 tracking-tight truncate w-full text-center ${isActive ? 'font-black' : 'font-medium'}`}>
+              <Icon className={`w-6 h-6 shrink-0 transition-colors ${
+                isActive ? 'text-gold' : 'text-navy-muted'
+              }`} />
+              <span className={`text-[11px] mt-0.5 tracking-tight truncate w-full text-center leading-tight transition-colors ${
+                isActive ? 'text-gold font-black' : 'text-navy-muted font-medium'
+              }`}>
                 {item.label}
               </span>
+              {isActive && (
+                <span className="w-1.5 h-1.5 rounded-full bg-gold mt-0.5 shrink-0 animate-fadeIn"></span>
+              )}
             </button>
           );
         })}

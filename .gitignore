@@ -2,3 +2,10 @@ node_modules
 dist
 .vercel
 .env
+
+# Media & Videos (External Hosting Rule: Never commit large video binaries)
+*.mp4
+*.mov
+*.avi
+public/squad/videos/
+

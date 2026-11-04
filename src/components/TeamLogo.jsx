@@ -61,6 +61,7 @@ const teamBadgeConfigs = {
 export default function TeamLogo({ teamName, className = "w-12 h-12", fallbackClassName }) {
   const [hasImageError, setHasImageError] = useState(false);
   const logoUrl = getTeamLogoUrl(teamName);
+  const isCircle = className.includes('rounded-full');
   const hasCustomRounding = className.includes('rounded-');
 
   if (logoUrl && !hasImageError) {
@@ -92,15 +93,17 @@ export default function TeamLogo({ teamName, className = "w-12 h-12", fallbackCl
 
   return (
     <div
-      className={`${fallbackClassName || className} shrink-0 rounded-2xl bg-gradient-to-br ${config.bgGradient} p-1 border-2 ${config.borderColor} shadow-xs flex flex-col items-center justify-center text-center select-none`}
+      className={`${fallbackClassName || className} shrink-0 ${isCircle ? 'rounded-full' : (hasCustomRounding ? '' : 'rounded-2xl')} bg-gradient-to-br ${config.bgGradient} p-1 border-2 ${config.borderColor} shadow-xs flex flex-col items-center justify-center text-center select-none overflow-hidden`}
       title={teamName}
     >
       <span className={`font-black font-sports tracking-wider leading-none text-xs sm:text-sm ${config.textColor}`}>
         {config.code}
       </span>
-      <span className={`text-[8px] font-bold uppercase tracking-widest mt-0.5 leading-none opacity-90 ${config.accentColor}`}>
-        {config.sub}
-      </span>
+      {!isCircle && (
+        <span className={`text-[8px] font-bold uppercase tracking-widest mt-0.5 leading-none opacity-90 ${config.accentColor}`}>
+          {config.sub}
+        </span>
+      )}
     </div>
   );
 }

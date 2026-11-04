@@ -74,15 +74,14 @@ export default function TicketCounterModal({ isOpen, onClose, lang, isDarkMode }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-      <div className={`relative w-full max-w-xl rounded-3xl border shadow-2xl p-5 sm:p-7 overflow-hidden transition-all ${
-        isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
-      }`}>
-        {/* Top Close Button */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#071433]/90 animate-fadeIn">
+      <div className="relative w-full max-w-xl rounded-3xl border shadow-2xl p-5 sm:p-7 overflow-hidden transition-all surface-card">
+        {/* Top Close Button (Rule 4: Minimum 44x44px target) */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 transition active:scale-95 z-10"
+          className="absolute top-4 right-4 min-w-[44px] min-h-[44px] rounded-full bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700 text-card-title flex items-center justify-center transition active:scale-95 z-10"
           title="Close"
+          aria-label="Close"
         >
           <X className="w-4 h-4" />
         </button>
@@ -90,26 +89,26 @@ export default function TicketCounterModal({ isOpen, onClose, lang, isDarkMode }
         {/* Modal Header */}
         <div className="flex items-center gap-2 mb-3">
           <div className="flex items-center -space-x-1">
-            <img src={logoUdaya} alt="Udaya" className="w-8 h-8 rounded-full border border-amber-400 bg-white p-0.5 object-contain" />
-            <img src={logoKasc} alt="KASC" className="w-8 h-8 rounded-full border border-blue-500 bg-white p-0.5 object-contain" />
+            <img src={logoUdaya} alt="Udaya" className="w-8 h-8 rounded-full border border-gold bg-white p-0.5 object-contain" />
+            <img src={logoKasc} alt="KASC" className="w-8 h-8 rounded-full border border-sky bg-white p-0.5 object-contain" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black uppercase tracking-wider">
-                Coming Soon
+              <span className="px-2.5 py-0.5 rounded-full btn-gold text-[10px] font-black uppercase tracking-wider">
+                🚧 Working Under Development
               </span>
-              <span className="text-xs text-slate-500 font-bold">Official Announcement</span>
+              <span className="text-xs text-card-muted font-bold">Official Notice</span>
             </div>
           </div>
         </div>
 
-        <h3 className="text-xl sm:text-2xl font-black font-sports uppercase tracking-wider text-slate-950">
-          {lang === 'ml' ? 'ഓൺലൈൻ ടിക്കറ്റ് ബുക്കിംഗ്' : 'ONLINE TICKET BOOKING'}
+        <h3 className="text-xl sm:text-2xl font-black font-sports uppercase tracking-wider text-card-title">
+          {lang === 'ml' ? 'ടിക്കറ്റ് ബുക്കിംഗ് സിസ്റ്റം നിർമ്മാണത്തിലാണ്' : 'ONLINE TICKET BOOKING SYSTEM'}
         </h3>
-        <p className="text-xs text-slate-500 mt-1 mb-5">
+        <p className="text-xs text-card-muted mt-1 mb-5 leading-relaxed">
           {lang === 'ml' 
-            ? 'ഓൺലൈൻ ടിക്കറ്റ് പേയ്മെന്റ് സൗകര്യം ഉടൻ ആരംഭിക്കും. ഔദ്യോഗിക ടിക്കറ്റ് നിരക്കുകൾ താഴെ നൽകുന്നു.' 
-            : 'Online payment and digital booking will open shortly. Check official matchday tier pricing below.'}
+            ? 'ഓൺലൈൻ ടിക്കറ്റ് പേയ്മെന്റ് ഗേറ്റ്‌വേ സജ്ജമാക്കിക്കൊണ്ടിരിക്കുന്നു (Working under development). ഔദ്യോഗിക ടിക്കറ്റ് നിരക്കുകൾ താഴെ നൽകുന്നു.' 
+            : 'Online ticket booking and digital payment gateway is currently working under development. Check confirmed official ticket tier rates below.'}
         </p>
 
         {/* Official Ticket Pricing Tiers Grid */}
@@ -117,61 +116,61 @@ export default function TicketCounterModal({ isOpen, onClose, lang, isDarkMode }
           {TICKET_TIERS.map((tier) => (
             <div
               key={tier.id}
-              className="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/80 hover:bg-slate-50 transition-colors flex flex-col justify-between"
+              className="p-3.5 rounded-2xl border border-surface-border dark:border-navy-700 surface-card-subtle transition-colors flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between gap-1 mb-1.5">
-                  <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                  <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 dark:bg-navy-700 text-royal dark:text-sky border border-blue-200 dark:border-navy-600">
                     {tier.badge}
                   </span>
-                  <span className="font-sports font-black text-lg text-emerald-700">
+                  <span className="font-sports font-black text-lg text-emerald-600 dark:text-emerald-400">
                     {tier.price}
                   </span>
                 </div>
-                <h4 className="font-sports font-black text-sm text-slate-950">
+                <h4 className="font-sports font-black text-sm text-card-title">
                   {lang === 'ml' ? tier.nameMl : tier.nameEn}
                 </h4>
-                <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                <p className="text-[11px] text-card-muted mt-0.5 leading-snug">
                   {lang === 'ml' ? tier.descMl : tier.descEn}
                 </p>
               </div>
 
-              <div className="mt-2.5 pt-2 border-t border-slate-200/80 flex items-center justify-between text-[10px] font-bold text-amber-700">
+              <div className="mt-2.5 pt-2 border-t border-surface-border dark:border-navy-700 flex items-center justify-between text-[10px] font-bold text-amber-700 dark:text-amber-400">
                 <span className="flex items-center gap-1">
                   <Clock className="w-3 h-3" />
-                  <span>{lang === 'ml' ? 'ഓൺലൈൻ ഉടൻ' : 'Online Soon'}</span>
+                  <span>{lang === 'ml' ? 'വർക്കിംഗ് അണ്ടർ പ്രോഗ്രസ്സ്' : 'Working Under Progress'}</span>
                 </span>
-                <span className="text-slate-400 font-normal">Per Match</span>
+                <span className="text-card-muted font-normal">Per Match</span>
               </div>
             </div>
           ))}
         </div>
 
         {/* Committee Official Notice Box */}
-        <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1 mb-5">
-          <div className="flex items-center gap-1.5 font-bold text-amber-900">
+        <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-950 dark:text-amber-200 space-y-1 mb-5">
+          <div className="flex items-center gap-1.5 font-bold text-amber-900 dark:text-amber-300">
             <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0" />
             <span>{lang === 'ml' ? 'കമ്മിറ്റി ഔദ്യോഗിക അറിയിപ്പ്:' : 'Official Organizing Notice:'}</span>
           </div>
-          <p className="text-[11px] text-amber-900/90 leading-relaxed pl-5 font-malayalam">
+          <p className="text-[11px] leading-relaxed pl-5 font-malayalam text-card-title">
             {lang === 'ml'
               ? 'ഓൺലൈൻ പേയ്മെന്റ് ഗേറ്റ്‌വേ ഉദ്ഘാടനത്തോട് അനുബന്ധിച്ച് നിലവിൽ വരും. ഉദ്ഘാടന ദിവസമായ 2026 നവംബർ 06 മുതൽ പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം മെയിൻ കൗണ്ടറുകളിൽ നേരിട്ട് ടിക്കറ്റുകൾ ലഭ്യമാകും.'
-              : 'Direct match tickets will be available at Peruvallur Panjayath Stadium ticket counters starting kickoff day, 06 November 2026. Online booking will be activated closer to the date.'}
+              : 'Direct match tickets will be available at Peruvallur Panjayath Stadium ticket counters starting kickoff day, 06 November 2026. Online booking system is actively working under progress.'}
           </p>
         </div>
 
-        {/* Action Buttons */}
+        {/* Action Buttons (Rule 4: Minimum 44x44px target) */}
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={handleShare}
-            className="py-3 px-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 transition active:scale-95"
+            className="min-h-[44px] py-2.5 px-3 rounded-2xl btn-royal text-white font-black text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 transition active:scale-95"
           >
             <Share2 className="w-4 h-4" />
             <span>{lang === 'ml' ? 'നിരക്കുകൾ പങ്കിടുക' : 'Share Pricing'}</span>
           </button>
           <button
             onClick={onClose}
-            className="py-3 px-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs uppercase tracking-wider transition active:scale-95"
+            className="min-h-[44px] py-2.5 px-3 rounded-2xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700 text-card-title font-bold text-xs uppercase tracking-wider transition active:scale-95"
           >
             <span>{lang === 'ml' ? 'മനസ്സിലായി (Close)' : 'Got It'}</span>
           </button>
