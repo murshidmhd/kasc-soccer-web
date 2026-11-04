@@ -22,19 +22,21 @@ import ClubFanVoteCard from './components/ClubFanVoteCard';
 import QuickActionRow from './components/QuickActionRow';
 import StartingSevenPitch from './components/StartingSevenPitch';
 import VipMatchPassModal from './components/VipMatchPassModal';
-import AdminScoreModal from './components/AdminScoreModal';
-import AdminDeskSection from './components/AdminDeskSection';
-import ScorerDemoModal from './components/ScorerDemoModal';
 import TicketCounterModal from './components/TicketCounterModal';
 import StickyScoreWidget from './components/StickyScoreWidget';
 import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
 import { fixtures } from './data/tournamentData';
+import { SHOW_LOCAL_ONLY_FEATURES, WHATSAPP_CHANNEL_URL } from './config/siteConfig';
 
 // Lazy-load heavy interactive mini-game to optimize 4G mobile page load speeds
 const SevensPenaltyGame = React.lazy(() => import('./components/SevensPenaltyGame'));
 // Lazy-load Squad Spotlight video showcase (Rule 12: does not delay live score or fixtures)
 const SquadSpotlightSection = React.lazy(() => import('./components/SquadSpotlightSection'));
+// Lazy-load Dev-only Admin and Scorer Desk components
+const AdminDeskSection = React.lazy(() => import('./components/AdminDeskSection'));
+const AdminScoreModal = React.lazy(() => import('./components/AdminScoreModal'));
+const ScorerDemoModal = React.lazy(() => import('./components/ScorerDemoModal'));
 // Lazy-load First-Visit Welcome Bottom Sheet (Rule 9: performance optimized)
 const WelcomeBottomSheet = React.lazy(() => import('./components/WelcomeBottomSheet'));
 
@@ -115,7 +117,11 @@ export default function App() {
 
   // Sync with URL hash or path if provided
   useEffect(() => {
-    const validTabs = ['live', 'vote', 'fixtures', 'teams', 'stats', 'promo', 'venue', 'admin', 'desk-s7'];
+    const validTabs = [
+      'live', 'fixtures', 'teams', 'stats', 'promo', 'venue',
+      ...(SHOW_LOCAL_ONLY_FEATURES ? ['vote'] : []),
+      ...(import.meta.env.DEV ? ['admin', 'desk-s7'] : [])
+    ];
     const hash = window.location.hash.replace('#', '');
     const path = window.location.pathname.replace(/^\//, '');
 
@@ -123,6 +129,8 @@ export default function App() {
       setActiveTab(hash);
     } else if (validTabs.includes(path)) {
       setActiveTab(path);
+    } else if (hash === 'admin' || hash === 'desk-s7') {
+      setActiveTab('live');
     }
 
     const handleHashChange = () => {
@@ -195,6 +203,30 @@ export default function App() {
               />
               
               <div className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-6">
+                {/* Calm Live Scores Honesty Banner (Rule 4) */}
+                {WHATSAPP_CHANNEL_URL && (
+                  <a
+                    href={WHATSAPP_CHANNEL_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block p-3 sm:p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-950 dark:text-emerald-200 text-xs font-semibold hover:bg-emerald-500/15 transition shadow-xs"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-base shrink-0">📢</span>
+                        <span className="truncate">
+                          {lang === 'ml' 
+                            ? 'തത്സമയ സ്കോറുകൾ ഞങ്ങളുടെ വാട്ട്‌സ്ആപ്പ് ചാനൽ വഴി അപ്‌ഡേറ്റ് ചെയ്യപ്പെടുന്നു' 
+                            : 'Live scores update on our WhatsApp channel'}
+                        </span>
+                      </div>
+                      <span className="text-[11px] font-black underline shrink-0 text-emerald-700 dark:text-emerald-400">
+                        {lang === 'ml' ? 'ചാനൽ കാണുക →' : 'Follow Channel →'}
+                      </span>
+                    </div>
+                  </a>
+                )}
+
                 {/* 1. Next / Live Match Center */}
                 <LiveMatchCard
                   lang={lang}
@@ -369,20 +401,22 @@ export default function App() {
                           <span>{lang === 'ml' ? 'സ്റ്റാർട്ടിംഗ് 7 ലൈനപ്പ്' : 'Starting 7 Lineup'}</span>
                         </button>
 
-                        <button
-                          onClick={() => setMatchSubTab('predict')}
-                          className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
-                            matchSubTab === 'predict' 
-                              ? 'bg-amber-500 text-slate-950 shadow-card font-black' 
-                              : 'text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
-                          }`}
-                        >
-                          <span>🎯</span>
-                          <span>{lang === 'ml' ? 'പ്രവചന മത്സരങ്ങൾ' : 'Predict & Win'}</span>
-                          <span className="px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[9px] font-black uppercase">
-                            Live
-                          </span>
-                        </button>
+                        {SHOW_LOCAL_ONLY_FEATURES && (
+                          <button
+                            onClick={() => setMatchSubTab('predict')}
+                            className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
+                              matchSubTab === 'predict' 
+                                ? 'bg-amber-500 text-slate-950 shadow-card font-black' 
+                                : 'text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+                            }`}
+                          >
+                            <span>🎯</span>
+                            <span>{lang === 'ml' ? 'പ്രവചന മത്സരങ്ങൾ' : 'Predict & Win'}</span>
+                            <span className="px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[9px] font-black uppercase">
+                              Live
+                            </span>
+                          </button>
+                        )}
 
                         <button
                           onClick={() => setMatchSubTab('game')}
@@ -433,7 +467,7 @@ export default function App() {
                     )}
 
                     {/* Section 2: Fan Zone & Prediction Hub (Cleanly grouped so home page is not cluttered) */}
-                    {(matchSubTab === 'predict' || matchSubTab === 'all') && (
+                    {(matchSubTab === 'predict' || matchSubTab === 'all') && SHOW_LOCAL_ONLY_FEATURES && (
                       <div className="space-y-6 animate-fadeIn">
                         {/* Predict & Win Contest */}
                         <MatchPredictionCard
@@ -507,10 +541,32 @@ export default function App() {
           {/* Page 2: 24 CLUB FAN VOTE MARATHON */}
           {activeTab === 'vote' && (
             <div className="animate-fadeIn py-6 max-w-6xl mx-auto px-3 sm:px-6">
-              <ClubFanVoteSection 
-                lang={lang} 
-                isDarkMode={isDarkMode} 
-              />
+              {SHOW_LOCAL_ONLY_FEATURES ? (
+                <ClubFanVoteSection 
+                  lang={lang} 
+                  isDarkMode={isDarkMode} 
+                />
+              ) : (
+                <div className="py-16 text-center max-w-md mx-auto space-y-4">
+                  <div className="w-12 h-12 rounded-2xl bg-navy-800 text-gold flex items-center justify-center mx-auto shadow-xs">
+                    <Trophy className="w-6 h-6 text-gold" />
+                  </div>
+                  <h3 className="text-lg font-bold text-navy-900 dark:text-white">
+                    {lang === 'ml' ? 'ഫാൻ വോട്ട് ഉടൻ ആരംഭിക്കും' : 'Official Fan Vote Coming Soon'}
+                  </h3>
+                  <p className="text-xs text-navy-muted">
+                    {lang === 'ml' 
+                      ? 'ഔദ്യോഗിക ഫാൻ വോട്ടിംഗ് ടൂർണ്ണമെന്റ് ആരംഭിക്കുന്നതോടെ ലൈവാകും.' 
+                      : 'Official 24-club fan voting will go live with shared scoring.'}
+                  </p>
+                  <button
+                    onClick={() => handleTabChange('live')}
+                    className="px-4 py-2 rounded-xl btn-royal text-white text-xs font-bold"
+                  >
+                    {lang === 'ml' ? 'ലൈവ് പേജിലേക്ക് മടങ്ങുക' : 'Return to Live'}
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
@@ -566,13 +622,41 @@ export default function App() {
 
           {/* Page 8: OFFICIAL MATCH SCORER & ADMIN DESK (Private Route: #desk-s7) */}
           {(activeTab === 'admin' || activeTab === 'desk-s7') && (
-            <div className="animate-fadeIn pt-4 max-w-5xl mx-auto px-3 sm:px-6">
-              <AdminDeskSection 
-                lang={lang} 
-                isDarkMode={isDarkMode} 
-                onBackToLive={() => handleTabChange('live')}
-              />
-            </div>
+            import.meta.env.DEV ? (
+              <div className="animate-fadeIn pt-4 max-w-5xl mx-auto px-3 sm:px-6">
+                <React.Suspense fallback={<div className="p-8 text-center text-xs text-navy-muted">Loading Scorer Desk...</div>}>
+                  <AdminDeskSection 
+                    lang={lang} 
+                    isDarkMode={isDarkMode} 
+                    onBackToLive={() => handleTabChange('live')}
+                  />
+                </React.Suspense>
+              </div>
+            ) : (
+              <div className="animate-fadeIn py-16 text-center max-w-md mx-auto px-4 space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-navy-800 text-gold flex items-center justify-center mx-auto shadow-xs">
+                  <Trophy className="w-6 h-6 text-gold" />
+                </div>
+                <h3 className="text-lg font-bold text-navy-900 dark:text-white">
+                  {lang === 'ml' ? 'സ്കോറർ ഡെസ്ക് ലഭ്യമല്ല' : 'Scorer Desk Disabled in Production'}
+                </h3>
+                <p className="text-xs text-navy-muted">
+                  {lang === 'ml'
+                    ? 'ലൈവ് സ്കോറുകൾ ഞങ്ങളുടെ വാട്ട്‌സ്ആപ്പ് ചാനൽ വഴി അപ്‌ഡേറ്റ് ചെയ്യപ്പെടുന്നു.'
+                    : 'The live scorer desk is disabled in production builds until a shared server backend is connected.'}
+                </p>
+                {WHATSAPP_CHANNEL_URL && (
+                  <a
+                    href={WHATSAPP_CHANNEL_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-xs"
+                  >
+                    <span>{lang === 'ml' ? 'വാട്ട്‌സ്ആപ്പ് ചാനൽ കാണുക' : 'Join WhatsApp Channel'}</span>
+                  </a>
+                )}
+              </div>
+            )
           )}
         </main>
       </GlobalErrorBoundary>
@@ -599,20 +683,22 @@ export default function App() {
         isDarkMode={isDarkMode}
       />
 
-      {/* Official Match Scorer & Admin Desk Modal */}
-      <AdminScoreModal
-        isOpen={isAdminModalOpen}
-        isDarkMode={isDarkMode}
-        lang={lang}
-        onClose={() => setIsAdminModalOpen(false)}
-      />
-
-      {/* Scorer Demonstration Modal for Committee */}
-      <ScorerDemoModal
-        isOpen={isScorerDemoOpen}
-        isDarkMode={isDarkMode}
-        onClose={() => setIsScorerDemoOpen(false)}
-      />
+      {/* Official Match Scorer & Admin Desk Modal (Dev Only) */}
+      {import.meta.env.DEV && (
+        <React.Suspense fallback={null}>
+          <AdminScoreModal
+            isOpen={isAdminModalOpen}
+            isDarkMode={isDarkMode}
+            lang={lang}
+            onClose={() => setIsAdminModalOpen(false)}
+          />
+          <ScorerDemoModal
+            isOpen={isScorerDemoOpen}
+            isDarkMode={isDarkMode}
+            onClose={() => setIsScorerDemoOpen(false)}
+          />
+        </React.Suspense>
+      )}
 
       {/* Official Ticket Pricing & Coming Soon Modal */}
       <TicketCounterModal

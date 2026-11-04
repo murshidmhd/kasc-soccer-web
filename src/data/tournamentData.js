@@ -512,7 +512,7 @@ export const topScorersPreview = [
 ];
 
 export const sponsors = [
-  { name: "Abacus Academy", tier: "Marathon Prize Partner", desc: "Parambil Peedika & Puthur Pallikkal - Educational Excellence & Sports Sponsor" },
+  { name: "Abacus Academy", tier: "Marathon Partner", desc: "Parambil Peedika & Puthur Pallikkal - Educational Excellence & Sports Sponsor" },
   { name: "Raidhan Kuzhimanthi", tier: "Food Partner", desc: "Official Food & Hospitality Partner - Parambil Peedika" },
   { name: "Life Line Hospital", tier: "Healthcare Partner", desc: "24x7 Emergency Care & Medical Partner" },
   { name: "UDAYA & KASC Peruvallur", tier: "Organizers", desc: "UDAYA Parambil Peedika & KASC Peruvallur" },
@@ -526,13 +526,13 @@ export const sponsorAds = [
     id: "abacus",
     name: "Abacus Academy",
     nameMl: "അബാക്കസ് അക്കാദമി",
-    category: "Official Prize Sponsor",
-    categoryMl: "പ്രൈസ് സ്പോൺസർ",
+    category: "Official Event Sponsor",
+    categoryMl: "ഇവന്റ് സ്പോൺസർ",
     tagline: "Quality Education & Promoting Local Athletic Excellence",
     taglineMl: "വിദ്യാഭ്യാസ രംഗത്ത് പുത്തൻ മുന്നേറ്റം • പറമ്പിൽ പീടിക & പുത്തൂർ പള്ളിക്കൽ",
     location: "Parambil Peedika & Puthur Pallikkal",
-    offers: "Proud Cash Prize Sponsor for SFA All India Sevens 8 KM Mini Marathon",
-    offersMl: "8 കി.മീ മിനി മാരത്തോൺ ക്യാഷ് പ്രൈസ് സ്പോൺസർമാർ",
+    offers: "Proud Event Sponsor for SFA All India Sevens 8 KM Mini Marathon",
+    offersMl: "8 കി.മീ മിനി മാരത്തോൺ അഭിമാന പങ്കാളി",
     badge: "🎓 EDUCATION & SPORTS",
     badgeColor: "bg-blue-100 text-blue-900 border-blue-300",
     gradient: "from-blue-600 to-indigo-700"
@@ -594,14 +594,14 @@ export const promoData = {
       nameMl: "അബാക്കസ് അക്കാദമി",
       branches: "Parambil Peedika & Puthur Pallikkal",
       branchesMl: "പറമ്പിൽ പീടിക & പുത്തൂർ പള്ളിക്കൽ",
-      role: "Official Prize Sponsor (₹6,000 Total Cash Awards)"
+      role: "Official Event Partner"
     },
     prizes: [
       {
         place: 1,
-        title: "1st Prize",
+        title: "1st Place",
         titleMl: "ഒന്നാം സ്ഥാനം",
-        cash: "₹3,000",
+        cash: "Trophy & Medal",
         winner: "Avinash Koyilandy",
         winnerMl: "അവിനാഷ് കൊയിലാണ്ടി",
         badge: "🥇 Champion Runner",
@@ -609,9 +609,9 @@ export const promoData = {
       },
       {
         place: 2,
-        title: "2nd Prize",
+        title: "2nd Place",
         titleMl: "രണ്ടാം സ്ഥാനം",
-        cash: "₹2,000",
+        cash: "Trophy & Medal",
         winner: "Aswan Palakkad",
         winnerMl: "അസ്വാൻ പാലക്കാട്",
         badge: "🥈 Runner-Up",
@@ -619,9 +619,9 @@ export const promoData = {
       },
       {
         place: 3,
-        title: "3rd Prize",
+        title: "3rd Place",
         titleMl: "മൂന്നാം സ്ഥാനം",
-        cash: "₹1,000",
+        cash: "Trophy & Medal",
         winner: "Aadil Kummipiparambin",
         winnerMl: "ആദിൽ കുമ്മിണിപ്പറമ്പ്",
         badge: "🥉 2nd Runner-Up",

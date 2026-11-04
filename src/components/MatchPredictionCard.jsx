@@ -3,6 +3,7 @@ import { Trophy, Gift, Share2, CheckCircle2, Flame, Award, Users, Sparkles, Tren
 import confetti from 'canvas-confetti';
 import { openingMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
+import { PRIZES_CONFIRMED } from '../config/siteConfig';
 
 export default function MatchPredictionCard({ lang, isDarkMode }) {
   // Persisted state in localStorage
@@ -89,8 +90,7 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
     const text = encodeURIComponent(
       `⚽ *അഖിലേന്ത്യാ സെവൻസ് സീസൺ 7 - എന്റെ മാച്ച് പ്രവചനം!* 🔥\n\n` +
       `⚔️ UDAYA Parambil Peedika vs NEW MALAYA MALABAR FC\n` +
-      `🎯 എന്റെ പ്രവചനം: *${openingMatch.teamHome.shortName} ${predictedScoreHome} - ${predictedScoreAway} ${openingMatch.teamAway.shortName}* (${outcomeText})\n` +
-      `🎁 കൃത്യമായി പ്രവചിച്ച് റൈദാൻ കുഴിമന്തി സ്പെഷ്യൽ സമ്മാനങ്ങൾ നേടൂ!\n\n` +
+      `🎯 എന്റെ പ്രവചനം: *${openingMatch.teamHome.shortName} ${predictedScoreHome} - ${predictedScoreAway} ${openingMatch.teamAway.shortName}* (${outcomeText})\n\n` +
       `നിങ്ങളുടെ പ്രവചനം ഇവിടെ രേഖപ്പെടുത്തൂ: ${shareUrl}`
     );
 
@@ -104,7 +104,7 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
         : 'bg-white border-slate-200 text-slate-900'
     }`}>
       {/* Header with Sponsor Badge */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-xs">
             <Gift className="w-5 h-5" />
@@ -114,25 +114,27 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
               <h3 className={`text-base sm:text-xl font-black font-sports uppercase tracking-wider ${
                 isDarkMode ? 'text-white' : 'text-slate-950'
               }`}>
-                {lang === 'ml' ? 'സ്കോർ പ്രവചിക്കൂ... സമ്മാനം നേടൂ!' : 'PREDICT & WIN CONTEST'}
+                {lang === 'ml' ? 'ആദ്യ മത്സര സ്കോർ പ്രവചനം' : 'OPENING MATCH PREDICTION'}
               </h3>
               <span className="px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-800 dark:text-red-300 text-[10px] font-black uppercase tracking-wider animate-pulse">
                 Live Poll
               </span>
             </div>
             <p className={`text-xs font-medium mt-0.5 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-              {lang === 'ml' 
-                ? 'മത്സരഫലവും കൃത്യമായ സ്കോറും പ്രവചിക്കുന്നവരിൽ നിന്നും നറുക്കെടുപ്പിലൂടെ വമ്പൻ സമ്മാനം!'
-                : 'Predict match winner & exact scoreline to enter the Matchday Lucky Draw!'}
+              {lang === 'ml'
+                ? 'മത്സരഫലവും കൃത്യമായ സ്കോറും പ്രവചിച്ച് നിങ്ങളുടെ ഫുട്ബോൾ അറിവ് തെളിയിക്കൂ.'
+                : 'Predict match winner & exact scoreline for the Season 7 opening match.'}
             </p>
           </div>
         </div>
 
-        {/* Sponsor Tag */}
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 text-[11px] font-bold text-amber-900 dark:text-amber-300 self-start sm:self-auto">
-          <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-          <span>Sponsored by <strong>Raidhan Kuzhimanthi</strong></span>
-        </div>
+        {/* Sponsor Tag (Only shown if prizes/sponsorship confirmed) */}
+        {PRIZES_CONFIRMED && (
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 text-[11px] font-bold text-amber-900 dark:text-amber-300 self-start sm:self-auto">
+            <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <span>Sponsored by <strong>Raidhan Kuzhimanthi</strong></span>
+          </div>
+        )}
       </div>
 
       {/* Part 1: Win Probability Community Poll */}
@@ -401,10 +403,10 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
                 : 'No purchase, entry fee, or monetary payment required. Strictly organized for fan promotional entertainment.'}
             </li>
             <li>
-              <strong className={isDarkMode ? 'text-slate-300' : 'text-slate-700'}>{lang === 'ml' ? 'സമ്മാനങ്ങൾ:' : 'Prizes:'}</strong>{' '}
-              {lang === 'ml' 
-                ? 'പ്രായോജകരായ റൈദാൻ കുഴിമന്തി നൽകുന്ന ഫുഡ് വൗച്ചറുകൾ ശരിയായ പ്രവചനം നടത്തിയവരിൽ നിന്ന് നറുക്കെടുപ്പിലൂടെ തിരഞ്ഞെടുക്കുന്നു. ഇതൊരു ചൂതാട്ടമോ വാതുവെപ്പോ അല്ല.' 
-                : 'Sponsored food vouchers by Raidhan Kuzhimanthi awarded through random lucky draw among correct entries. Not gambling or real-money gaming.'}
+              <strong className={isDarkMode ? 'text-slate-300' : 'text-slate-700'}>{lang === 'ml' ? 'ഫാൻ എൻഗേജ്മെന്റ്:' : 'Fan Engagement:'}</strong>{' '}
+              {lang === 'ml'
+                ? 'ഇതൊരു കായിക വിനോദ പരിപാടിയാണ്. ചൂതാട്ടമോ വാതുവെപ്പോ അല്ല.'
+                : 'Purely promotional community fan engagement, strictly not gambling.'}
             </li>
             <li>
               <strong className={isDarkMode ? 'text-slate-300' : 'text-slate-700'}>{lang === 'ml' ? 'നിയമം:' : 'Fair Play:'}</strong>{' '}

@@ -29,8 +29,6 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { 
-  DEFAULT_ADMIN_PIN, 
-  BACKUP_ADMIN_PIN,
   isAdminAuthenticated, 
   setAdminAuthenticated, 
   getStoredMatchState, 
@@ -183,7 +181,7 @@ export default function AdminDeskSection({
   const handleScorerHandover = (targetRole) => {
     const newRole = targetRole || (activeScorer.role === 'PRIMARY' ? 'BACKUP' : 'PRIMARY');
     const label = newRole === 'PRIMARY' ? 'Primary Ground Scorer' : 'Standby Backup Scorer';
-    const info = { role: newRole, label, pinUsed: newRole === 'PRIMARY' ? DEFAULT_ADMIN_PIN : BACKUP_ADMIN_PIN };
+    const info = { role: newRole, label, pinUsed: 'dev_session' };
     setActiveScorerInfo(info);
     setActiveScorer(info);
     setNotification(`Scorer Handover Complete: ${label}`);

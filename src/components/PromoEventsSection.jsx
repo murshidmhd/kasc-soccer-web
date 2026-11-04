@@ -345,11 +345,11 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                     <span className="font-bold text-slate-900">{lang === 'ml' ? marathon.flagOffBy.nameMl : marathon.flagOffBy.name}</span>
                   </div>
                   <div className="p-2.5 rounded-xl bg-white/80 border border-slate-200">
-                    <span className="text-[10px] text-slate-500 block uppercase font-bold">Cash Awards</span>
-                    <span className="font-bold text-amber-700">₹6,000 Prizes</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-bold">Event Type</span>
+                    <span className="font-bold text-slate-900">8 KM Mini Marathon</span>
                   </div>
                   <div className="p-2.5 rounded-xl bg-white/80 border border-slate-200 col-span-2 sm:col-span-1">
-                    <span className="text-[10px] text-slate-500 block uppercase font-bold">Prize Partner</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-bold">Event Partner</span>
                     <span className="font-bold text-blue-800">{marathon.prizeSponsor.name}</span>
                   </div>
                 </div>
@@ -386,7 +386,7 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                 <Trophy className="w-5 h-5 text-amber-500" />
                 <span>{lang === 'ml' ? 'മാരത്തോൺ വിജയികൾ (Winners Podium)' : 'Mini Marathon 8KM Champions'}</span>
               </h3>
-              <span className="text-xs text-slate-500 font-medium">₹6,000 Cash Pool</span>
+              <span className="text-xs text-slate-500 font-medium">Top 3 Finishers</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -403,7 +403,7 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                       onClick={() => setSelectedImage({
                         src: img,
                         title: `${p.title}: ${lang === 'ml' ? p.winnerMl : p.winner}`,
-                        subtitle: `${p.badge} • Cash Prize: ${p.cash}`
+                        subtitle: `${p.badge} • ${p.title}`
                       })}
                       className="relative aspect-4/3 overflow-hidden cursor-pointer group bg-slate-100"
                     >
@@ -414,9 +414,6 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                       />
                       <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-slate-950/85 text-white text-[11px] font-black font-sports backdrop-blur-xs flex items-center gap-1">
                         <span>{p.badge}</span>
-                      </div>
-                      <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded-lg bg-amber-400 text-slate-950 text-xs font-black shadow-xs">
-                        {p.cash}
                       </div>
                     </div>
 
@@ -436,8 +433,8 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                     <div className="p-3 text-center bg-slate-50 border-t border-slate-100">
                       <p className="text-[11px] text-slate-600 font-medium">
                         {lang === 'ml' 
-                          ? `${p.titleMl} ട്രോഫിയും ${p.cash} ക്യാഷ് അവാർഡും നൽകി ആദരിച്ചു.` 
-                          : `Honored with ${p.title} trophy, medal and ${p.cash} prize.`}
+                          ? `${p.titleMl} ട്രോഫിയും മെഡലും നൽകി ആദരിച്ചു.` 
+                          : `Honored with ${p.title} trophy and medal.`}
                       </p>
                     </div>
                   </div>
@@ -512,22 +509,22 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
               </div>
               <div>
                 <span className="text-[10px] font-mono text-blue-700 font-bold uppercase tracking-wider">
-                  Official Marathon Prize Partner
+                  Official Marathon Partner
                 </span>
                 <h4 className="font-sports font-black text-base text-slate-950">
                   {marathon.prizeSponsor.name} ({marathon.prizeSponsor.nameMl})
                 </h4>
                 <p className="text-xs text-slate-500">
                   {lang === 'ml' 
-                    ? 'പറമ്പിൽ പീടിക & പുത്തൂർ പള്ളിക്കൽ • സെവൻസ് മിനി മാരത്തോൺ ക്യാഷ് പ്രൈസ് സ്പോൺസർമാർ' 
-                    : `${marathon.prizeSponsor.branches} • Proud Cash Award Partner for SFA Sevens 8KM Marathon`}
+                    ? 'പറമ്പിൽ പീടിക & പുത്തൂർ പള്ളിക്കൽ • സെവൻസ് മിനി മാരത്തോൺ സ്പോൺസർമാർ' 
+                    : `${marathon.prizeSponsor.branches} • Official Partner for SFA Sevens 8KM Marathon`}
                 </p>
               </div>
             </div>
 
             <div className="text-right shrink-0">
-              <span className="inline-block px-3 py-1.5 rounded-xl bg-amber-400 text-slate-950 font-black text-xs font-mono shadow-xs">
-                ₹6,000 Total Prizes Distributed
+              <span className="inline-block px-3 py-1.5 rounded-xl bg-blue-100 text-blue-950 font-black text-xs font-mono shadow-xs border border-blue-200">
+                Official Event Partner
               </span>
             </div>
           </div>

@@ -17,7 +17,7 @@ import {
 import logoKasc from '../assets/logo_kasc.png';
 import logoUdaya from '../assets/logo_udaya_transparent.png';
 import { tournamentInfo } from '../data/tournamentData';
-import { SITE_URL, SHOW_UNFINISHED } from '../config/siteConfig';
+import { SITE_URL, SHOW_UNFINISHED, SHOW_LOCAL_ONLY_FEATURES } from '../config/siteConfig';
 
 export default function Header({ 
   activeTab, 
@@ -69,7 +69,7 @@ export default function Header({
 
   // More menu features (Rule 4: List every feature only reachable from hub, no SFA/official badges)
   const moreMenuFeatures = [
-    {
+    ...(SHOW_LOCAL_ONLY_FEATURES ? [{
       id: 'vote',
       label: lang === 'ml' ? '24 ക്ലബ് ഫാൻ വോട്ട്' : 'Fan Vote Battle',
       icon: Users,
@@ -79,7 +79,7 @@ export default function Header({
         setIsMenuOpen(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    },
+    }] : []),
     {
       id: 'pass',
       label: lang === 'ml' ? 'വി.ഐ.പി ഫാൻ പാസ്സ്' : 'VIP Fan Pass',

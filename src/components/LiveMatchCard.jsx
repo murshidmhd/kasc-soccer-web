@@ -33,7 +33,7 @@ import {
   SEVENS_HALF_MINUTES,
   SEVENS_TOTAL_MINUTES
 } from '../utils/matchStateManager';
-import { FAN_REPORTS_ENABLED } from '../config/siteConfig';
+import { FAN_REPORTS_ENABLED, WHATSAPP_CHANNEL_URL } from '../config/siteConfig';
 
 export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
   const [matchState, setMatchState] = useState(getStoredMatchState);
@@ -336,6 +336,28 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
               Turn Off
             </button>
           </div>
+        )}
+
+        {/* Calm Live Scores Broadcast Banner (Rule 4) */}
+        {WHATSAPP_CHANNEL_URL && (
+          <a
+            href={WHATSAPP_CHANNEL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mb-4 p-2.5 sm:p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-950 dark:text-emerald-200 text-xs font-semibold flex items-center justify-between gap-2 hover:bg-emerald-500/15 transition shadow-xs"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-base shrink-0">📢</span>
+              <span className="truncate">
+                {lang === 'ml' 
+                  ? 'തത്സമയ സ്കോറുകൾ ഞങ്ങളുടെ വാട്ട്‌സ്ആപ്പ് ചാനൽ വഴി അപ്‌ഡേറ്റ് ചെയ്യപ്പെടുന്നു' 
+                  : 'Live scores update on our WhatsApp channel'}
+              </span>
+            </div>
+            <span className="text-[11px] font-black underline shrink-0 text-emerald-700 dark:text-emerald-400">
+              {lang === 'ml' ? 'വാട്ട്‌സ്ആപ്പ് ചാനൽ →' : 'Follow Channel →'}
+            </span>
+          </a>
         )}
 
         {/* Top Match Ribbon */}

@@ -10,8 +10,7 @@ const ADMIN_AUTH_KEY = 'kasc_admin_session_auth';
 
 export const COOLDOWN_SECONDS = 60; // 60s Anti-Spam for crowd reports
 export const MAX_REPORTS_PER_USER = 3; // Strict 3 reports max per device
-export const DEFAULT_ADMIN_PIN = '7012'; // Default Primary Scorer PIN
-export const BACKUP_ADMIN_PIN = '2026';  // Standby Backup Scorer PIN
+// Admin PIN removed from source for production security; read strictly via VITE_DEV_ADMIN_PIN in dev only
 
 // Kerala Sevens Football: 30 minutes + 30 minutes = 60 minutes full match
 export const SEVENS_HALF_MINUTES = 30;
@@ -226,12 +225,17 @@ export function getOfflineQueueCount() {
 
 // Scorer Handover & Role Management
 export function verifyAdminPin(pin) {
-  const clean = (pin || '').trim();
-  if (clean === DEFAULT_ADMIN_PIN) {
-    return { isValid: true, role: 'PRIMARY', label: 'Primary Ground Scorer (പ്രധാന സ്കോറർ)' };
+  // Disabled in production builds
+  if (!import.meta.env.DEV) {
+    return { isValid: false, role: null, label: null };
   }
-  if (clean === BACKUP_ADMIN_PIN) {
-    return { isValid: true, role: 'BACKUP', label: 'Standby Backup Scorer (ബാക്കപ്പ് സ്കോറർ)' };
+  const devPin = import.meta.env.VITE_DEV_ADMIN_PIN;
+  if (!devPin) {
+    return { isValid: false, role: null, label: null };
+  }
+  const clean = (pin || '').trim();
+  if (clean === devPin.trim()) {
+    return { isValid: true, role: 'PRIMARY', label: 'Dev Scorer (ഡെവലപ്‌മെന്റ് സ്കോറർ)' };
   }
   return { isValid: false, role: null, label: null };
 }

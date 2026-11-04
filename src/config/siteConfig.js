@@ -7,6 +7,8 @@
 export const SITE_URL = 'https://kasc-soccer-web.vercel.app';
 
 // Feature Flags
+export const SHOW_LOCAL_ONLY_FEATURES = false;
+export const PRIZES_CONFIRMED = false;
 export const SHOW_SFA_CLAIMS = false;
 export const SHOW_SPONSORS = true;
 export const SHOW_UNFINISHED = false;
@@ -15,6 +17,9 @@ export const FAN_REPORTS_ENABLED = false;
 export const TROPHY_IS_ILLUSTRATION = true;
 export const SHOW_NATIONALITY = false;
 export const AWARDS_NOTE = true;
+
+// Official Tournament WhatsApp Broadcast Channel
+export const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029Vb4v0Xp002T5Y9Xk9r2B';
 
 // Committee Contact Details
 export const COMMITTEE_PHONE = '+91 70120 46930';
