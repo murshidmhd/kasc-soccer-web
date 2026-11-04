@@ -183,6 +183,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
           {/* Quick Action Navigation Buttons */}
           <div className="grid grid-cols-2 gap-2.5 pt-4">
             <button
+              id="hero-fixtures-btn"
               onClick={() => scrollToSection('fixtures')}
               className="min-h-touch w-full py-3 px-3 sm:px-4 rounded-xl font-bold text-xs sm:text-sm btn-royal text-white shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5"
             >
@@ -190,6 +191,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
               <span>{lang === 'ml' ? 'മത്സരക്രമം' : 'View Fixtures'}</span>
             </button>
             <button
+              id="hero-ticket-btn"
               onClick={onOpenTicketModal}
               className="min-h-touch w-full py-3 px-2 sm:px-4 rounded-xl font-black text-xs sm:text-sm btn-gold shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"
             >
@@ -201,6 +203,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
           {/* Official Trailer Video Card with Poster & Play Button (User request: video image with play button) */}
           <div className="mt-3.5">
             <button
+              id="hero-trailer-btn"
               onClick={() => setIsTrailerOpen(true)}
               className="relative w-full h-24 sm:h-28 rounded-2xl overflow-hidden border border-gold/40 hover:border-gold shadow-lg group transition active:scale-98 text-left flex items-center"
               aria-label="Watch Official Tournament Trailer"
@@ -248,58 +251,6 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                 </div>
               </div>
             </button>
-          </div>
-
-          {/* Quick Discovery Guide for New Visitors (User request: view full team, fixtures, top player) */}
-          <div className="mt-3.5 pt-3 border-t border-navy-700/60">
-            <div className="flex items-center justify-between text-[11px] font-bold text-navy-muted mb-2 px-0.5">
-              <span className="flex items-center gap-1 text-gold">
-                <Sparkles className="w-3.5 h-3.5 text-gold" />
-                <span>{lang === 'ml' ? 'പ്രധാന വിവരങ്ങൾ കാണുക:' : 'Quick Tournament Guide:'}</span>
-              </span>
-              <span className="text-[10px] text-navy-muted opacity-80">{lang === 'ml' ? 'ക്ലിക്ക് ചെയ്യുക' : 'Tap to explore'}</span>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                onClick={() => (onNavigate ? onNavigate('teams') : scrollToSection('teams'))}
-                className="py-2.5 px-2 rounded-xl bg-navy-850 hover:bg-navy-750 border border-navy-700 text-center transition active:scale-95 group flex flex-col items-center justify-center gap-1 shadow-xs"
-              >
-                <Shield className="w-4 h-4 text-gold group-hover:scale-110 transition-transform" />
-                <span className="text-[11px] font-black text-white leading-tight">
-                  {lang === 'ml' ? '24 ക്ലബ്ബുകൾ' : 'Full Teams'}
-                </span>
-                <span className="text-[9px] text-navy-muted">
-                  {lang === 'ml' ? 'സ്ക്വാഡ്' : 'Squads'}
-                </span>
-              </button>
-
-              <button
-                onClick={() => (onNavigate ? onNavigate('fixtures') : scrollToSection('fixtures'))}
-                className="py-2.5 px-2 rounded-xl bg-navy-850 hover:bg-navy-750 border border-navy-700 text-center transition active:scale-95 group flex flex-col items-center justify-center gap-1 shadow-xs"
-              >
-                <Calendar className="w-4 h-4 text-blue-400 group-hover:scale-110 transition-transform" />
-                <span className="text-[11px] font-black text-white leading-tight">
-                  {lang === 'ml' ? 'മത്സരക്രമം' : 'Fixtures'}
-                </span>
-                <span className="text-[9px] text-navy-muted">
-                  {lang === 'ml' ? 'ടൈംടേബിൾ' : 'Schedule'}
-                </span>
-              </button>
-
-              <button
-                onClick={() => (onNavigate ? onNavigate('stats') : scrollToSection('stats'))}
-                className="py-2.5 px-2 rounded-xl bg-navy-850 hover:bg-navy-750 border border-navy-700 text-center transition active:scale-95 group flex flex-col items-center justify-center gap-1 shadow-xs"
-              >
-                <Star className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
-                <span className="text-[11px] font-black text-white leading-tight">
-                  {lang === 'ml' ? 'താരങ്ങൾ' : 'Top Players'}
-                </span>
-                <span className="text-[9px] text-navy-muted">
-                  {lang === 'ml' ? 'സ്റ്റാറ്റ്സ്' : 'Stats & Goals'}
-                </span>
-              </button>
-            </div>
           </div>
         </div>
       </div>

@@ -10,7 +10,8 @@ import {
   Bell, 
   Share2,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  ArrowLeft
 } from 'lucide-react';
 import logoUdaya from '../assets/logo_udaya_transparent.png';
 import logoKasc from '../assets/logo_kasc.png';
@@ -74,20 +75,37 @@ export default function TicketCounterModal({ isOpen, onClose, lang, isDarkMode }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#071433]/90 animate-fadeIn">
-      <div className="relative w-full max-w-xl rounded-3xl border shadow-2xl p-5 sm:p-7 overflow-hidden transition-all surface-card">
-        {/* Top Close Button (Rule 4: Minimum 44x44px target) */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 min-w-[44px] min-h-[44px] rounded-full bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700 text-card-title flex items-center justify-center transition active:scale-95 z-10"
-          title="Close"
-          aria-label="Close"
-        >
-          <X className="w-4 h-4" />
-        </button>
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-[#071433]/90 backdrop-blur-xs animate-fadeIn select-none"
+      onClick={onClose}
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-xl max-h-[92vh] overflow-y-auto rounded-3xl border shadow-2xl p-4 sm:p-7 transition-all surface-card"
+      >
+        {/* Top Header Row with prominent Back Button */}
+        <div className="flex items-center justify-between gap-2 pb-2.5 mb-3 border-b border-surface-border dark:border-navy-700">
+          <button
+            onClick={onClose}
+            className="min-h-[40px] px-3.5 py-1.5 rounded-xl bg-surface-light dark:bg-navy-800 hover:bg-navy-700 border border-surface-border dark:border-navy-700 text-card-title text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-xs"
+            aria-label="Back to page"
+          >
+            <ArrowLeft className="w-4 h-4 text-gold shrink-0" />
+            <span>{lang === 'ml' ? '← തിരികെ' : '← Back'}</span>
+          </button>
+
+          <button
+            onClick={onClose}
+            className="min-w-[40px] min-h-[40px] rounded-xl bg-surface-light dark:bg-navy-800 hover:bg-navy-700 border border-surface-border dark:border-navy-700 text-card-title flex items-center justify-center transition active:scale-95"
+            title="Close"
+            aria-label="Close"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
 
         {/* Modal Header */}
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2 mb-2.5">
           <div className="flex items-center -space-x-1">
             <img src={logoUdaya} alt="Udaya" className="w-8 h-8 rounded-full border border-gold bg-white p-0.5 object-contain" />
             <img src={logoKasc} alt="KASC" className="w-8 h-8 rounded-full border border-sky bg-white p-0.5 object-contain" />
@@ -102,17 +120,17 @@ export default function TicketCounterModal({ isOpen, onClose, lang, isDarkMode }
           </div>
         </div>
 
-        <h3 className="text-xl sm:text-2xl font-black font-sports uppercase tracking-wider text-card-title">
+        <h3 className="text-lg sm:text-2xl font-black font-sports uppercase tracking-wider text-card-title">
           {lang === 'ml' ? 'ടിക്കറ്റ് നിരക്കുകളും വിവരങ്ങളും' : 'OFFICIAL TICKET RATES'}
         </h3>
-        <p className="text-xs text-card-muted mt-1 mb-5 leading-relaxed">
+        <p className="text-xs text-card-muted mt-1 mb-4 leading-relaxed">
           {lang === 'ml' 
             ? 'മത്സര ടിക്കറ്റുകൾ പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം കൗണ്ടറിൽ നേരിട്ട് ലഭ്യമാണ്. ഓൺലൈൻ പേയ്മെന്റ് ഗേറ്റ്‌വേ പരീക്ഷണ ഘട്ടത്തിലാണ്.' 
             : 'Match tickets will be sold directly at the Peruvallur Panjayath Stadium counters. Online digital payment is under test mode.'}
         </p>
 
         {/* Official Ticket Pricing Tiers Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
           {TICKET_TIERS.map((tier) => (
             <div
               key={tier.id}
@@ -138,7 +156,7 @@ export default function TicketCounterModal({ isOpen, onClose, lang, isDarkMode }
               <div className="mt-2.5 pt-2 border-t border-surface-border dark:border-navy-700 flex items-center justify-between text-[10px] font-bold text-amber-700 dark:text-amber-400">
                 <span className="flex items-center gap-1">
                   <Clock className="w-3 h-3" />
-                  <span>{lang === 'ml' ? 'വർക്കിംഗ് അണ്ടർ പ്രോഗ്രസ്സ്' : 'Working Under Progress'}</span>
+                  <span>{lang === 'ml' ? 'കൗണ്ടർ വിൽപന' : 'Direct Counter'}</span>
                 </span>
                 <span className="text-card-muted font-normal">Per Match</span>
               </div>
@@ -147,7 +165,7 @@ export default function TicketCounterModal({ isOpen, onClose, lang, isDarkMode }
         </div>
 
         {/* Committee Official Notice Box */}
-        <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-950 dark:text-amber-200 space-y-1 mb-5">
+        <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-950 dark:text-amber-200 space-y-1 mb-4">
           <div className="flex items-center gap-1.5 font-bold text-amber-900 dark:text-amber-300">
             <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0" />
             <span>{lang === 'ml' ? 'കമ്മിറ്റി ഔദ്യോഗിക അറിയിപ്പ്:' : 'Official Organizing Notice:'}</span>
@@ -159,8 +177,8 @@ export default function TicketCounterModal({ isOpen, onClose, lang, isDarkMode }
           </p>
         </div>
 
-        {/* Action Buttons (Rule 4: Minimum 44x44px target) */}
-        <div className="grid grid-cols-2 gap-2">
+        {/* Action Buttons with Back button */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
           <button
             onClick={handleShare}
             className="min-h-[44px] py-2.5 px-3 rounded-2xl btn-royal text-white font-black text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 transition active:scale-95"
@@ -170,9 +188,10 @@ export default function TicketCounterModal({ isOpen, onClose, lang, isDarkMode }
           </button>
           <button
             onClick={onClose}
-            className="min-h-[44px] py-2.5 px-3 rounded-2xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700 text-card-title font-bold text-xs uppercase tracking-wider transition active:scale-95"
+            className="min-h-[44px] py-2.5 px-3 rounded-2xl bg-surface-light dark:bg-navy-800 hover:bg-navy-700 border border-surface-border dark:border-navy-700 text-card-title font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95"
           >
-            <span>{lang === 'ml' ? 'മനസ്സിലായി (Close)' : 'Got It'}</span>
+            <ArrowLeft className="w-3.5 h-3.5 text-gold" />
+            <span>{lang === 'ml' ? 'തിരികെ പേജിലേക്ക്' : 'Back to Match Center'}</span>
           </button>
         </div>
       </div>

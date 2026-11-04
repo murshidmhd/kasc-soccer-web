@@ -28,6 +28,7 @@ export default function Header({
   setActiveTab, 
   onOpenTicketModal,
   onOpenPassModal,
+  onOpenTour,
   lang, 
   setLang, 
   isDarkMode, 
@@ -155,6 +156,15 @@ export default function Header({
       action: () => {
         setIsMenuOpen(false);
         if (onOpenTicketModal) onOpenTicketModal();
+      }
+    },
+    {
+      id: 'tour',
+      label: lang === 'ml' ? '🎯 ടൂർണ്ണമെന്റ് ഗൈഡ് (App Tour)' : '🎯 Interactive App Tour',
+      icon: Sparkles,
+      action: () => {
+        setIsMenuOpen(false);
+        if (onOpenTour) onOpenTour();
       }
     },
     {

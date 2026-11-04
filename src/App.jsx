@@ -26,6 +26,7 @@ import TicketCounterModal from './components/TicketCounterModal';
 import StickyScoreWidget from './components/StickyScoreWidget';
 import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
+import NewUserGuidedTour from './components/NewUserGuidedTour';
 import { fixtures } from './data/tournamentData';
 import { SHOW_LOCAL_ONLY_FEATURES, WHATSAPP_CHANNEL_URL } from './config/siteConfig';
 
@@ -91,6 +92,7 @@ export default function App() {
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   const [isVipPassModalOpen, setIsVipPassModalOpen] = useState(false);
+  const [isTourOpenManually, setIsTourOpenManually] = useState(false);
   const [matchSubTab, setMatchSubTab] = useState('lineup'); // 'lineup' | 'predict' | 'game' | 'h2h' | 'all'
   const [isOnline, setIsOnline] = useState(() => (typeof navigator !== 'undefined' ? navigator.onLine : true));
 
@@ -170,6 +172,10 @@ export default function App() {
   }, []);
 
   const handleTabChange = (tab) => {
+    if (tab === 'tour') {
+      setIsTourOpenManually(true);
+      return;
+    }
     if (tab === 'tickets') {
       setIsTicketModalOpen(true);
       return;
@@ -221,6 +227,7 @@ export default function App() {
         setIsDarkMode={setIsDarkMode}
         onOpenTicketModal={() => setIsTicketModalOpen(true)}
         onOpenPassModal={() => setIsVipPassModalOpen(true)}
+        onOpenTour={() => setIsTourOpenManually(true)}
       />
 
       {/* Main Content Rendered by Page/Tab Wrapped in Error Boundary */}
@@ -783,10 +790,19 @@ export default function App() {
           isDarkMode={isDarkMode}
           setIsDarkMode={setIsDarkMode}
           isLiveMatch={false}
-          isOtherModalOpen={isAdminModalOpen || isScorerDemoOpen || isTicketModalOpen || isVipPassModalOpen}
+          isOtherModalOpen={isAdminModalOpen || isScorerDemoOpen || isTicketModalOpen || isVipPassModalOpen || isTourOpenManually}
           onNavigate={handleTabChange}
         />
       </React.Suspense>
+
+      {/* Interactive New User Guided Tour Coachmark Card */}
+      <NewUserGuidedTour
+        lang={lang}
+        activeTab={activeTab}
+        onNavigate={handleTabChange}
+        isOpenManually={isTourOpenManually}
+        onCloseManual={() => setIsTourOpenManually(false)}
+      />
     </div>
   );
 }

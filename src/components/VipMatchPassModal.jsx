@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Sparkles, Share2, Download, Check, Shield, Trophy, QrCode, AlertTriangle } from 'lucide-react';
+import { X, Sparkles, Share2, Download, Check, Shield, Trophy, QrCode, AlertTriangle, ArrowLeft } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import logoUdaya from '../assets/logo_udaya_transparent.png';
 import logoKasc from '../assets/logo_kasc.png';
@@ -39,15 +39,33 @@ export default function VipMatchPassModal({ isOpen, onClose, lang }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-lg bg-slate-900 border border-amber-500/40 text-white rounded-3xl shadow-2xl p-5 sm:p-7 overflow-hidden">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full bg-slate-800 text-slate-400 hover:text-white transition"
-        >
-          <X className="w-4 h-4" />
-        </button>
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-950/85 backdrop-blur-xs animate-fadeIn select-none"
+      onClick={onClose}
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto bg-slate-900 border border-amber-500/40 text-white rounded-3xl shadow-2xl p-4 sm:p-7"
+      >
+        {/* Top Header Bar with Back Button */}
+        <div className="flex items-center justify-between gap-2 pb-2.5 mb-3 border-b border-slate-800">
+          <button
+            onClick={onClose}
+            className="min-h-[40px] px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-xs"
+            aria-label="Back"
+          >
+            <ArrowLeft className="w-4 h-4 text-amber-400 shrink-0" />
+            <span>{lang === 'ml' ? '← തിരികെ' : '← Back'}</span>
+          </button>
+
+          <button
+            onClick={onClose}
+            className="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition active:scale-95"
+            aria-label="Close"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
 
         {!isGenerated ? (
           <div>
