@@ -112,14 +112,13 @@ export const squadPlayers = [
     fileSize: '823 KB',
     isAiGenerated: true,
   },
-  // New Malaya Malabar FC
   {
     id: 'p3',
     name: 'Jameel Kozhikode',
     nameMl: 'ജമീൽ കോഴിക്കോട്',
     number: '10',
-    club: 'NEW MALAYA MALABAR FC',
-    clubMl: 'ന്യൂ മലയ മലബാർ എഫ്.സി',
+    club: 'UDAYA Parambil Peedika',
+    clubMl: 'ഉദയ പറമ്പിൽ പീടിക',
     position: 'Playmaker / പ്ലേമേക്കർ',
     posterUrl: '/squad/posters/player_3.webp',
     videoUrl: '/squad/videos/player_3.mp4',
@@ -132,8 +131,8 @@ export const squadPlayers = [
     name: 'Emmanuel',
     nameMl: 'ഇമ്മാനുവൽ',
     number: '11',
-    club: 'NEW MALAYA MALABAR FC',
-    clubMl: 'ന്യൂ മലയ മലബാർ എഫ്.സി',
+    club: 'UDAYA Parambil Peedika',
+    clubMl: 'ഉദയ പറമ്പിൽ പീടിക',
     position: 'Forward / ഫോർവേഡ്',
     posterUrl: '/squad/posters/player_4.webp',
     videoUrl: '/squad/videos/player_4.mp4',
@@ -197,6 +196,6 @@ export const squadClubs = [
 export const clubSquadStatus = {
   'SUPER STUDIO MALAPPURAM': 'confirmed',
   'UDAYA Parambil Peedika': 'confirmed',
-  'NEW MALAYA MALABAR FC': 'confirmed',
+  'NEW MALAYA MALABAR FC': 'unconfirmed',
   'FIFA Manjeri': 'unconfirmed'
 };
