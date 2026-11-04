@@ -4,7 +4,7 @@
  */
 
 // Canonical Production URL for sharing (never localhost per prompt rule)
-export const SITE_URL = 'https://kasc-sevens.vercel.app';
+export const SITE_URL = 'https://kasc-soccer-web.vercel.app';
 
 // Feature Flags
 export const SHOW_SFA_CLAIMS = false;
