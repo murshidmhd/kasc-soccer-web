@@ -25,8 +25,8 @@ export const MAX_MATCH_MINUTES = 60;
 // Admin Access & Shortcuts
 export const ADMIN_SHORTCUT_ENABLED = true;
 
-// Official Tournament WhatsApp Broadcast Channel
-export const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029Vb4v0Xp002T5Y9Xk9r2B';
+// Official Tournament WhatsApp Broadcast Channel (Hidden when empty)
+export const WHATSAPP_CHANNEL_URL = '';
 
 // Committee Contact Details
 export const COMMITTEE_PHONE = '+91 70120 46930';
