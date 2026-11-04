@@ -236,27 +236,37 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
       case '1ST_HALF':
         return (
           <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold text-navy-900 font-mono font-black text-xs uppercase shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-navy-900 animate-ping"></span>
+            <span className={`w-2 h-2 rounded-full bg-navy-900 ${clock.isCapped ? '' : 'animate-ping'}`}></span>
             <span>LIVE 1ST HALF • {clock.display}</span>
+            {clock.isCapped && (
+              <span className="px-1.5 py-0.2 rounded bg-navy-950 text-gold text-[10px] font-bold uppercase tracking-wider">
+                Time
+              </span>
+            )}
           </span>
         );
       case 'HALF_TIME':
         return (
           <span className="px-3 py-1 rounded-full bg-navy-700 text-white font-black text-xs uppercase shadow-xs border border-navy-600">
-            ⏸️ Half Time (30:00 Break)
+            ⏸️ Half Time ({clock.display} Break)
           </span>
         );
       case '2ND_HALF':
         return (
           <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold text-navy-900 font-mono font-black text-xs uppercase shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-navy-900 animate-ping"></span>
+            <span className={`w-2 h-2 rounded-full bg-navy-900 ${clock.isCapped ? '' : 'animate-ping'}`}></span>
             <span>LIVE 2ND HALF • {clock.display}</span>
+            {clock.isCapped && (
+              <span className="px-1.5 py-0.2 rounded bg-navy-950 text-gold text-[10px] font-bold uppercase tracking-wider">
+                Time
+              </span>
+            )}
           </span>
         );
       case 'FULL_TIME':
         return (
           <span className="px-3 py-1 rounded-full bg-navy-900 text-white font-black text-xs uppercase shadow-xs border border-navy-700">
-            🏁 FULL TIME • 60:00 (FINAL)
+            🏁 FULL TIME • {clock.display} (FINAL)
           </span>
         );
       default:

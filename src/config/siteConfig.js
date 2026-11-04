@@ -18,6 +18,13 @@ export const TROPHY_IS_ILLUSTRATION = true;
 export const SHOW_NATIONALITY = false;
 export const AWARDS_NOTE = true;
 
+// Match Length & Clock Caps (Kerala Sevens: 30 mins 1st half, 60 mins full match)
+export const HALF_LENGTH_MINUTES = 30;
+export const MAX_MATCH_MINUTES = 60;
+
+// Admin Access & Shortcuts
+export const ADMIN_SHORTCUT_ENABLED = true;
+
 // Official Tournament WhatsApp Broadcast Channel
 export const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029Vb4v0Xp002T5Y9Xk9r2B';
 

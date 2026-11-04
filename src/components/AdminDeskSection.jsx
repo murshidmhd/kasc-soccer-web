@@ -45,8 +45,11 @@ import {
   getActiveScorerInfo,
   setActiveScorerInfo,
   SEVENS_HALF_MINUTES,
-  SEVENS_TOTAL_MINUTES
+  SEVENS_TOTAL_MINUTES,
+  resetTestMatchState,
+  addExtraTimeMinutes
 } from '../utils/matchStateManager';
+import { HALF_LENGTH_MINUTES, MAX_MATCH_MINUTES } from '../config/siteConfig';
 import { tournamentInfo, openingMatch } from '../data/tournamentData';
 import logoUdaya from '../assets/logo_udaya_transparent.png';
 import logoKasc from '../assets/logo_kasc.png';
@@ -385,6 +388,49 @@ export default function AdminDeskSection({
         setConfirmModal((prev) => ({ ...prev, open: false }));
         setNotification('Match safely reset to Upcoming Pre-Match status (0-0).');
         setTimeout(() => setNotification(''), 2500);
+      }
+    });
+  };
+
+  const handlePromptAddExtraTime = () => {
+    const currentExtra = matchState.extraTimeMinutes || 0;
+    const newCap = (MAX_MATCH_MINUTES + currentExtra + 5);
+    setConfirmModal({
+      open: true,
+      title: 'Add 5 Minutes Extra Time?',
+      message: `Are you sure you want to add 5 minutes stoppage/extra time? This will raise the match clock cap to ${newCap}:00 for this match only.`,
+      confirmText: 'Add +5 Minutes',
+      confirmColor: 'bg-emerald-600',
+      onConfirm: () => {
+        setConfirmModal((prev) => ({ ...prev, open: false }));
+        const res = addExtraTimeMinutes(5);
+        if (res.success) {
+          setMatchState(res.state);
+          setClock(getCalculatedMatchTime(res.state));
+          setNotification(`⏱️ Added 5 minutes extra time! Match cap raised to ${newCap}:00.`);
+          setTimeout(() => setNotification(''), 3500);
+        }
+      }
+    });
+  };
+
+  const handlePromptResetTestState = () => {
+    setConfirmModal({
+      open: true,
+      title: 'Reset Test Match State?',
+      message: 'This will completely clear localStorage test match data, history, and offline queue, and reset to pre-match 0-0 UPCOMING (00:00). Available in DEV only.',
+      confirmText: 'Reset Test State',
+      confirmColor: 'bg-rose-600',
+      onConfirm: () => {
+        setConfirmModal((prev) => ({ ...prev, open: false }));
+        const res = resetTestMatchState();
+        if (res.success) {
+          setMatchState(res.state);
+          setClock(getCalculatedMatchTime(res.state));
+          setHistoryCount(0);
+          setNotification('🧪 Test match state completely reset to pre-match 0-0.');
+          setTimeout(() => setNotification(''), 3000);
+        }
       }
     });
   };
@@ -803,6 +849,18 @@ export default function AdminDeskSection({
 
                 {/* DIGITAL MOVING CLOCK & CUSTOM TIME SETTER (SEVENS 30:30) */}
                 <div className="p-3.5 sm:p-4 rounded-2xl bg-black/40 border border-white/10 space-y-3.5">
+                  {/* Clear Clock Cap Stopped Banner (Task 1 Rule 4) */}
+                  {clock.isCapped && (
+                    <div className="p-3 rounded-xl bg-amber-500/20 border-2 border-amber-400 text-amber-200 text-xs sm:text-sm font-bold flex items-center gap-2.5 animate-pulse">
+                      <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
+                      <span>
+                        {matchState.status === '1ST_HALF' 
+                          ? `Clock stopped at ${clock.capDisplay}. Press Half Time.`
+                          : `Clock stopped at ${clock.capDisplay}. Press Full Time or add extra time.`}
+                      </span>
+                    </div>
+                  )}
+
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                       <Clock className="w-5 h-5 text-amber-400 animate-spin" style={{ animationDuration: '6s' }} />
@@ -906,8 +964,8 @@ export default function AdminDeskSection({
 
                 {/* Live Minute Quick Increments & Safety Reset Button */}
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-white/10 text-xs">
-                  <span className="text-blue-200 font-medium">Quick Minute Nudge:</span>
-                  <div className="flex items-center gap-1.5">
+                  <span className="text-blue-200 font-medium">Clock Controls & Extra Time:</span>
+                  <div className="flex flex-wrap items-center gap-1.5">
                     <button
                       onClick={() => handleAdjustMinute(-1)}
                       className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] active:scale-95"
@@ -921,10 +979,16 @@ export default function AdminDeskSection({
                       +1 Min
                     </button>
                     <button
-                      onClick={() => handleAdjustMinute(5)}
-                      className="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white font-bold text-[11px] active:scale-95"
+                      onClick={handlePromptAddExtraTime}
+                      className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] active:scale-95 shadow-xs flex items-center gap-1"
+                      title="Add 5 minutes stoppage/extra time for this match only"
                     >
-                      +5 Mins
+                      <span>⏱️ +5 Mins Extra Time</span>
+                      {matchState.extraTimeMinutes > 0 && (
+                        <span className="px-1 py-0.2 rounded bg-emerald-950 text-[10px] font-black">
+                          +{matchState.extraTimeMinutes}m
+                        </span>
+                      )}
                     </button>
                     <button
                       onClick={handleResetToUpcoming}
@@ -933,6 +997,15 @@ export default function AdminDeskSection({
                     >
                       Reset Pre-Match
                     </button>
+                    {import.meta.env.DEV && (
+                      <button
+                        onClick={handlePromptResetTestState}
+                        className="px-2.5 py-1 rounded-lg bg-rose-700 hover:bg-rose-600 text-white font-bold text-[11px] active:scale-95 border border-rose-400/50"
+                        title="Clear localStorage test match state (DEV only)"
+                      >
+                        🧪 Reset Test State
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

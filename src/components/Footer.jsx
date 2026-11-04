@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { 
   MapPin, 
   Phone, 
@@ -21,7 +21,8 @@ import {
   COMMITTEE_YOUTUBE, 
   DEVELOPER_CREDIT, 
   SPONSORS_DATA,
-  STADIUM_MAPS_URL 
+  STADIUM_MAPS_URL,
+  ADMIN_SHORTCUT_ENABLED
 } from '../config/siteConfig';
 
 function InstagramIcon({ className = "w-4 h-4" }) {
@@ -54,6 +55,36 @@ function YoutubeIcon({ className = "w-4 h-4" }) {
 }
 
 export default function Footer({ lang, isDarkMode, setActiveTab }) {
+  const tapCountRef = useRef(0);
+  const tapTimerRef = useRef(null);
+
+  const handleCopyrightTap = () => {
+    // Only active when shortcut enabled AND admin desk is enabled in this build
+    // (if desk is disabled in production, shortcut does nothing per Task 2 Rule 10)
+    if (!ADMIN_SHORTCUT_ENABLED || !import.meta.env.DEV) {
+      return;
+    }
+
+    tapCountRef.current += 1;
+
+    if (tapTimerRef.current) {
+      clearTimeout(tapTimerRef.current);
+    }
+
+    if (tapCountRef.current >= 5) {
+      tapCountRef.current = 0;
+      if (setActiveTab) {
+        setActiveTab('admin');
+      }
+      window.location.hash = '#admin';
+      return;
+    }
+
+    tapTimerRef.current = setTimeout(() => {
+      tapCountRef.current = 0;
+    }, 3000);
+  };
+
   const quickLinks = [
     { id: 'live', label: lang === 'ml' ? 'ലൈവ് മാച്ച്' : 'Live Match', icon: Flame },
     { id: 'fixtures', label: lang === 'ml' ? 'മത്സരക്രമം' : 'Fixtures', icon: Calendar },
@@ -268,7 +299,10 @@ export default function Footer({ lang, isDarkMode, setActiveTab }) {
 
         {/* 7. Copyright & Developer Credit (Rule 7: Built by Murshid with 44px tap target icons) */}
         <div className="pt-6 border-t border-navy-700/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-navy-muted">
-          <p className="text-[11px] sm:text-xs text-center sm:text-left leading-relaxed">
+          <p 
+            onClick={handleCopyrightTap}
+            className="text-[11px] sm:text-xs text-center sm:text-left leading-relaxed select-none touch-manipulation cursor-default"
+          >
             © 2026 Udaya Parambil Peedika & KASC Peruvallur. All Rights Reserved.
           </p>
 

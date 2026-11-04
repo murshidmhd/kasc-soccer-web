@@ -1,3 +1,5 @@
+import { HALF_LENGTH_MINUTES, MAX_MATCH_MINUTES } from '../config/siteConfig.js';
+
 // Match State, Offline Queue, Scorer Redundancy, and Anti-Spam Rate Limiter for KASC Sevens
 
 const MATCH_STORAGE_KEY = 'kasc_official_match_state_v2';
@@ -13,8 +15,8 @@ export const MAX_REPORTS_PER_USER = 3; // Strict 3 reports max per device
 // Admin PIN removed from source for production security; read strictly via VITE_DEV_ADMIN_PIN in dev only
 
 // Kerala Sevens Football: 30 minutes + 30 minutes = 60 minutes full match
-export const SEVENS_HALF_MINUTES = 30;
-export const SEVENS_TOTAL_MINUTES = 60;
+export const SEVENS_HALF_MINUTES = HALF_LENGTH_MINUTES;
+export const SEVENS_TOTAL_MINUTES = MAX_MATCH_MINUTES;
 
 // Real Official Match State (Pre-Kickoff, authentic state before Nov 6, 2026, 8:00 PM IST)
 export const realOfficialMatchState = {
@@ -25,6 +27,7 @@ export const realOfficialMatchState = {
   isTimerRunning: false,
   timerStartedAt: null,
   status: 'UPCOMING',
+  extraTimeMinutes: 0,
   isVerified: false,
   scoreEnteredByDesk: false,
   lastUpdated: new Date().toISOString(),
@@ -96,22 +99,89 @@ export function getDaysToKickoff() {
 
 export const initialOfficialMatchState = realOfficialMatchState;
 
-// Calculate real-time ticking match time (MM:SS)
+// Calculate real-time ticking match time (MM:SS) with caps per Sevens rules
 export function getCalculatedMatchTime(matchState) {
-  if (!matchState) {
-    return { minutes: 0, seconds: 0, totalSeconds: 0, display: '00:00', minuteOnly: 0, isRunning: false };
+  const halfMinutes = typeof HALF_LENGTH_MINUTES === 'number' ? HALF_LENGTH_MINUTES : 30;
+  const maxMinutes = typeof MAX_MATCH_MINUTES === 'number' ? MAX_MATCH_MINUTES : 60;
+  const extraMinutes = (matchState && typeof matchState.extraTimeMinutes === 'number') ? Math.max(0, matchState.extraTimeMinutes) : 0;
+  const pad = (n) => String(n).padStart(2, '0');
+
+  if (!matchState || matchState.status === 'UPCOMING' || !matchState.status) {
+    return {
+      minutes: 0,
+      seconds: 0,
+      totalSeconds: 0,
+      display: '00:00',
+      minuteOnly: 0,
+      isRunning: false,
+      isCapped: false,
+      capMinutes: halfMinutes,
+      capDisplay: `${pad(halfMinutes)}:00`,
+      status: 'UPCOMING'
+    };
   }
 
-  let totalSeconds = typeof matchState.matchSeconds === 'number' ? matchState.matchSeconds : (matchState.matchMinute || 0) * 60;
+  // HALF_TIME: frozen at exactly 1st half length (or custom set seconds within 1st half)
+  if (matchState.status === 'HALF_TIME') {
+    const htSeconds = halfMinutes * 60;
+    const minutes = Math.floor(htSeconds / 60);
+    const seconds = htSeconds % 60;
+    return {
+      minutes,
+      seconds,
+      totalSeconds: htSeconds,
+      display: `${pad(minutes)}:${pad(seconds)}`,
+      minuteOnly: minutes,
+      isRunning: false,
+      isCapped: true,
+      capMinutes: halfMinutes,
+      capDisplay: `${pad(halfMinutes)}:00`,
+      status: 'HALF_TIME'
+    };
+  }
+
+  // FULL_TIME: frozen at match cap (60:00 or with extra time)
+  if (matchState.status === 'FULL_TIME') {
+    const ftCapMinutes = maxMinutes + extraMinutes;
+    const ftSeconds = ftCapMinutes * 60;
+    const minutes = Math.floor(ftSeconds / 60);
+    const seconds = ftSeconds % 60;
+    return {
+      minutes,
+      seconds,
+      totalSeconds: ftSeconds,
+      display: `${pad(minutes)}:${pad(seconds)}`,
+      minuteOnly: minutes,
+      isRunning: false,
+      isCapped: true,
+      capMinutes: ftCapMinutes,
+      capDisplay: `${pad(ftCapMinutes)}:00`,
+      status: 'FULL_TIME'
+    };
+  }
+
+  // Active match status (1ST_HALF or 2ND_HALF or custom)
+  const isFirstHalf = matchState.status === '1ST_HALF';
+  const capMinutes = isFirstHalf ? halfMinutes : (maxMinutes + extraMinutes);
+  const capSeconds = capMinutes * 60;
+
+  let totalSeconds = typeof matchState.matchSeconds === 'number'
+    ? matchState.matchSeconds
+    : (matchState.matchMinute || 0) * 60;
 
   if (matchState.isTimerRunning && matchState.timerStartedAt) {
     const elapsed = Math.max(0, Math.floor((Date.now() - matchState.timerStartedAt) / 1000));
     totalSeconds += elapsed;
   }
 
+  // Enforce cap: clock stops at capMinutes (30:00 or 60:00 / 65:00)
+  const isCapped = totalSeconds >= capSeconds;
+  if (isCapped) {
+    totalSeconds = capSeconds;
+  }
+
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
-  const pad = (n) => String(n).padStart(2, '0');
   const display = `${pad(minutes)}:${pad(seconds)}`;
 
   return {
@@ -120,8 +190,57 @@ export function getCalculatedMatchTime(matchState) {
     totalSeconds,
     display,
     minuteOnly: minutes,
-    isRunning: Boolean(matchState.isTimerRunning)
+    isRunning: Boolean(matchState.isTimerRunning) && !isCapped,
+    isCapped,
+    capMinutes,
+    capDisplay: `${pad(capMinutes)}:00`,
+    status: matchState.status
   };
+}
+
+// Reset match state strictly for development/testing
+export function resetTestMatchState() {
+  try {
+    localStorage.removeItem(MATCH_STORAGE_KEY);
+    localStorage.removeItem(MATCH_HISTORY_KEY);
+    localStorage.removeItem(OFFLINE_QUEUE_KEY);
+    localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(realOfficialMatchState));
+    window.dispatchEvent(new CustomEvent('kasc_match_state_updated', { detail: realOfficialMatchState }));
+    return { success: true, state: realOfficialMatchState };
+  } catch (err) {
+    console.error('Failed to reset test match state', err);
+    return { success: false, state: realOfficialMatchState };
+  }
+}
+
+// Add extra time (stoppage time) raising the cap for the current match
+export function addExtraTimeMinutes(minutesToAdd = 5) {
+  try {
+    const currentState = getStoredMatchState();
+    const currentExtra = typeof currentState.extraTimeMinutes === 'number' ? currentState.extraTimeMinutes : 0;
+    const newExtra = currentExtra + minutesToAdd;
+    
+    // If timer was capped and stopped, resume timer from current capped seconds
+    const currentClock = getCalculatedMatchTime(currentState);
+    
+    const updatedState = {
+      ...currentState,
+      extraTimeMinutes: newExtra,
+      matchSeconds: currentClock.totalSeconds,
+      matchMinute: Math.floor(currentClock.totalSeconds / 60),
+      isTimerRunning: true,
+      timerStartedAt: Date.now(),
+      lastUpdated: new Date().toISOString()
+    };
+    
+    pushMatchHistory(currentState);
+    localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(updatedState));
+    window.dispatchEvent(new CustomEvent('kasc_match_state_updated', { detail: updatedState }));
+    return { success: true, state: updatedState, newExtra };
+  } catch (err) {
+    console.error('Failed to add extra time', err);
+    return { success: false };
+  }
 }
 
 // Retrieve stored state or fallback to real pre-match default

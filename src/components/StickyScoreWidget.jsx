@@ -99,7 +99,7 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
         >
           <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
           <span className="font-sports font-black">UDY {matchState.officialScoreHome}-{matchState.officialScoreAway} MAL</span>
-          <span className="text-[10px] text-amber-400 font-mono">({clock.display})</span>
+          <span className="text-[10px] text-amber-400 font-mono">({clock.display}{clock.isCapped ? ' Time' : ''})</span>
         </button>
       );
     }
@@ -143,7 +143,7 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
             <span className="font-sports font-black tracking-wide truncate">
               UDAYA {matchState.officialScoreHome} - {matchState.officialScoreAway} NEW MALAYA
             </span>
-            <span className="text-[10px] text-amber-400 font-mono shrink-0">({clock.display})</span>
+            <span className="text-[10px] text-amber-400 font-mono shrink-0">({clock.display}{clock.isCapped ? ' Time' : ''})</span>
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
@@ -211,8 +211,13 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
 
             {/* Live Moving Clock */}
             <span className="font-mono font-black text-amber-400 flex items-center gap-1">
-              <Clock className="w-3 h-3 animate-spin" style={{ animationDuration: '6s' }} />
+              <Clock className={`w-3 h-3 ${clock.isCapped ? '' : 'animate-spin'}`} style={{ animationDuration: '6s' }} />
               <span>{clock.display}</span>
+              {clock.isCapped && (
+                <span className="text-[9px] px-1 py-0.2 rounded bg-amber-400 text-slate-950 font-bold uppercase">
+                  Time
+                </span>
+              )}
             </span>
           </div>
 
