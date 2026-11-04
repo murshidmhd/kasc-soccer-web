@@ -95,20 +95,20 @@ export default function TicketCounterModal({ isOpen, onClose, lang, isDarkMode }
           <div>
             <div className="flex items-center gap-1.5">
               <span className="px-2.5 py-0.5 rounded-full btn-gold text-[10px] font-black uppercase tracking-wider">
-                🚧 Working Under Development
+                🏟️ നേരിട്ടുള്ള കൗണ്ടർ ടിക്കറ്റ്
               </span>
-              <span className="text-xs text-card-muted font-bold">Official Notice</span>
+              <span className="text-xs text-card-muted font-bold">Stadium Box Office</span>
             </div>
           </div>
         </div>
 
         <h3 className="text-xl sm:text-2xl font-black font-sports uppercase tracking-wider text-card-title">
-          {lang === 'ml' ? 'ടിക്കറ്റ് ബുക്കിംഗ് സിസ്റ്റം നിർമ്മാണത്തിലാണ്' : 'ONLINE TICKET BOOKING SYSTEM'}
+          {lang === 'ml' ? 'ടിക്കറ്റ് നിരക്കുകളും വിവരങ്ങളും' : 'OFFICIAL TICKET RATES'}
         </h3>
         <p className="text-xs text-card-muted mt-1 mb-5 leading-relaxed">
           {lang === 'ml' 
-            ? 'ഓൺലൈൻ ടിക്കറ്റ് പേയ്മെന്റ് ഗേറ്റ്‌വേ സജ്ജമാക്കിക്കൊണ്ടിരിക്കുന്നു (Working under development). ഔദ്യോഗിക ടിക്കറ്റ് നിരക്കുകൾ താഴെ നൽകുന്നു.' 
-            : 'Online ticket booking and digital payment gateway is currently working under development. Check confirmed official ticket tier rates below.'}
+            ? 'മത്സര ടിക്കറ്റുകൾ പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം കൗണ്ടറിൽ നേരിട്ട് ലഭ്യമാണ്. ഓൺലൈൻ പേയ്മെന്റ് ഗേറ്റ്‌വേ പരീക്ഷണ ഘട്ടത്തിലാണ്.' 
+            : 'Match tickets will be sold directly at the Peruvallur Panjayath Stadium counters. Online digital payment is under test mode.'}
         </p>
 
         {/* Official Ticket Pricing Tiers Grid */}
@@ -154,8 +154,8 @@ export default function TicketCounterModal({ isOpen, onClose, lang, isDarkMode }
           </div>
           <p className="text-[11px] leading-relaxed pl-5 font-malayalam text-card-title">
             {lang === 'ml'
-              ? 'ഓൺലൈൻ പേയ്മെന്റ് ഗേറ്റ്‌വേ ഉദ്ഘാടനത്തോട് അനുബന്ധിച്ച് നിലവിൽ വരും. ഉദ്ഘാടന ദിവസമായ 2026 നവംബർ 06 മുതൽ പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം മെയിൻ കൗണ്ടറുകളിൽ നേരിട്ട് ടിക്കറ്റുകൾ ലഭ്യമാകും.'
-              : 'Direct match tickets will be available at Peruvallur Panjayath Stadium ticket counters starting kickoff day, 06 November 2026. Online booking system is actively working under progress.'}
+              ? 'എല്ലാ ദിവസങ്ങളിലെയും മത്സര ടിക്കറ്റുകൾ പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം ബോക്സ് ഓഫീസ് കൗണ്ടറിൽ നേരിട്ട് ലഭിക്കും. ഓൺലൈൻ പേയ്മെന്റ് ഗേറ്റ്‌വേ 50/50 പരീക്ഷണാർത്ഥം മാത്രമാണ്.'
+              : 'Direct match tickets will be available at Peruvallur Panjayath Stadium box office counters. Digital online gateway is in simple test mode.'}
           </p>
         </div>
 

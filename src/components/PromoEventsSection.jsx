@@ -108,45 +108,42 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
             </p>
           </div>
 
-          {/* Sub-tab Pill Switcher */}
-          <div className={`horizontal-scroll-container flex items-center gap-1.5 p-1 rounded-2xl border self-start sm:self-center overflow-x-auto max-w-full ${
+          {/* Sub-tab Pill Switcher (Responsive 3-column layout prevents text clipping on all phones) */}
+          <div className={`grid grid-cols-3 gap-1 sm:flex sm:items-center sm:gap-1.5 p-1 rounded-2xl border w-full sm:w-auto ${
             isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-100 border-slate-200'
           }`}>
             <button
               onClick={() => setActiveSubTab('goalvandi')}
-              className={`min-h-touch px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-2 transition active:scale-95 ${
+              className={`min-h-touch py-2 px-1 sm:px-4 rounded-xl text-[11px] sm:text-xs font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 transition active:scale-95 text-center ${
                 activeSubTab === 'goalvandi'
                   ? 'bg-blue-700 text-white shadow-xs'
                   : isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Target className="w-4 h-4 text-amber-300" />
-              <span>{lang === 'ml' ? 'ഉദയ ഗോൾ വണ്ടി' : 'Goal Vandi Shootout'}</span>
-              <span className="px-1.5 py-0.2 rounded-full bg-red-600 text-white text-[9px] font-black uppercase">
-                New
-              </span>
+              <Target className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 shrink-0" />
+              <span className="truncate">{lang === 'ml' ? 'ഗോൾ വണ്ടി' : 'Goal Vandi'}</span>
             </button>
             <button
               onClick={() => setActiveSubTab('marathon')}
-              className={`min-h-touch px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-2 transition active:scale-95 ${
+              className={`min-h-touch py-2 px-1 sm:px-4 rounded-xl text-[11px] sm:text-xs font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 transition active:scale-95 text-center ${
                 activeSubTab === 'marathon'
                   ? 'bg-blue-700 text-white shadow-xs'
                   : isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Trophy className="w-4 h-4 text-amber-300" />
-              <span>{lang === 'ml' ? 'മിനി മാരത്തോൺ' : 'Mini Marathon (8 KM)'}</span>
+              <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 shrink-0" />
+              <span className="truncate">{lang === 'ml' ? 'മാരത്തോൺ' : 'Marathon'}</span>
             </button>
             <button
               onClick={() => setActiveSubTab('countdown')}
-              className={`min-h-touch px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-2 transition active:scale-95 ${
+              className={`min-h-touch py-2 px-1 sm:px-4 rounded-xl text-[11px] sm:text-xs font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 transition active:scale-95 text-center ${
                 activeSubTab === 'countdown'
                   ? 'bg-blue-700 text-white shadow-xs'
                   : isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Calendar className="w-4 h-4 text-red-300" />
-              <span>{lang === 'ml' ? 'കൗണ്ട്ഡൗൺ' : 'Countdown Posters'}</span>
+              <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-300 shrink-0" />
+              <span className="truncate">{lang === 'ml' ? 'കൗണ്ട്ഡൗൺ' : 'Posters'}</span>
             </button>
           </div>
         </div>
@@ -651,6 +648,72 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
           </div>
         </div>
       )}
+
+      {/* Floating Side Action Dock (User request: small icons in right side down for shootout, marathon, countdown) */}
+      <aside 
+        className="fixed right-2.5 sm:right-4 bottom-28 z-40 flex flex-col items-end gap-2 pointer-events-auto select-none"
+        aria-label="Quick Category Switcher"
+      >
+        {/* Goal Vandi Shootout / Penalty Button */}
+        <button
+          onClick={() => {
+            setActiveSubTab('goalvandi');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`group relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full border shadow-xl transition-all duration-200 active:scale-90 ${
+            activeSubTab === 'goalvandi'
+              ? 'bg-amber-400 text-slate-950 border-white ring-2 ring-amber-400/60 scale-105 shadow-amber-400/25'
+              : 'bg-slate-900/95 text-amber-300 border-slate-700/80 hover:border-amber-400 hover:bg-slate-800'
+          }`}
+          title={lang === 'ml' ? 'ഉദയ ഗോൾ വണ്ടി ഷൂട്ട് ഔട്ട്' : 'Goal Vandi Shootout'}
+          aria-label="Goal Vandi Shootout"
+        >
+          <Target className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+          <span className="hidden group-hover:inline-block absolute right-12 px-2 py-1 rounded-lg bg-slate-950/95 border border-slate-700 text-white text-[10px] font-bold whitespace-nowrap shadow-md pointer-events-none">
+            {lang === 'ml' ? '🎯 ഗോൾ വണ്ടി ഷൂട്ട് ഔട്ട്' : '🎯 Shootout'}
+          </span>
+        </button>
+
+        {/* Marathon Button */}
+        <button
+          onClick={() => {
+            setActiveSubTab('marathon');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`group relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full border shadow-xl transition-all duration-200 active:scale-90 ${
+            activeSubTab === 'marathon'
+              ? 'bg-amber-400 text-slate-950 border-white ring-2 ring-amber-400/60 scale-105 shadow-amber-400/25'
+              : 'bg-slate-900/95 text-amber-300 border-slate-700/80 hover:border-amber-400 hover:bg-slate-800'
+          }`}
+          title={lang === 'ml' ? 'മിനി മാരത്തോൺ' : 'Mini Marathon 8KM'}
+          aria-label="Mini Marathon"
+        >
+          <Trophy className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+          <span className="hidden group-hover:inline-block absolute right-12 px-2 py-1 rounded-lg bg-slate-950/95 border border-slate-700 text-white text-[10px] font-bold whitespace-nowrap shadow-md pointer-events-none">
+            {lang === 'ml' ? '🏆 മിനി മാരത്തോൺ' : '🏆 Marathon'}
+          </span>
+        </button>
+
+        {/* Countdown Posters Button */}
+        <button
+          onClick={() => {
+            setActiveSubTab('countdown');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`group relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full border shadow-xl transition-all duration-200 active:scale-90 ${
+            activeSubTab === 'countdown'
+              ? 'bg-amber-400 text-slate-950 border-white ring-2 ring-amber-400/60 scale-105 shadow-amber-400/25'
+              : 'bg-slate-900/95 text-red-400 border-slate-700/80 hover:border-red-400 hover:bg-slate-800'
+          }`}
+          title={lang === 'ml' ? 'കൗണ്ട്ഡൗൺ പോസ്റ്ററുകൾ' : 'Countdown Posters'}
+          aria-label="Countdown Posters"
+        >
+          <Calendar className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+          <span className="hidden group-hover:inline-block absolute right-12 px-2 py-1 rounded-lg bg-slate-950/95 border border-slate-700 text-white text-[10px] font-bold whitespace-nowrap shadow-md pointer-events-none">
+            {lang === 'ml' ? '📅 കൗണ്ട്ഡൗൺ പോസ്റ്റർ' : '📅 Posters'}
+          </span>
+        </button>
+      </aside>
     </section>
   );
 }

@@ -258,34 +258,47 @@ export default function Header({
             </button>
 
             {isMenuOpen && (
-              <div 
-                className="absolute right-0 mt-2 w-64 rounded-2xl border border-navy-700 bg-navy-900 text-white shadow-2xl py-2 z-50 animate-fadeIn"
-              >
-                <div className="flex items-center justify-between px-3.5 py-1.5 border-b border-navy-800 mb-1">
-                  <span className="text-[10px] font-sports font-black tracking-widest uppercase text-gold">
-                    {lang === 'ml' ? 'കൂടുതൽ ഫീച്ചറുകൾ' : 'MORE FEATURES'}
-                  </span>
-                  <button 
-                    onClick={() => setIsMenuOpen(false)}
-                    className="p-1 text-navy-muted hover:text-white"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-                {moreMenuFeatures.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={item.action}
-                      className="w-full px-3.5 py-2.5 text-left text-xs font-bold flex items-center gap-2.5 hover:bg-navy-800 text-navy-muted hover:text-white transition"
+              <>
+                {/* Backdrop overlay to close menu on click outside */}
+                <div 
+                  className="fixed inset-0 z-40 bg-navy-950/60"
+                  onClick={() => setIsMenuOpen(false)}
+                  aria-hidden="true"
+                />
+
+                {/* Dropdown positioned safely inside phone viewport (Fixes left clipping) */}
+                <div 
+                  className="fixed top-14 left-3 right-3 sm:left-auto sm:right-4 sm:top-16 sm:absolute sm:w-64 rounded-2xl border border-navy-700 bg-navy-900 text-white shadow-2xl py-2 z-50 animate-fadeIn"
+                >
+                  <div className="flex items-center justify-between px-3.5 py-1.5 border-b border-navy-800 mb-1">
+                    <span className="text-[10px] font-sports font-black tracking-widest uppercase text-gold">
+                      {lang === 'ml' ? 'കൂടുതൽ ഫീച്ചറുകൾ' : 'MORE FEATURES'}
+                    </span>
+                    <button 
+                      onClick={() => setIsMenuOpen(false)}
+                      className="p-1 text-navy-muted hover:text-white"
                     >
-                      <Icon className="w-4 h-4 text-sky shrink-0" />
-                      <span className="truncate">{item.label}</span>
+                      <X className="w-3.5 h-3.5" />
                     </button>
-                  );
-                })}
-              </div>
+                  </div>
+                  {moreMenuFeatures.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          item.action();
+                        }}
+                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold flex items-center gap-2.5 hover:bg-navy-800 text-navy-muted hover:text-white transition"
+                      >
+                        <Icon className="w-4 h-4 text-sky shrink-0" />
+                        <span className="truncate">{item.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
             )}
           </div>
 
