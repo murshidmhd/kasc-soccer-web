@@ -43,6 +43,7 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
     : squadPlayers.filter(p => p.club === selectedClub);
 
   const activePlayer = filteredPlayers[activeIndex] || filteredPlayers[0];
+  const sourceUrl = activePlayer?.devFallbackUrl || activePlayer?.videoUrl;
 
   // Data saving detection (Rule 12)
   useEffect(() => {
