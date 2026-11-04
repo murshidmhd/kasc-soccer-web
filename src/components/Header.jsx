@@ -12,7 +12,11 @@ import {
   Gamepad2, 
   Flame,
   X,
-  MoreHorizontal
+  MoreHorizontal,
+  Calendar,
+  Shield,
+  Star,
+  Target
 } from 'lucide-react';
 import logoKasc from '../assets/logo_kasc.png';
 import logoUdaya from '../assets/logo_udaya_transparent.png';
@@ -67,26 +71,39 @@ export default function Header({
     { id: 'stats', label: lang === 'ml' ? 'സ്റ്റാറ്റ്സ്' : 'Stats' }
   ];
 
-  // More menu features (Rule 4: List every feature only reachable from hub, no SFA/official badges)
+  // More menu features: Comprehensive list of all features & routes (User request: add all routes to 3-dot menu)
   const moreMenuFeatures = [
-    ...(SHOW_LOCAL_ONLY_FEATURES ? [{
-      id: 'vote',
-      label: lang === 'ml' ? '24 ക്ലബ് ഫാൻ വോട്ട്' : 'Fan Vote Battle',
-      icon: Users,
+    {
+      id: 'fixtures',
+      label: lang === 'ml' ? 'മത്സരക്രമം & ടൈംടേബിൾ' : 'Match Fixtures & Dates',
+      icon: Calendar,
       action: () => {
-        setActiveTab('vote');
-        window.location.hash = 'vote';
         setIsMenuOpen(false);
+        setActiveTab('fixtures');
+        window.location.hash = 'fixtures';
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    }] : []),
+    },
     {
-      id: 'pass',
-      label: lang === 'ml' ? 'വി.ഐ.പി ഫാൻ പാസ്സ്' : 'VIP Fan Pass',
-      icon: Sparkles,
+      id: 'teams',
+      label: lang === 'ml' ? '24 ക്ലബ്ബുകളും സ്ക്വാഡും' : '24 Clubs & Squads',
+      icon: Shield,
       action: () => {
         setIsMenuOpen(false);
-        if (onOpenPassModal) onOpenPassModal();
+        setActiveTab('teams');
+        window.location.hash = 'teams';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    },
+    {
+      id: 'stats',
+      label: lang === 'ml' ? 'ടോപ് സ്കോറർ & സ്റ്റാറ്റ്സ്' : 'Top Scorers & Player Stats',
+      icon: Star,
+      action: () => {
+        setIsMenuOpen(false);
+        setActiveTab('stats');
+        window.location.hash = 'stats';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
     {
@@ -94,23 +111,20 @@ export default function Header({
       label: lang === 'ml' ? 'പെനാൽറ്റി ഷൂട്ടൗട്ട് ഗെയിം' : 'Penalty Shootout Game',
       icon: Gamepad2,
       action: () => {
-        setActiveTab('live');
-        window.location.hash = 'game';
         setIsMenuOpen(false);
-        setTimeout(() => {
-          const el = document.getElementById('penalty-game');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }, 150);
+        setActiveTab('game');
+        window.location.hash = 'game';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
     {
       id: 'promo',
-      label: lang === 'ml' ? 'മാരത്തോൺ ഫോട്ടോ ഗാലറി' : 'Marathon & Media',
+      label: lang === 'ml' ? 'മാരത്തോൺ & മീഡിയ ഗാലറി' : 'Marathon & Media Gallery',
       icon: Award,
       action: () => {
+        setIsMenuOpen(false);
         setActiveTab('promo');
         window.location.hash = 'promo';
-        setIsMenuOpen(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
@@ -119,23 +133,50 @@ export default function Header({
       label: lang === 'ml' ? 'സ്റ്റേഡിയം GPS & വിവരങ്ങൾ' : 'Stadium Venue & GPS',
       icon: MapPin,
       action: () => {
+        setIsMenuOpen(false);
         setActiveTab('venue');
         window.location.hash = 'venue';
-        setIsMenuOpen(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
-    ...(SHOW_UNFINISHED ? [
-      {
-        id: 'tickets',
-        label: lang === 'ml' ? 'ടിക്കറ്റ് നിരക്കുകൾ' : 'Ticket Tiers',
-        icon: Ticket,
-        action: () => {
-          setIsMenuOpen(false);
-          if (onOpenTicketModal) onOpenTicketModal();
-        }
+    {
+      id: 'pass',
+      label: lang === 'ml' ? 'വി.ഐ.പി ഫാൻ പാസ്സ്' : 'VIP Fan Supporter Pass',
+      icon: Sparkles,
+      action: () => {
+        setIsMenuOpen(false);
+        if (onOpenPassModal) onOpenPassModal();
       }
-    ] : [])
+    },
+    {
+      id: 'tickets',
+      label: lang === 'ml' ? 'ടിക്കറ്റ് നിരക്കുകൾ' : 'Ticket Tiers & Counter Rates',
+      icon: Ticket,
+      action: () => {
+        setIsMenuOpen(false);
+        if (onOpenTicketModal) onOpenTicketModal();
+      }
+    },
+    {
+      id: 'predict',
+      label: lang === 'ml' ? 'മാച്ച് പ്രഡിക്ഷൻ ഹബ്ബ്' : 'Match Prediction Hub',
+      icon: Target,
+      action: () => {
+        setIsMenuOpen(false);
+        setActiveTab('predict');
+      }
+    },
+    ...(SHOW_LOCAL_ONLY_FEATURES ? [{
+      id: 'vote',
+      label: lang === 'ml' ? '24 ക്ലബ് ഫാൻ വോട്ട്' : 'Fan Vote Battle',
+      icon: Users,
+      action: () => {
+        setIsMenuOpen(false);
+        setActiveTab('vote');
+        window.location.hash = 'vote';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }] : [])
   ];
 
   return (
@@ -268,7 +309,7 @@ export default function Header({
 
                 {/* Dropdown positioned safely inside phone viewport (Fixes left clipping) */}
                 <div 
-                  className="fixed top-14 left-3 right-3 sm:left-auto sm:right-4 sm:top-16 sm:absolute sm:w-64 rounded-2xl border border-navy-700 bg-navy-900 text-white shadow-2xl py-2 z-50 animate-fadeIn"
+                  className="fixed top-14 left-3 right-3 sm:left-auto sm:right-4 sm:top-16 sm:absolute sm:w-64 max-h-[80vh] overflow-y-auto rounded-2xl border border-navy-700 bg-navy-900 text-white shadow-2xl py-2 z-50 animate-fadeIn"
                 >
                   <div className="flex items-center justify-between px-3.5 py-1.5 border-b border-navy-800 mb-1">
                     <span className="text-[10px] font-sports font-black tracking-widest uppercase text-gold">

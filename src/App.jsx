@@ -118,14 +118,24 @@ export default function App() {
   // Sync with URL hash or path if provided
   useEffect(() => {
     const validTabs = [
-      'live', 'fixtures', 'teams', 'stats', 'promo', 'venue',
-      ...(SHOW_LOCAL_ONLY_FEATURES ? ['vote'] : []),
+      'live', 'fixtures', 'teams', 'stats', 'promo', 'venue', 'game', 'vote',
       ...(import.meta.env.DEV ? ['admin', 'desk-s7'] : [])
     ];
     const hash = window.location.hash.replace('#', '');
     const path = window.location.pathname.replace(/^\//, '');
 
-    if (validTabs.includes(hash)) {
+    if (hash === 'tickets') {
+      setIsTicketModalOpen(true);
+      setActiveTab('live');
+    } else if (hash === 'pass') {
+      setIsVipPassModalOpen(true);
+      setActiveTab('live');
+    } else if (hash === 'game') {
+      setActiveTab('game');
+    } else if (hash === 'predict') {
+      setActiveTab('live');
+      setMatchSubTab('predict');
+    } else if (validTabs.includes(hash)) {
       setActiveTab(hash);
     } else if (validTabs.includes(path)) {
       setActiveTab(path);
@@ -135,13 +145,13 @@ export default function App() {
 
     const handleHashChange = () => {
       const newHash = window.location.hash.replace('#', '');
-      if (newHash === 'game') {
-        setActiveTab('live');
-        setMatchSubTab('game');
-        setTimeout(() => {
-          const el = document.getElementById('penalty-game');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }, 150);
+      if (newHash === 'tickets') {
+        setIsTicketModalOpen(true);
+      } else if (newHash === 'pass') {
+        setIsVipPassModalOpen(true);
+      } else if (newHash === 'game') {
+        setActiveTab('game');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (newHash === 'predict') {
         setActiveTab('live');
         setMatchSubTab('predict');
@@ -160,6 +170,30 @@ export default function App() {
   }, []);
 
   const handleTabChange = (tab) => {
+    if (tab === 'tickets') {
+      setIsTicketModalOpen(true);
+      return;
+    }
+    if (tab === 'pass') {
+      setIsVipPassModalOpen(true);
+      return;
+    }
+    if (tab === 'predict') {
+      setActiveTab('live');
+      setMatchSubTab('predict');
+      window.location.hash = 'predict';
+      setTimeout(() => {
+        const el = document.getElementById('match-subtabs');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 150);
+      return;
+    }
+    if (tab === 'game') {
+      setActiveTab('game');
+      window.location.hash = 'game';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     setActiveTab(tab);
     window.location.hash = tab;
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -618,6 +652,31 @@ export default function App() {
                 lang={lang} 
                 isDarkMode={isDarkMode} 
               />
+            </div>
+          )}
+
+          {/* Page: INTERACTIVE PENALTY SHOOTOUT GAME */}
+          {activeTab === 'game' && (
+            <div className="animate-fadeIn py-6 max-w-4xl mx-auto px-3 sm:px-6 pb-28 sm:pb-12">
+              <div className="mb-4 flex items-center justify-between">
+                <button
+                  onClick={() => handleTabChange('live')}
+                  className="px-3.5 py-2 rounded-xl bg-navy-800 hover:bg-navy-750 border border-navy-700 text-gold text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-xs"
+                >
+                  ← {lang === 'ml' ? 'ലൈവ് മാച്ച് സെന്ററിലേക്ക് മടങ്ങുക' : 'Back to Live Center'}
+                </button>
+              </div>
+              <React.Suspense fallback={
+                <div className="p-12 text-center rounded-3xl bg-navy-900 border border-navy-700">
+                  <div className="w-8 h-8 border-3 border-gold border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                  <p className="text-xs font-bold text-white">ലോഡിംഗ് പെനാൽറ്റി ഗെയിം...</p>
+                </div>
+              }>
+                <SevensPenaltyGame
+                  lang={lang}
+                  isDarkMode={isDarkMode}
+                />
+              </React.Suspense>
             </div>
           )}
 
