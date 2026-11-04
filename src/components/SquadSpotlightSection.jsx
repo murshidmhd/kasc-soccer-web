@@ -28,6 +28,8 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
   const [isDataSaving, setIsDataSaving] = useState(false);
   const [isSectionVisible, setIsSectionVisible] = useState(false);
   const [isPressing, setIsPressing] = useState(false);
+  const [videoError, setVideoError] = useState(null);
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false);
 
   const containerRef = useRef(null);
   const videoRef = useRef(null);
@@ -104,6 +106,8 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
 
     setCurrentTime(0);
     setIsBuffering(false);
+    setVideoError(null);
+    setAutoplayBlocked(false);
     clearTimeout(bufferTimerRef.current);
     clearTimeout(stallTimerRef.current);
 
@@ -111,7 +115,7 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
     const sourceUrl = activePlayer.devFallbackUrl || activePlayer.videoUrl;
 
     if (!sourceUrl) {
-      // Missing video: auto-skip safely (Rule 14)
+      setVideoError({ url: 'N/A', code: 'NO_SOURCE' });
       return;
     }
 
@@ -122,14 +126,22 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise
-          .then(() => setIsPlaying(true))
-          .catch(() => setIsPlaying(false));
+          .then(() => {
+            setIsPlaying(true);
+            setAutoplayBlocked(false);
+          })
+          .catch((err) => {
+            setIsPlaying(false);
+            setAutoplayBlocked(true);
+          });
       }
+    } else {
+      setAutoplayBlocked(true);
     }
 
     // Set stall fallback timer for 8 seconds (Rule 14)
     stallTimerRef.current = setTimeout(() => {
-      if (video.readyState < 2) {
+      if (video.readyState < 2 && !videoError) {
         handleNextPlayer(false);
       }
     }, 8000);
@@ -138,7 +150,54 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
       clearTimeout(bufferTimerRef.current);
       clearTimeout(stallTimerRef.current);
     };
-  }, [activeIndex, selectedClub]);
+  }, [activeIndex, selectedClub, isSectionVisible, isStoppedAfterCycles, isDataSaving]);
+
+  // Video error listener with console logging (Step 2, Rule 9)
+  const onVideoError = (e) => {
+    const sourceUrl = activePlayer?.devFallbackUrl || activePlayer?.videoUrl;
+    const mediaError = videoRef.current?.error;
+    const errorCode = mediaError ? mediaError.code : 'UNKNOWN';
+    console.error(`[Squad Spotlight] Video error (code: ${errorCode}) failed to load URL: ${sourceUrl}`, mediaError);
+    setVideoError({
+      url: sourceUrl,
+      code: errorCode
+    });
+    setIsPlaying(false);
+  };
+
+  // Video Retry action
+  const handleRetryVideo = (e) => {
+    if (e) e.stopPropagation();
+    setVideoError(null);
+    setAutoplayBlocked(false);
+    const video = videoRef.current;
+    if (video && activePlayer) {
+      const sourceUrl = activePlayer.devFallbackUrl || activePlayer.videoUrl;
+      video.src = sourceUrl;
+      video.load();
+      video.play()
+        .then(() => setIsPlaying(true))
+        .catch((err) => {
+          setIsPlaying(false);
+          setAutoplayBlocked(true);
+        });
+    }
+  };
+
+  // User Tap-to-play trigger (Step 2, Rule 10)
+  const handleStartPlay = (e) => {
+    if (e) e.stopPropagation();
+    setIsDataSaving(false);
+    setAutoplayBlocked(false);
+    setVideoError(null);
+    if (videoRef.current) {
+      videoRef.current.play()
+        .then(() => setIsPlaying(true))
+        .catch((err) => {
+          console.error('[Squad Spotlight] Play rejected on user tap:', err);
+        });
+    }
+  };
 
   // Video Time & Buffer event listeners
   const onTimeUpdate = () => {
@@ -330,11 +389,29 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
             onTimeUpdate={onTimeUpdate}
             onWaiting={onWaiting}
             onPlaying={onPlaying}
+            onError={onVideoError}
             onEnded={handleVideoEnded}
             className={`w-full h-full object-cover transition-opacity duration-300 ${
               isPlaying ? 'opacity-100' : 'opacity-85'
             }`}
-          />
+          >
+            {sourceUrl && <source src={sourceUrl} type="video/mp4" />}
+          </video>
+
+          {/* Small Dev-Only Debug Line (Step 2, Rule 12 - hidden in production) */}
+          {import.meta.env.DEV && (
+            <div className="absolute top-14 inset-x-3 z-30 px-2.5 py-1 rounded-lg bg-black/85 text-[10px] font-mono text-amber-300 pointer-events-none truncate border border-amber-500/40 shadow-xs">
+              <span>[Dev Debug: </span>
+              <span className="font-bold">
+                {videoError ? 'Video 404 / Network Error' :
+                 isDataSaving ? 'Data-Saver / Slow Network' :
+                 !isSectionVisible ? 'Section < 55% visible' :
+                 isStoppedAfterCycles ? 'Stopped after 3 cycles' :
+                 isPlaying ? 'Active Playing' : 'Autoplay Blocked (Tap to play)'}
+              </span>
+              <span>]</span>
+            </div>
+          )}
 
           {/* Hidden Next Video Prefetcher (Rule 11: Preload only NEXT clip) */}
           {nextClipUrl && (
@@ -347,12 +424,53 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
           )}
 
           {/* Poster Fallback (shown while video is buffering or in data saving mode) */}
-          {(!isPlaying || isDataSaving) && activePlayer?.posterUrl && (
+          {(!isPlaying || isDataSaving || videoError) && activePlayer?.posterUrl && (
             <img
               src={activePlayer.posterUrl}
               alt={activePlayer.name}
               className="absolute inset-0 w-full h-full object-cover pointer-events-none"
             />
+          )}
+
+          {/* Clear Error Overlay with Retry Button (Step 2, Rule 9) */}
+          {videoError && (
+            <div className="absolute inset-0 z-35 flex flex-col items-center justify-center p-4 bg-navy-950/90 text-center space-y-3 animate-fadeIn">
+              <div className="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/40">
+                <AlertCircle className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="text-sm font-black font-sports uppercase text-white">
+                  {lang === 'ml' ? 'വീഡിയോ ലഭ്യമല്ല' : 'Video unavailable'}
+                </h4>
+                <p className="text-[11px] text-navy-muted mt-1 max-w-[200px]">
+                  {lang === 'ml'
+                    ? 'വീഡിയോ സെർവറിൽ നിന്ന് ലോഡ് ചെയ്യാൻ സാധിച്ചില്ല'
+                    : 'External video file could not be loaded'}
+                </p>
+              </div>
+              <button
+                onClick={handleRetryVideo}
+                className="min-h-[44px] px-4 py-2 rounded-xl btn-gold text-navy-900 font-bold text-xs uppercase flex items-center gap-1.5 shadow-md active:scale-95"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>{lang === 'ml' ? 'വീണ്ടും ശ്രമിക്കുക' : 'Retry'}</span>
+              </button>
+            </div>
+          )}
+
+          {/* Visible Tap to Play Button Overlay (Step 2, Rule 10) */}
+          {!isPlaying && !isBuffering && !videoError && !isStoppedAfterCycles && (
+            <div 
+              onClick={handleStartPlay}
+              className="absolute inset-0 z-20 flex flex-col items-center justify-center p-4 bg-navy-950/35 group cursor-pointer"
+            >
+              <div className="w-16 h-16 rounded-full btn-gold text-navy-900 flex items-center justify-center shadow-2xl transition-transform duration-200 group-hover:scale-110 active:scale-90">
+                <Play className="w-7 h-7 fill-current ml-1" />
+              </div>
+              <span className="mt-2.5 px-3 py-1 rounded-full bg-navy-950/90 text-white text-xs font-bold border border-white/20 shadow-md">
+                {lang === 'ml' ? 'പ്ലേ ചെയ്യാൻ ടാപ്പ് ചെയ്യുക' : 'Tap to play'}
+              </span>
+            </div>
           )}
 
           {/* Story Progress Bar at Top (Rule 2: thin segments, fills as video plays) */}

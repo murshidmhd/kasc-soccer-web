@@ -192,3 +192,11 @@ export const squadClubs = [
   'NEW MALAYA MALABAR FC',
   'FIFA Manjeri'
 ];
+
+// Official Squad Confirmation Status per Club (Rule 9f)
+export const clubSquadStatus = {
+  'SUPER STUDIO MALAPPURAM': 'confirmed',
+  'UDAYA Parambil Peedika': 'confirmed',
+  'NEW MALAYA MALABAR FC': 'confirmed',
+  'FIFA Manjeri': 'unconfirmed'
+};

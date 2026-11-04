@@ -12,6 +12,9 @@ export const SHOW_SPONSORS = true;
 export const SHOW_UNFINISHED = false;
 export const SHOW_LINEUPS = true;
 export const FAN_REPORTS_ENABLED = false;
+export const TROPHY_IS_ILLUSTRATION = true;
+export const SHOW_NATIONALITY = false;
+export const AWARDS_NOTE = true;
 
 // Committee Contact Details
 export const COMMITTEE_PHONE = '+91 70120 46930';

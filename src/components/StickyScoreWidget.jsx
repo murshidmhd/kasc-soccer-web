@@ -83,14 +83,18 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
     return () => window.removeEventListener('scroll', checkScroll);
   }, [activeTab, isDismissed]);
 
-  // Before kickoff, hide the sticky score widget completely unless live match or demo is active
-  if (!isVisible || isDismissed || matchState.status === 'UPCOMING') {
+  // Sticky score widget appears ONLY when a real match is currently live (1st Half, Half Time, 2nd Half)
+  const isRealMatchLive = 
+    (matchState.status === '1ST_HALF' || matchState.status === 'HALF_TIME' || matchState.status === '2ND_HALF') &&
+    (import.meta.env.DEV || matchState.updatedBy !== 'Demo Simulation Mode');
+
+  if (!isVisible || isDismissed || !isRealMatchLive) {
     // If dismissed during live match, render a tiny recall pill button
-    if (isDismissed && matchState.status !== 'UPCOMING') {
+    if (isDismissed && isRealMatchLive) {
       return (
         <button
           onClick={() => { setIsDismissed(false); setIsMinimized(false); }}
-          className="fixed bottom-[74px] sm:bottom-6 right-3 sm:right-6 z-40 px-3 py-1.5 rounded-full bg-slate-900/95 text-white text-xs font-bold border border-slate-700 shadow-xl backdrop-blur-md flex items-center gap-1.5 hover:scale-105 active:scale-95 transition animate-fadeIn touch-manipulation"
+          className="fixed bottom-[74px] sm:bottom-6 right-3 sm:right-6 z-40 px-3 py-1.5 rounded-full bg-slate-900 text-white text-xs font-bold border border-slate-700 shadow-xl flex items-center gap-1.5 hover:scale-105 active:scale-95 transition animate-fadeIn touch-manipulation"
           title="Show Live Match Score"
         >
           <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
@@ -132,7 +136,7 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
       >
         <div 
           onClick={() => setIsMinimized(false)}
-          className="bg-slate-950/95 backdrop-blur-xl border border-slate-700 text-white rounded-full shadow-2xl px-3.5 py-2 flex items-center justify-between gap-2 cursor-pointer hover:border-slate-500 transition active:scale-98 min-h-[44px]"
+          className="bg-slate-950 border border-slate-700 text-white rounded-full shadow-2xl px-3.5 py-2 flex items-center justify-between gap-2 cursor-pointer hover:border-slate-500 transition active:scale-98 min-h-[44px]"
         >
           <div className="flex items-center gap-1.5 text-xs truncate min-w-0">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-ping shrink-0"></span>
@@ -181,8 +185,8 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
         </div>
       )}
 
-      {/* Main Glassmorphic Widget Container */}
-      <div className="bg-slate-950/95 backdrop-blur-xl border border-slate-800 text-white rounded-2xl shadow-2xl p-2.5 sm:p-3 w-full space-y-2 transition-all">
+      {/* Main High-Contrast Widget Container (no blur per rule) */}
+      <div className="bg-slate-950 border border-slate-800 text-white rounded-2xl shadow-2xl p-2.5 sm:p-3 w-full space-y-2 transition-all">
         {/* Top Status & Controls Bar */}
         <div className="flex items-center justify-between text-[11px] pb-1.5 border-b border-slate-800">
           <div className="flex items-center gap-1.5">
