@@ -7,7 +7,10 @@ import {
   Globe, 
   Moon, 
   Sun, 
-  Sparkles 
+  Sparkles,
+  Shield,
+  Calendar,
+  Star
 } from 'lucide-react';
 import { SITE_URL } from '../config/siteConfig';
 
@@ -18,7 +21,8 @@ export default function WelcomeBottomSheet({
   setIsDarkMode,
   isLiveMatch = false,
   isOtherModalOpen = false,
-  onDismissCallback
+  onDismissCallback,
+  onNavigate
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -225,7 +229,7 @@ export default function WelcomeBottomSheet({
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 16px))' }}
-        className="relative z-10 w-full max-h-[40vh] overflow-y-auto surface-navy-card border-t border-navy-700 rounded-t-3xl shadow-2xl transition-transform duration-200 ease-out transform translate-y-0 px-4 pt-3 text-white select-none motion-reduce:transition-none"
+        className="relative z-10 w-full max-h-[75vh] overflow-y-auto surface-navy-card border-t border-navy-700 rounded-t-3xl shadow-2xl transition-transform duration-200 ease-out transform translate-y-0 px-4 pt-3 text-white select-none motion-reduce:transition-none"
       >
         {/* Drag Handle Bar (Rule 7) */}
         <div className="w-12 h-1.5 rounded-full bg-navy-600/80 mx-auto mb-3" />
@@ -252,6 +256,73 @@ export default function WelcomeBottomSheet({
           >
             <X className="w-4 h-4" />
           </button>
+        </div>
+
+        {/* Quick Highlights for New Fans (User request: view full team, fixtures, current top player) */}
+        <div className="pt-3 pb-2 border-b border-navy-700/60">
+          <div className="text-[11px] font-black uppercase tracking-wider text-gold flex items-center justify-between mb-2">
+            <span className="flex items-center gap-1.5">
+              <span>⚡</span>
+              <span>{lang === 'ml' ? 'പ്രധാന വിവരങ്ങൾ പെട്ടെന്ന് കാണാം:' : 'Explore Tournament:'}</span>
+            </span>
+            <span className="text-[10px] text-navy-muted font-normal lowercase">{lang === 'ml' ? 'ക്ലിക്ക് ചെയ്യുക' : 'tap to view'}</span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              onClick={() => {
+                handleDismiss();
+                if (onNavigate) onNavigate('teams');
+              }}
+              className="p-2 sm:p-2.5 rounded-2xl bg-navy-800 hover:bg-navy-750 border border-navy-700 transition active:scale-95 flex flex-col items-center text-center group shadow-xs"
+            >
+              <div className="w-8 h-8 rounded-xl bg-gold/15 text-gold flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+                <Shield className="w-4 h-4" />
+              </div>
+              <span className="text-[11px] font-black text-white leading-tight">
+                {lang === 'ml' ? '24 ക്ലബ്ബുകൾ' : 'Full Teams'}
+              </span>
+              <span className="text-[9px] text-navy-muted mt-0.5">
+                {lang === 'ml' ? 'സ്ക്വാഡ് കാണാം' : 'View Squad'}
+              </span>
+            </button>
+
+            <button
+              onClick={() => {
+                handleDismiss();
+                if (onNavigate) onNavigate('fixtures');
+              }}
+              className="p-2 sm:p-2.5 rounded-2xl bg-navy-800 hover:bg-navy-750 border border-navy-700 transition active:scale-95 flex flex-col items-center text-center group shadow-xs"
+            >
+              <div className="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+                <Calendar className="w-4 h-4" />
+              </div>
+              <span className="text-[11px] font-black text-white leading-tight">
+                {lang === 'ml' ? 'മത്സരക്രമം' : 'Fixtures'}
+              </span>
+              <span className="text-[9px] text-navy-muted mt-0.5">
+                {lang === 'ml' ? 'ടൈംടേബിൾ' : 'Schedule'}
+              </span>
+            </button>
+
+            <button
+              onClick={() => {
+                handleDismiss();
+                if (onNavigate) onNavigate('stats');
+              }}
+              className="p-2 sm:p-2.5 rounded-2xl bg-navy-800 hover:bg-navy-750 border border-navy-700 transition active:scale-95 flex flex-col items-center text-center group shadow-xs"
+            >
+              <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+                <Star className="w-4 h-4" />
+              </div>
+              <span className="text-[11px] font-black text-white leading-tight">
+                {lang === 'ml' ? 'താരങ്ങൾ' : 'Top Players'}
+              </span>
+              <span className="text-[9px] text-navy-muted mt-0.5">
+                {lang === 'ml' ? 'സ്റ്റാറ്റ്സ് & ഗോൾ' : 'Stats Race'}
+              </span>
+            </button>
+          </div>
         </div>
 
         {/* Action Controls Grid (Rule 5: Three large buttons >= 48px tall) */}

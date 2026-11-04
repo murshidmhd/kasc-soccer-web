@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Ticket, Clock, Play, X, Film } from 'lucide-react';
+import { Calendar, Ticket, Clock, Play, X, Film, Shield, Star, Sparkles } from 'lucide-react';
 import { tournamentInfo, openingMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
 import { getStoredMatchState } from '../utils/matchStateManager';
+import teaserPoster from '../assets/tournament_teaser_poster.jpg';
 
-export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketModal }) {
+export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketModal, onNavigate }) {
   const [matchState, setMatchState] = useState(getStoredMatchState);
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState({
@@ -197,17 +198,109 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
             </button>
           </div>
 
-          {/* Official Trailer Button in Front (User request: trailer video in front) */}
-          <button
-            onClick={() => setIsTrailerOpen(true)}
-            className="mt-3 w-full min-h-[44px] py-2.5 px-4 rounded-xl border border-navy-700 bg-navy-850 hover:bg-navy-700 text-gold font-bold text-xs uppercase tracking-wider transition active:scale-95 flex items-center justify-center gap-2 shadow-xs"
-            aria-label="Watch Official Tournament Trailer"
-          >
-            <Play className="w-4 h-4 fill-gold text-gold shrink-0" />
-            <span className="truncate">
-              {lang === 'ml' ? '🎬 ഒഫീഷ്യൽ ടൂർണ്ണമെന്റ് ട്രെയിലർ കാണുക' : '🎬 Watch Official Tournament Trailer'}
-            </span>
-          </button>
+          {/* Official Trailer Video Card with Poster & Play Button (User request: video image with play button) */}
+          <div className="mt-3.5">
+            <button
+              onClick={() => setIsTrailerOpen(true)}
+              className="relative w-full h-24 sm:h-28 rounded-2xl overflow-hidden border border-gold/40 hover:border-gold shadow-lg group transition active:scale-98 text-left flex items-center"
+              aria-label="Watch Official Tournament Trailer"
+            >
+              {/* Background Video Poster */}
+              <img
+                src={teaserPoster}
+                alt="Tournament Trailer"
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-90"
+              />
+              {/* Dark Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-navy-950/95 via-navy-950/75 to-navy-900/40" />
+
+              {/* Foreground Content */}
+              <div className="relative z-10 w-full px-3.5 sm:px-5 py-2.5 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  {/* Glowing Play Button with pulse animation */}
+                  <div className="relative shrink-0">
+                    <span className="absolute -inset-1 rounded-full bg-gold/30 animate-ping opacity-75" />
+                    <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-gold to-amber-500 text-navy-950 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                      <Play className="w-5 h-5 fill-navy-950 text-navy-950 ml-0.5" />
+                    </div>
+                  </div>
+
+                  {/* Title and Action Text */}
+                  <div className="min-w-0">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-600/90 text-white text-[10px] font-black uppercase tracking-wider mb-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                      <span>{lang === 'ml' ? 'ഒഫീഷ്യൽ ട്രെയിലർ' : 'Official Trailer'}</span>
+                    </div>
+                    <h3 className="font-sports font-black text-xs sm:text-sm text-white uppercase tracking-wider truncate drop-shadow-sm">
+                      {lang === 'ml' ? 'സീസൺ 7 വീഡിയോ കാണുക' : 'Watch Season 7 Teaser'}
+                    </h3>
+                    <p className="text-[11px] text-gold font-semibold truncate">
+                      {lang === 'ml' ? 'ക്ലിക്ക് ചെയ്ത് പ്ലേ ചെയ്യാം • Tap to Play' : 'Click to watch preview • Full HD'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right Badge */}
+                <div className="hidden xs:flex flex-col items-end shrink-0">
+                  <span className="px-2 py-1 rounded-lg bg-navy-900/80 border border-gold/30 text-gold text-[10px] font-black uppercase tracking-wider">
+                    HD VIDEO
+                  </span>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          {/* Quick Discovery Guide for New Visitors (User request: view full team, fixtures, top player) */}
+          <div className="mt-3.5 pt-3 border-t border-navy-700/60">
+            <div className="flex items-center justify-between text-[11px] font-bold text-navy-muted mb-2 px-0.5">
+              <span className="flex items-center gap-1 text-gold">
+                <Sparkles className="w-3.5 h-3.5 text-gold" />
+                <span>{lang === 'ml' ? 'പ്രധാന വിവരങ്ങൾ കാണുക:' : 'Quick Tournament Guide:'}</span>
+              </span>
+              <span className="text-[10px] text-navy-muted opacity-80">{lang === 'ml' ? 'ക്ലിക്ക് ചെയ്യുക' : 'Tap to explore'}</span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => (onNavigate ? onNavigate('teams') : scrollToSection('teams'))}
+                className="py-2.5 px-2 rounded-xl bg-navy-850 hover:bg-navy-750 border border-navy-700 text-center transition active:scale-95 group flex flex-col items-center justify-center gap-1 shadow-xs"
+              >
+                <Shield className="w-4 h-4 text-gold group-hover:scale-110 transition-transform" />
+                <span className="text-[11px] font-black text-white leading-tight">
+                  {lang === 'ml' ? '24 ക്ലബ്ബുകൾ' : 'Full Teams'}
+                </span>
+                <span className="text-[9px] text-navy-muted">
+                  {lang === 'ml' ? 'സ്ക്വാഡ്' : 'Squads'}
+                </span>
+              </button>
+
+              <button
+                onClick={() => (onNavigate ? onNavigate('fixtures') : scrollToSection('fixtures'))}
+                className="py-2.5 px-2 rounded-xl bg-navy-850 hover:bg-navy-750 border border-navy-700 text-center transition active:scale-95 group flex flex-col items-center justify-center gap-1 shadow-xs"
+              >
+                <Calendar className="w-4 h-4 text-blue-400 group-hover:scale-110 transition-transform" />
+                <span className="text-[11px] font-black text-white leading-tight">
+                  {lang === 'ml' ? 'മത്സരക്രമം' : 'Fixtures'}
+                </span>
+                <span className="text-[9px] text-navy-muted">
+                  {lang === 'ml' ? 'ടൈംടേബിൾ' : 'Schedule'}
+                </span>
+              </button>
+
+              <button
+                onClick={() => (onNavigate ? onNavigate('stats') : scrollToSection('stats'))}
+                className="py-2.5 px-2 rounded-xl bg-navy-850 hover:bg-navy-750 border border-navy-700 text-center transition active:scale-95 group flex flex-col items-center justify-center gap-1 shadow-xs"
+              >
+                <Star className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+                <span className="text-[11px] font-black text-white leading-tight">
+                  {lang === 'ml' ? 'താരങ്ങൾ' : 'Top Players'}
+                </span>
+                <span className="text-[9px] text-navy-muted">
+                  {lang === 'ml' ? 'സ്റ്റാറ്റ്സ്' : 'Stats & Goals'}
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

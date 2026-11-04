@@ -198,7 +198,8 @@ export default function App() {
               <Hero 
                 lang={lang} 
                 isDarkMode={isDarkMode} 
-                scrollToSection={(id) => handleTabChange(id === 'fixtures' ? 'fixtures' : 'live')} 
+                scrollToSection={handleTabChange}
+                onNavigate={handleTabChange}
                 onOpenTicketModal={() => setIsTicketModalOpen(true)}
               />
               
@@ -724,6 +725,7 @@ export default function App() {
           setIsDarkMode={setIsDarkMode}
           isLiveMatch={false}
           isOtherModalOpen={isAdminModalOpen || isScorerDemoOpen || isTicketModalOpen || isVipPassModalOpen}
+          onNavigate={handleTabChange}
         />
       </React.Suspense>
     </div>
