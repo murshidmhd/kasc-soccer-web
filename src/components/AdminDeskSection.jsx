@@ -812,7 +812,7 @@ export default function AdminDeskSection({
                         <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">
                           Live Ticking Match Clock (Kerala Sevens: 30 + 30 Mins)
                         </span>
-                        <div className="flex items-center gap-2.5">
+                        <div className="flex flex-wrap items-center gap-2.5">
                           <span className="text-3xl font-black font-mono tracking-widest text-white drop-shadow-sm">
                             {clock.display}
                           </span>
@@ -821,6 +821,12 @@ export default function AdminDeskSection({
                           }`}>
                             {matchState.isTimerRunning ? 'Clock Running' : 'Clock Paused'}
                           </span>
+                          {matchState.status === '1ST_HALF' && clock.totalSeconds > (SEVENS_HALF_MINUTES + 2) * 60 && !matchState.events?.some(e => e.type === 'half_time' || e.type === 'full_time') && (
+                            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/25 border border-amber-400 text-amber-300 text-[10px] font-black uppercase animate-pulse">
+                              <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                              <span>Half time not pressed</span>
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>

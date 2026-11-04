@@ -11,6 +11,7 @@ export const SHOW_SFA_CLAIMS = false;
 export const SHOW_SPONSORS = true;
 export const SHOW_UNFINISHED = false;
 export const SHOW_LINEUPS = true;
+export const FAN_REPORTS_ENABLED = false;
 
 // Committee Contact Details
 export const COMMITTEE_PHONE = '+91 70120 46930';

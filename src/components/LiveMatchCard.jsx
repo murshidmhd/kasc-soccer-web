@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import confetti from 'canvas-confetti';
 import { 
   Radio, 
@@ -15,7 +15,8 @@ import {
   Settings,
   Calendar,
   Sparkles,
-  Info
+  Info,
+  WifiOff
 } from 'lucide-react';
 import { openingMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
@@ -28,9 +29,11 @@ import {
   getDaysToKickoff,
   isDemoModeActive,
   setDemoModeActive,
+  getDemoCommentaryIfDev,
   SEVENS_HALF_MINUTES,
   SEVENS_TOTAL_MINUTES
 } from '../utils/matchStateManager';
+import { FAN_REPORTS_ENABLED } from '../config/siteConfig';
 
 export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
   const [matchState, setMatchState] = useState(getStoredMatchState);
@@ -39,7 +42,22 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
   const [toastMessage, setToastMessage] = useState(null);
   const [timelineTab, setTimelineTab] = useState('commentary'); // 'timeline' | 'commentary'
   const [isDemo, setIsDemo] = useState(isDemoModeActive);
+  const [demoCommentary, setDemoCommentary] = useState([]);
   const [goalShareModal, setGoalShareModal] = useState({ isOpen: false, goalData: null });
+  const [isOnline, setIsOnline] = useState(() => (typeof navigator !== 'undefined' ? navigator.onLine : true));
+  const [nowTs, setNowTs] = useState(Date.now());
+
+  // Online / Offline monitor
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   // Sync with global custom events
   useEffect(() => {
@@ -61,9 +79,19 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
     };
   }, []);
 
-  // Continuous 1-second ticker interval for live moving clock & rate limit
+  // Dynamic load of demo commentary strictly in DEV mode
+  useEffect(() => {
+    if (import.meta.env.DEV && isDemo) {
+      getDemoCommentaryIfDev().then(setDemoCommentary);
+    } else {
+      setDemoCommentary([]);
+    }
+  }, [isDemo]);
+
+  // Continuous 1-second ticker interval for live moving clock, rate limit & relative time
   useEffect(() => {
     const interval = setInterval(() => {
+      setNowTs(Date.now());
       setRateLimit(getUserRateLimitStatus());
       setClock(getCalculatedMatchTime(matchState));
     }, 1000);
@@ -96,15 +124,110 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
     }, 4000);
   };
 
-  const daysToKickoff = getDaysToKickoff();
   const isLive = matchState.status !== 'UPCOMING';
+
+  // Relative timestamp calculation for trust details ("Updated Xs ago")
+  const relativeUpdateTime = useMemo(() => {
+    if (!matchState.lastUpdated) return '';
+    const diffSec = Math.max(0, Math.floor((nowTs - new Date(matchState.lastUpdated).getTime()) / 1000));
+    if (diffSec < 5) {
+      return lang === 'ml' ? 'ഇപ്പോൾ അപ്ഡേറ്റ് ചെയ്തു' : 'Updated just now';
+    }
+    if (diffSec < 60) {
+      return lang === 'ml' ? `${diffSec} സെക്കൻഡ് മുൻപ്` : `Updated ${diffSec}s ago`;
+    }
+    const diffMin = Math.floor(diffSec / 60);
+    return lang === 'ml' ? `${diffMin} മിനിറ്റ് മുൻപ്` : `Updated ${diffMin}m ago`;
+  }, [matchState.lastUpdated, nowTs, lang]);
+
+  // Whether score was entered by official ground desk
+  const isScoreEnteredByDesk = Boolean(
+    matchState.scoreEnteredByDesk ||
+    matchState.updatedBy?.includes('Desk') ||
+    matchState.updatedBy?.includes('Scorer') ||
+    matchState.updatedBy?.includes('Official')
+  );
+
+  // Auto-generate commentary feed from logged events (newest first)
+  const commentaryLines = useMemo(() => {
+    if (import.meta.env.DEV && isDemo && demoCommentary.length > 0) {
+      return demoCommentary.map((item, idx) => ({
+        id: `demo-${idx}`,
+        minute: item.min,
+        type: item.type,
+        mainLine: lang === 'ml' ? item.textMl : item.textEn,
+        noteText: null
+      }));
+    }
+
+    if (!matchState.events || matchState.events.length === 0) {
+      return [];
+    }
+
+    // Sort newest first by minute
+    const sorted = [...matchState.events].sort((a, b) => (b.minute || 0) - (a.minute || 0));
+
+    return sorted.map((evt) => {
+      const teamLabel = evt.team === 'away' ? 'NEW MALAYA' : 'UDAYA';
+      const minText = `${evt.minute || 0}'`;
+      let mainLine = '';
+
+      switch (evt.type) {
+        case 'goal':
+          mainLine = lang === 'ml'
+            ? `⚽ ഗോൾ: ${evt.player} (${teamLabel})`
+            : `⚽ Goal: ${evt.player} (${teamLabel})`;
+          break;
+        case 'yellow_card':
+          mainLine = lang === 'ml'
+            ? `🟨 യെല്ലോ കാർഡ്: ${evt.player} (${teamLabel})`
+            : `🟨 Yellow Card: ${evt.player} (${teamLabel})`;
+          break;
+        case 'red_card':
+          mainLine = lang === 'ml'
+            ? `🟥 റെഡ് കാർഡ്: ${evt.player} (${teamLabel})`
+            : `🟥 Red Card: ${evt.player} (${teamLabel})`;
+          break;
+        case 'sub':
+        case 'substitution':
+          mainLine = lang === 'ml'
+            ? `🔄 സബ്സ്റ്റിറ്റ്യൂഷൻ: ${evt.player} (${teamLabel})`
+            : `🔄 Substitution: ${evt.player} (${teamLabel})`;
+          break;
+        case 'half_time':
+          mainLine = lang === 'ml'
+            ? '⏸️ ഹാഫ് ടൈം വിസിൽ'
+            : '⏸️ Half Time Whistle';
+          break;
+        case 'full_time':
+          mainLine = lang === 'ml'
+            ? '🏁 ഫുൾ ടൈം വിസിൽ: മത്സരം സമാപിച്ചു'
+            : '🏁 Full Time Whistle: Match Ended';
+          break;
+        default:
+          mainLine = `${evt.player ? `${evt.player} (${teamLabel})` : teamLabel}`;
+      }
+
+      // Check if desk entered an optional custom typed note
+      const hasCustomText = evt.text && !evt.text.toUpperCase().includes('RECORDED');
+      const noteText = hasCustomText ? evt.text : null;
+
+      return {
+        id: evt.id || `evt-${evt.minute}-${Math.random()}`,
+        minute: minText,
+        mainLine,
+        noteText,
+        type: evt.type
+      };
+    });
+  }, [matchState.events, isDemo, demoCommentary, lang]);
 
   const getStatusBadge = () => {
     if (!isLive) {
       return (
-        <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-900 font-bold text-xs border border-blue-200 flex items-center gap-1.5">
-          <Calendar className="w-3.5 h-3.5 text-blue-700" />
-          <span>{lang === 'ml' ? `കിക്ക്ഓഫ്: ${daysToKickoff} ദിനം ബാക്കി` : `Kickoff in ${daysToKickoff} days`}</span>
+        <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950/70 text-blue-900 dark:text-blue-200 font-bold text-xs border border-blue-200 dark:border-blue-800 flex items-center gap-1.5">
+          <Calendar className="w-3.5 h-3.5 text-blue-700 dark:text-blue-400" />
+          <span>{lang === 'ml' ? '06 നവം • 8:00 PM' : '06 Nov • 8:00 PM'}</span>
         </span>
       );
     }
@@ -154,61 +277,73 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
               {lang === 'ml' ? 'മാച്ച് സെന്റർ' : 'MATCH CENTER'}
             </h2>
           </div>
-          <p className="text-xs text-slate-500 dark:text-muted-on-navy font-medium leading-[1.5]">
+          {/* Subtitle: Single line kickoff date and time, no repeated days countdown */}
+          <p className="text-xs text-slate-600 dark:text-slate-300 font-medium leading-[1.5]">
             {isLive
               ? (lang === 'ml' ? 'ഔദ്യോഗിക തത്സമയ സ്കോറും പന്ത് തട്ടുന്ന നിമിഷങ്ങളും' : 'Official live score verified by Ground Referee Desk')
-              : (lang === 'ml' ? `ഉദ്ഘാടന മത്സരം: 2026 നവംബർ 06, രാത്രി 8:00 മണിക്ക് (${daysToKickoff} ദിനം ബാക്കി)` : `Opening Match: Nov 06, 2026, 8:00 PM IST (Kickoff in ${daysToKickoff} days)`)}
+              : (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം: 2026 നവംബർ 06, രാത്രി 8:00 മണിക്ക്' : 'Opening Match: Nov 06, 2026, 8:00 PM IST')}
           </p>
         </div>
 
-        {/* Demo Mode Toggle (Off by default) & Private Admin Link */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          <button
-            onClick={() => {
-              const next = !isDemo;
-              setDemoModeActive(next);
-              setIsDemo(next);
-            }}
-            className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
-              isDemo 
-                ? 'bg-gold text-navy-900 border-gold font-black shadow-xs' 
-                : 'bg-white dark:bg-navy-700 border-surface-border dark:border-navy-600 text-navy-900 dark:text-muted-on-navy hover:bg-surface-light dark:hover:bg-navy-600'
-            }`}
-            title="Toggle sample demo match simulation (off by default)"
-          >
-            <span>⚡ Demo Simulation:</span>
-            <span className="font-black underline">{isDemo ? 'ON' : 'OFF'}</span>
-          </button>
-        </div>
+        {/* Demo Mode Toggle (DEV Only, completely impossible in production) */}
+        {import.meta.env.DEV && (
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <button
+              onClick={() => {
+                const next = !isDemo;
+                setDemoModeActive(next);
+                setIsDemo(next);
+              }}
+              className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
+                isDemo 
+                  ? 'bg-gold text-navy-900 border-gold font-black shadow-xs' 
+                  : 'bg-white dark:bg-navy-700 border-surface-border dark:border-navy-600 text-navy-900 dark:text-muted-on-navy hover:bg-surface-light dark:hover:bg-navy-600'
+              }`}
+              title="Toggle sample demo match simulation (dev only)"
+            >
+              <span>⚡ Demo:</span>
+              <span className="font-black underline">{isDemo ? 'ON' : 'OFF'}</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Main Match Scorecard */}
       <div className="rounded-3xl overflow-hidden border p-4 sm:p-7 relative shadow-card transition-colors surface-card">
-        {/* DEMO MODE ACTIVE WARNING BANNER */}
-        {isDemo && (
-          <div className="mb-4 p-2.5 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-900 text-xs font-bold flex items-center justify-between gap-2">
+        {/* Diagonal DEMO Watermark across score card (Development Only) */}
+        {import.meta.env.DEV && isDemo && (
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-10 select-none">
+            <span className="text-6xl sm:text-8xl font-black font-sports text-red-500/15 dark:text-red-400/20 uppercase tracking-widest -rotate-12 border-4 border-dashed border-red-500/20 dark:border-red-400/30 py-2 px-8 rounded-3xl">
+              DEMO
+            </span>
+          </div>
+        )}
+
+        {/* DEMO MODE ACTIVE WARNING BANNER (DEV Only) */}
+        {import.meta.env.DEV && isDemo && (
+          <div className="mb-4 p-2.5 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-900 dark:text-amber-200 text-xs font-bold flex items-center justify-between gap-2 relative z-20">
             <div className="flex items-center gap-1.5">
               <span className="text-base">⚡</span>
-              <span>DEMO MODE ACTIVE: Showing simulated 2-1 sample match for testing. Toggle OFF for real pre-kickoff state.</span>
+              <span>DEMO MODE ACTIVE: Showing simulated sample match. Toggle OFF for real pre-kickoff state.</span>
             </div>
             <button
               onClick={() => {
                 setDemoModeActive(false);
                 setIsDemo(false);
               }}
-              className="text-[11px] underline font-black text-amber-950 shrink-0"
+              className="text-[11px] underline font-black text-amber-950 dark:text-amber-100 shrink-0"
             >
               Turn Off
             </button>
           </div>
         )}
 
-        {/* Top Match Ribbon with Official Verification Badge */}
+        {/* Top Match Ribbon */}
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-surface-border dark:border-navy-700 pb-3 mb-5">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-900 font-bold text-[10px] sm:text-xs border border-blue-200">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-              <span>Official Matchday 1</span>
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/70 text-blue-900 dark:text-blue-200 font-bold text-[10px] sm:text-xs border border-blue-200 dark:border-blue-800">
+              <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+              <span>{isDemo ? 'Demo' : 'Official Matchday 1'}</span>
             </span>
             <span className="text-[11px] text-card-muted hidden sm:inline">•</span>
             <span className="text-[11px] text-card-muted font-medium hidden sm:inline">
@@ -234,7 +369,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
             </span>
           </div>
 
-          {/* Center Official Scores (if Live or Demo) OR Kickoff countdown (if Upcoming) */}
+          {/* Center Official Scores (if Live or Demo) OR Single Kickoff Date/Time (if Upcoming) */}
           <div className="col-span-4 flex flex-col items-center justify-center">
             {isLive ? (
               <div className="space-y-1">
@@ -247,11 +382,36 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                     {matchState.officialScoreAway}
                   </span>
                 </div>
+
+                {/* Trust Details */}
                 <div className="flex flex-col items-center gap-1">
-                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-bold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>Ground Referee Score</span>
+                  {isDemo ? (
+                    <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/70 border border-amber-300 dark:border-amber-700 text-amber-900 dark:text-amber-200 text-[10px] font-bold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                      <span>Demo</span>
+                    </div>
+                  ) : isScoreEnteredByDesk ? (
+                    <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      <span>Ground Referee Score</span>
+                    </div>
+                  ) : null}
+
+                  {/* Relative timestamp ticker & Reconnecting offline indicator */}
+                  <div className="flex items-center gap-2">
+                    {relativeUpdateTime && (
+                      <span className="text-[10px] text-card-muted font-medium">
+                        {relativeUpdateTime}
+                      </span>
+                    )}
+                    {!isOnline && (
+                      <span className="inline-flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400 font-bold animate-pulse">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                        <span>{lang === 'ml' ? 'വീണ്ടും ബന്ധിപ്പിക്കുന്നു...' : 'Reconnecting...'}</span>
+                      </span>
+                    )}
                   </div>
+
                   <button
                     onClick={() => setGoalShareModal({
                       isOpen: true,
@@ -267,7 +427,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                         goalText: 'Official Live Match Score'
                       }
                     })}
-                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 hover:bg-blue-100 text-royal text-[10px] font-bold border border-blue-200 transition active:scale-95"
+                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:hover:bg-blue-900 text-royal dark:text-sky text-[10px] font-bold border border-blue-200 dark:border-blue-800 transition active:scale-95 mt-0.5"
                     title="Generate WhatsApp Status Card"
                   >
                     <Share2 className="w-3 h-3" />
@@ -280,12 +440,10 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                 <div className="text-2xl sm:text-4xl font-black font-sports text-royal dark:text-sky">
                   VS
                 </div>
-                <div className="text-[10px] sm:text-xs font-black text-card-title bg-surface-light dark:bg-navy-900 px-2.5 py-1 rounded-lg border border-surface-border dark:border-navy-700">
+                {/* One short line for kickoff date and time, no repeated days text */}
+                <div className="text-[10px] sm:text-xs font-black text-card-title bg-surface-light dark:bg-navy-900 px-2.5 py-1 rounded-lg border border-surface-border dark:border-navy-700 shadow-2xs">
                   06 Nov • 8:00 PM
                 </div>
-                <span className="text-[10px] text-card-muted font-bold block">
-                  {lang === 'ml' ? `${daysToKickoff} ദിനം ബാക്കി` : `In ${daysToKickoff} days`}
-                </span>
               </div>
             )}
           </div>
@@ -302,12 +460,12 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           </div>
         </div>
 
-        {/* Pre-Kickoff Notice when match is not live and Demo is off */}
+        {/* Pre-Kickoff Notice: Clean single announcement, no countdown repetition */}
         {!isLive && (
-          <div className="mt-5 p-3.5 rounded-2xl surface-card-subtle text-center space-y-1">
+          <div className="mt-5 p-3.5 rounded-2xl surface-card-subtle text-center space-y-1 border border-surface-border dark:border-navy-700">
             <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-card-title">
               <Clock className="w-4 h-4 text-royal dark:text-sky" />
-              <span>{lang === 'ml' ? `ഉദ്ഘാടന മത്സര കിക്ക്ഓഫിലേക്ക് ${daysToKickoff} ദിനങ്ങൾ ബാക്കി` : `Kickoff in ${daysToKickoff} days`}</span>
+              <span>{lang === 'ml' ? 'കിക്ക്ഓഫോടെ മാച്ച് സെന്റർ ലൈവാകും' : 'Match Center activates at kickoff'}</span>
             </div>
             <p className="text-[11px] text-card-muted leading-relaxed">
               {lang === 'ml'
@@ -321,99 +479,106 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
         {toastMessage && (
           <div className={`mt-4 p-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 animate-fadeIn shadow-xs ${
             toastMessage.type === 'success'
-              ? 'bg-emerald-50 text-emerald-900 border border-emerald-300'
-              : 'bg-red-50 text-red-900 border border-red-300'
+              ? 'bg-emerald-50 text-emerald-900 border border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-200 dark:border-emerald-700'
+              : 'bg-red-50 text-red-900 border border-red-300 dark:bg-red-950/80 dark:text-red-200 dark:border-red-700'
           }`}>
-            {toastMessage.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /> : <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />}
+            {toastMessage.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> : <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />}
             <span>{toastMessage.text}</span>
           </div>
         )}
 
-        {/* FAN CROWD GOAL REPORTING & COMMENTARY: SHOWN ONLY IF LIVE OR DEMO MODE IS ON */}
+        {/* LIVE-ONLY SECTION: All live elements hidden until kickoff or demo mode */}
         {isLive && (
-          <div className="mt-6 pt-5 border-t border-slate-200 bg-slate-50 -mx-4 -mb-4 sm:-mx-7 sm:-mb-7 p-4 sm:p-6 rounded-b-3xl space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-slate-600" />
-                  <h4 className="text-xs font-black font-sports uppercase tracking-wider text-slate-800">
-                    Fan Crowd Score Pulse
-                  </h4>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-900 border border-blue-200">
-                    Anti-Spam Protected
+          <div className="mt-6 pt-5 border-t border-slate-200 dark:border-navy-700 bg-slate-50 dark:bg-navy-900/60 -mx-4 -mb-4 sm:-mx-7 sm:-mb-7 p-4 sm:p-6 rounded-b-3xl space-y-4">
+            {/* FAN CROWD GOAL REPORTING: Controlled strictly by FAN_REPORTS_ENABLED */}
+            {FAN_REPORTS_ENABLED && (
+              <div className="space-y-4 pb-4 border-b border-slate-200 dark:border-navy-700">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <Users className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+                      <h4 className="text-xs font-black font-sports uppercase tracking-wider text-slate-800 dark:text-white">
+                        Fan Crowd Score Pulse
+                      </h4>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/70 text-blue-900 dark:text-blue-200 border border-blue-200 dark:border-blue-800">
+                        Anti-Spam Protected
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5">
+                      Rate limited to 1 report every 60s (Max 3/match). Referee score remains final authority.
+                    </p>
+                  </div>
+
+                  {/* Rate limit status pill */}
+                  <div className="flex items-center gap-2">
+                    {rateLimit.isCooldownActive ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-200 font-mono font-bold text-xs border border-amber-300 dark:border-amber-700">
+                        <Clock className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400 animate-spin" />
+                        <span>Cooldown: {rateLimit.remainingSeconds}s</span>
+                      </span>
+                    ) : rateLimit.isLimitReached ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-200 dark:bg-navy-700 text-slate-700 dark:text-slate-300 font-bold text-xs">
+                        <span>Limit Reached (3/3)</span>
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-200 font-bold text-xs border border-emerald-300 dark:border-emerald-700">
+                        <span>Ready ({rateLimit.reportsCount}/3 used)</span>
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* User Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => handleCrowdGoal('home')}
+                    disabled={rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'}
+                    className={`min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-card active:scale-95 ${
+                      rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'
+                        ? 'bg-slate-200 dark:bg-navy-800 text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-navy-700 cursor-not-allowed'
+                        : 'bg-sky-700 hover:bg-sky-800 text-white shadow-sm'
+                    }`}
+                  >
+                    <span>⚽ Report Goal: UDAYA</span>
+                    {rateLimit.isCooldownActive && <span className="text-[10px]">({rateLimit.remainingSeconds}s)</span>}
+                  </button>
+
+                  <button
+                    onClick={() => handleCrowdGoal('away')}
+                    disabled={rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'}
+                    className={`min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-card active:scale-95 ${
+                      rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'
+                        ? 'bg-slate-200 dark:bg-navy-800 text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-navy-700 cursor-not-allowed'
+                        : 'bg-zinc-800 hover:bg-zinc-900 text-white shadow-sm'
+                    }`}
+                  >
+                    <span>⚽ Report Goal: NEW MALAYA</span>
+                    {rateLimit.isCooldownActive && <span className="text-[10px]">({rateLimit.remainingSeconds}s)</span>}
+                  </button>
+                </div>
+
+                {/* Crowd Stats Counter Bar */}
+                <div className="flex items-center justify-between text-xs text-slate-700 dark:text-slate-200 bg-white dark:bg-navy-800 p-3 rounded-xl border border-slate-200 dark:border-navy-700 shadow-card">
+                  <span>
+                    Community Reports: <strong>{matchState.crowdReports?.home || 0} Udaya</strong> vs <strong>{matchState.crowdReports?.away || 0} New Malaya</strong>
+                  </span>
+                  <span className="font-bold text-royal dark:text-sky">
+                    🛡️ Ground Desk Authority
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Rate limited to 1 report every 60s (Max 3/match). Referee score remains final authority.
-                </p>
               </div>
+            )}
 
-              {/* Rate limit status pill */}
-              <div className="flex items-center gap-2">
-                {rateLimit.isCooldownActive ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-100 text-amber-900 font-mono font-bold text-xs border border-amber-300">
-                    <Clock className="w-3.5 h-3.5 text-amber-700 animate-spin" />
-                    <span>Cooldown: {rateLimit.remainingSeconds}s</span>
-                  </span>
-                ) : rateLimit.isLimitReached ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-200 text-slate-700 font-bold text-xs">
-                    <span>Limit Reached (3/3)</span>
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-900 font-bold text-xs">
-                    <span>Ready ({rateLimit.reportsCount}/3 used)</span>
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* User Action Buttons (Rule 4: Minimum 44px tap targets) */}
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => handleCrowdGoal('home')}
-                disabled={rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'}
-                className={`min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-card active:scale-95 ${
-                  rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'
-                    ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
-                    : 'bg-sky-600 hover:bg-sky-700 text-white shadow-sm'
-                }`}
-              >
-                <span>⚽ Report Goal: UDAYA</span>
-                {rateLimit.isCooldownActive && <span className="text-[10px]">({rateLimit.remainingSeconds}s)</span>}
-              </button>
-
-              <button
-                onClick={() => handleCrowdGoal('away')}
-                disabled={rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'}
-                className={`min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-card active:scale-95 ${
-                  rateLimit.isCooldownActive || rateLimit.isLimitReached || matchState.isCrowdLocked || matchState.status === 'FULL_TIME'
-                    ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
-                    : 'bg-zinc-800 hover:bg-zinc-900 text-white shadow-sm'
-                }`}
-              >
-                <span>⚽ Report Goal: NEW MALAYA</span>
-                {rateLimit.isCooldownActive && <span className="text-[10px]">({rateLimit.remainingSeconds}s)</span>}
-              </button>
-            </div>
-
-            {/* Crowd Stats Counter Bar */}
-            <div className="flex items-center justify-between text-xs text-slate-600 bg-white dark:bg-slate-800 dark:text-slate-300 p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-card">
-              <span>
-                Community Reports: <strong>{matchState.crowdReports?.home || 0} Udaya</strong> vs <strong>{matchState.crowdReports?.away || 0} New Malaya</strong>
-              </span>
-              <span className="font-bold text-blue-700 dark:text-blue-400">
-                🛡️ Ground Desk Authority
-              </span>
-            </div>
-
-            {/* Dual Tab: Official Events vs Live Commentary Feed */}
-            <div className="pt-2 space-y-2">
-              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
-                <div className="flex items-center gap-1 bg-slate-200/80 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold">
+            {/* Dual Tab: Live Commentary Feed vs Referee Timeline */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-navy-700 pb-2">
+                <div className="flex items-center gap-1 bg-slate-200/80 dark:bg-navy-800 p-1 rounded-xl text-xs font-bold">
                   <button
                     onClick={() => setTimelineTab('commentary')}
                     className={`min-h-[44px] px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 active:scale-95 ${
-                      timelineTab === 'commentary' ? 'bg-blue-700 text-white shadow-card font-black' : 'text-slate-700 dark:text-slate-300 hover:text-blue-700'
+                      timelineTab === 'commentary' 
+                        ? 'bg-royal text-white shadow-card font-black' 
+                        : 'text-slate-700 dark:text-slate-200 hover:text-royal dark:hover:text-sky'
                     }`}
                   >
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -422,7 +587,9 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                   <button
                     onClick={() => setTimelineTab('timeline')}
                     className={`min-h-[44px] px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 active:scale-95 ${
-                      timelineTab === 'timeline' ? 'bg-blue-700 text-white shadow-card font-black' : 'text-slate-700 dark:text-slate-300 hover:text-blue-700'
+                      timelineTab === 'timeline' 
+                        ? 'bg-royal text-white shadow-card font-black' 
+                        : 'text-slate-700 dark:text-slate-200 hover:text-royal dark:hover:text-sky'
                     }`}
                   >
                     <span>{lang === 'ml' ? 'റഫറി ഇവന്റ്സ്' : 'Referee Timeline'}</span>
@@ -430,27 +597,38 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                 </div>
               </div>
 
-              {/* View 1: Ball-by-ball Text Commentary */}
+              {/* View 1: Auto-Generated Commentary Feed (Newest First) */}
               {timelineTab === 'commentary' && (
                 <div className="space-y-2 max-h-56 overflow-y-auto pr-1 animate-fadeIn">
-                  {[
-                    { min: "30'", type: "whistle", text: lang === 'ml' ? 'ഹാഫ് ടൈം വിസിൽ! ആദ്യ പകുതിയിൽ ഉദയ പറമ്പിൽ പീടിക 2 - 1 ന് മുന്നിൽ. ഗാലറിയിൽ ആവേശക്കടൽ.' : 'Half-time whistle! Udaya leads 2-1 after a breathless first half under the floodlights.' },
-                    { min: "26'", type: "card", text: lang === 'ml' ? '🟨 യെല്ലോ കാർഡ്: ന്യൂ മലയ മിഡ്ഫീൽഡർക്ക് കൗണ്ടർ തടഞ്ഞതിന് റഫറിയുടെ മുന്നറിയിപ്പ്.' : '🟨 Yellow Card: Tactical foul stopping a dangerous break.' },
-                    { min: "24'", type: "goal", text: lang === 'ml' ? '⚽ ഗോൾ!! ഷമീർ കെ. (ഉദയ). ഡി-ബോക്സിന് വെളിയിൽ നിന്നുള്ള ബുള്ളറ്റ് വോളി പോസ്റ്റിന്റെ ടോപ്പ് കോർണറിലേക്ക്!' : '⚽ GOAL!! Shameer K. (Udaya) with a screamer into the top corner!' },
-                    { min: "18'", type: "save", text: lang === 'ml' ? '🧤 മിന്നൽ സേവ്! ന്യൂ മലയ സ്ട്രൈക്കറുടെ ഹെഡർ ഉദയ ഗോൾകീപ്പർ ഷംസീർ പറന്നു തട്ടിയകറ്റി.' : '🧤 Sensational reflex save by Udaya keeper Shamseer to deny an equalizer!' },
-                    { min: "12'", type: "goal", text: lang === 'ml' ? '⚽ ഗോൾ!! ഇബ്രാഹിം സുമഹോറോ (ഉദയ). ഡിഫൻഡർമാരെ വെട്ടിച്ച് കിടിലൻ ചിപ്പ് ഫിനിഷ്.' : '⚽ GOAL!! Ibrahim Soumahoro (Udaya) chips the keeper with sublime composure.' },
-                    { min: "7'", type: "attack", text: lang === 'ml' ? 'ന്യൂ മലയയുടെ കൗണ്ടർ അറ്റാക്ക്! ഉദയ സെന്റർ ബാക്ക് ഫൈസൽ പന്ത് കൃത്യസമയത്ത് ക്ലിയർ ചെയ്തു.' : 'Dangerous counter-attack by New Malaya, snuffed out by Udaya defense.' },
-                    { min: "1'", type: "start", text: lang === 'ml' ? '🟢 പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയത്തിൽ ഫ്ലഡ്‌ലൈറ്റിന്റെ പ്രഭയിൽ ആവേശകരമായ ഉദ്ഘാടന മത്സരത്തിന് തുടക്കം!' : '🟢 Kickoff under floodlights at Peruvallur Panjayath Stadium!' }
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex items-start gap-2.5 p-2 rounded-xl bg-white border border-slate-100 shadow-2xs text-xs">
-                      <span className="font-sports font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md shrink-0 border border-blue-200">
-                        {item.min}
+                  {commentaryLines.length > 0 ? (
+                    commentaryLines.map((item, idx) => (
+                      <div 
+                        key={item.id || idx} 
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl bg-white dark:bg-navy-800/80 border border-slate-200 dark:border-navy-700 shadow-2xs text-xs"
+                      >
+                        <span className="font-sports font-black text-royal dark:text-sky bg-blue-50 dark:bg-blue-950/70 px-2 py-0.5 rounded-md shrink-0 border border-blue-200 dark:border-blue-800">
+                          {item.minute}
+                        </span>
+                        <div className="space-y-0.5 min-w-0 flex-1">
+                          <p className="text-slate-900 dark:text-white font-bold leading-relaxed">
+                            {item.mainLine}
+                          </p>
+                          {item.noteText && (
+                            <p className="text-[11px] text-slate-600 dark:text-slate-300 italic">
+                              "{item.noteText}"
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-6 px-4 rounded-xl bg-white dark:bg-navy-800/60 border border-dashed border-slate-300 dark:border-navy-700 text-xs text-slate-600 dark:text-slate-300">
+                      <Radio className="w-5 h-5 mx-auto mb-1.5 text-royal dark:text-sky opacity-80 animate-pulse" />
+                      <span className="font-bold">
+                        {lang === 'ml' ? 'കിക്ക്ഓഫോടെ ലൈവ് കമന്ററി ആരംഭിക്കും' : 'Commentary starts at kickoff'}
                       </span>
-                      <p className="text-slate-800 font-medium leading-relaxed">
-                        {item.text}
-                      </p>
                     </div>
-                  ))}
+                  )}
                 </div>
               )}
 
@@ -461,21 +639,23 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                     matchState.events.map((evt) => (
                       <div
                         key={evt.id}
-                        className="flex items-center justify-between text-xs py-2 px-3 rounded-xl bg-white border border-slate-200 shadow-xs"
+                        className="flex items-center justify-between text-xs py-2 px-3 rounded-xl bg-white dark:bg-navy-800/80 border border-slate-200 dark:border-navy-700 shadow-xs"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="font-black text-blue-800 font-sports">
+                          <span className="font-black text-royal dark:text-sky font-sports">
                             {evt.minute}'
                           </span>
                           <span>
                             {evt.type === 'goal' ? '⚽' : evt.type === 'yellow_card' ? '🟨' : evt.type === 'red_card' ? '🟥' : '🥅'}
                           </span>
-                          <span className="font-bold text-slate-900">
+                          <span className="font-bold text-slate-900 dark:text-white">
                             {evt.player}
                           </span>
-                          <span className="text-[11px] text-slate-500 hidden sm:inline">
-                            ({evt.text})
-                          </span>
+                          {evt.text && (
+                            <span className="text-[11px] text-slate-600 dark:text-slate-300 hidden sm:inline">
+                              ({evt.text})
+                            </span>
+                          )}
                         </div>
                         <div className="flex items-center gap-1.5 shrink-0">
                           {evt.type === 'goal' && (
@@ -494,21 +674,21 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                                   goalText: evt.text
                                 }
                               })}
-                              className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-200 transition active:scale-95"
+                              className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/70 dark:hover:bg-emerald-900 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold border border-emerald-200 dark:border-emerald-800 transition active:scale-95"
                               title="Share Goal Status to WhatsApp"
                             >
                               <Share2 className="w-3 h-3" />
                               <span>Share</span>
                             </button>
                           )}
-                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                          <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/70 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800">
                             Official
                           </span>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <div className="text-center py-4 text-xs text-slate-500">
+                    <div className="text-center py-4 text-xs text-slate-600 dark:text-slate-300">
                       No official referee events recorded yet.
                     </div>
                   )}

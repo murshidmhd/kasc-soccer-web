@@ -26,9 +26,10 @@ export const realOfficialMatchState = {
   isTimerRunning: false,
   timerStartedAt: null,
   status: 'UPCOMING',
-  isVerified: true,
+  isVerified: false,
+  scoreEnteredByDesk: false,
   lastUpdated: new Date().toISOString(),
-  updatedBy: 'Committee Ground Desk (Official)',
+  updatedBy: '',
   isCrowdLocked: true,
   crowdReports: {
     home: 0,
@@ -38,44 +39,30 @@ export const realOfficialMatchState = {
   events: []
 };
 
-// Demo Simulation Data (Accessible strictly via DEMO Mode toggle, OFF by default)
-export const demoOfficialMatchState = {
-  officialScoreHome: 2,
-  officialScoreAway: 1,
-  matchSeconds: 30 * 60 + 30, // 30:30 in 2nd Half
-  matchMinute: 31,
-  isTimerRunning: true,
-  timerStartedAt: Date.now(),
-  status: '2ND_HALF',
-  isVerified: true,
-  lastUpdated: new Date().toISOString(),
-  updatedBy: 'Demo Simulation Mode',
-  isCrowdLocked: false,
-  crowdReports: {
-    home: 18,
-    away: 9,
-    total: 27
-  },
-  events: [
-    { id: 'evt-1', minute: 12, team: 'home', player: 'Ibrahim Soumahoro', type: 'goal', text: 'Curler into top corner', isOfficial: true },
-    { id: 'evt-2', minute: 24, team: 'away', player: 'Jameel (New Malaya #6)', type: 'goal', text: 'Equalizer through penalty rebound', isOfficial: true },
-    { id: 'evt-3', minute: 30, team: 'home', player: 'Riyas K. (Captain)', type: 'goal', text: 'Header right before Half-Time whistle', isOfficial: true }
-  ]
-};
-
 export const DEMO_MODE_KEY = 'kasc_demo_mode_active';
 
+// Demo mode is available strictly in DEV builds or when ?demo=1 is present in non-production
 export function isDemoModeActive() {
+  if (!import.meta.env.DEV) {
+    return false;
+  }
   try {
-    return localStorage.getItem(DEMO_MODE_KEY) === 'true';
+    const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const hasDemoParam = urlParams?.get('demo') === '1';
+    return hasDemoParam || localStorage.getItem(DEMO_MODE_KEY) === 'true';
   } catch (e) {
     return false;
   }
 }
 
-export function setDemoModeActive(enabled) {
+// In production builds, demo toggling is impossible and does nothing
+export async function setDemoModeActive(enabled) {
+  if (!import.meta.env.DEV) {
+    return;
+  }
   try {
     if (enabled) {
+      const { demoOfficialMatchState } = await import('./demoMatchData.js');
       localStorage.setItem(DEMO_MODE_KEY, 'true');
       localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(demoOfficialMatchState));
       window.dispatchEvent(new CustomEvent('kasc_match_state_updated', { detail: demoOfficialMatchState }));
@@ -87,6 +74,17 @@ export function setDemoModeActive(enabled) {
     window.dispatchEvent(new CustomEvent('kasc_demo_mode_changed', { detail: Boolean(enabled) }));
   } catch (e) {
     console.error('Failed to toggle demo mode', e);
+  }
+}
+
+// Dynamic loader for development demo commentary
+export async function getDemoCommentaryIfDev() {
+  if (!import.meta.env.DEV) return [];
+  try {
+    const { sampleDemoCommentary } = await import('./demoMatchData.js');
+    return sampleDemoCommentary;
+  } catch (e) {
+    return [];
   }
 }
 
@@ -132,7 +130,7 @@ export function getStoredMatchState() {
   try {
     const raw = localStorage.getItem(MATCH_STORAGE_KEY);
     if (!raw) {
-      return isDemoModeActive() ? demoOfficialMatchState : realOfficialMatchState;
+      return realOfficialMatchState;
     }
     const parsed = JSON.parse(raw);
     if (!isDemoModeActive() && (parsed.updatedBy === 'Demo Simulation Mode' || (parsed.status === '2ND_HALF' && parsed.officialScoreHome === 2 && parsed.officialScoreAway === 1))) {
@@ -267,6 +265,7 @@ export function saveOfficialMatchState(newState, skipHistory = false) {
     const updated = {
       ...newState,
       isVerified: true,
+      scoreEnteredByDesk: true,
       lastUpdated: new Date().toISOString()
     };
     localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(updated));
