@@ -19,7 +19,7 @@ import SponsorAdsSidebar from './components/SponsorAdsSidebar';
 import PromoEventsSection from './components/PromoEventsSection';
 import ClubFanVoteSection from './components/ClubFanVoteSection';
 import ClubFanVoteCard from './components/ClubFanVoteCard';
-import TournamentFeatureHub from './components/TournamentFeatureHub';
+import QuickActionRow from './components/QuickActionRow';
 import StartingSevenPitch from './components/StartingSevenPitch';
 import VipMatchPassModal from './components/VipMatchPassModal';
 import AdminScoreModal from './components/AdminScoreModal';
@@ -35,6 +35,8 @@ import { fixtures } from './data/tournamentData';
 const SevensPenaltyGame = React.lazy(() => import('./components/SevensPenaltyGame'));
 // Lazy-load Squad Spotlight video showcase (Rule 12: does not delay live score or fixtures)
 const SquadSpotlightSection = React.lazy(() => import('./components/SquadSpotlightSection'));
+// Lazy-load First-Visit Welcome Bottom Sheet (Rule 9: performance optimized)
+const WelcomeBottomSheet = React.lazy(() => import('./components/WelcomeBottomSheet'));
 
 // Global React Error Boundary to prevent blank page on connection failures
 class GlobalErrorBoundary extends React.Component {
@@ -113,7 +115,7 @@ export default function App() {
 
   // Sync with URL hash or path if provided
   useEffect(() => {
-    const validTabs = ['live', 'vote', 'fixtures', 'teams', 'stats', 'promo', 'venue', 'admin'];
+    const validTabs = ['live', 'vote', 'fixtures', 'teams', 'stats', 'promo', 'venue', 'admin', 'desk-s7'];
     const hash = window.location.hash.replace('#', '');
     const path = window.location.pathname.replace(/^\//, '');
 
@@ -176,6 +178,7 @@ export default function App() {
         isDarkMode={isDarkMode}
         setIsDarkMode={setIsDarkMode}
         onOpenTicketModal={() => setIsTicketModalOpen(true)}
+        onOpenPassModal={() => setIsVipPassModalOpen(true)}
       />
 
       {/* Main Content Rendered by Page/Tab Wrapped in Error Boundary */}
@@ -203,7 +206,14 @@ export default function App() {
                   onNavigateTab={handleTabChange}
                 />
 
-                {/* 2. Today's & Upcoming Fixtures (Rule 1 & Rule 2: White cards, Gold next match accent) */}
+                {/* 2. Quick Action Row (Change 3: 4 equal buttons replacing feature hub) */}
+                <QuickActionRow
+                  lang={lang}
+                  isDarkMode={isDarkMode}
+                  onNavigate={handleTabChange}
+                />
+
+                {/* 3. Today's & Upcoming Fixtures (Rule 1 & Rule 2: White cards, Gold next match accent) */}
                 <section className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-surface-border dark:border-navy-700">
                     <div className="flex items-center gap-2.5">
@@ -483,16 +493,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Tournament Feature Hub: Quick Access to Voting, Pass, Tickets */}
-                <TournamentFeatureHub
-                  lang={lang}
-                  isDarkMode={isDarkMode}
-                  onOpenVote={() => handleTabChange('vote')}
-                  onOpenPassModal={() => setIsVipPassModalOpen(true)}
-                  onOpenTicketModal={() => setIsTicketModalOpen(true)}
-                  onOpenDemo={() => setIsScorerDemoOpen(true)}
-                />
-
                 {/* Marathon Section (Moved to the bottom of the page) */}
                 <div id="marathon-section" className="pt-6 border-t border-slate-200 dark:border-slate-800">
                   <PromoEventsSection 
@@ -564,8 +564,8 @@ export default function App() {
             </div>
           )}
 
-          {/* Page 8: OFFICIAL MATCH SCORER & ADMIN DESK */}
-          {activeTab === 'admin' && (
+          {/* Page 8: OFFICIAL MATCH SCORER & ADMIN DESK (Private Route: #desk-s7) */}
+          {(activeTab === 'admin' || activeTab === 'desk-s7') && (
             <div className="animate-fadeIn pt-4 max-w-5xl mx-auto px-3 sm:px-6">
               <AdminDeskSection 
                 lang={lang} 
@@ -628,6 +628,18 @@ export default function App() {
         onClose={() => setIsVipPassModalOpen(false)}
         lang={lang}
       />
+
+      {/* First-Visit Welcome Bottom Sheet (Lazy-Loaded) */}
+      <React.Suspense fallback={null}>
+        <WelcomeBottomSheet
+          lang={lang}
+          setLang={setLang}
+          isDarkMode={isDarkMode}
+          setIsDarkMode={setIsDarkMode}
+          isLiveMatch={false}
+          isOtherModalOpen={isAdminModalOpen || isScorerDemoOpen || isTicketModalOpen || isVipPassModalOpen}
+        />
+      </React.Suspense>
     </div>
   );
 }

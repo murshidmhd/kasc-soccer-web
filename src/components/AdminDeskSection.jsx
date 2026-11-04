@@ -169,7 +169,7 @@ export default function AdminDeskSection({
       setNotification(`Authenticated: ${verification.label}`);
       setTimeout(() => setNotification(''), 3000);
     } else {
-      setPinError('Invalid Committee PIN. Primary Scorer: 7012 | Backup Scorer: 2026');
+      setPinError('Invalid Committee PIN. Please enter an authorized scorer PIN.');
     }
   };
 
@@ -182,7 +182,7 @@ export default function AdminDeskSection({
   // Switch between Primary and Standby Scorer
   const handleScorerHandover = (targetRole) => {
     const newRole = targetRole || (activeScorer.role === 'PRIMARY' ? 'BACKUP' : 'PRIMARY');
-    const label = newRole === 'PRIMARY' ? 'Primary Ground Scorer (7012)' : 'Standby Backup Scorer (2026)';
+    const label = newRole === 'PRIMARY' ? 'Primary Ground Scorer' : 'Standby Backup Scorer';
     const info = { role: newRole, label, pinUsed: newRole === 'PRIMARY' ? DEFAULT_ADMIN_PIN : BACKUP_ADMIN_PIN };
     setActiveScorerInfo(info);
     setActiveScorer(info);
@@ -572,7 +572,7 @@ export default function AdminDeskSection({
                   Official Match Scorer & Admin Desk
                 </h2>
                 <span className="px-2 py-0.5 rounded-full bg-red-600 text-[10px] font-black uppercase shrink-0">
-                  {activeScorer.role === 'PRIMARY' ? 'PIN 7012' : 'PIN 2026 (BACKUP)'}
+                  {activeScorer.role === 'PRIMARY' ? 'Primary Scorer' : 'Backup Scorer'}
                 </span>
               </div>
               <p className="text-xs text-blue-200 mt-0.5">
@@ -633,7 +633,7 @@ export default function AdminDeskSection({
                   maxLength={6}
                   value={pinInput}
                   onChange={(e) => setPinInput(e.target.value)}
-                  placeholder="PIN: 7012 (Primary) or 2026 (Backup)"
+                  placeholder="Enter Scorer PIN"
                   className={`w-full p-3.5 text-center text-xl font-mono tracking-widest rounded-2xl border font-bold shadow-xs ${
                     isDarkMode ? 'bg-slate-950 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                   }`}
@@ -653,24 +653,6 @@ export default function AdminDeskSection({
                   Unlock Admin Control Panel
                 </button>
               </form>
-
-              <div className="pt-2 flex items-center justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => { setPinInput('7012'); }}
-                  className="text-xs text-blue-600 hover:text-blue-700 hover:underline font-bold"
-                >
-                  Fill Primary PIN (7012)
-                </button>
-                <span className="text-slate-300">•</span>
-                <button
-                  type="button"
-                  onClick={() => { setPinInput('2026'); }}
-                  className="text-xs text-purple-600 hover:text-purple-700 hover:underline font-bold"
-                >
-                  Fill Standby PIN (2026)
-                </button>
-              </div>
             </div>
           ) : (
             /* SCREEN 2: MAIN ADMIN CONTROLLER */

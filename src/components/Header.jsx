@@ -1,21 +1,52 @@
-import React, { useState } from 'react';
-import { Share2, Moon, Sun, Ticket, ChevronDown, Award, Users, MapPin } from 'lucide-react';
-import logoKerala from '../assets/logo_kerala.png';
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Share2, 
+  Moon, 
+  Sun, 
+  Ticket, 
+  ChevronDown, 
+  Award, 
+  Users, 
+  MapPin, 
+  Sparkles, 
+  Gamepad2, 
+  Flame,
+  X,
+  MoreHorizontal
+} from 'lucide-react';
 import logoKasc from '../assets/logo_kasc.png';
-import logoSfa from '../assets/logo_sfa.png';
 import logoUdaya from '../assets/logo_udaya_transparent.png';
 import { tournamentInfo } from '../data/tournamentData';
+import { SITE_URL, SHOW_UNFINISHED } from '../config/siteConfig';
 
 export default function Header({ 
   activeTab, 
   setActiveTab, 
   onOpenTicketModal,
+  onOpenPassModal,
   lang, 
   setLang, 
   isDarkMode, 
   setIsDarkMode 
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  // Close menu on click outside
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isMenuOpen]);
 
   const shareOnWhatsApp = () => {
     const text = encodeURIComponent(
@@ -23,9 +54,9 @@ export default function Header({
       `📅 2026 Nov 06 - Dec 06\n` +
       `📍 Peruvallur Panjayath Stadium, Parambil Peedika\n` +
       `🔥 Opening Match: UDAYA Parambil Peedika vs NEW MALAYA MALABAR FC\n` +
-      `Follow live scores & fixtures here: ${window.location.origin}/?v=3`
+      `Follow live scores & fixtures here: ${SITE_URL}`
     );
-    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank', 'noopener,noreferrer');
   };
 
   // Top nav strictly reduced to: Live, Fixtures, Teams, Stats
@@ -36,16 +67,80 @@ export default function Header({
     { id: 'stats', label: lang === 'ml' ? 'സ്റ്റാറ്റ്സ്' : 'Stats' }
   ];
 
-  // Menu items for the rest
-  const menuLinks = [
-    { id: 'vote', label: lang === 'ml' ? 'ഫാൻ വോട്ട്' : 'Fan Vote', icon: Users },
-    { id: 'promo', label: lang === 'ml' ? 'മാരത്തോൺ' : 'Marathon', icon: Award },
-    { id: 'venue', label: lang === 'ml' ? 'സ്റ്റേഡിയം' : 'Venue', icon: MapPin }
+  // More menu features (Rule 4: List every feature only reachable from hub, no SFA/official badges)
+  const moreMenuFeatures = [
+    {
+      id: 'vote',
+      label: lang === 'ml' ? '24 ക്ലബ് ഫാൻ വോട്ട്' : 'Fan Vote Battle',
+      icon: Users,
+      action: () => {
+        setActiveTab('vote');
+        window.location.hash = 'vote';
+        setIsMenuOpen(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    },
+    {
+      id: 'pass',
+      label: lang === 'ml' ? 'വി.ഐ.പി ഫാൻ പാസ്സ്' : 'VIP Fan Pass',
+      icon: Sparkles,
+      action: () => {
+        setIsMenuOpen(false);
+        if (onOpenPassModal) onOpenPassModal();
+      }
+    },
+    {
+      id: 'game',
+      label: lang === 'ml' ? 'പെനാൽറ്റി ഷൂട്ടൗട്ട് ഗെയിം' : 'Penalty Shootout Game',
+      icon: Gamepad2,
+      action: () => {
+        setActiveTab('live');
+        window.location.hash = 'game';
+        setIsMenuOpen(false);
+        setTimeout(() => {
+          const el = document.getElementById('penalty-game');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
+      }
+    },
+    {
+      id: 'promo',
+      label: lang === 'ml' ? 'മാരത്തോൺ ഫോട്ടോ ഗാലറി' : 'Marathon & Media',
+      icon: Award,
+      action: () => {
+        setActiveTab('promo');
+        window.location.hash = 'promo';
+        setIsMenuOpen(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    },
+    {
+      id: 'venue',
+      label: lang === 'ml' ? 'സ്റ്റേഡിയം GPS & വിവരങ്ങൾ' : 'Stadium Venue & GPS',
+      icon: MapPin,
+      action: () => {
+        setActiveTab('venue');
+        window.location.hash = 'venue';
+        setIsMenuOpen(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    },
+    ...(SHOW_UNFINISHED ? [
+      {
+        id: 'tickets',
+        label: lang === 'ml' ? 'ടിക്കറ്റ് നിരക്കുകൾ' : 'Ticket Tiers',
+        icon: Ticket,
+        action: () => {
+          setIsMenuOpen(false);
+          if (onOpenTicketModal) onOpenTicketModal();
+        }
+      }
+    ] : [])
   ];
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-navy-700 surface-navy text-white pt-safe transition-colors">
-      {/* Top Malayalam ticker banner (Rule 8: ONE line on phones with truncation) */}
+      {/* Top Malayalam ticker banner */}
       <div className="surface-navy-card border-b border-navy-700/60 py-1 px-3 text-center text-[11px] sm:text-xs font-semibold text-white flex items-center justify-center gap-1.5 overflow-hidden">
         <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
         <span className="font-malayalam tracking-wide truncate max-w-full text-center">
@@ -56,19 +151,23 @@ export default function Header({
       <div className="max-w-7xl mx-auto px-2 sm:px-6 py-2 flex items-center justify-between gap-1.5 sm:gap-4 w-full">
         {/* Logos & Brand Title */}
         <div 
-          onClick={() => { setActiveTab('live'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          onClick={() => { setActiveTab('live'); window.location.hash = 'live'; window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           className="flex items-center gap-1.5 sm:gap-2.5 cursor-pointer select-none min-w-0"
         >
           <div className="flex items-center -space-x-1 sm:space-x-1 shrink-0">
             <img 
               src={logoUdaya} 
               alt="Udaya Parambil Peedika" 
+              width={36}
+              height={36}
               className="w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-amber-400 bg-white p-0.5 object-contain shadow-xs shrink-0" 
               title="Udaya Parambil Peedika"
             />
             <img 
               src={logoKasc} 
               alt="KASC Peruvallur" 
+              width={36}
+              height={36}
               className="w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-sky bg-white p-0.5 object-contain shadow-xs shrink-0" 
               title="KASC Peruvallur"
             />
@@ -89,14 +188,14 @@ export default function Header({
           </div>
         </div>
 
-        {/* Top Nav: Live, Fixtures, Teams, Stats + Menu Button */}
+        {/* Desktop Top Nav: Live, Fixtures, Teams, Stats + Desktop More Button */}
         <nav className="hidden lg:flex items-center gap-1 shrink-0">
           {mainNavLinks.map((link) => {
             const isActive = activeTab === link.id;
             return (
               <button
                 key={link.id}
-                onClick={() => { setActiveTab(link.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                onClick={() => { setActiveTab(link.id); window.location.hash = link.id; window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition active:scale-95 ${
                   isActive
                     ? 'btn-royal text-white shadow-xs'
@@ -108,34 +207,35 @@ export default function Header({
             );
           })}
 
-          {/* Menu Button for the rest */}
-          <div className="relative">
+          {/* Desktop "More" Menu Dropdown */}
+          <div className="relative" ref={menuRef}>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition text-navy-muted hover:text-white hover:bg-navy-800"
+              aria-expanded={isMenuOpen}
+              aria-label="More Features Menu"
             >
-              <span>{lang === 'ml' ? 'മെനു' : 'Menu'}</span>
+              <span>{lang === 'ml' ? 'കൂടുതൽ' : 'More'}</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {isMenuOpen && (
               <div 
-                className="absolute right-0 mt-2 w-48 rounded-2xl border border-navy-700 bg-navy-900 text-white shadow-xl py-1.5 z-50"
+                className="absolute right-0 mt-2 w-56 rounded-2xl border border-navy-700 bg-navy-900 text-white shadow-2xl py-2 z-50 animate-fadeIn"
               >
-                {menuLinks.map((item) => {
+                <div className="px-3 py-1 text-[10px] font-sports font-black tracking-widest uppercase text-navy-muted border-b border-navy-800 mb-1">
+                  {lang === 'ml' ? 'ഫീച്ചറുകൾ' : 'FEATURES'}
+                </div>
+                {moreMenuFeatures.map((item) => {
                   const Icon = item.icon;
                   return (
                     <button
                       key={item.id}
-                      onClick={() => {
-                        setActiveTab(item.id);
-                        setIsMenuOpen(false);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                      className="w-full px-3.5 py-2 text-left text-xs font-bold flex items-center gap-2.5 hover:bg-navy-800 text-navy-muted hover:text-white transition"
+                      onClick={item.action}
+                      className="w-full px-3.5 py-2.5 text-left text-xs font-bold flex items-center gap-2.5 hover:bg-navy-800 text-navy-muted hover:text-white transition"
                     >
-                      <Icon className="w-4 h-4 text-sky" />
-                      <span>{item.label}</span>
+                      <Icon className="w-4 h-4 text-sky shrink-0" />
+                      <span className="truncate">{item.label}</span>
                     </button>
                   );
                 })}
@@ -144,8 +244,51 @@ export default function Header({
           </div>
         </nav>
 
-        {/* Right Action buttons (Rule 7: No overflow at 360-390px, Share button never clipped) */}
+        {/* Right Action Buttons */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+          {/* Mobile "More" Menu Trigger (Rule 4) */}
+          <div className="relative lg:hidden">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl border border-navy-700 bg-navy-800 text-gold hover:text-white transition flex items-center justify-center active:scale-95 shrink-0"
+              title="More Features"
+              aria-label="More Features"
+            >
+              <MoreHorizontal className="w-4 h-4" />
+            </button>
+
+            {isMenuOpen && (
+              <div 
+                className="absolute right-0 mt-2 w-64 rounded-2xl border border-navy-700 bg-navy-900 text-white shadow-2xl py-2 z-50 animate-fadeIn"
+              >
+                <div className="flex items-center justify-between px-3.5 py-1.5 border-b border-navy-800 mb-1">
+                  <span className="text-[10px] font-sports font-black tracking-widest uppercase text-gold">
+                    {lang === 'ml' ? 'കൂടുതൽ ഫീച്ചറുകൾ' : 'MORE FEATURES'}
+                  </span>
+                  <button 
+                    onClick={() => setIsMenuOpen(false)}
+                    className="p-1 text-navy-muted hover:text-white"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+                {moreMenuFeatures.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={item.action}
+                      className="w-full px-3.5 py-2.5 text-left text-xs font-bold flex items-center gap-2.5 hover:bg-navy-800 text-navy-muted hover:text-white transition"
+                    >
+                      <Icon className="w-4 h-4 text-sky shrink-0" />
+                      <span className="truncate">{item.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
           {/* Theme Toggle (Light / Dark) */}
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
@@ -165,7 +308,7 @@ export default function Header({
             {lang === 'ml' ? 'EN' : 'മല'}
           </button>
 
-          {/* Ticket Rates Modal trigger (Rule 5: Gold with navy text, prevent awkward wrapping) */}
+          {/* Ticket Rates Modal trigger */}
           <button
             onClick={onOpenTicketModal}
             className="h-8 sm:h-10 w-8 sm:w-auto px-0 sm:px-3 rounded-xl btn-gold font-black text-xs transition flex items-center justify-center gap-1 active:scale-95 shrink-0 whitespace-nowrap shadow-xs"

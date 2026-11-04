@@ -241,10 +241,10 @@ export function verifyAdminPin(pin) {
 export function getActiveScorerInfo() {
   try {
     const raw = localStorage.getItem(SCORER_ROLE_KEY);
-    if (!raw) return { role: 'PRIMARY', label: 'Primary Ground Scorer (7012)' };
+    if (!raw) return { role: 'PRIMARY', label: 'Primary Ground Scorer' };
     return JSON.parse(raw);
   } catch (e) {
-    return { role: 'PRIMARY', label: 'Primary Ground Scorer (7012)' };
+    return { role: 'PRIMARY', label: 'Primary Ground Scorer' };
   }
 }
 
