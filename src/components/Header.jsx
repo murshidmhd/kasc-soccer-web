@@ -18,7 +18,7 @@ import {
   Star,
   Target
 } from 'lucide-react';
-import { tournamentInfo } from '../data/tournamentData';
+import { tournamentInfo, openingMatch } from '../data/tournamentData';
 import { SITE_URL, SHOW_UNFINISHED, SHOW_LOCAL_ONLY_FEATURES, ORGANISERS } from '../config/siteConfig';
 
 export default function Header({ 
@@ -60,7 +60,7 @@ export default function Header({
       `🏆 ${orgLine}\n` +
       `📅 2026 Nov 06 - Dec 06\n` +
       `📍 Peruvallur Panjayath Stadium, Parambil Peedika\n` +
-      `🔥 Opening Match: UDAYA Parambil Peedika vs NEW MALAYA MALABAR FC\n` +
+      `🔥 Opening Match: ${openingMatch.teamHome.name} vs ${openingMatch.teamAway.name}\n` +
       `Follow live scores & fixtures here: ${shareUrl}`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank', 'noopener,noreferrer');

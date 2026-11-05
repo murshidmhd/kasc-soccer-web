@@ -51,6 +51,10 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
   }, []);
 
   const isLive = matchState && matchState.status !== 'UPCOMING';
+  const isUdayaMatch = Boolean(
+    openingMatch.teamHome?.name?.toUpperCase().includes('UDAYA') || 
+    openingMatch.teamAway?.name?.toUpperCase().includes('UDAYA')
+  );
 
   return (
     <section className="pt-6 pb-6 px-3 sm:px-6 border-b border-navy-700 surface-navy text-white transition-colors">
@@ -69,8 +73,8 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
           </p>
         </div>
 
-        {/* Next / Live Match Card (Task 3, Rule 11: purple left border & chip for Udaya match) */}
-        <div className={`w-full max-w-2xl mx-auto rounded-3xl p-5 sm:p-7 border-2 border-gold border-l-4 border-l-purple-500 ring-1 ring-gold/40 surface-navy-card text-white shadow-card relative overflow-hidden transition-all ${
+        {/* Next / Live Match Card */}
+        <div className={`w-full max-w-2xl mx-auto rounded-3xl p-5 sm:p-7 border-2 border-gold ${isUdayaMatch ? 'border-l-4 border-l-purple-500' : ''} ring-1 ring-gold/40 surface-navy-card text-white shadow-card relative overflow-hidden transition-all ${
           isLive ? 'ring-2 ring-gold' : ''
         }`}>
           {/* Card Header: Gold highlight for next match / LIVE */}
@@ -80,9 +84,11 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                 {isLive && <span className="w-2 h-2 rounded-full bg-navy-900 animate-ping"></span>}
                 <span>{isLive ? 'LIVE' : (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം' : 'Opening match')}</span>
               </span>
-              <span className="px-2 py-0.5 rounded-md bg-purple-700 text-white text-[10px] font-black uppercase tracking-wider">
-                UDAYA
-              </span>
+              {isUdayaMatch && (
+                <span className="px-2 py-0.5 rounded-md bg-purple-700 text-white text-[10px] font-black uppercase tracking-wider">
+                  UDAYA
+                </span>
+              )}
             </div>
 
             <div className="text-[11px] sm:text-xs font-bold font-mono text-navy-muted shrink-0">

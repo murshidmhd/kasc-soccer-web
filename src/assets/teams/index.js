@@ -82,6 +82,10 @@ export const teamNameToSlug = {
   // Base Perumbavur
   'BASE PERUMBAVUR': 'base_perumbavur',
   'Base Perumbavur': 'base_perumbavur',
+  'BASE PERUMBAVUR FOOTBALL CLUB': 'base_perumbavur',
+  'Base Perumbavur Football Club': 'base_perumbavur',
+  'BASE PERUMBAVOOR': 'base_perumbavur',
+  'Base Perumbavoor': 'base_perumbavur',
   'ബേസ് പെരുമ്പാവൂർ': 'base_perumbavur',
 
   // KMG Mavoor
@@ -167,6 +171,8 @@ export const teamNameToSlug = {
   // KRSC Kozhikkode
   'KRSC KOZHIKKODE': 'krsc_kozhikkode',
   'KRSC Kozhikkode': 'krsc_kozhikkode',
+  'KRSC KOZHIKODE': 'krsc_kozhikkode',
+  'KRSC Kozhikode': 'krsc_kozhikkode',
   'കെ.ആർ.എസ്.സി കോഴിക്കോട്': 'krsc_kozhikkode',
 
   // Hunters Koothuparamba
