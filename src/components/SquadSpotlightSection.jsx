@@ -11,7 +11,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { squadPlayers, squadClubs } from '../data/squad';
+import { squadPlayers, squadClubs, squadClubLabelsMl } from '../data/squad';
 import TeamLogo from './TeamLogo';
 
 export default function SquadSpotlightSection({ lang, isDarkMode }) {
@@ -365,7 +365,7 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
                   : 'surface-card text-card-title border border-surface-border dark:border-navy-700'
               }`}
             >
-              <span>{club === 'All' ? (lang === 'ml' ? 'എല്ലാ ക്ലബ്ബുകളും' : 'All Clubs') : club}</span>
+              <span>{club === 'All' ? (lang === 'ml' ? 'എല്ലാ ക്ലബ്ബുകളും' : 'All Clubs') : (lang === 'ml' ? (squadClubLabelsMl[club] || club) : club)}</span>
             </button>
           );
         })}

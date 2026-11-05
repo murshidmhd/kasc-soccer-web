@@ -51,7 +51,7 @@ export default function Header({
   }, [isDesktopMenuOpen]);
 
   const shareOnWhatsApp = () => {
-    const shareUrl = `${SITE_URL}?v=udaya7`;
+    const shareUrl = `${SITE_URL}?v=udaya_s7`;
     const orgLine = lang === 'ml'
       ? `${ORGANISERS.primary.nameMl} & ${ORGANISERS.coOrganiser.nameMl}`
       : `${ORGANISERS.primary.name} & ${ORGANISERS.coOrganiser.name}`;

@@ -178,13 +178,15 @@ export default function WelcomeBottomSheet({
     ? `⚽ അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ ടൂർണ്ണമെന്റ് Season 7 • ${orgLine} • പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം\nലൈവ് സ്കോറുകളും ഫിക്സ്ചറുകളും കാണാൻ സന്ദർശിക്കുക:`
     : `⚽ Akhilenthya Sevens Football Tournament Season 7 • ${orgLine} • Peruvallur Panjayath Stadium\nFollow live scores & fixtures:`;
 
+  const shareTargetUrl = `${SITE_URL}?v=udaya_s7`;
+
   const handleShare = async () => {
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
         await navigator.share({
           title: 'Akhilenthya Sevens S7',
           text: shareMessage,
-          url: SITE_URL
+          url: shareTargetUrl
         });
         return;
       } catch (err) {
@@ -198,13 +200,13 @@ export default function WelcomeBottomSheet({
   };
 
   const openWhatsApp = () => {
-    const text = encodeURIComponent(`${shareMessage} ${SITE_URL}`);
+    const text = encodeURIComponent(`${shareMessage} ${shareTargetUrl}`);
     window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener,noreferrer');
   };
 
   const handleCopy = () => {
     if (navigator?.clipboard?.writeText) {
-      navigator.clipboard.writeText(SITE_URL).then(() => {
+      navigator.clipboard.writeText(shareTargetUrl).then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       });

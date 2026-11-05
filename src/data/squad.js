@@ -12,7 +12,78 @@
  */
 
 export const squadPlayers = [
-  // Udaya Parambil Peedika (Host Team - Starting Spotlight)
+  // Base Perumbavur Official Squad Videos (Match 1 Stars - Usman Front & Spotlight)
+  {
+    id: 'base_1',
+    name: 'Usman K. P.',
+    nameMl: 'ഉസ്മാൻ കെ. പി.',
+    number: '10',
+    club: 'BASE PERUMBAVUR',
+    clubMl: 'ബേസ് പെരുമ്പാവൂർ',
+    position: 'Forward / സ്ട്രൈക്കർ',
+    posterUrl: '/squad/posters/base_1.webp',
+    videoUrl: '/squad/videos/base_1.mp4',
+    devFallbackUrl: '/squad/videos/base_1.mp4',
+    fileSize: '834 KB',
+    isAiGenerated: false,
+  },
+  {
+    id: 'base_2',
+    name: 'Bilal',
+    nameMl: 'ബിലാൽ',
+    number: '7',
+    club: 'BASE PERUMBAVUR',
+    clubMl: 'ബേസ് പെരുമ്പാവൂർ',
+    position: 'Winger / വിങ്ങർ',
+    posterUrl: '/squad/posters/base_2.webp',
+    videoUrl: '/squad/videos/base_2.mp4',
+    devFallbackUrl: '/squad/videos/base_2.mp4',
+    fileSize: '949 KB',
+    isAiGenerated: false,
+  },
+  {
+    id: 'base_3',
+    name: 'Shibil',
+    nameMl: 'ഷിബിൽ',
+    number: '4',
+    club: 'BASE PERUMBAVUR',
+    clubMl: 'ബേസ് പെരുമ്പാവൂർ',
+    position: 'Defender / പ്രതിരോധ താരം',
+    posterUrl: '/squad/posters/base_3.webp',
+    videoUrl: '/squad/videos/base_3.mp4',
+    devFallbackUrl: '/squad/videos/base_3.mp4',
+    fileSize: '1.2 MB',
+    isAiGenerated: false,
+  },
+  {
+    id: 'base_4',
+    name: 'Ajmal',
+    nameMl: 'അജ്മൽ',
+    number: '11',
+    club: 'BASE PERUMBAVUR',
+    clubMl: 'ബേസ് പെരുമ്പാവൂർ',
+    position: 'Midfielder / മിഡ്ഫീൽഡർ',
+    posterUrl: '/squad/posters/base_4.webp',
+    videoUrl: '/squad/videos/base_4.mp4',
+    devFallbackUrl: '/squad/videos/base_4.mp4',
+    fileSize: '979 KB',
+    isAiGenerated: false,
+  },
+  {
+    id: 'base_5',
+    name: 'Musthu',
+    nameMl: 'മുസ്തു',
+    number: '9',
+    club: 'BASE PERUMBAVUR',
+    clubMl: 'ബേസ് പെരുമ്പാവൂർ',
+    position: 'Striker / ഫോർവേഡ്',
+    posterUrl: '/squad/posters/base_5.webp',
+    videoUrl: '/squad/videos/base_5.mp4',
+    devFallbackUrl: '/squad/videos/base_5.mp4',
+    fileSize: '969 KB',
+    isAiGenerated: false,
+  },
+  // Udaya Parambil Peedika (Host Team)
   {
     id: 'p1',
     name: 'Shameer K.',
@@ -243,6 +314,7 @@ export const squadPlayers = [
 
 export const squadClubs = [
   'All',
+  'BASE PERUMBAVUR',
   'UDAYA Parambil Peedika',
   'SUPER STUDIO MALAPPURAM',
   'LINSHA MEDICALS MANNARKKAD',
@@ -250,8 +322,18 @@ export const squadClubs = [
   'FIFA Manjeri'
 ];
 
+export const squadClubLabelsMl = {
+  'BASE PERUMBAVUR': 'ബേസ് പെരുമ്പാവൂർ',
+  'UDAYA Parambil Peedika': 'ഉദയ പറമ്പിൽ പീടിക',
+  'SUPER STUDIO MALAPPURAM': 'സൂപ്പർ സ്റ്റുഡിയോ മലപ്പുറം',
+  'LINSHA MEDICALS MANNARKKAD': 'ലിൻഷാ മെഡിക്കൽസ്',
+  'NEW MALAYA MALABAR FC': 'ന്യൂ മലയ മലബാർ',
+  'FIFA Manjeri': 'ഫിഫ മഞ്ചേരി'
+};
+
 // Official Squad Confirmation Status per Club (Rule 9f)
 export const clubSquadStatus = {
+  'BASE PERUMBAVUR': 'confirmed',
   'UDAYA Parambil Peedika': 'confirmed',
   'SUPER STUDIO MALAPPURAM': 'confirmed',
   'LINSHA MEDICALS MANNARKKAD': 'confirmed',
