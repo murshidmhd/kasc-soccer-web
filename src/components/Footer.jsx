@@ -58,9 +58,8 @@ export default function Footer({ lang, isDarkMode, setActiveTab }) {
   const tapTimerRef = useRef(null);
 
   const handleCopyrightTap = () => {
-    // Only active when shortcut enabled AND admin desk is enabled in this build
-    // (if desk is disabled in production, shortcut does nothing per Task 2 Rule 10)
-    if (!ADMIN_SHORTCUT_ENABLED || !import.meta.env.DEV) {
+    // Only active when shortcut enabled
+    if (!ADMIN_SHORTCUT_ENABLED) {
       return;
     }
 

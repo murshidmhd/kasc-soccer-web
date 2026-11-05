@@ -120,7 +120,7 @@ export default function App() {
   useEffect(() => {
     const validTabs = [
       'live', 'fixtures', 'teams', 'stats', 'promo', 'venue', 'game', 'vote',
-      ...(import.meta.env.DEV ? ['admin', 'desk-s7'] : [])
+      'admin', 'desk-s7'
     ];
     const hash = window.location.hash.replace('#', '');
     const path = window.location.pathname.replace(/^\//, '');
@@ -140,8 +140,6 @@ export default function App() {
       setActiveTab(hash);
     } else if (validTabs.includes(path)) {
       setActiveTab(path);
-    } else if (hash === 'admin' || hash === 'desk-s7') {
-      setActiveTab('live');
     }
 
     const handleHashChange = () => {
@@ -753,43 +751,17 @@ export default function App() {
             </div>
           )}
 
-          {/* Page 8: OFFICIAL MATCH SCORER & ADMIN DESK (Private Route: #desk-s7) */}
+          {/* Page 8: OFFICIAL MATCH SCORER & ADMIN DESK (Private Route: #desk-s7 / #admin) */}
           {(activeTab === 'admin' || activeTab === 'desk-s7') && (
-            import.meta.env.DEV ? (
-              <div className="animate-fadeIn pt-4 max-w-5xl mx-auto px-3 sm:px-6">
-                <React.Suspense fallback={<div className="p-8 text-center text-xs text-navy-muted">Loading Scorer Desk...</div>}>
-                  <AdminDeskSection 
-                    lang={lang} 
-                    isDarkMode={isDarkMode} 
-                    onBackToLive={() => handleTabChange('live')}
-                  />
-                </React.Suspense>
-              </div>
-            ) : (
-              <div className="animate-fadeIn py-16 text-center max-w-md mx-auto px-4 space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-navy-800 text-gold flex items-center justify-center mx-auto shadow-xs">
-                  <Trophy className="w-6 h-6 text-gold" />
-                </div>
-                <h3 className="text-lg font-bold text-navy-900 dark:text-white">
-                  {lang === 'ml' ? 'സ്കോറർ ഡെസ്ക് ലഭ്യമല്ല' : 'Scorer Desk Disabled in Production'}
-                </h3>
-                <p className="text-xs text-navy-muted">
-                  {lang === 'ml'
-                    ? 'ലൈവ് സ്കോറുകൾ ഞങ്ങളുടെ വാട്ട്‌സ്ആപ്പ് ചാനൽ വഴി അപ്‌ഡേറ്റ് ചെയ്യപ്പെടുന്നു.'
-                    : 'The live scorer desk is disabled in production builds until a shared server backend is connected.'}
-                </p>
-                {WHATSAPP_CHANNEL_URL && (
-                  <a
-                    href={WHATSAPP_CHANNEL_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-xs"
-                  >
-                    <span>{lang === 'ml' ? 'വാട്ട്‌സ്ആപ്പ് ചാനൽ കാണുക' : 'Join WhatsApp Channel'}</span>
-                  </a>
-                )}
-              </div>
-            )
+            <div className="animate-fadeIn pt-4 max-w-5xl mx-auto px-3 sm:px-6">
+              <React.Suspense fallback={<div className="p-8 text-center text-xs text-navy-muted">Loading Scorer Desk...</div>}>
+                <AdminDeskSection 
+                  lang={lang} 
+                  isDarkMode={isDarkMode} 
+                  onBackToLive={() => handleTabChange('live')}
+                />
+              </React.Suspense>
+            </div>
           )}
         </main>
       </GlobalErrorBoundary>

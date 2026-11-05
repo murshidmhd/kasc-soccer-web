@@ -177,7 +177,17 @@ export default function Header({
         window.location.hash = 'vote';
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    }] : [])
+    }] : []),
+    {
+      id: 'admin',
+      label: lang === 'ml' ? '🛡️ അഡ്മിൻ സ്കോറർ ഡെസ്ക്' : '🛡️ Admin Scorer Desk',
+      icon: Shield,
+      action: () => {
+        setActiveTab('admin');
+        window.location.hash = 'admin';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
   ];
 
   return (
