@@ -53,12 +53,13 @@ export default function Header({
   }, [isDesktopMenuOpen]);
 
   const shareOnWhatsApp = () => {
+    const shareUrl = `${SITE_URL}?v=udaya7`;
     const text = encodeURIComponent(
       `⚽ *അഖിലേന്ത്യാ സെവൻസ് ടൂർണ്ണമെന്റ് Season 7*\n` +
       `📅 2026 Nov 06 - Dec 06\n` +
       `📍 Peruvallur Panjayath Stadium, Parambil Peedika\n` +
       `🔥 Opening Match: UDAYA Parambil Peedika vs NEW MALAYA MALABAR FC\n` +
-      `Follow live scores & fixtures here: ${SITE_URL}`
+      `Follow live scores & fixtures here: ${shareUrl}`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank', 'noopener,noreferrer');
   };
