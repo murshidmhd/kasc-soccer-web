@@ -55,6 +55,7 @@ import logoUdaya from '../assets/logo_udaya_transparent.png';
 import logoKasc from '../assets/logo_kasc.png';
 import GoalShareCardModal from './GoalShareCardModal';
 import AddCardModal from './AddCardModal';
+import { saveDisciplinaryRecord } from '../utils/disciplinaryManager';
 
 export default function AdminDeskSection({ 
   isDarkMode, 
@@ -509,6 +510,21 @@ export default function AdminDeskSection({
       setHistoryCount(getMatchHistory().length);
       return next;
     });
+
+    // If official YELLOW/RED CARD is logged, persistently store in Disciplinary Database
+    if (newEvent.type === 'yellow_card' || newEvent.type === 'red_card') {
+      saveDisciplinaryRecord({
+        id: eventObj.id,
+        cardType: newEvent.type,
+        playerName: newEvent.player.trim(),
+        team: newEvent.team,
+        teamName: newEvent.team === 'away' ? openingMatch.teamAway.name : openingMatch.teamHome.name,
+        minute: newEvent.minute,
+        reason: newEvent.text.trim() || (newEvent.type === 'red_card' ? 'Red Card Dismissal' : 'Caution'),
+        matchId: openingMatch.id,
+        matchTitle: `${openingMatch.teamHome.name} vs ${openingMatch.teamAway.name}`
+      });
+    }
 
     // If official GOAL is logged, auto-prompt the branded WhatsApp Status Goal Card
     if (newEvent.type === 'goal') {
@@ -1236,7 +1252,7 @@ export default function AdminDeskSection({
                       type="text"
                       value={newEvent.player}
                       onChange={(e) => setNewEvent({ ...newEvent, player: e.target.value })}
-                      placeholder="e.g. Ibrahim Soumahoro"
+                      placeholder="e.g. Usman K. P."
                       className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white border-slate-300 shadow-2xs"
                     />
                   </div>
@@ -1250,6 +1266,30 @@ export default function AdminDeskSection({
                       className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white border-slate-300 shadow-2xs"
                     />
                   </div>
+                </div>
+
+                {/* Quick Player Suggestions */}
+                <div className="flex flex-wrap items-center gap-1 pt-1">
+                  <span className="text-[10px] text-slate-400 font-bold mr-1">Quick Select:</span>
+                  {[
+                    { name: 'Usman K. P.', team: 'away' },
+                    { name: 'Bilal', team: 'away' },
+                    { name: 'Shibil', team: 'away' },
+                    { name: 'Ajmal', team: 'away' },
+                    { name: 'Musthu', team: 'away' },
+                    { name: 'Rujeesh K.', team: 'home' },
+                    { name: 'Shameer K.', team: 'home' },
+                    { name: 'Ibrahim Soumahoro', team: 'home' }
+                  ].map((p) => (
+                    <button
+                      key={p.name}
+                      type="button"
+                      onClick={() => setNewEvent({ ...newEvent, player: p.name, team: p.team })}
+                      className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition"
+                    >
+                      {p.name}
+                    </button>
+                  ))}
                 </div>
 
                 <div className="flex items-center gap-2 pt-1">

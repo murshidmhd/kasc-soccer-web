@@ -21,6 +21,7 @@ import { fixtures, tournamentInfo, participatingTeams } from '../data/tournament
 import { squadPlayers, squadClubs, clubSquadStatus } from '../data/squad';
 import { getStoredMatchState } from '../utils/matchStateManager';
 import { calculateTournamentStats } from '../utils/statsCalculator';
+import { getPlayerDisciplinaryStatus } from '../utils/disciplinaryManager';
 import { 
   TROPHY_IS_ILLUSTRATION, 
   SHOW_NATIONALITY, 
@@ -32,6 +33,7 @@ export default function TopScorers({ lang, isDarkMode }) {
   const [showTopTen, setShowTopTen] = useState(false);
   const [playerSearchQuery, setPlayerSearchQuery] = useState('');
   const [selectedClubFilter, setSelectedClubFilter] = useState('All');
+  const [selectedCardPlayer, setSelectedCardPlayer] = useState(null);
 
   // Compute all tournament stats once and memoize so ticker doesn't recompute (Confirmed matches only - Task 4, Rule 15)
   const stats = useMemo(() => {
@@ -556,27 +558,139 @@ export default function TopScorers({ lang, isDarkMode }) {
                 key={p.id}
                 className="p-3 rounded-xl surface-light border border-surface-border dark:border-navy-700 flex items-center justify-between gap-3 text-xs min-h-[48px]"
               >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="w-7 h-7 rounded-lg bg-surface-card text-card-title font-black font-sports border border-surface-border dark:border-navy-700 flex items-center justify-center shrink-0">
-                    #{p.number}
-                  </span>
-                  <div className="w-7 h-7 rounded-full bg-white p-0.5 border border-slate-200 shrink-0">
-                    <TeamLogo teamName={p.club} className="w-full h-full object-contain" />
-                  </div>
-                  <div className="min-w-0">
-                    <h5 className="font-bold text-card-title truncate">
-                      {lang === 'ml' ? (p.nameMl || p.name) : p.name}
-                    </h5>
-                    <p className="text-[10px] text-card-muted truncate font-medium">
-                      {p.club}
-                    </p>
-                  </div>
-                </div>
+                {(() => {
+                  const disc = getPlayerDisciplinaryStatus(p.name, p.number, p.club);
+                  return (
+                    <>
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="w-7 h-7 rounded-lg bg-surface-card text-card-title font-black font-sports border border-surface-border dark:border-navy-700 flex items-center justify-center shrink-0">
+                          #{p.number}
+                        </span>
+                        <div className="w-7 h-7 rounded-full bg-white p-0.5 border border-slate-200 shrink-0">
+                          <TeamLogo teamName={p.club} className="w-full h-full object-contain" />
+                        </div>
+                        <div className="min-w-0">
+                          <h5 className="font-bold text-card-title truncate">
+                            {lang === 'ml' ? (p.nameMl || p.name) : p.name}
+                          </h5>
+                          <p className="text-[10px] text-card-muted truncate font-medium">
+                            {p.club}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Disciplinary Card Indicator */}
+                      {disc.hasRedCard && (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedCardPlayer({ player: p, disciplinary: disc })}
+                          className="px-2 py-1 rounded-lg bg-red-600 text-white font-black text-[10px] flex items-center gap-1 shrink-0 shadow-xs hover:bg-red-700 active:scale-95 transition"
+                        >
+                          <span>🟥</span>
+                          <span>{lang === 'ml' ? 'റെഡ് കാർഡ്' : 'Red Card'}</span>
+                          <span className="font-mono bg-black/20 px-1 rounded-xs">{disc.latestCard?.minute}'</span>
+                        </button>
+                      )}
+                      {disc.hasYellowCard && !disc.hasRedCard && (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedCardPlayer({ player: p, disciplinary: disc })}
+                          className="px-2 py-1 rounded-lg bg-amber-500 text-navy-950 font-black text-[10px] flex items-center gap-1 shrink-0 shadow-xs hover:bg-amber-400 active:scale-95 transition"
+                        >
+                          <span>🟨</span>
+                          <span>{lang === 'ml' ? 'യെല്ലോ കാർഡ്' : 'Yellow'}</span>
+                          <span className="font-mono bg-black/20 px-1 rounded-xs">{disc.latestCard?.minute}'</span>
+                        </button>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             ))}
           </div>
         )}
       </section>
+
+      {/* Disciplinary Card Modal */}
+      {selectedCardPlayer && (
+        <div 
+          onClick={() => setSelectedCardPlayer(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fadeIn"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-sm rounded-3xl surface-navy-card border border-navy-700 p-5 text-white shadow-2xl space-y-4 animate-scaleUp"
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-navy-700">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-white p-0.5 border border-slate-300 shrink-0">
+                  <TeamLogo teamName={selectedCardPlayer.player?.club} className="w-full h-full object-contain" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-white">{selectedCardPlayer.player?.name}</h4>
+                  <p className="text-[11px] text-navy-muted">#{selectedCardPlayer.player?.number} • {selectedCardPlayer.player?.club}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedCardPlayer(null)}
+                className="w-8 h-8 rounded-full bg-navy-800 text-white flex items-center justify-center hover:bg-navy-700 transition"
+              >
+                ✕
+              </button>
+            </div>
+
+            {selectedCardPlayer.disciplinary?.hasRedCard ? (
+              <div className="p-4 rounded-2xl bg-red-600/20 border-2 border-red-500 text-white space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl animate-pulse">🟥</span>
+                    <div>
+                      <span className="text-[10px] font-black uppercase text-red-400 block">
+                        {lang === 'ml' ? 'റഫറി ചുവപ്പ് കാർഡ് നൽകി' : 'OFFICIAL RED CARD'}
+                      </span>
+                      <h5 className="text-sm font-black text-white">
+                        {lang === 'ml' ? 'കളത്തിൽ നിന്ന് പുറത്തായി' : 'Match Expulsion'}
+                      </h5>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-lg bg-red-600 text-white font-mono font-black text-xs">
+                    {selectedCardPlayer.disciplinary.latestCard?.minute}'
+                  </span>
+                </div>
+                <div className="text-xs text-red-200 bg-navy-950/60 p-2.5 rounded-xl border border-red-500/30 space-y-1">
+                  <p><span className="font-bold">{lang === 'ml' ? 'കാരണം:' : 'Reason:'}</span> {selectedCardPlayer.disciplinary.latestCard?.reason}</p>
+                  <p className="text-[10px] text-emerald-400 font-bold">✓ Saved in Database</p>
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 rounded-2xl bg-amber-500/20 border-2 border-amber-500 text-white space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">🟨</span>
+                    <div>
+                      <span className="text-[10px] font-black uppercase text-amber-400 block">OFFICIAL YELLOW CARD</span>
+                      <h5 className="text-sm font-black text-white">Caution Recorded</h5>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-lg bg-amber-500 text-navy-950 font-mono font-black text-xs">
+                    {selectedCardPlayer.disciplinary.latestCard?.minute}'
+                  </span>
+                </div>
+                <p className="text-xs text-amber-200">
+                  {selectedCardPlayer.disciplinary.latestCard?.reason}
+                </p>
+              </div>
+            )}
+
+            <button
+              onClick={() => setSelectedCardPlayer(null)}
+              className="w-full py-2.5 rounded-xl btn-royal text-white font-bold text-xs uppercase transition active:scale-98"
+            >
+              {lang === 'ml' ? 'അടയ്ക്കുക' : 'Close'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 7. Tournament Awards Explainer Note (Rule 11) */}
       {AWARDS_NOTE && (

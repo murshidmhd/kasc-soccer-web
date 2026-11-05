@@ -9,9 +9,13 @@ import {
   AlertCircle,
   WifiOff,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ShieldAlert,
+  X,
+  Check
 } from 'lucide-react';
 import { squadPlayers, squadClubs, squadClubLabelsMl } from '../data/squad';
+import { getPlayerDisciplinaryStatus, getAllDisciplinaryRecords } from '../utils/disciplinaryManager';
 import TeamLogo from './TeamLogo';
 
 export default function SquadSpotlightSection({ lang, isDarkMode }) {
@@ -30,12 +34,25 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
   const [isPressing, setIsPressing] = useState(false);
   const [videoError, setVideoError] = useState(null);
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
+  const [selectedPlayerForDisciplinary, setSelectedPlayerForDisciplinary] = useState(null);
+  const [disciplinaryRev, setDisciplinaryRev] = useState(0);
 
   const containerRef = useRef(null);
   const videoRef = useRef(null);
   const bufferTimerRef = useRef(null);
   const stallTimerRef = useRef(null);
   const scrollContainerRef = useRef(null);
+
+  // Listen to live disciplinary updates
+  useEffect(() => {
+    const handleDisciplinary = () => setDisciplinaryRev(r => r + 1);
+    window.addEventListener('kasc_disciplinary_updated', handleDisciplinary);
+    window.addEventListener('kasc_match_state_updated', handleDisciplinary);
+    return () => {
+      window.removeEventListener('kasc_disciplinary_updated', handleDisciplinary);
+      window.removeEventListener('kasc_match_state_updated', handleDisciplinary);
+    };
+  }, []);
 
   // Filter players by selected club
   const filteredPlayers = selectedClub === 'All'
@@ -583,6 +600,46 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
 
           {/* Bottom Overlay with Linear Gradient (Rule 3: NO blur, WCAG AA contrast) */}
           <div className="absolute inset-x-0 bottom-0 z-30 pt-16 pb-4 px-4 bg-gradient-to-t from-navy-950 via-navy-950/80 to-transparent pointer-events-none text-left">
+            {/* Disciplinary Card Alert on Active Player (User Request: must show card when user views/clicks player) */}
+            {(() => {
+              const disc = getPlayerDisciplinaryStatus(activePlayer?.name, activePlayer?.number, activePlayer?.club);
+              if (disc.hasRedCard) {
+                return (
+                  <div 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedPlayerForDisciplinary({ player: activePlayer, disciplinary: disc });
+                    }}
+                    className="pointer-events-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-red-600 text-white font-black text-xs uppercase tracking-wider border border-white/50 shadow-lg cursor-pointer animate-pulse hover:bg-red-700 active:scale-95 mb-2"
+                  >
+                    <span className="text-sm">🟥</span>
+                    <span>{lang === 'ml' ? 'റെഡ് കാർഡ് ലഭിച്ചു (പുറത്തായി)' : 'RED CARD • SUSPENDED'}</span>
+                    <span className="font-mono bg-black/30 px-1.5 py-0.5 rounded-md text-[10px]">
+                      {disc.latestCard?.minute || 25}'
+                    </span>
+                  </div>
+                );
+              }
+              if (disc.hasYellowCard) {
+                return (
+                  <div 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedPlayerForDisciplinary({ player: activePlayer, disciplinary: disc });
+                    }}
+                    className="pointer-events-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-500 text-navy-950 font-black text-xs uppercase tracking-wider border border-white/40 shadow-md cursor-pointer hover:bg-amber-400 active:scale-95 mb-2"
+                  >
+                    <span>🟨</span>
+                    <span>{lang === 'ml' ? 'യെല്ലോ കാർഡ് (മുന്നറിയിപ്പ്)' : 'YELLOW CARD'}</span>
+                    <span className="font-mono bg-black/20 px-1.5 py-0.5 rounded-md text-[10px]">
+                      {disc.latestCard?.minute || 25}'
+                    </span>
+                  </div>
+                );
+              }
+              return null;
+            })()}
+
             <div className="flex items-end justify-between gap-3">
               <div className="min-w-0 flex-1 space-y-1">
                 {/* Shirt Number Badge */}
@@ -633,6 +690,94 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
           )}
         </div>
       </div>
+
+      {/* Disciplinary Inspection Modal */}
+      {selectedPlayerForDisciplinary && (
+        <div 
+          onClick={() => setSelectedPlayerForDisciplinary(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fadeIn"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-sm rounded-3xl surface-navy-card border border-navy-700 p-5 text-white shadow-2xl space-y-4 animate-scaleUp"
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-navy-700">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-white p-0.5 border border-slate-300 shrink-0">
+                  <TeamLogo teamName={selectedPlayerForDisciplinary.player?.club} className="w-full h-full object-contain" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-white">
+                    {selectedPlayerForDisciplinary.player?.name}
+                  </h4>
+                  <p className="text-[11px] text-navy-muted">
+                    #{selectedPlayerForDisciplinary.player?.number} • {selectedPlayerForDisciplinary.player?.club}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedPlayerForDisciplinary(null)}
+                className="w-8 h-8 rounded-full bg-navy-800 text-white flex items-center justify-center hover:bg-navy-700 transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {selectedPlayerForDisciplinary.disciplinary?.hasRedCard ? (
+              <div className="p-4 rounded-2xl bg-red-600/20 border-2 border-red-500 text-white space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl animate-pulse">🟥</span>
+                    <div>
+                      <span className="text-[10px] font-black uppercase text-red-400 block tracking-wider">
+                        {lang === 'ml' ? 'റഫറി ചുവപ്പ് കാർഡ് നൽകി' : 'OFFICIAL RED CARD'}
+                      </span>
+                      <h5 className="text-sm font-black text-white">
+                        {lang === 'ml' ? 'കളത്തിൽ നിന്ന് പുറത്തായി' : 'Suspended from Match'}
+                      </h5>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-lg bg-red-600 text-white font-mono font-black text-xs">
+                    {selectedPlayerForDisciplinary.disciplinary.latestCard?.minute}'
+                  </span>
+                </div>
+
+                <div className="text-xs text-red-200 space-y-1 bg-navy-950/60 p-2.5 rounded-xl border border-red-500/30">
+                  <p><span className="font-bold">{lang === 'ml' ? 'കാരണം:' : 'Reason:'}</span> {selectedPlayerForDisciplinary.disciplinary.latestCard?.reason}</p>
+                  <p className="text-[10px] text-emerald-400 font-bold">✓ Stored in Match Database</p>
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 rounded-2xl bg-amber-500/20 border-2 border-amber-500 text-white space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">🟨</span>
+                    <div>
+                      <span className="text-[10px] font-black uppercase text-amber-400 block">
+                        {lang === 'ml' ? 'മഞ്ഞ കാർഡ് മുന്നറിയിപ്പ്' : 'OFFICIAL YELLOW CARD'}
+                      </span>
+                      <h5 className="text-sm font-black text-white">Caution Recorded</h5>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-lg bg-amber-500 text-navy-950 font-mono font-black text-xs">
+                    {selectedPlayerForDisciplinary.disciplinary.latestCard?.minute}'
+                  </span>
+                </div>
+                <p className="text-xs text-amber-200">
+                  {selectedPlayerForDisciplinary.disciplinary.latestCard?.reason}
+                </p>
+              </div>
+            )}
+
+            <button
+              onClick={() => setSelectedPlayerForDisciplinary(null)}
+              className="w-full py-2.5 rounded-xl btn-royal text-white font-bold text-xs uppercase transition active:scale-98"
+            >
+              {lang === 'ml' ? 'അടയ്ക്കുക' : 'Close'}
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
