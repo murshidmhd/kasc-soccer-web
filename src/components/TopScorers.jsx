@@ -13,29 +13,31 @@ import {
   Info,
   Calendar,
   Medal,
-  Users
+  Users,
+  Radio,
+  TrendingUp,
+  X
 } from 'lucide-react';
-import trophyImg from '../assets/tournament_trophy.jpg';
 import TeamLogo from './TeamLogo';
 import { fixtures, tournamentInfo, participatingTeams } from '../data/tournamentData';
-import { squadPlayers, squadClubs, clubSquadStatus } from '../data/squad';
+import { squadPlayers, squadClubs, clubSquadStatus, squadClubLabelsMl } from '../data/squad';
 import { getStoredMatchState } from '../utils/matchStateManager';
 import { calculateTournamentStats } from '../utils/statsCalculator';
 import { getPlayerDisciplinaryStatus } from '../utils/disciplinaryManager';
 import { 
-  TROPHY_IS_ILLUSTRATION, 
   SHOW_NATIONALITY, 
   AWARDS_NOTE 
 } from '../config/siteConfig';
 
 export default function TopScorers({ lang, isDarkMode }) {
   const [matchState] = useState(getStoredMatchState);
+  const [activeStatsTab, setActiveStatsTab] = useState('players'); // 'players' | 'leaders'
   const [showTopTen, setShowTopTen] = useState(false);
   const [playerSearchQuery, setPlayerSearchQuery] = useState('');
   const [selectedClubFilter, setSelectedClubFilter] = useState('All');
   const [selectedCardPlayer, setSelectedCardPlayer] = useState(null);
 
-  // Compute all tournament stats once and memoize so ticker doesn't recompute (Confirmed matches only - Task 4, Rule 15)
+  // Compute all tournament stats once and memoize (Confirmed matches only)
   const stats = useMemo(() => {
     return calculateTournamentStats([], fixtures.filter((m) => m.confirmed), matchState);
   }, [matchState]);
@@ -55,7 +57,7 @@ export default function TopScorers({ lang, isDarkMode }) {
     return finalMatch.score1 > finalMatch.score2 ? finalMatch.team1 : finalMatch.team2;
   }, [finalMatch]);
 
-  // Filtered confirmed squad players for "All Players" section (Rule 9f)
+  // Filtered confirmed squad players for "All Players" section
   const isClubConfirmed = selectedClubFilter === 'All' || clubSquadStatus[selectedClubFilter] === 'confirmed';
 
   const visiblePlayers = useMemo(() => {
@@ -83,445 +85,153 @@ export default function TopScorers({ lang, isDarkMode }) {
   const topScorerLeader = stats.rankedScorers[0] || null;
   const subsequentScorers = showTopTen ? stats.rankedScorers.slice(1, 10) : stats.rankedScorers.slice(1, 5);
 
+  const hasLiveMatchesPlayed = stats.matchesCount > 0 || stats.totalGoals > 0;
+
   return (
-    <div className="space-y-6 pb-28 max-w-5xl mx-auto select-none">
-      {/* 1. Trophy Showcase & Tournament Status Banner */}
-      <section className="rounded-3xl p-5 sm:p-7 border border-surface-border dark:border-navy-700 surface-card shadow-card">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-          {/* Trophy Image Card */}
-          <div className="md:col-span-4 flex flex-col items-center text-center space-y-3">
-            <div className="relative rounded-2xl overflow-hidden border border-surface-border dark:border-navy-700 shadow-md max-w-[240px] w-full surface-light">
-              <img
-                src={trophyImg}
-                alt="All India Sevens Championship Trophy"
-                width="240"
-                height="240"
-                loading="lazy"
-                className="w-full h-auto object-cover"
-              />
-              {/* Illustration Badge (Rule 2) */}
-              {TROPHY_IS_ILLUSTRATION && (
-                <div className="absolute top-2 right-2 px-2.5 py-0.5 rounded-full bg-navy-950/85 text-[10px] font-bold text-amber-300 border border-white/20 shadow-xs flex items-center gap-1">
-                  <Sparkles className="w-2.5 h-2.5 text-amber-400" />
-                  <span>{lang === 'ml' ? 'ചിത്രീകരണ മാതൃക' : 'Illustration'}</span>
-                </div>
-              )}
+    <div className="space-y-5 pb-28 max-w-5xl mx-auto select-none">
+      {/* 1. Modern Sports Hero Header (Clean, Premium, No Bulky Trophy Image) */}
+      <section className="rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-navy-900 via-navy-950 to-purple-950 text-white border border-navy-700 shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold/20 border border-gold/40 text-gold text-[11px] font-black uppercase tracking-wider shadow-xs">
+              <Trophy className="w-3.5 h-3.5 text-gold" />
+              <span>{tournamentInfo.season || 'SEASON 7'} • SFA AFFILIATED</span>
             </div>
-            <div>
-              <h3 className="text-lg font-black font-sports uppercase tracking-wider text-card-title">
-                {lang === 'ml' ? 'അഖിലേന്ത്യാ സെവൻസ് ട്രോഫി' : 'ALL INDIA SEVENS TROPHY'}
-              </h3>
-              {/* Rule 2: Show "Season 7 Trophy" unless Final is finished in real data */}
-              <p className="text-xs font-bold text-royal dark:text-sky">
-                {championTeam
-                  ? (lang === 'ml' ? `വിജയികൾ: ${championTeam}` : `Champions: ${championTeam}`)
-                  : (lang === 'ml' ? 'സീസൺ 7 ട്രോഫി' : 'Season 7 Trophy')}
-              </p>
-            </div>
+            <h2 className="text-xl sm:text-2xl font-black font-sports uppercase tracking-wide text-white leading-tight">
+              {lang === 'ml' ? 'ടൂർണ്ണമെന്റ് സ്ഥിതിവിവരക്കണക്കുകൾ' : 'OFFICIAL TOURNAMENT STATS'}
+            </h2>
+            <p className="text-xs text-navy-muted max-w-lg leading-relaxed">
+              {lang === 'ml'
+                ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം • 24 പ്രമുഖ ക്ലബ്ബുകളുടെ ഔദ്യോഗിക ടൂർണ്ണമെന്റ് റെക്കോർഡുകൾ'
+                : 'Peruvallur Panchayath Stadium • Live referee scorecard records for 24 elite Sevens clubs.'}
+            </p>
           </div>
 
-          {/* Tournament Overview & Explainer */}
-          <div className="md:col-span-8 space-y-4">
-            <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-royal text-white text-[11px] font-bold uppercase tracking-wider mb-2">
-                <Trophy className="w-3.5 h-3.5" />
-                <span>{tournamentInfo.season || 'SEASON 7'}</span>
-              </div>
-              <h2 className="text-xl sm:text-3xl font-black font-sports uppercase tracking-wide text-card-title leading-tight">
-                {lang === 'ml' ? 'ടൂർണ്ണമെന്റ് സ്ഥിതിവിവരക്കണക്കുകൾ' : 'OFFICIAL TOURNAMENT STATS'}
-              </h2>
-              <p className="text-xs text-card-muted font-medium mt-1 leading-relaxed">
-                {lang === 'ml'
-                  ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയത്തിൽ നടക്കുന്ന മത്സരങ്ങളിൽ നിന്നുള്ള ഔദ്യോഗിക കണക്കുകൾ. റഫറി സ്കോർ കാർഡുകളിൽ നിന്ന് തത്സമയം കണക്കാക്കുന്നു.'
-                  : 'Official real-time statistics derived strictly from logged referee match events under the floodlights at Peruvallur Stadium.'}
-              </p>
-            </div>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-navy-800/80 border border-navy-700 self-start sm:self-center">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[11px] font-bold text-slate-200">
+              {lang === 'ml' ? 'ഉദ്ഘാടനം: നവംബർ 06, രാത്രി 8 PM' : 'Kickoff: Nov 06, 8:00 PM'}
+            </span>
+          </div>
+        </div>
 
-            {/* Rule 9a: Tournament Numbers (Row of 4 Small Stat Tiles) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
-              {/* Matches Finished */}
-              <div className="p-3 rounded-2xl surface-light border border-surface-border dark:border-navy-700 text-center space-y-0.5">
-                <span className="text-[10px] uppercase font-bold text-card-muted block">
-                  {lang === 'ml' ? 'മത്സരങ്ങൾ' : 'Matches'}
-                </span>
-                <span className="text-2xl font-black font-sports text-card-title">
-                  {stats.matchesCount}
-                </span>
-              </div>
+        {/* 4-Tile Live Number Counters */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+          {/* Matches */}
+          <div className="p-3 rounded-2xl bg-navy-800/60 border border-navy-700/80 text-center space-y-0.5">
+            <span className="text-[10px] uppercase font-bold text-navy-muted block">
+              {lang === 'ml' ? 'മത്സരങ്ങൾ' : 'Matches'}
+            </span>
+            <span className="text-2xl font-black font-sports text-white">
+              {stats.matchesCount}
+            </span>
+          </div>
 
-              {/* Total Goals */}
-              <div className="p-3 rounded-2xl surface-light border border-surface-border dark:border-navy-700 text-center space-y-0.5">
-                <span className="text-[10px] uppercase font-bold text-card-muted block">
-                  {lang === 'ml' ? 'ഗോളുകൾ' : 'Goals'}
-                </span>
-                <span className="text-2xl font-black font-sports text-royal dark:text-sky">
-                  {stats.totalGoals}
-                </span>
-              </div>
+          {/* Goals */}
+          <div className="p-3 rounded-2xl bg-navy-800/60 border border-navy-700/80 text-center space-y-0.5">
+            <span className="text-[10px] uppercase font-bold text-navy-muted block">
+              {lang === 'ml' ? 'ഗോളുകൾ' : 'Goals'}
+            </span>
+            <span className="text-2xl font-black font-sports text-gold">
+              {stats.totalGoals}
+            </span>
+          </div>
 
-              {/* Average per Match */}
-              <div className="p-3 rounded-2xl surface-light border border-surface-border dark:border-navy-700 text-center space-y-0.5">
-                <span className="text-[10px] uppercase font-bold text-card-muted block">
-                  {lang === 'ml' ? 'ശരാശരി' : 'Avg / Match'}
-                </span>
-                <span className="text-2xl font-black font-sports text-card-title">
-                  {stats.avgGoals}
-                </span>
-              </div>
+          {/* Avg Goals */}
+          <div className="p-3 rounded-2xl bg-navy-800/60 border border-navy-700/80 text-center space-y-0.5">
+            <span className="text-[10px] uppercase font-bold text-navy-muted block">
+              {lang === 'ml' ? 'ശരാശരി' : 'Avg / Match'}
+            </span>
+            <span className="text-2xl font-black font-sports text-sky">
+              {stats.avgGoals}
+            </span>
+          </div>
 
-              {/* Clean Sheets */}
-              <div className="p-3 rounded-2xl surface-light border border-surface-border dark:border-navy-700 text-center space-y-0.5">
-                <span className="text-[10px] uppercase font-bold text-card-muted block">
-                  {lang === 'ml' ? 'ക്ലീൻ ഷീറ്റ്' : 'Clean Sheets'}
-                </span>
-                <span className="text-2xl font-black font-sports text-emerald-600 dark:text-emerald-400">
-                  {stats.totalCleanSheets}
-                </span>
-              </div>
-            </div>
+          {/* Clean Sheets */}
+          <div className="p-3 rounded-2xl bg-navy-800/60 border border-navy-700/80 text-center space-y-0.5">
+            <span className="text-[10px] uppercase font-bold text-navy-muted block">
+              {lang === 'ml' ? 'ക്ലീൻ ഷീറ്റ്' : 'Clean Sheets'}
+            </span>
+            <span className="text-2xl font-black font-sports text-emerald-400">
+              {stats.totalCleanSheets}
+            </span>
           </div>
         </div>
       </section>
 
-      {/* 2. Golden Boot Race (Rule 9b & Rules 3, 4, 5, 8) */}
-      <section className="rounded-3xl p-5 sm:p-7 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-surface-border dark:border-navy-700 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-xs shrink-0">
-              <Trophy className="w-6 h-6" />
+      {/* 2. Sleek Section Controller: Tab Navigation between Players Directory & Leaderboards */}
+      <div className="p-1.5 rounded-2xl bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700 grid grid-cols-2 gap-1.5">
+        <button
+          onClick={() => setActiveStatsTab('players')}
+          className={`min-h-[46px] px-3 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 active:scale-95 ${
+            activeStatsTab === 'players'
+              ? 'btn-royal text-white font-black shadow-md'
+              : 'text-card-muted hover:text-card-title'
+          }`}
+        >
+          <Users className="w-4 h-4" />
+          <span>{lang === 'ml' ? 'കളിക്കാരുടെ പട്ടിക' : 'All Players Directory'}</span>
+        </button>
+
+        <button
+          onClick={() => setActiveStatsTab('leaders')}
+          className={`min-h-[46px] px-3 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 active:scale-95 ${
+            activeStatsTab === 'leaders'
+              ? 'btn-royal text-white font-black shadow-md'
+              : 'text-card-muted hover:text-card-title'
+          }`}
+        >
+          <Trophy className="w-4 h-4" />
+          <span>{lang === 'ml' ? 'ലീഡർബോർഡുകൾ & അവാർഡുകൾ' : 'Leaderboards & Awards'}</span>
+        </button>
+      </div>
+
+      {/* ============================================================== */}
+      {/* VIEW A: ALL PLAYERS DIRECTORY (Default, Highly Requested & Active) */}
+      {/* ============================================================== */}
+      {activeStatsTab === 'players' && (
+        <section className="rounded-3xl p-4 sm:p-6 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-4 animate-fadeIn">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-surface-border dark:border-navy-700 pb-3">
+            <div className="flex items-center gap-2.5">
+              <span className="p-2 rounded-xl btn-royal text-white shadow-xs">
+                <Users className="w-5 h-5" />
+              </span>
+              <div>
+                <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title">
+                  {lang === 'ml' ? 'കളിക്കാരുടെ പട്ടിക' : 'ALL PLAYERS DIRECTORY'}
+                </h3>
+                <p className="text-[11px] text-card-muted font-bold">
+                  {lang === 'ml' ? 'സ്ഥിരീകരിച്ച സ്ക്വാഡുകളിലെ താരങ്ങൾ' : 'Names, numbers, positions and disciplinary records'}
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-lg sm:text-xl font-black font-sports uppercase tracking-wider text-card-title">
-                {lang === 'ml' ? 'ഗോൾഡൻ ബൂട്ട് ലീഡർബോർഡ്' : 'GOLDEN BOOT RACE'}
-              </h3>
-              {/* Rule 3: Replaced "Live Tracking" with "Updated after each match" */}
-              <p className="text-xs text-amber-600 dark:text-amber-400 font-bold">
-                {lang === 'ml' ? 'ഓരോ മത്സരശേഷവും അപ്ഡേറ്റ് ചെയ്യുന്നു' : 'Updated after each match'}
-              </p>
-            </div>
+
+            <span className="text-xs font-mono font-bold text-card-muted self-start sm:self-center">
+              {visiblePlayers.length} {lang === 'ml' ? 'താരങ്ങൾ' : 'Players'}
+            </span>
           </div>
 
-          <span className="self-start sm:self-auto text-[11px] font-bold text-card-muted">
-            {lang === 'ml' ? 'ടൈ-ബ്രേക്കർ: കൂടുതൽ ഗോളുകൾ, കുറഞ്ഞ മത്സരങ്ങൾ' : 'Tie-break: Goals → Fewer matches → Earlier goal'}
-          </span>
-        </div>
-
-        {/* Rule 5: If no match has a goal yet, show calm empty state */}
-        {stats.rankedScorers.length === 0 ? (
-          <div className="py-10 px-4 rounded-2xl surface-light border border-dashed border-surface-border dark:border-navy-700 text-center space-y-2">
-            <Goal className="w-8 h-8 text-royal dark:text-sky mx-auto opacity-70 animate-pulse" />
-            <h4 className="text-sm font-bold text-card-title">
-              {lang === 'ml' ? 'ആദ്യ ഗോളിന് ശേഷം സ്റ്റാറ്റിസ്റ്റിക്സ് ആരംഭിക്കും' : 'Stats start after the first goal'}
-            </h4>
-            <p className="text-xs text-card-muted max-w-sm mx-auto">
-              {lang === 'ml'
-                ? 'ഉദ്ഘാടന മത്സരത്തിൽ ആദ്യ ഗോൾ പിറക്കുന്നതോടെ ലീഡർബോർഡ് യാന്ത്രികമായി സജീവമാകും.'
-                : 'The official Golden Boot race will populate immediately after the opening goal is logged.'}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {/* Leader Card (Rank 1) */}
-            {topScorerLeader && (
-              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/30 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5 min-w-0">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 font-black font-sports text-xl flex items-center justify-center shrink-0 shadow-sm">
-                    #{topScorerLeader.rank}
-                  </div>
-                  {/* Club Logo in 40px White Circle (Rule 12) */}
-                  <div className="w-10 h-10 rounded-full bg-white p-0.5 border border-slate-200 shadow-xs flex items-center justify-center shrink-0">
-                    <TeamLogo teamName={topScorerLeader.team} className="w-full h-full object-contain" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-base sm:text-lg font-black font-sports text-card-title truncate">
-                        {topScorerLeader.name}
-                      </h4>
-                      <span className="px-2 py-0.5 rounded-md bg-amber-500 text-slate-950 text-[10px] font-black uppercase shrink-0">
-                        Leader
-                      </span>
-                    </div>
-                    <p className="text-xs text-card-muted truncate font-medium">
-                      {topScorerLeader.team}
-                    </p>
-                    <span className="text-[10px] text-card-muted block mt-0.5">
-                      {topScorerLeader.matchesPlayed} {topScorerLeader.matchesPlayed === 1 ? 'match' : 'matches'} • First goal: {topScorerLeader.firstGoalMinute}'
-                    </span>
-                  </div>
-                </div>
-
-                <div className="text-right shrink-0">
-                  <span className="text-3xl sm:text-4xl font-black font-sports text-amber-500 block leading-none">
-                    {topScorerLeader.goals}
-                  </span>
-                  <span className="text-[10px] font-bold text-card-muted uppercase">
-                    {topScorerLeader.goals === 1 ? 'Goal' : 'Goals'}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Subsequent Scorers (Ranks 2 to 5 or Top 10) */}
-            {subsequentScorers.length > 0 && (
-              <div className="space-y-2">
-                {subsequentScorers.map((scorer) => (
-                  <div
-                    key={`${scorer.name}-${scorer.team}`}
-                    className="p-3 sm:p-3.5 rounded-xl surface-light border border-surface-border dark:border-navy-700 flex items-center justify-between gap-3 text-xs sm:text-sm"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <span className="w-7 h-7 rounded-lg bg-surface-card text-card-title border border-surface-border dark:border-navy-700 font-bold font-sports flex items-center justify-center shrink-0 text-xs">
-                        #{scorer.rank}
-                      </span>
-                      {/* Logo in 32px White Circle (Rule 12) */}
-                      <div className="w-8 h-8 rounded-full bg-white p-0.5 border border-slate-200 shadow-2xs flex items-center justify-center shrink-0">
-                        <TeamLogo teamName={scorer.team} className="w-full h-full object-contain" />
-                      </div>
-                      <div className="min-w-0">
-                        <h5 className="font-bold text-card-title truncate">
-                          {scorer.name}
-                        </h5>
-                        <p className="text-[11px] text-card-muted truncate font-medium">
-                          {scorer.team} • {scorer.matchesPlayed}M
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="text-right shrink-0 font-sports font-black text-amber-500 text-lg sm:text-xl">
-                      {scorer.goals}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* See Top 10 Expander Toggle (Rule 9b) */}
-            {stats.rankedScorers.length > 5 && (
-              <div className="pt-2 text-center">
+          {/* Club Filter Chips */}
+          <div className="flex items-center gap-1.5 overflow-x-auto horizontal-scroll-container py-1">
+            {squadClubs.map((club) => {
+              const isSelected = selectedClubFilter === club;
+              return (
                 <button
-                  onClick={() => setShowTopTen(!showTopTen)}
-                  className="min-h-[44px] px-4 py-2 rounded-xl surface-light hover:bg-surface-border dark:hover:bg-navy-800 text-card-title text-xs font-bold border border-surface-border dark:border-navy-700 inline-flex items-center gap-1.5 transition active:scale-95"
+                  key={club}
+                  onClick={() => setSelectedClubFilter(club)}
+                  className={`min-h-[40px] px-3 py-1 rounded-xl text-xs font-bold shrink-0 transition active:scale-95 flex items-center gap-1.5 ${
+                    isSelected
+                      ? 'btn-royal text-white font-black shadow-xs'
+                      : 'surface-light text-card-title border border-surface-border dark:border-navy-700'
+                  }`}
                 >
-                  <span>{showTopTen ? (lang === 'ml' ? 'കുറച്ച് കാണിക്കുക' : 'Show Top 5') : (lang === 'ml' ? 'ടോപ്പ് 10 കാണുക' : 'See Top 10')}</span>
-                  {showTopTen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  <span>{club === 'All' ? (lang === 'ml' ? 'എല്ലാ ക്ലബ്ബുകളും' : 'All Clubs') : (lang === 'ml' ? (squadClubLabelsMl[club] || club) : club)}</span>
                 </button>
-              </div>
-            )}
+              );
+            })}
           </div>
-        )}
-      </section>
 
-      {/* 3. Golden Glove (Starting Goalkeepers Only) (Rule 9c) */}
-      <section className="rounded-3xl p-5 sm:p-7 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-surface-border dark:border-navy-700 pb-3">
-          <div className="flex items-center gap-2.5">
-            <span className="p-1.5 rounded-xl bg-emerald-600 text-white shadow-xs">
-              <ShieldCheck className="w-5 h-5" />
-            </span>
-            <div>
-              <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title">
-                {lang === 'ml' ? 'ഗോൾഡൻ ഗ്ലോവ് (ക്ലീൻ ഷീറ്റ്)' : 'GOLDEN GLOVE RACE'}
-              </h3>
-              <p className="text-[11px] text-card-muted font-bold">
-                {lang === 'ml' ? 'സ്റ്റാർട്ടിംഗ് ഗോൾകീപ്പർമാരുടെ അടിസ്ഥാനത്തിൽ' : 'Based on starting goalkeepers'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {stats.rankedGoalkeepers.length === 0 ? (
-          <div className="py-6 px-4 rounded-2xl surface-light border border-dashed border-surface-border dark:border-navy-700 text-center">
-            <p className="text-xs text-card-muted font-medium">
-              {lang === 'ml'
-                ? 'പൂർത്തിയായ മത്സരങ്ങൾക്ക് ശേഷം ക്ലീൻ ഷീറ്റ് കണക്കുകൾ രേഖപ്പെടുത്തും.'
-                : 'Clean sheet records activate after finished matches.'}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {stats.rankedGoalkeepers.slice(0, 3).map((gk, idx) => (
-              <div 
-                key={gk.name} 
-                className="p-3.5 rounded-2xl surface-light border border-surface-border dark:border-navy-700 flex items-center justify-between gap-3"
-              >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="w-6 h-6 rounded-md bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold font-sports text-xs flex items-center justify-center shrink-0">
-                    #{idx + 1}
-                  </span>
-                  <div className="w-8 h-8 rounded-full bg-white p-0.5 border border-slate-200 shrink-0">
-                    <TeamLogo teamName={gk.club} className="w-full h-full object-contain" />
-                  </div>
-                  <div className="min-w-0">
-                    <h5 className="font-bold text-card-title text-xs truncate">{gk.name}</h5>
-                    <p className="text-[10px] text-card-muted truncate">{gk.club}</p>
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <span className="text-lg font-black font-sports text-emerald-600 dark:text-emerald-400 block leading-none">
-                    {gk.cleanSheets}
-                  </span>
-                  <span className="text-[9px] uppercase font-bold text-card-muted">Clean Sheet</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* 4. Fair Play Table (Rule 9d: Clubs with fewest cards) */}
-      <section className="rounded-3xl p-5 sm:p-7 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-4">
-        <div className="flex items-center gap-2.5 border-b border-surface-border dark:border-navy-700 pb-3">
-          <span className="p-1.5 rounded-xl bg-blue-600 text-white shadow-xs">
-            <Medal className="w-5 h-5" />
-          </span>
-          <div>
-            <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title">
-              {lang === 'ml' ? 'ഫെയർ പ്ലേ അവാർഡ് പട്ടിക' : 'FAIR PLAY STANDINGS'}
-            </h3>
-            <p className="text-[11px] text-card-muted font-bold">
-              {lang === 'ml' ? 'ഏറ്റവും കുറഞ്ഞ കാർഡുകൾ നേടിയ ക്ലബ്ബുകൾ' : 'Clubs ranked by fewest disciplined cards'}
-            </p>
-          </div>
-        </div>
-
-        {stats.fairPlayClubs.length === 0 ? (
-          <div className="py-6 px-4 rounded-2xl surface-light border border-dashed border-surface-border dark:border-navy-700 text-center">
-            <p className="text-xs text-card-muted font-medium">
-              {lang === 'ml'
-                ? 'മത്സരങ്ങളിൽ റഫറി കാർഡുകൾ രേഖപ്പെടുത്തുമ്പോൾ ഫെയർ പ്ലേ പട്ടിക അപ്ഡേറ്റ് ചെയ്യപ്പെടും.'
-                : 'Fair play table activates as match referee cards are recorded.'}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {stats.fairPlayClubs.map((item, idx) => (
-              <div
-                key={item.club}
-                className="p-3 rounded-xl surface-light border border-surface-border dark:border-navy-700 flex items-center justify-between gap-3 text-xs"
-              >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="w-6 h-6 rounded-md bg-surface-card text-card-title font-bold text-xs flex items-center justify-center border border-surface-border dark:border-navy-700 shrink-0">
-                    #{idx + 1}
-                  </span>
-                  <div className="w-7 h-7 rounded-full bg-white p-0.5 border border-slate-200 shrink-0">
-                    <TeamLogo teamName={item.club} className="w-full h-full object-contain" />
-                  </div>
-                  <span className="font-bold text-card-title truncate">{item.club}</span>
-                </div>
-
-                <div className="flex items-center gap-3 shrink-0">
-                  <span className="inline-flex items-center gap-1 font-bold text-amber-600 dark:text-amber-400">
-                    <span className="w-2.5 h-3.5 bg-amber-400 rounded-xs inline-block border border-amber-600"></span>
-                    <span>{item.yellow}</span>
-                  </span>
-                  <span className="inline-flex items-center gap-1 font-bold text-red-600 dark:text-red-400">
-                    <span className="w-2.5 h-3.5 bg-red-600 rounded-xs inline-block border border-red-700"></span>
-                    <span>{item.red}</span>
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* 5. Tournament Awards (Rule 9e: Player of the Match & Player of Tournament) */}
-      <section className="rounded-3xl p-5 sm:p-7 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-4">
-        <div className="flex items-center gap-2.5 border-b border-surface-border dark:border-navy-700 pb-3">
-          <span className="p-1.5 rounded-xl bg-amber-500 text-slate-950 shadow-xs">
-            <Award className="w-5 h-5" />
-          </span>
-          <div>
-            <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title">
-              {lang === 'ml' ? 'ടൂർണ്ണമെന്റ് അവാർഡുകൾ' : 'OFFICIAL MATCH AWARDS'}
-            </h3>
-            <p className="text-[11px] text-card-muted font-bold">
-              {lang === 'ml' ? 'സംഘാടക സമിതി ഔദ്യോഗികമായി നിശ്ചയിക്കുന്നത്' : 'Designated by the organizing committee'}
-            </p>
-          </div>
-        </div>
-
-        {/* Check if any awards exist */}
-        {!tournamentInfo.playerOfTheTournament && !stats.finishedMatches.some(m => m.playerOfTheMatch) ? (
-          <div className="py-6 px-4 rounded-2xl surface-light border border-dashed border-surface-border dark:border-navy-700 text-center">
-            <p className="text-xs text-card-muted font-medium">
-              {lang === 'ml'
-                ? 'മത്സരങ്ങൾക്ക് ശേഷം ഔദ്യോഗിക പ്ലെയർ ഓഫ് ദി മാച്ച് അവാർഡുകൾ ഇവിടെ പ്രസിദ്ധീകരിക്കും.'
-                : 'Player of the Match awards will be posted by the committee following each finished match.'}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {tournamentInfo.playerOfTheTournament && (
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 to-transparent border border-amber-500/30 space-y-1">
-                <span className="text-[10px] font-black uppercase text-amber-600 dark:text-amber-400">
-                  Player of the Tournament
-                </span>
-                <h4 className="text-sm font-black font-sports text-card-title">
-                  {tournamentInfo.playerOfTheTournament}
-                </h4>
-              </div>
-            )}
-            {stats.finishedMatches
-              .filter(m => m.playerOfTheMatch)
-              .map(m => (
-                <div key={m.id} className="p-3.5 rounded-2xl surface-light border border-surface-border dark:border-navy-700 space-y-0.5">
-                  <span className="text-[10px] font-bold text-card-muted uppercase">
-                    {m.team1} vs {m.team2} • Player of the Match
-                  </span>
-                  <h5 className="text-xs font-bold text-card-title">{m.playerOfTheMatch}</h5>
-                </div>
-              ))}
-          </div>
-        )}
-      </section>
-
-      {/* 6. All Players Directory (Confirmed Squads Only) (Rule 9f) */}
-      <section className="rounded-3xl p-5 sm:p-7 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-surface-border dark:border-navy-700 pb-3">
-          <div className="flex items-center gap-2.5">
-            <span className="p-1.5 rounded-xl bg-navy-800 text-gold shadow-xs">
-              <Users className="w-5 h-5" />
-            </span>
-            <div>
-              <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title">
-                {lang === 'ml' ? 'കളിക്കാരുടെ പട്ടിക' : 'ALL PLAYERS DIRECTORY'}
-              </h3>
-              <p className="text-[11px] text-card-muted font-bold">
-                {lang === 'ml' ? 'സ്ഥിരീകരിച്ച സ്ക്വാഡുകളിൽ നിന്നുള്ള താരങ്ങൾ' : 'Names, numbers and clubs from confirmed squad rosters'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Club Filter Chips */}
-        <div className="flex items-center gap-1.5 overflow-x-auto horizontal-scroll-container py-1">
-          {squadClubs.map((club) => {
-            const isSelected = selectedClubFilter === club;
-            const isConfirmed = club === 'All' || clubSquadStatus[club] === 'confirmed';
-            return (
-              <button
-                key={club}
-                onClick={() => setSelectedClubFilter(club)}
-                className={`min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-bold shrink-0 transition active:scale-95 flex items-center gap-1.5 ${
-                  isSelected
-                    ? 'btn-royal text-white font-black shadow-xs'
-                    : 'surface-light text-card-title border border-surface-border dark:border-navy-700'
-                }`}
-              >
-                <span>{club === 'All' ? (lang === 'ml' ? 'എല്ലാ ക്ലബ്ബുകളും' : 'All Clubs') : club}</span>
-                {!isConfirmed && (
-                  <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-300">
-                    Draft
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Search Bar */}
-        {isClubConfirmed && (
+          {/* Search Bar */}
           <div className="relative">
             <Search className="w-4 h-4 text-card-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -529,89 +239,288 @@ export default function TopScorers({ lang, isDarkMode }) {
               value={playerSearchQuery}
               onChange={(e) => setPlayerSearchQuery(e.target.value)}
               placeholder={lang === 'ml' ? 'കളിക്കാരന്റെ പേര് അല്ലെങ്കിൽ ജേഴ്സി നമ്പർ തിരയുക...' : 'Search player by name, number or club...'}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl text-xs font-medium surface-light border border-surface-border dark:border-navy-700 text-card-title focus:outline-hidden focus:ring-2 focus:ring-blue-500 min-h-[44px]"
+              className="w-full pl-10 pr-10 py-2.5 rounded-xl text-xs font-medium surface-light border border-surface-border dark:border-navy-700 text-card-title focus:outline-hidden focus:ring-2 focus:ring-royal min-h-[44px]"
             />
-          </div>
-        )}
-
-        {/* Players List or Unconfirmed Squad Notice */}
-        {!isClubConfirmed ? (
-          <div className="py-8 px-4 rounded-2xl surface-light border border-dashed border-surface-border dark:border-navy-700 text-center space-y-1.5">
-            <ShieldAlert className="w-6 h-6 text-royal dark:text-sky mx-auto opacity-75" />
-            <h4 className="text-sm font-bold text-card-title">
-              {lang === 'ml' ? 'സ്ക്വാഡ് ഉടൻ പ്രഖ്യാപിക്കും' : 'Squad to be confirmed'}
-            </h4>
-            <p className="text-xs text-card-muted">
-              {lang === 'ml'
-                ? 'ഔദ്യോഗിക സ്ക്വാഡ് ലിസ്റ്റ് ക്ലബ്ബ് സമർപ്പിച്ച ശേഷം ഇവിടെ പ്രസിദ്ധീകരിക്കും.'
-                : 'Official roster will be displayed once confirmed by the club committee.'}
-            </p>
-          </div>
-        ) : visiblePlayers.length === 0 ? (
-          <div className="py-8 px-4 rounded-2xl surface-light border border-dashed border-surface-border dark:border-navy-700 text-center text-xs text-card-muted font-medium">
-            {lang === 'ml' ? 'തിരഞ്ഞെടുത്ത വിവരങ്ങളുമായി പൊരുത്തപ്പെടുന്ന കളിക്കാരെ കണ്ടെത്തിയില്ല' : 'No players found matching your query'}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {visiblePlayers.map((p) => (
-              <div
-                key={p.id}
-                className="p-3 rounded-xl surface-light border border-surface-border dark:border-navy-700 flex items-center justify-between gap-3 text-xs min-h-[48px]"
+            {playerSearchQuery && (
+              <button
+                onClick={() => setPlayerSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-card-muted hover:text-card-title"
               >
-                {(() => {
-                  const disc = getPlayerDisciplinaryStatus(p.name, p.number, p.club);
-                  return (
-                    <>
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          {/* Players Grid with Live Card Status Indicators */}
+          {visiblePlayers.length === 0 ? (
+            <div className="py-8 px-4 rounded-2xl surface-light border border-dashed border-surface-border dark:border-navy-700 text-center text-xs text-card-muted font-medium">
+              {lang === 'ml' ? 'തിരഞ്ഞെടുത്ത വിവരങ്ങളുമായി പൊരുത്തപ്പെടുന്ന കളിക്കാരെ കണ്ടെത്തിയില്ല' : 'No players found matching your query'}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {visiblePlayers.map((p) => {
+                const disc = getPlayerDisciplinaryStatus(p.name, p.number, p.club);
+                return (
+                  <div
+                    key={p.id}
+                    onClick={() => {
+                      if (disc.hasCard) {
+                        setSelectedCardPlayer({ player: p, disciplinary: disc });
+                      }
+                    }}
+                    className={`p-3 rounded-2xl surface-light border transition flex items-center justify-between gap-3 text-xs min-h-[52px] ${
+                      disc.hasRedCard 
+                        ? 'border-red-500/50 bg-red-500/5 hover:border-red-500 cursor-pointer' 
+                        : disc.hasYellowCard
+                        ? 'border-amber-500/50 bg-amber-500/5 hover:border-amber-500 cursor-pointer'
+                        : 'border-surface-border dark:border-navy-700 hover:border-royal'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="w-8 h-8 rounded-xl bg-surface-card text-card-title font-black font-sports border border-surface-border dark:border-navy-700 flex items-center justify-center shrink-0 shadow-2xs">
+                        #{p.number}
+                      </span>
+                      <div className="w-8 h-8 rounded-full bg-white p-0.5 border border-slate-200 shrink-0">
+                        <TeamLogo teamName={p.club} className="w-full h-full object-contain" />
+                      </div>
+                      <div className="min-w-0">
+                        <h5 className="font-bold text-card-title truncate text-xs sm:text-sm">
+                          {lang === 'ml' ? (p.nameMl || p.name) : p.name}
+                        </h5>
+                        <p className="text-[10px] text-card-muted truncate font-medium">
+                          {lang === 'ml' ? (p.clubMl || p.club) : p.club}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Disciplinary Card Indicator */}
+                    {disc.hasRedCard && (
+                      <span className="px-2 py-1 rounded-lg bg-red-600 text-white font-black text-[10px] flex items-center gap-1 shrink-0 shadow-xs animate-pulse">
+                        <span>🟥</span>
+                        <span>{lang === 'ml' ? 'റെഡ് കാർഡ്' : 'Red Card'}</span>
+                        <span className="font-mono bg-black/20 px-1 rounded-xs">{disc.latestCard?.minute}'</span>
+                      </span>
+                    )}
+                    {disc.hasYellowCard && !disc.hasRedCard && (
+                      <span className="px-2 py-1 rounded-lg bg-amber-500 text-navy-950 font-black text-[10px] flex items-center gap-1 shrink-0 shadow-xs">
+                        <span>🟨</span>
+                        <span>{lang === 'ml' ? 'യെല്ലോ' : 'Yellow'}</span>
+                        <span className="font-mono bg-black/20 px-1 rounded-xs">{disc.latestCard?.minute}'</span>
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* ============================================================== */}
+      {/* VIEW B: OFFICIAL HONOURS & LEADERBOARDS */}
+      {/* ============================================================== */}
+      {activeStatsTab === 'leaders' && (
+        <div className="space-y-5 animate-fadeIn">
+          {/* If No Matches Played Yet: Show 1 Clean Modern Kickoff Preview instead of 4 giant empty boxes */}
+          {!hasLiveMatchesPlayed ? (
+            <div className="p-6 rounded-3xl surface-card border border-surface-border dark:border-navy-700 text-center space-y-4 shadow-card">
+              <div className="w-14 h-14 rounded-2xl btn-royal text-white flex items-center justify-center mx-auto shadow-md">
+                <Trophy className="w-7 h-7 text-gold" />
+              </div>
+
+              <div className="space-y-1 max-w-md mx-auto">
+                <h3 className="text-base sm:text-lg font-black font-sports uppercase text-card-title">
+                  {lang === 'ml' ? 'ലീഡർബോർഡുകൾ ഉദ്ഘാടന മത്സരത്തോടെ സജീവമാകും' : 'Leaderboards Activate on Opening Match'}
+                </h3>
+                <p className="text-xs text-card-muted leading-relaxed">
+                  {lang === 'ml'
+                    ? 'നവംബർ 06 വെള്ളിയാഴ്ച രാത്രി 8:00 മണിക്ക് ഉദ്ഘാടന മത്സരം ആരംഭിക്കുന്നതോടെ ഗോൾഡൻ ബൂട്ട്, ക്ലീൻ ഷീറ്റ്, ഫെയർ പ്ലേ പട്ടികകൾ റഫറി സ്കോർ കാർഡുകളിൽ നിന്ന് തത്സമയം അപ്ഡേറ്റ് ചെയ്യപ്പെടും.'
+                    : 'The Golden Boot, Golden Glove, and Fair Play standings will activate live from the referee scorer desk once Match 1 kicks off on Friday, Nov 06.'}
+                </p>
+              </div>
+
+              {/* 3 Preview Honors Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-left">
+                <div className="p-4 rounded-2xl surface-light border border-surface-border dark:border-navy-700 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">👟</span>
+                    <h5 className="font-bold text-xs text-card-title">Golden Boot</h5>
+                  </div>
+                  <p className="text-[11px] text-card-muted">Top goal scorers across all tournament matches.</p>
+                </div>
+
+                <div className="p-4 rounded-2xl surface-light border border-surface-border dark:border-navy-700 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">🧤</span>
+                    <h5 className="font-bold text-xs text-card-title">Golden Glove</h5>
+                  </div>
+                  <p className="text-[11px] text-card-muted">Goalkeepers with the most clean sheets recorded.</p>
+                </div>
+
+                <div className="p-4 rounded-2xl surface-light border border-surface-border dark:border-navy-700 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">🤝</span>
+                    <h5 className="font-bold text-xs text-card-title">Fair Play</h5>
+                  </div>
+                  <p className="text-[11px] text-card-muted">Clubs disciplined with the fewest cards.</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Live Leaderboards when matches are played */
+            <div className="space-y-5">
+              {/* Golden Boot Section */}
+              <section className="rounded-3xl p-5 sm:p-6 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-4">
+                <div className="flex items-center gap-2.5 border-b border-surface-border dark:border-navy-700 pb-3">
+                  <span className="p-2 rounded-xl bg-amber-500 text-navy-950 shadow-xs font-black">
+                    <Flame className="w-5 h-5" />
+                  </span>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title">
+                      {lang === 'ml' ? 'ഗോൾഡൻ ബൂട്ട് ലീഡർബോർഡ്' : 'GOLDEN BOOT RACE'}
+                    </h3>
+                    <p className="text-[11px] text-card-muted font-bold">
+                      {lang === 'ml' ? 'ടൂർണ്ണമെന്റിലെ മുൻനിര ഗോൾവേട്ടക്കാർ' : 'Top goal scorers of Season 7'}
+                    </p>
+                  </div>
+                </div>
+
+                {topScorerLeader && (
+                  <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-amber-500/5 to-transparent border border-amber-500/40 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <span className="w-9 h-9 rounded-xl bg-amber-500 text-navy-950 font-black font-sports text-sm flex items-center justify-center shrink-0 shadow-sm">
+                        #1
+                      </span>
+                      <div>
+                        <span className="text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 block">
+                          Current Leader
+                        </span>
+                        <h4 className="text-base font-black font-sports text-card-title leading-tight">
+                          {topScorerLeader.name}
+                        </h4>
+                        <p className="text-xs text-card-muted font-medium">
+                          {topScorerLeader.team}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-2xl font-black font-sports text-amber-500 leading-none block">
+                        {topScorerLeader.goals}
+                      </span>
+                      <span className="text-[10px] uppercase font-bold text-card-muted">Goals</span>
+                    </div>
+                  </div>
+                )}
+
+                {subsequentScorers.length > 0 && (
+                  <div className="space-y-1.5 pt-1">
+                    {subsequentScorers.map((scorer, idx) => (
+                      <div
+                        key={scorer.name}
+                        className="p-3 rounded-xl surface-light border border-surface-border dark:border-navy-700 flex items-center justify-between gap-3 text-xs"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="font-sports font-bold text-card-muted w-5 text-center">
+                            #{idx + 2}
+                          </span>
+                          <div>
+                            <h5 className="font-bold text-card-title">{scorer.name}</h5>
+                            <p className="text-[10px] text-card-muted">{scorer.team}</p>
+                          </div>
+                        </div>
+                        <span className="font-sports font-black text-amber-500 text-base">
+                          {scorer.goals}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+
+              {/* Golden Glove Section */}
+              <section className="rounded-3xl p-5 sm:p-6 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-4">
+                <div className="flex items-center gap-2.5 border-b border-surface-border dark:border-navy-700 pb-3">
+                  <span className="p-2 rounded-xl bg-emerald-600 text-white shadow-xs">
+                    <ShieldCheck className="w-5 h-5" />
+                  </span>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title">
+                      {lang === 'ml' ? 'ഗോൾഡൻ ഗ്ലോവ് (ക്ലീൻ ഷീറ്റ്)' : 'GOLDEN GLOVE RACE'}
+                    </h3>
+                    <p className="text-[11px] text-card-muted font-bold">
+                      {lang === 'ml' ? 'സ്റ്റാർട്ടിംഗ് ഗോൾകീപ്പർമാരുടെ ക്ലീൻ ഷീറ്റ്' : 'Clean sheets recorded by starting goalkeepers'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {stats.rankedGoalkeepers.slice(0, 3).map((gk, idx) => (
+                    <div 
+                      key={gk.name} 
+                      className="p-3.5 rounded-2xl surface-light border border-surface-border dark:border-navy-700 flex items-center justify-between gap-3"
+                    >
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="w-7 h-7 rounded-lg bg-surface-card text-card-title font-black font-sports border border-surface-border dark:border-navy-700 flex items-center justify-center shrink-0">
-                          #{p.number}
+                        <span className="w-6 h-6 rounded-md bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold font-sports text-xs flex items-center justify-center shrink-0">
+                          #{idx + 1}
                         </span>
                         <div className="w-7 h-7 rounded-full bg-white p-0.5 border border-slate-200 shrink-0">
-                          <TeamLogo teamName={p.club} className="w-full h-full object-contain" />
+                          <TeamLogo teamName={gk.club} className="w-full h-full object-contain" />
                         </div>
                         <div className="min-w-0">
-                          <h5 className="font-bold text-card-title truncate">
-                            {lang === 'ml' ? (p.nameMl || p.name) : p.name}
-                          </h5>
-                          <p className="text-[10px] text-card-muted truncate font-medium">
-                            {p.club}
-                          </p>
+                          <h5 className="font-bold text-card-title text-xs truncate">{gk.name}</h5>
+                          <p className="text-[10px] text-card-muted truncate">{gk.club}</p>
                         </div>
                       </div>
+                      <span className="text-base font-black font-sports text-emerald-600 dark:text-emerald-400">
+                        {gk.cleanSheets}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </section>
 
-                      {/* Disciplinary Card Indicator */}
-                      {disc.hasRedCard && (
-                        <button
-                          type="button"
-                          onClick={() => setSelectedCardPlayer({ player: p, disciplinary: disc })}
-                          className="px-2 py-1 rounded-lg bg-red-600 text-white font-black text-[10px] flex items-center gap-1 shrink-0 shadow-xs hover:bg-red-700 active:scale-95 transition"
-                        >
-                          <span>🟥</span>
-                          <span>{lang === 'ml' ? 'റെഡ് കാർഡ്' : 'Red Card'}</span>
-                          <span className="font-mono bg-black/20 px-1 rounded-xs">{disc.latestCard?.minute}'</span>
-                        </button>
-                      )}
-                      {disc.hasYellowCard && !disc.hasRedCard && (
-                        <button
-                          type="button"
-                          onClick={() => setSelectedCardPlayer({ player: p, disciplinary: disc })}
-                          className="px-2 py-1 rounded-lg bg-amber-500 text-navy-950 font-black text-[10px] flex items-center gap-1 shrink-0 shadow-xs hover:bg-amber-400 active:scale-95 transition"
-                        >
-                          <span>🟨</span>
-                          <span>{lang === 'ml' ? 'യെല്ലോ കാർഡ്' : 'Yellow'}</span>
-                          <span className="font-mono bg-black/20 px-1 rounded-xs">{disc.latestCard?.minute}'</span>
-                        </button>
-                      )}
-                    </>
-                  );
-                })()}
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
+              {/* Fair Play Table */}
+              <section className="rounded-3xl p-5 sm:p-6 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-4">
+                <div className="flex items-center gap-2.5 border-b border-surface-border dark:border-navy-700 pb-3">
+                  <span className="p-2 rounded-xl bg-blue-600 text-white shadow-xs">
+                    <Medal className="w-5 h-5" />
+                  </span>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title">
+                      {lang === 'ml' ? 'ഫെയർ പ്ലേ പട്ടിക' : 'FAIR PLAY STANDINGS'}
+                    </h3>
+                    <p className="text-[11px] text-card-muted font-bold">
+                      {lang === 'ml' ? 'ഏറ്റവും കുറഞ്ഞ കാർഡുകൾ നേടിയ ക്ലബ്ബുകൾ' : 'Clubs ranked by fewest disciplined cards'}
+                    </p>
+                  </div>
+                </div>
 
-      {/* Disciplinary Card Modal */}
+                <div className="space-y-1.5">
+                  {stats.fairPlayClubs.slice(0, 5).map((club, idx) => (
+                    <div
+                      key={club.club}
+                      className="p-3 rounded-xl surface-light border border-surface-border dark:border-navy-700 flex items-center justify-between text-xs"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <span className="font-sports font-bold text-card-muted w-5 text-center">
+                          #{idx + 1}
+                        </span>
+                        <h5 className="font-bold text-card-title">{club.club}</h5>
+                      </div>
+                      <div className="flex items-center gap-3 font-mono font-bold">
+                        <span className="text-amber-500">🟨 {club.yellow}</span>
+                        <span className="text-red-500">🟥 {club.red}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Disciplinary Inspection Dialog (Triggered on Click of disciplined player) */}
       {selectedCardPlayer && (
         <div 
           onClick={() => setSelectedCardPlayer(null)}
@@ -689,18 +598,6 @@ export default function TopScorers({ lang, isDarkMode }) {
               {lang === 'ml' ? 'അടയ്ക്കുക' : 'Close'}
             </button>
           </div>
-        </div>
-      )}
-
-      {/* 7. Tournament Awards Explainer Note (Rule 11) */}
-      {AWARDS_NOTE && (
-        <div className="p-3.5 rounded-2xl surface-light border border-surface-border dark:border-navy-700 text-center text-xs text-card-muted font-medium flex items-center justify-center gap-1.5">
-          <Info className="w-4 h-4 text-royal dark:text-sky shrink-0" />
-          <span>
-            {lang === 'ml'
-              ? 'ടൂർണ്ണമെന്റ് അവാർഡുകൾ സംഘാടക സമിതിയാണ് തീരുമാനിക്കുന്നത്.'
-              : 'Awards are decided by the organizing committee.'}
-          </span>
         </div>
       )}
     </div>

@@ -525,18 +525,6 @@ export default function App() {
                         )}
 
                         <button
-                          onClick={() => setMatchSubTab('game')}
-                          className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
-                            matchSubTab === 'game' 
-                              ? 'bg-emerald-600 text-white shadow-card font-black' 
-                              : 'text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
-                          }`}
-                        >
-                          <span>🎮</span>
-                          <span>{lang === 'ml' ? 'പെനാൽറ്റി കളി' : 'Mini Game'}</span>
-                        </button>
-
-                        <button
                           onClick={() => setMatchSubTab('h2h')}
                           className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
                             matchSubTab === 'h2h' 
@@ -596,24 +584,7 @@ export default function App() {
                       </div>
                     )}
 
-                    {/* Section 3: Interactive Penalty Shootout Mini-Game (Lazy-Loaded) */}
-                    {(matchSubTab === 'game' || matchSubTab === 'all') && (
-                      <div id="penalty-game" className="animate-fadeIn">
-                        <React.Suspense fallback={
-                          <div className="p-12 text-center rounded-3xl bg-white border border-slate-200">
-                            <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                            <p className="text-xs font-bold text-slate-500">ലോഡിംഗ് പെനാൽറ്റി ഗെയിം...</p>
-                          </div>
-                        }>
-                          <SevensPenaltyGame
-                            lang={lang}
-                            isDarkMode={isDarkMode}
-                          />
-                        </React.Suspense>
-                      </div>
-                    )}
-
-                    {/* Section 4: Head-to-Head & Historical Form */}
+                    {/* Section 2: Head-to-Head & Historical Form */}
                     {(matchSubTab === 'h2h' || matchSubTab === 'all') && (
                       <div className="animate-fadeIn">
                         <HeadToHeadCard
@@ -631,14 +602,6 @@ export default function App() {
                       isDarkMode={isDarkMode} 
                     />
                   </div>
-                </div>
-
-                {/* Marathon Section (Moved to the bottom of the page) */}
-                <div id="marathon-section" className="pt-6 border-t border-slate-200 dark:border-slate-800">
-                  <PromoEventsSection 
-                    lang={lang} 
-                    isDarkMode={isDarkMode} 
-                  />
                 </div>
               </div>
             </div>

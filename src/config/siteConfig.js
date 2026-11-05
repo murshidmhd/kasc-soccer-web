@@ -72,14 +72,14 @@ export const DEVELOPER_CREDIT = {
   show: true
 };
 
-// Official Tournament Sponsors Array
+// Official Tournament Sponsors Array (Official Title Sponsor: FEZCO GROUP)
 export const SPONSORS_DATA = [
-  { name: 'Fezco Group', logoUrl: null, url: '#' },
-  { name: 'Raidhan Kuzhimanthi', logoUrl: null, url: '#' },
-  { name: 'Abacus Academy', logoUrl: null, url: '#' },
-  { name: 'Life Line Hospital', logoUrl: null, url: '#' },
-  { name: 'Malabar Gold & Diamonds', logoUrl: null, url: '#' },
-  { name: 'Al-Ameen Builders', logoUrl: null, url: '#' }
+  { 
+    name: 'FEZCO GROUP (Official Title Sponsor)', 
+    tier: 'Official Title Sponsor',
+    logoUrl: '/fezco_title_sponsor_poster.jpg', 
+    url: '#' 
+  }
 ];
 
 // Stadium Maps URL
