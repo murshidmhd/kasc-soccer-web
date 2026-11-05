@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kasc-soccer-web.vercel.app/sitemap.xml
+Sitemap: https://udaya-football.vercel.app/sitemap.xml

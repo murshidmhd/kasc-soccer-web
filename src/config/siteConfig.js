@@ -3,8 +3,10 @@
  * Akhilenthya Sevens Season 7 (Peruvallur Panjayath Stadium)
  */
 
-// Canonical Production URL for sharing (never localhost per prompt rule)
-export const SITE_URL = 'https://kasc-soccer-web.vercel.app';
+// Canonical Production URL for sharing (auto-resolves current live domain with udaya-football fallback)
+export const SITE_URL = typeof window !== 'undefined' && window.location.origin && !window.location.origin.includes('localhost')
+  ? window.location.origin
+  : 'https://udaya-football.vercel.app';
 
 // Feature Flags
 export const SHOW_LOCAL_ONLY_FEATURES = false;

@@ -687,7 +687,10 @@ export async function generateGoalStatusImage({
   // Live URL & Hashtags
   ctx.fillStyle = '#94a3b8';
   ctx.font = 'bold 20px "Plus Jakarta Sans", sans-serif';
-  ctx.fillText('kasc-soccer-web.vercel.app  •  #KeralaSevens  •  #Season7', width / 2, 1810);
+  const displayDomain = typeof window !== 'undefined' && window.location.hostname
+    ? window.location.hostname
+    : 'udaya-football.vercel.app';
+  ctx.fillText(`${displayDomain}  •  #KeralaSevens  •  #Season7`, width / 2, 1810);
 
   ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
   ctx.font = '16px "Plus Jakarta Sans", sans-serif';
@@ -719,7 +722,10 @@ export async function generateGoalStatusImage({
 export async function shareGoalCard({ blob, dataUrl, title, text, fileName }) {
   const finalFileName = fileName || 'kasc-sevens-goal.png';
   const shareTitle = title || '⚽ GOAL! - All India Sevens Season 7';
-  const shareText = text || 'Live goal update from Udaya & KASC All India Sevens Football Tournament! Check live scores at https://kasc-soccer-web.vercel.app';
+  const fallbackOrigin = typeof window !== 'undefined' && window.location.origin
+    ? window.location.origin
+    : 'https://udaya-football.vercel.app';
+  const shareText = text || `Live goal update from Udaya & KASC All India Sevens Football Tournament! Check live scores at ${fallbackOrigin}`;
 
   // 1. Try Native Web Share API (Mobile WhatsApp Status direct share)
   if (typeof navigator !== 'undefined' && navigator.share && blob) {

@@ -13,6 +13,7 @@ import {
   Smartphone
 } from 'lucide-react';
 import { generateGoalStatusImage, shareGoalCard } from '../utils/goalCardCanvasGenerator';
+import { SITE_URL } from '../config/siteConfig';
 
 export default function GoalShareCardModal({
   isOpen,
@@ -93,7 +94,7 @@ export default function GoalShareCardModal({
     setStatusMessage({ type: 'info', text: 'Opening Share Menu...' });
 
     const shareTitle = `⚽ GOAL! ${formData.scorerName} (${formData.minute}')`;
-    const shareText = `⚽ GOAL ALERT!\n${formData.scorerName} scores at ${formData.minute}'!\n${formData.homeTeamName} ${formData.scoreHome} - ${formData.scoreAway} ${formData.awayTeamName}\n\n🏆 Udaya & KASC All India Sevens Season 7\nLive Scores: https://kasc-soccer-web.vercel.app`;
+    const shareText = `⚽ GOAL ALERT!\n${formData.scorerName} scores at ${formData.minute}'!\n${formData.homeTeamName} ${formData.scoreHome} - ${formData.scoreAway} ${formData.awayTeamName}\n\n🏆 Udaya & KASC All India Sevens Season 7\nLive Scores: ${SITE_URL}`;
 
     const result = await shareGoalCard({
       blob: cardImage.blob,
@@ -139,7 +140,7 @@ export default function GoalShareCardModal({
   };
 
   const handleCopyText = () => {
-    const text = `⚽ GOAL ALERT! (${formData.minute}')\nScorer: ${formData.scorerName}\n${formData.homeTeamName} [ ${formData.scoreHome} - ${formData.scoreAway} ] ${formData.awayTeamName}\n\n🏆 All India Sevens Football Season 7 (Peruvallur)\nLive Scores: https://kasc-soccer-web.vercel.app`;
+    const text = `⚽ GOAL ALERT! (${formData.minute}')\nScorer: ${formData.scorerName}\n${formData.homeTeamName} [ ${formData.scoreHome} - ${formData.scoreAway} ] ${formData.awayTeamName}\n\n🏆 All India Sevens Football Season 7 (Peruvallur)\nLive Scores: ${SITE_URL}`;
     navigator.clipboard.writeText(text);
     setCopiedText(true);
     setTimeout(() => setCopiedText(false), 2500);
