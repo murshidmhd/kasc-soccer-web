@@ -8,7 +8,6 @@ import MatchPredictionCard from './components/MatchPredictionCard';
 import PlayerOfTheMatchVote from './components/PlayerOfTheMatchVote';
 import HeadToHeadCard from './components/HeadToHeadCard';
 import FixturesSection from './components/FixturesSection';
-import TournamentBracket from './components/TournamentBracket';
 import TeamLogo from './components/TeamLogo';
 import TeamsSection from './components/TeamsSection';
 import HomeClubsStrip from './components/HomeClubsStrip';
@@ -462,13 +461,6 @@ export default function App() {
                   })()}
                   </div>
                 </section>
-
-                {/* 3. Knockout Bracket (Hidden behind SHOW_BRACKET = false per Task 4, Rule 16) */}
-                {SHOW_BRACKET && (
-                  <section className="space-y-3">
-                    <TournamentBracket lang={lang} isDarkMode={isDarkMode} />
-                  </section>
-                )}
 
                 {/* 4. Clubs Strip (Home compact scroll-snap strip with View All 24) */}
                 <HomeClubsStrip 
