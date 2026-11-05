@@ -41,7 +41,7 @@ export default function NewUserGuidedTour({
       id: 'fixtures',
       icon: Calendar,
       iconColor: 'text-blue-400 bg-blue-400/20',
-      badgeMl: '2/4 • മത്സരക്രമം',
+      badgeMl: '2/4 • ഫിക്സ്ചർ',
       badgeEn: '2/4 • Fixtures',
       titleMl: '📅 മത്സരക്രമവും ടൈംടേബിളും',
       titleEn: '📅 Match Schedule & Timetable',

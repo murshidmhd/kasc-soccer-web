@@ -304,7 +304,7 @@ export default function WelcomeBottomSheet({
                 <Calendar className="w-4 h-4" />
               </div>
               <span className="text-[11px] font-black text-white leading-tight">
-                {lang === 'ml' ? 'മത്സരക്രമം' : 'Fixtures'}
+                {lang === 'ml' ? 'ഫിക്സ്ചർ' : 'Fixtures'}
               </span>
               <span className="text-[9px] text-navy-muted mt-0.5">
                 {lang === 'ml' ? 'ടൈംടേബിൾ' : 'Schedule'}

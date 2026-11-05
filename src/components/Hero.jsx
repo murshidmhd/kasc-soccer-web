@@ -151,7 +151,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
             <div className="pt-3 pb-1 border-t border-navy-700">
               <div className="text-center mb-2.5">
                 <span className="text-[11px] font-black uppercase tracking-wider text-navy-muted">
-                  {lang === 'ml' ? 'കിക്ക്ഓഫിലേക്ക് ഇനി' : 'COUNTDOWN TO KICKOFF'}
+                  COUNTDOWN TO KICKOFF
                 </span>
               </div>
               <div className="grid grid-cols-4 gap-2 sm:gap-3 max-w-sm mx-auto">
@@ -159,32 +159,32 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
                   <div className="text-[28px] sm:text-3xl font-black font-sports text-white leading-none">
                     {String(timeLeft.days).padStart(2, '0')}
                   </div>
-                  <div className="text-[12px] font-bold uppercase text-navy-muted mt-1">
-                    {lang === 'ml' ? 'ദിനം' : 'Days'}
+                  <div className="text-[11px] sm:text-[12px] font-black tracking-wider uppercase text-navy-muted mt-1">
+                    DAYS
                   </div>
                 </div>
                 <div className="p-2 sm:p-2.5 rounded-2xl text-center border border-navy-700 surface-navy-box">
                   <div className="text-[28px] sm:text-3xl font-black font-sports text-white leading-none">
                     {String(timeLeft.hours).padStart(2, '0')}
                   </div>
-                  <div className="text-[12px] font-bold uppercase text-navy-muted mt-1">
-                    {lang === 'ml' ? 'മണി' : 'Hours'}
+                  <div className="text-[11px] sm:text-[12px] font-black tracking-wider uppercase text-navy-muted mt-1">
+                    HOURS
                   </div>
                 </div>
                 <div className="p-2 sm:p-2.5 rounded-2xl text-center border border-navy-700 surface-navy-box">
                   <div className="text-[28px] sm:text-3xl font-black font-sports text-white leading-none">
                     {String(timeLeft.minutes).padStart(2, '0')}
                   </div>
-                  <div className="text-[12px] font-bold uppercase text-navy-muted mt-1">
-                    {lang === 'ml' ? 'മിനിറ്റ്' : 'Mins'}
+                  <div className="text-[11px] sm:text-[12px] font-black tracking-wider uppercase text-navy-muted mt-1">
+                    MINS
                   </div>
                 </div>
                 <div className="p-2 sm:p-2.5 rounded-2xl text-center border border-navy-700 surface-navy-box">
                   <div className="text-[28px] sm:text-3xl font-black font-sports text-gold leading-none">
                     {String(timeLeft.seconds).padStart(2, '0')}
                   </div>
-                  <div className="text-[12px] font-bold uppercase text-navy-muted mt-1">
-                    {lang === 'ml' ? 'സെക്കൻഡ്' : 'Secs'}
+                  <div className="text-[11px] sm:text-[12px] font-black tracking-wider uppercase text-navy-muted mt-1">
+                    SECS
                   </div>
                 </div>
               </div>
@@ -199,7 +199,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
               className="min-h-touch w-full py-3 px-3 sm:px-4 rounded-xl font-bold text-xs sm:text-sm btn-royal text-white shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5"
             >
               <Calendar className="w-4 h-4" />
-              <span>{lang === 'ml' ? 'മത്സരക്രമം' : 'View Fixtures'}</span>
+              <span>{lang === 'ml' ? 'ഫിക്സ്ചർ (Fixtures)' : 'View Fixtures'}</span>
             </button>
             <button
               id="hero-ticket-btn"
@@ -207,7 +207,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
               className="min-h-touch w-full py-3 px-2 sm:px-4 rounded-xl font-black text-xs sm:text-sm btn-gold shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"
             >
               <Ticket className="w-4 h-4 text-navy-900 shrink-0" />
-              <span className="truncate">{lang === 'ml' ? 'ടിക്കറ്റ് വിവരങ്ങൾ' : 'Ticket Info'}</span>
+              <span className="truncate">{lang === 'ml' ? 'ടിക്കറ്റ് (Tickets)' : 'Ticket Info'}</span>
             </button>
           </div>
 

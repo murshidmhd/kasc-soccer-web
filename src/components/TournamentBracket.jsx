@@ -143,7 +143,7 @@ export default function TournamentBracket({ lang, isDarkMode }) {
           <div className="flex items-center gap-1.5">
             <Trophy className="w-4 h-4 text-gold shrink-0" />
             <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title leading-[1.3]">
-              {lang === 'ml' ? 'നോക്കൗട്ട് ബ്രാക്കറ്റ് (ട്രീ)' : 'TOURNAMENT BRACKET'}
+              {lang === 'ml' ? 'ഫിക്സ്ചർ ട്രീ (Fixture Tree)' : 'TOURNAMENT BRACKET'}
             </h3>
           </div>
           {/* Venue shown once at the top of the page (Rule 12) */}
@@ -160,7 +160,7 @@ export default function TournamentBracket({ lang, isDarkMode }) {
           aria-label="Open full tree bracket view"
         >
           <Maximize2 className="w-3.5 h-3.5" />
-          <span>{lang === 'ml' ? 'പൂർണ്ണ ട്രീ' : 'Full Tree'}</span>
+          <span>Full Tree</span>
         </button>
       </div>
 
@@ -170,7 +170,7 @@ export default function TournamentBracket({ lang, isDarkMode }) {
           <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
           <span className="font-semibold">
             {lang === 'ml' 
-              ? 'മത്സരക്രമം ഉടൻ സ്ഥിരീകരിക്കും • ഉദ്ഘാടന മത്സരം മാത്രം നിശ്ചയിച്ചിരിക്കുന്നു' 
+              ? 'ഫിക്സ്ചർ ഉടൻ സ്ഥിരീകരിക്കും • ഉദ്ഘാടന മത്സരം മാത്രം നിശ്ചയിച്ചിരിക്കുന്നു' 
               : 'Draw to be confirmed • Nov 6 opening match confirmed'}
           </span>
         </div>

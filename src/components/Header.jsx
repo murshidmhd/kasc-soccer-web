@@ -78,7 +78,7 @@ export default function Header({
   const moreMenuFeatures = [
     {
       id: 'fixtures',
-      label: lang === 'ml' ? 'മത്സരക്രമം & ടൈംടേബിൾ' : 'Match Fixtures & Dates',
+      label: lang === 'ml' ? 'ഫിക്സ്ചർ & ടൈംടേബിൾ' : 'Match Fixtures & Dates',
       icon: Calendar,
       action: () => {
         setActiveTab('fixtures');
