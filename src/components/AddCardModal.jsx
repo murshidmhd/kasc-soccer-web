@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Check, Trash2, AlertCircle, ShieldAlert } from 'lucide-react';
 import { getStoredMatchState, saveOfficialMatchState, getCalculatedMatchTime } from '../utils/matchStateManager';
+import { openingMatch } from '../data/tournamentData';
 
 // Official Match Squads for Quick Player Selection
 const SQUADS = {
@@ -215,10 +216,10 @@ export default function AddCardModal({ isOpen, onClose, isDarkMode, lang }) {
                     : 'border-surface-border dark:border-navy-700 hover:bg-surface-light dark:hover:bg-navy-800'
                 }`}
               >
-                <span className="text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-purple-700 text-white block w-fit mb-1">
-                  UDAYA
+                <span className="text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-royal text-white block w-fit mb-1">
+                  {openingMatch.teamHome.shortName}
                 </span>
-                <span className="text-xs font-bold block truncate">UDAYA Parambil Peedika</span>
+                <span className="text-xs font-bold block truncate">{openingMatch.teamHome.name}</span>
               </button>
 
               <button
@@ -234,9 +235,9 @@ export default function AddCardModal({ isOpen, onClose, isDarkMode, lang }) {
                 }`}
               >
                 <span className="text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-600 text-white block w-fit mb-1">
-                  NEW MALAYA
+                  {openingMatch.teamAway.shortName}
                 </span>
-                <span className="text-xs font-bold block truncate">NEW MALAYA MALABAR FC</span>
+                <span className="text-xs font-bold block truncate">{openingMatch.teamAway.name}</span>
               </button>
             </div>
           </div>

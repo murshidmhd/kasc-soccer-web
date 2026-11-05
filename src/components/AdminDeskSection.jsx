@@ -54,6 +54,7 @@ import { tournamentInfo, openingMatch } from '../data/tournamentData';
 import logoUdaya from '../assets/logo_udaya_transparent.png';
 import logoKasc from '../assets/logo_kasc.png';
 import GoalShareCardModal from './GoalShareCardModal';
+import AddCardModal from './AddCardModal';
 
 export default function AdminDeskSection({ 
   isDarkMode, 
@@ -105,6 +106,7 @@ export default function AdminDeskSection({
     isOpen: false,
     goalData: null
   });
+  const [isCardBookingOpen, setIsCardBookingOpen] = useState(false);
 
   // Live ticking interval for the clock inside Admin Desk
   useEffect(() => {
@@ -1160,31 +1162,45 @@ export default function AdminDeskSection({
               <div className={`p-4 sm:p-5 rounded-3xl border space-y-3.5 ${
                 isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-wrap gap-2">
                   <h4 className="text-xs font-black font-sports uppercase tracking-wider text-slate-500">
                     Publish Official Timeline Event
                   </h4>
-                  <button
-                    type="button"
-                    onClick={() => setGoalShareModal({
-                      isOpen: true,
-                      goalData: {
-                        scorerName: newEvent.player || 'Ibrahim Soumahoro',
-                        minute: newEvent.minute || matchState.matchMinute || 24,
-                        goalTeam: newEvent.team,
-                        scoreHome: matchState.officialScoreHome,
-                        scoreAway: matchState.officialScoreAway,
-                        homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
-                        awayTeamName: 'NEW MALAYA MALABAR FC',
-                        matchStatus: matchState.status === 'UPCOMING' ? 'MATCH HIGHLIGHT' : matchState.status,
-                        goalText: newEvent.text || 'Official Goal Highlight'
-                      }
-                    })}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 font-bold text-[11px] border border-amber-500/30 transition active:scale-95"
-                  >
-                    <Camera className="w-3.5 h-3.5" />
-                    <span>Status Card Creator</span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsCardBookingOpen(true)}
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-600 dark:text-amber-300 font-bold text-[11px] border border-amber-500/30 transition active:scale-95 shadow-2xs"
+                    >
+                      <span className="flex items-center -space-x-1">
+                        <span className="w-2 h-2.5 rounded-2xs bg-amber-400 border border-amber-600 inline-block" />
+                        <span className="w-2 h-2.5 rounded-2xs bg-red-600 border border-red-700 inline-block" />
+                      </span>
+                      <span>{lang === 'ml' ? 'കാർഡ് ചേർക്കുക (Book Card)' : 'Book Yellow / Red Card'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setGoalShareModal({
+                        isOpen: true,
+                        goalData: {
+                          scorerName: newEvent.player || 'Player Name',
+                          minute: newEvent.minute || matchState.matchMinute || 24,
+                          goalTeam: newEvent.team,
+                          scoreHome: matchState.officialScoreHome,
+                          scoreAway: matchState.officialScoreAway,
+                          homeTeamName: openingMatch.teamHome.name,
+                          awayTeamName: openingMatch.teamAway.name,
+                          matchStatus: matchState.status === 'UPCOMING' ? 'MATCH HIGHLIGHT' : matchState.status,
+                          goalText: newEvent.text || 'Official Goal Highlight'
+                        }
+                      })}
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-300 font-bold text-[11px] border border-blue-500/30 transition active:scale-95"
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>Status Card Creator</span>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -1209,8 +1225,8 @@ export default function AdminDeskSection({
                       onChange={(e) => setNewEvent({ ...newEvent, team: e.target.value })}
                       className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white border-slate-300 shadow-2xs"
                     >
-                      <option value="home">UDAYA Parambil Peedika</option>
-                      <option value="away">NEW MALAYA MALABAR FC</option>
+                      <option value="home">{openingMatch.teamHome.name}</option>
+                      <option value="away">{openingMatch.teamAway.name}</option>
                     </select>
                   </div>
 
@@ -1415,11 +1431,19 @@ export default function AdminDeskSection({
           scoreHome: matchState.officialScoreHome,
           scoreAway: matchState.officialScoreAway,
           minute: matchState.matchMinute || 30,
-          homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
-          awayTeamName: 'NEW MALAYA MALABAR FC',
+          homeTeamName: openingMatch.teamHome.name,
+          awayTeamName: openingMatch.teamAway.name,
           matchStatus: matchState.status
         }}
         isDarkMode={isDarkMode}
+      />
+
+      {/* Admin Disciplinary Card Booking Modal (Yellow & Red Cards) */}
+      <AddCardModal
+        isOpen={isCardBookingOpen}
+        onClose={() => setIsCardBookingOpen(false)}
+        isDarkMode={isDarkMode}
+        lang={lang}
       />
     </div>
   );
