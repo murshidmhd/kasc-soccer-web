@@ -65,7 +65,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
             {lang === 'ml' ? 'അഖിലേന്ത്യാ സെവൻസ്' : 'ALL INDIA SEVENS'}
           </h1>
           <p className="text-xs sm:text-sm font-semibold text-navy-muted leading-[1.5]">
-            {lang === 'ml' ? 'സീസൺ 7 • ഉദയ & കാസ്ക്' : 'Season 7 • Udaya & KASC'}
+            {lang === 'ml' ? 'സീസൺ 7 • ഉദയ പറമ്പിൽ പീടിക & KASC' : 'Season 7 • Udaya Parambil Peedika & KASC'}
           </p>
         </div>
 

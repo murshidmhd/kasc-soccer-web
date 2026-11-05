@@ -193,21 +193,21 @@ export default function Header({
           onClick={() => { setActiveTab('live'); window.location.hash = 'live'; window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           className="flex items-center gap-1.5 sm:gap-2.5 cursor-pointer select-none min-w-0"
         >
-          <div className="flex items-center -space-x-1 sm:space-x-1 shrink-0">
+          <div className="flex items-center -space-x-1.5 shrink-0">
             <img 
               src={logoUdaya} 
-              alt="Udaya Parambil Peedika" 
-              width={36}
-              height={36}
-              className="w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-amber-400 bg-white p-0.5 object-contain shadow-xs shrink-0" 
-              title="Udaya Parambil Peedika"
+              alt="Udaya Parambil Peedika (Host Club)" 
+              width={40}
+              height={40}
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-gold bg-white p-0.5 object-contain shadow-md z-10 shrink-0 ring-1 ring-gold/40" 
+              title="Udaya Parambil Peedika (Host Club)"
             />
             <img 
               src={logoKasc} 
               alt="KASC Peruvallur" 
-              width={36}
-              height={36}
-              className="w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-sky bg-white p-0.5 object-contain shadow-xs shrink-0" 
+              width={32}
+              height={32}
+              className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border border-sky/80 bg-white p-0.5 object-contain shadow-xs shrink-0 opacity-90" 
               title="KASC Peruvallur"
             />
           </div>

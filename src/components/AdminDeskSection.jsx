@@ -595,16 +595,16 @@ export default function AdminDeskSection({
       }`}>
         <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 p-4 sm:p-6 text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex items-center -space-x-1 sm:space-x-1.5 shrink-0">
+            <div className="flex items-center -space-x-2 shrink-0">
               <img 
                 src={logoUdaya} 
-                alt="Udaya" 
-                className="w-10 h-10 rounded-full border-2 border-amber-400 bg-white p-0.5 object-contain" 
+                alt="Udaya Parambil Peedika (Host Club)" 
+                className="w-12 h-12 rounded-full border-2 border-gold bg-white p-0.5 object-contain shadow-md z-10 ring-1 ring-gold/40" 
               />
               <img 
                 src={logoKasc} 
-                alt="KASC" 
-                className="w-10 h-10 rounded-full border-2 border-blue-400 bg-white p-0.5 object-contain" 
+                alt="KASC Peruvallur" 
+                className="w-9 h-9 rounded-full border border-sky/80 bg-white p-0.5 object-contain opacity-90" 
               />
             </div>
             <div>
@@ -620,7 +620,7 @@ export default function AdminDeskSection({
                 </span>
               </div>
               <p className="text-xs text-blue-200 mt-0.5">
-                Ground Referee Desk • SFA All India Sevens Season 7 • Peruvallur
+                UDAYA Parambil Peedika & KASC Peruvallur • SFA All India Sevens Season 7
               </p>
             </div>
           </div>

@@ -93,7 +93,7 @@ export default function GoalShareCardModal({
     setStatusMessage({ type: 'info', text: 'Opening Share Menu...' });
 
     const shareTitle = `⚽ GOAL! ${formData.scorerName} (${formData.minute}')`;
-    const shareText = `⚽ GOAL ALERT!\n${formData.scorerName} scores at ${formData.minute}'!\n${formData.homeTeamName} ${formData.scoreHome} - ${formData.scoreAway} ${formData.awayTeamName}\n\n🏆 Udaya KASC All India Sevens Season 7\nLive Scores: https://kasc-soccer-web.vercel.app`;
+    const shareText = `⚽ GOAL ALERT!\n${formData.scorerName} scores at ${formData.minute}'!\n${formData.homeTeamName} ${formData.scoreHome} - ${formData.scoreAway} ${formData.awayTeamName}\n\n🏆 Udaya & KASC All India Sevens Season 7\nLive Scores: https://kasc-soccer-web.vercel.app`;
 
     const result = await shareGoalCard({
       blob: cardImage.blob,

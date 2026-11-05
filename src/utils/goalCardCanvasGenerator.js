@@ -682,7 +682,7 @@ export async function generateGoalStatusImage({
   ctx.fillStyle = '#fde047';
   ctx.font = 'bold 22px "Plus Jakarta Sans", "Anek Malayalam", sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('KASC PERUVALLUR & UDAYA PARAMBIL PEEDIKA', width / 2, 1765);
+  ctx.fillText('UDAYA PARAMBIL PEEDIKA & KASC PERUVALLUR', width / 2, 1765);
 
   // Live URL & Hashtags
   ctx.fillStyle = '#94a3b8';
@@ -719,7 +719,7 @@ export async function generateGoalStatusImage({
 export async function shareGoalCard({ blob, dataUrl, title, text, fileName }) {
   const finalFileName = fileName || 'kasc-sevens-goal.png';
   const shareTitle = title || '⚽ GOAL! - All India Sevens Season 7';
-  const shareText = text || 'Live goal update from Udaya KASC All India Sevens Football Tournament! Check live scores at https://kasc-soccer-web.vercel.app';
+  const shareText = text || 'Live goal update from Udaya & KASC All India Sevens Football Tournament! Check live scores at https://kasc-soccer-web.vercel.app';
 
   // 1. Try Native Web Share API (Mobile WhatsApp Status direct share)
   if (typeof navigator !== 'undefined' && navigator.share && blob) {

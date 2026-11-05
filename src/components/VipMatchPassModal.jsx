@@ -8,7 +8,7 @@ export default function VipMatchPassModal({ isOpen, onClose, lang }) {
   const [fanName, setFanName] = useState('');
   const [selectedClub, setSelectedClub] = useState('UDAYA PARAMBIL PEEDIKA');
   const [isGenerated, setIsGenerated] = useState(false);
-  const [passNumber, setPassNumber] = useState('KASC-FAN-7782');
+  const [passNumber, setPassNumber] = useState('UDAYA-FAN-7782');
 
   if (!isOpen) return null;
 
@@ -16,7 +16,7 @@ export default function VipMatchPassModal({ isOpen, onClose, lang }) {
     e.preventDefault();
     if (!fanName.trim()) return;
     const randomNum = Math.floor(1000 + Math.random() * 9000);
-    setPassNumber(`KASC-FAN-${randomNum}`);
+    setPassNumber(`UDAYA-FAN-${randomNum}`);
     setIsGenerated(true);
     confetti({
       particleCount: 80,
@@ -167,11 +167,13 @@ export default function VipMatchPassModal({ isOpen, onClose, lang }) {
               {/* Pass Header */}
               <div className="flex items-center justify-between border-b border-white/15 pb-3">
                 <div className="flex items-center gap-2">
-                  <img src={logoUdaya} alt="Udaya" className="w-8 h-8 rounded-full border border-amber-400 bg-white p-0.5 object-contain" />
-                  <img src={logoKasc} alt="KASC" className="w-8 h-8 rounded-full border border-blue-500 bg-white p-0.5 object-contain" />
+                  <div className="flex items-center -space-x-1.5 shrink-0">
+                    <img src={logoUdaya} alt="Udaya" className="w-9 h-9 rounded-full border-2 border-amber-400 bg-white p-0.5 object-contain shadow-md z-10" />
+                    <img src={logoKasc} alt="KASC" className="w-7 h-7 rounded-full border border-sky/80 bg-white p-0.5 object-contain opacity-90" />
+                  </div>
                   <div className="leading-tight">
                     <span className="font-sports font-black text-sm block tracking-wide">AKHILENDHYA SEVENS S7</span>
-                    <span className="text-[9px] text-amber-300">Udaya & KASC Peruvallur</span>
+                    <span className="text-[9px] text-amber-300 font-bold">UDAYA Parambil Peedika (with KASC)</span>
                   </div>
                 </div>
                 <div className="px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-[9px] uppercase tracking-wider shadow-xs">

@@ -208,7 +208,7 @@ export default function TeamsSection({ lang, isDarkMode }) {
           >
             <div className="p-3.5 bg-navy-800 border-b border-navy-700 flex items-center justify-between text-white">
               <h4 className="font-sports font-black text-xs sm:text-sm uppercase tracking-wider text-white">
-                24 Teams • Udaya KASC Soccer Season 7
+                24 Teams • UDAYA & KASC Soccer Season 7
               </h4>
               <button
                 onClick={() => setIsPosterModalOpen(false)}

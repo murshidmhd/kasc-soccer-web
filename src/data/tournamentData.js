@@ -2,9 +2,9 @@ export const tournamentInfo = {
   name: "അഖിലേന്ത്യാ സെവൻസ് ടൂർണ്ണമെന്റ്",
   nameEn: "ALL INDIA SEVENS TOURNAMENT",
   season: "SEASON 7",
-  fullTitle: "UDAYA KASC SOCCER - ALL INDIA SEVENS FOOTBALL TOURNAMENT",
-  organizersMalayalam: "KASC പെരുവള്ളൂരും ഉദയ പറമ്പിൽ പീടികയും സംയുക്തമായി സംഘടിപ്പിക്കുന്ന",
-  organizersEn: "Jointly Organized by KASC Peruvallur & Udaya Parambil Peedika",
+  fullTitle: "UDAYA & KASC SOCCER - ALL INDIA SEVENS FOOTBALL TOURNAMENT",
+  organizersMalayalam: "ഉദയ പറമ്പിൽ പീടികയും KASC പെരുവള്ളൂരും സംയുക്തമായി സംഘടിപ്പിക്കുന്ന",
+  organizersEn: "Organized by UDAYA Parambil Peedika & KASC Peruvallur",
   affiliation: "SFA (Sevens Football Association) Affiliated",
   taglineMl: "2026-27 സീസണിലെ ആദ്യ അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ ടൂർണ്ണമെന്റ് പറമ്പിൽ പീടികയിൽ",
   taglineEn: "The Premier Opening All-India Sevens Football Tournament of Season 2026-27",
@@ -16,7 +16,7 @@ export const tournamentInfo = {
   venueMalayalam: "പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം, പറമ്പിൽ പീടിക",
   location: "Parambil Peedika, Malappuram, Kerala",
   googleMapsUrl: "https://maps.google.com/?q=Peruvallur+Panjayath+Stadium+Parambil+Peedika",
-  mediaContact: "KASC & UDAYA Committee",
+  mediaContact: "UDAYA & KASC Committee Desk",
   matchTime: "8:00 PM IST (Every Night)"
 };
 

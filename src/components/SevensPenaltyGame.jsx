@@ -311,7 +311,7 @@ export default function SevensPenaltyGame({ lang, isDarkMode }) {
 
           {/* Goal Post Crossbar Branding */}
           <div className="relative z-10 w-full py-0.5 bg-black/40 text-center text-[9px] font-sports font-black tracking-widest text-amber-300">
-            UDAYA KASC SEVENS • PARAMPIL PEEDIKA
+            UDAYA & KASC SEVENS • PARAMPIL PEEDIKA
           </div>
 
           {/* Target Zone Clickable Overlays */}

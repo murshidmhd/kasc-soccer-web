@@ -101,23 +101,23 @@ export default function Footer({ lang, isDarkMode, setActiveTab }) {
         {/* 1. Header Row: Two Club Logos (40px white circles) & Organizer Title (Rule 8) */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-navy-700/80 pb-6">
           <div className="flex items-center gap-3">
-            <div className="flex items-center -space-x-2">
-              <div className="w-10 h-10 rounded-full bg-white p-1 border-2 border-amber-400 shadow-md flex items-center justify-center shrink-0">
+            <div className="flex items-center -space-x-2.5">
+              <div className="w-12 h-12 rounded-full bg-white p-1 border-2 border-gold shadow-lg z-10 flex items-center justify-center shrink-0 ring-1 ring-gold/40">
                 <img 
                   src={logoUdaya} 
-                  alt="Udaya Parambil Peedika" 
-                  width={36} 
-                  height={36} 
+                  alt="Udaya Parambil Peedika (Host Club)" 
+                  width={44} 
+                  height={44} 
                   loading="lazy" 
                   className="w-full h-full object-contain rounded-full" 
                 />
               </div>
-              <div className="w-10 h-10 rounded-full bg-white p-1 border-2 border-sky shadow-md flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-full bg-white p-0.5 border border-sky/80 shadow-md flex items-center justify-center shrink-0 opacity-90">
                 <img 
                   src={logoKasc} 
                   alt="KASC Peruvallur" 
-                  width={36} 
-                  height={36} 
+                  width={34} 
+                  height={34} 
                   loading="lazy" 
                   className="w-full h-full object-contain rounded-full" 
                 />
@@ -157,8 +157,8 @@ export default function Footer({ lang, isDarkMode, setActiveTab }) {
         {/* needs Malayalam proofreading: repetition of 'സംയുക്തമായി സംഘടിപ്പിക്കുന്ന' removed */}
         <p className="text-xs text-navy-muted font-malayalam leading-relaxed max-w-2xl">
           {lang === 'ml'
-            ? 'KASC പെരുവള്ളൂരും ഉദയ പറമ്പിൽ പീടികയും സംയുക്തമായി സംഘടിപ്പിക്കുന്ന അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ മാമാങ്കം.'
-            : 'Organized jointly by KASC Peruvallur and Udaya Parambil Peedika for the Akhilenthya Sevens Football Championship Season 7.'}
+            ? 'ഉദയ പറമ്പിൽ പീടികയും KASC പെരുവള്ളൂരും സംയുക്തമായി സംഘടിപ്പിക്കുന്ന അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ മാമാങ്കം.'
+            : 'Organized by Udaya Parambil Peedika & KASC Peruvallur for the Akhilenthya Sevens Football Championship Season 7.'}
         </p>
 
         {/* 3. Quick Links 2-Column Grid of Buttons >= 44px (Rule 8) */}

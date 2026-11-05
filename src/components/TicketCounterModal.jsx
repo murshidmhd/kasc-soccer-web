@@ -105,17 +105,17 @@ export default function TicketCounterModal({ isOpen, onClose, lang, isDarkMode }
         </div>
 
         {/* Modal Header */}
-        <div className="flex items-center gap-2 mb-2.5">
-          <div className="flex items-center -space-x-1">
-            <img src={logoUdaya} alt="Udaya" className="w-8 h-8 rounded-full border border-gold bg-white p-0.5 object-contain" />
-            <img src={logoKasc} alt="KASC" className="w-8 h-8 rounded-full border border-sky bg-white p-0.5 object-contain" />
+        <div className="flex items-center gap-2.5 mb-2.5">
+          <div className="flex items-center -space-x-1.5 shrink-0">
+            <img src={logoUdaya} alt="Udaya Parambil Peedika" className="w-9 h-9 rounded-full border-2 border-gold bg-white p-0.5 object-contain shadow-sm z-10" />
+            <img src={logoKasc} alt="KASC Peruvallur" className="w-7 h-7 rounded-full border border-sky/80 bg-white p-0.5 object-contain opacity-90" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
               <span className="px-2.5 py-0.5 rounded-full btn-gold text-[10px] font-black uppercase tracking-wider">
                 🏟️ നേരിട്ടുള്ള കൗണ്ടർ ടിക്കറ്റ്
               </span>
-              <span className="text-xs text-card-muted font-bold">Stadium Box Office</span>
+              <span className="text-[11px] text-card-muted font-bold">UDAYA & KASC Peruvallur</span>
             </div>
           </div>
         </div>
