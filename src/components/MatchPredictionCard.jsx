@@ -81,15 +81,15 @@ export default function MatchPredictionCard({ lang, isDarkMode }) {
 
   const handleShareToWhatsApp = () => {
     const outcomeText = selectedOutcome === 'home' 
-      ? 'UDAYA ജയിക്കും' 
+      ? `${openingMatch.teamHome.shortName || 'KRSC'} ജയിക്കും` 
       : selectedOutcome === 'away' 
-        ? 'NEW MALAYA FC ജയിക്കും' 
+        ? `${openingMatch.teamAway.shortName || 'BASE'} ജയിക്കും` 
         : 'മത്സരം സമനിലയാകും (Draw)';
 
     const shareUrl = `${window.location.origin}${window.location.pathname}#live`;
     const text = encodeURIComponent(
       `⚽ *അഖിലേന്ത്യാ സെവൻസ് സീസൺ 7 - എന്റെ മാച്ച് പ്രവചനം!* 🔥\n\n` +
-      `⚔️ UDAYA Parambil Peedika vs NEW MALAYA MALABAR FC\n` +
+      `⚔️ ${openingMatch.teamHome.name} vs ${openingMatch.teamAway.name}\n` +
       `🎯 എന്റെ പ്രവചനം: *${openingMatch.teamHome.shortName} ${predictedScoreHome} - ${predictedScoreAway} ${openingMatch.teamAway.shortName}* (${outcomeText})\n\n` +
       `നിങ്ങളുടെ പ്രവചനം ഇവിടെ രേഖപ്പെടുത്തൂ: ${shareUrl}`
     );

@@ -14,8 +14,12 @@
  * - Fair Play: sorted by fewest red cards, then fewest yellow cards.
  */
 
+import { openingMatch } from '../data/tournamentData';
+
 // Starting Goalkeepers map for clean sheet tracking
 export const STARTING_GOALKEEPERS = {
+  'KRSC KOZHIKKODE': 'Ramees',
+  'BASE PERUMBAVUR': 'Ameen',
   'UDAYA PARAMBIL PEEDIKA': 'Shamseer',
   'NEW MALAYA MALABAR FC': 'Aneesh',
   'SUPER STUDIO MALAPPURAM': 'Mujeeb',
@@ -52,8 +56,8 @@ export function calculateTournamentStats(events = [], fixtures = [], activeMatch
     if (!isAlreadyIn) {
       finishedMatches.push({
         id: activeMatchState.id || 'm1',
-        team1: 'UDAYA PARAMBIL PEEDIKA',
-        team2: 'NEW MALAYA MALABAR FC',
+        team1: openingMatch.teamHome.name,
+        team2: openingMatch.teamAway.name,
         score1: activeMatchState.officialScoreHome,
         score2: activeMatchState.officialScoreAway,
         status: 'Finished',
@@ -75,8 +79,8 @@ export function calculateTournamentStats(events = [], fixtures = [], activeMatch
     activeMatchState.status !== 'UPCOMING' &&
     activeMatchState.status !== 'FULL_TIME'
   ) {
-    clubMatchesPlayed['UDAYA PARAMBIL PEEDIKA'] = (clubMatchesPlayed['UDAYA PARAMBIL PEEDIKA'] || 0) + 1;
-    clubMatchesPlayed['NEW MALAYA MALABAR FC'] = (clubMatchesPlayed['NEW MALAYA MALABAR FC'] || 0) + 1;
+    clubMatchesPlayed[openingMatch.teamHome.name] = (clubMatchesPlayed[openingMatch.teamHome.name] || 0) + 1;
+    clubMatchesPlayed[openingMatch.teamAway.name] = (clubMatchesPlayed[openingMatch.teamAway.name] || 0) + 1;
   }
 
   // 1. Regular goals only (excluding own goals and penalty shootout goals)
@@ -93,7 +97,7 @@ export function calculateTournamentStats(events = [], fixtures = [], activeMatch
   validGoalEvents.forEach((evt) => {
     const playerName = (evt.player || 'Unknown Player').trim();
     if (!playerGoalMap[playerName]) {
-      const fallbackTeam = evt.team === 'away' ? 'NEW MALAYA MALABAR FC' : 'UDAYA PARAMBIL PEEDIKA';
+      const fallbackTeam = evt.team === 'away' ? openingMatch.teamAway.name : openingMatch.teamHome.name;
       const teamName = evt.teamName || fallbackTeam;
       playerGoalMap[playerName] = {
         name: playerName,
@@ -143,7 +147,7 @@ export function calculateTournamentStats(events = [], fixtures = [], activeMatch
   const clubCards = {};
   allEvents.forEach((evt) => {
     if (evt.type === 'yellow_card' || evt.type === 'red_card') {
-      const fallbackTeam = evt.team === 'away' ? 'NEW MALAYA MALABAR FC' : 'UDAYA PARAMBIL PEEDIKA';
+      const fallbackTeam = evt.team === 'away' ? openingMatch.teamAway.name : openingMatch.teamHome.name;
       const club = evt.teamName || fallbackTeam;
       if (!clubCards[club]) {
         clubCards[club] = { club, yellow: 0, red: 0, total: 0 };

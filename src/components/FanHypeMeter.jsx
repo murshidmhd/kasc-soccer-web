@@ -219,13 +219,13 @@ export default function FanHypeMeter({ lang, isDarkMode }) {
         <div className="flex items-center justify-between text-xs font-bold">
           <span className="text-blue-700 flex items-center gap-1 font-sports">
             <TeamLogo teamName={openingMatch.teamHome.name} className="w-4 h-4" />
-            <span>UDAYA: {cheersHome.toLocaleString()}</span>
+            <span>{openingMatch.teamHome.shortName || 'KRSC'}: {cheersHome.toLocaleString()}</span>
           </span>
           <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">
             Matchday Roar
           </span>
           <span className="text-zinc-800 flex items-center gap-1 font-sports">
-            <span>NEW MALAYA: {cheersAway.toLocaleString()}</span>
+            <span>{openingMatch.teamAway.shortName || 'BASE'}: {cheersAway.toLocaleString()}</span>
             <TeamLogo teamName={openingMatch.teamAway.name} className="w-4 h-4" />
           </span>
         </div>
@@ -255,7 +255,7 @@ export default function FanHypeMeter({ lang, isDarkMode }) {
           className="p-3 rounded-2xl bg-gradient-to-r from-blue-600 to-sky-700 hover:from-blue-700 hover:to-sky-800 text-white font-bold text-xs sm:text-sm shadow-xs transition active:scale-95 flex items-center justify-center gap-2"
         >
           <span className="text-base">👏</span>
-          <span>{lang === 'ml' ? 'ഉദയക്ക് കയ്യടി!' : 'Cheer UDAYA!'}</span>
+          <span>{lang === 'ml' ? `${openingMatch.teamHome.shortName || 'KRSC'}ക്ക് കയ്യടി!` : `Cheer ${openingMatch.teamHome.shortName || 'KRSC'}!`}</span>
         </button>
 
         <button
@@ -263,7 +263,7 @@ export default function FanHypeMeter({ lang, isDarkMode }) {
           className="p-3 rounded-2xl bg-gradient-to-r from-zinc-800 to-black hover:from-zinc-900 hover:to-black text-white font-black text-xs sm:text-sm shadow-xs transition active:scale-95 flex items-center justify-center gap-2"
         >
           <span className="text-base">👏</span>
-          <span>{lang === 'ml' ? 'ന്യൂ മലയക്ക് കയ്യടി!' : 'Cheer NEW MALAYA!'}</span>
+          <span>{lang === 'ml' ? `${openingMatch.teamAway.shortName || 'BASE'}ക്ക് കയ്യടി!` : `Cheer ${openingMatch.teamAway.shortName || 'BASE'}!`}</span>
         </button>
       </div>
 

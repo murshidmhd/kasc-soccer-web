@@ -172,7 +172,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
     const sorted = [...matchState.events].sort((a, b) => (b.minute || 0) - (a.minute || 0));
 
     return sorted.map((evt) => {
-      const teamLabel = evt.team === 'away' ? 'NEW MALAYA' : 'UDAYA';
+      const teamLabel = evt.team === 'away' ? (openingMatch.teamAway.shortName || 'BASE') : (openingMatch.teamHome.shortName || 'KRSC');
       const minText = `${evt.minute || 0}'`;
       let mainLine = '';
 
@@ -397,16 +397,16 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           </div>
         </div>
 
-        {/* Matchup Presentation (UDAYA vs NEW MALAYA) */}
+        {/* Matchup Presentation (KRSC vs BASE) */}
         <div className="grid grid-cols-12 gap-2 sm:gap-4 items-center text-center py-2">
-          {/* Team Home (UDAYA Parambil Peedika) */}
+          {/* Team Home (KRSC KOZHIKKODE) */}
           <div className="col-span-4 flex flex-col items-center space-y-1.5">
             <TeamLogo teamName={openingMatch.teamHome.name} className="w-16 h-16 sm:w-20 sm:h-20 shadow-xs" />
             <h3 className="text-sm sm:text-lg font-black font-sports text-card-title leading-tight">
-              UDAYA
+              {openingMatch.teamHome.name}
             </h3>
             <span className="text-[10px] sm:text-xs text-royal dark:text-sky font-bold">
-              Parambil Peedika
+              {openingMatch.teamHome.city}
             </span>
           </div>
 
@@ -462,8 +462,8 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                         goalTeam: 'home',
                         scoreHome: matchState.officialScoreHome,
                         scoreAway: matchState.officialScoreAway,
-                        homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
-                        awayTeamName: 'NEW MALAYA MALABAR FC',
+                        homeTeamName: openingMatch.teamHome.name,
+                        awayTeamName: openingMatch.teamAway.name,
                         matchStatus: matchState.status,
                         goalText: 'Official Live Match Score'
                       }
@@ -489,14 +489,14 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
             )}
           </div>
 
-          {/* Team Away (NEW MALAYA MALABAR FC) */}
+          {/* Team Away (BASE PERUMBAVUR) */}
           <div className="col-span-4 flex flex-col items-center space-y-1.5">
             <TeamLogo teamName={openingMatch.teamAway.name} className="w-16 h-16 sm:w-20 sm:h-20 shadow-xs" />
             <h3 className="text-sm sm:text-lg font-black font-sports text-card-title leading-tight">
-              NEW MALAYA
+              {openingMatch.teamAway.name}
             </h3>
             <span className="text-[10px] sm:text-xs text-card-muted font-bold">
-              Kozhikode
+              {openingMatch.teamAway.city}
             </span>
           </div>
         </div>
@@ -613,7 +613,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                         : 'bg-sky-700 hover:bg-sky-800 text-white shadow-sm'
                     }`}
                   >
-                    <span>⚽ Report Goal: UDAYA</span>
+                    <span>⚽ Report Goal: {openingMatch.teamHome.shortName || 'KRSC'}</span>
                     {rateLimit.isCooldownActive && <span className="text-[10px]">({rateLimit.remainingSeconds}s)</span>}
                   </button>
 
@@ -626,7 +626,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                         : 'bg-zinc-800 hover:bg-zinc-900 text-white shadow-sm'
                     }`}
                   >
-                    <span>⚽ Report Goal: NEW MALAYA</span>
+                    <span>⚽ Report Goal: {openingMatch.teamAway.shortName || 'BASE'}</span>
                     {rateLimit.isCooldownActive && <span className="text-[10px]">({rateLimit.remainingSeconds}s)</span>}
                   </button>
                 </div>
@@ -634,7 +634,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                 {/* Crowd Stats Counter Bar */}
                 <div className="flex items-center justify-between text-xs text-slate-700 dark:text-slate-200 bg-white dark:bg-navy-800 p-3 rounded-xl border border-slate-200 dark:border-navy-700 shadow-card">
                   <span>
-                    Community Reports: <strong>{matchState.crowdReports?.home || 0} Udaya</strong> vs <strong>{matchState.crowdReports?.away || 0} New Malaya</strong>
+                    Community Reports: <strong>{matchState.crowdReports?.home || 0} {openingMatch.teamHome.shortName || 'KRSC'}</strong> vs <strong>{matchState.crowdReports?.away || 0} {openingMatch.teamAway.shortName || 'BASE'}</strong>
                   </span>
                   <span className="font-bold text-royal dark:text-sky">
                     🛡️ Ground Desk Authority
@@ -742,8 +742,8 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                                   goalTeam: evt.team || 'home',
                                   scoreHome: matchState.officialScoreHome,
                                   scoreAway: matchState.officialScoreAway,
-                                  homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
-                                  awayTeamName: 'NEW MALAYA MALABAR FC',
+                                  homeTeamName: openingMatch.teamHome.name,
+                                  awayTeamName: openingMatch.teamAway.name,
                                   matchStatus: matchState.status,
                                   goalText: evt.text
                                 }
@@ -781,8 +781,8 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           scoreHome: matchState.officialScoreHome,
           scoreAway: matchState.officialScoreAway,
           minute: matchState.matchMinute || 30,
-          homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
-          awayTeamName: 'NEW MALAYA MALABAR FC',
+          homeTeamName: openingMatch.teamHome.name,
+          awayTeamName: openingMatch.teamAway.name,
           matchStatus: matchState.status
         }}
         isDarkMode={isDarkMode}

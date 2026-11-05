@@ -142,8 +142,8 @@ export async function generateGoalStatusImage({
   goalTeam = 'home',
   scoreHome = 2,
   scoreAway = 1,
-  homeTeamName = 'UDAYA PARAMBIL PEEDIKA',
-  awayTeamName = 'NEW MALAYA MALABAR FC',
+  homeTeamName = 'KRSC KOZHIKKODE',
+  awayTeamName = 'BASE PERUMBAVUR',
   matchStatus = 'LIVE 2ND HALF',
   goalText = '',
   lang = 'en'
@@ -607,7 +607,7 @@ export async function generateGoalStatusImage({
   // Away Team Name
   drawScaledText({
     ctx,
-    text: awayTeamName === 'NEW MALAYA MALABAR FC' ? 'NEW MALAYA' : awayTeamName,
+    text: awayTeamName === 'BASE PERUMBAVUR' ? 'BASE' : awayTeamName,
     x: awayColX,
     y: teamRowY + 115,
     maxWidth: 320,

@@ -497,7 +497,7 @@ export function submitFanCrowdGoal(team) {
     cooldownSeconds: COOLDOWN_SECONDS,
     reportsCount: newCount,
     maxReports: MAX_REPORTS_PER_USER,
-    message: `Thank you! Your goal report for ${team === 'home' ? 'UDAYA' : 'NEW MALAYA'} was registered.`
+    message: `Thank you! Your goal report was registered.`
   };
 }
 

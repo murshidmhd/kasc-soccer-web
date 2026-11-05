@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { generateGoalStatusImage, shareGoalCard } from '../utils/goalCardCanvasGenerator';
 import { SITE_URL } from '../config/siteConfig';
+import { openingMatch } from '../data/tournamentData';
 
 export default function GoalShareCardModal({
   isOpen,
@@ -22,13 +23,13 @@ export default function GoalShareCardModal({
   isDarkMode = false
 }) {
   const [formData, setFormData] = useState({
-    scorerName: initialGoalData.scorerName || initialGoalData.player || 'Ibrahim Soumahoro',
+    scorerName: initialGoalData.scorerName || initialGoalData.player || 'Usman K. P.',
     minute: initialGoalData.minute || 24,
-    goalTeam: initialGoalData.team || initialGoalData.goalTeam || 'home',
-    scoreHome: initialGoalData.scoreHome ?? 2,
+    goalTeam: initialGoalData.team || initialGoalData.goalTeam || 'away',
+    scoreHome: initialGoalData.scoreHome ?? 0,
     scoreAway: initialGoalData.scoreAway ?? 1,
-    homeTeamName: initialGoalData.homeTeamName || 'UDAYA PARAMBIL PEEDIKA',
-    awayTeamName: initialGoalData.awayTeamName || 'NEW MALAYA MALABAR FC',
+    homeTeamName: initialGoalData.homeTeamName || openingMatch.teamHome.name,
+    awayTeamName: initialGoalData.awayTeamName || openingMatch.teamAway.name,
     matchStatus: initialGoalData.matchStatus || 'LIVE 2ND HALF',
     goalText: initialGoalData.goalText || initialGoalData.text || 'Stunning top corner finish'
   });
@@ -42,13 +43,13 @@ export default function GoalShareCardModal({
   useEffect(() => {
     if (isOpen) {
       setFormData({
-        scorerName: initialGoalData.scorerName || initialGoalData.player || 'Ibrahim Soumahoro',
+        scorerName: initialGoalData.scorerName || initialGoalData.player || 'Usman K. P.',
         minute: initialGoalData.minute ?? 24,
-        goalTeam: initialGoalData.team || initialGoalData.goalTeam || 'home',
-        scoreHome: initialGoalData.scoreHome ?? 2,
+        goalTeam: initialGoalData.team || initialGoalData.goalTeam || 'away',
+        scoreHome: initialGoalData.scoreHome ?? 0,
         scoreAway: initialGoalData.scoreAway ?? 1,
-        homeTeamName: initialGoalData.homeTeamName || 'UDAYA PARAMBIL PEEDIKA',
-        awayTeamName: initialGoalData.awayTeamName || 'NEW MALAYA MALABAR FC',
+        homeTeamName: initialGoalData.homeTeamName || openingMatch.teamHome.name,
+        awayTeamName: initialGoalData.awayTeamName || openingMatch.teamAway.name,
         matchStatus: initialGoalData.matchStatus || 'LIVE 2ND HALF',
         goalText: initialGoalData.goalText || initialGoalData.text || 'Stunning top corner finish'
       });
@@ -301,8 +302,8 @@ export default function GoalShareCardModal({
                     onChange={(e) => setFormData({ ...formData, goalTeam: e.target.value })}
                     className="w-full p-2.5 rounded-xl border font-bold bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-700"
                   >
-                    <option value="home">UDAYA (Home)</option>
-                    <option value="away">NEW MALAYA (Away)</option>
+                    <option value="home">{openingMatch.teamHome.shortName || 'KRSC'} (Home)</option>
+                    <option value="away">{openingMatch.teamAway.shortName || 'BASE'} (Away)</option>
                   </select>
                 </div>
               </div>
@@ -311,7 +312,7 @@ export default function GoalShareCardModal({
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
                   <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                    UDAYA Score
+                    {openingMatch.teamHome.shortName || 'KRSC'} Score
                   </label>
                   <input
                     type="number"
@@ -325,7 +326,7 @@ export default function GoalShareCardModal({
 
                 <div>
                   <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1">
-                    NEW MALAYA Score
+                    {openingMatch.teamAway.shortName || 'BASE'} Score
                   </label>
                   <input
                     type="number"

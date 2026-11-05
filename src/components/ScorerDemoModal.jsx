@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Smartphone, Zap, CheckCircle, Shield, AlertTriangle } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { openingMatch } from '../data/tournamentData';
 
 export default function ScorerDemoModal({ isOpen, onClose, isDarkMode }) {
   if (!isOpen) return null;
@@ -8,8 +9,8 @@ export default function ScorerDemoModal({ isOpen, onClose, isDarkMode }) {
   const [scorerLog, setScorerLog] = useState([
     'Match started: 08:00 PM',
     'Kickoff whistle blown by referee',
-    '12\' - Goal Udaya Parambil Peedika (Ibrahim)',
-    '24\' - Goal New Malaya Malabar FC (Jameel)',
+    `12' - Goal ${openingMatch.teamHome.name} (Rujeesh)`,
+    `24' - Goal ${openingMatch.teamAway.name} (Usman)`,
   ]);
 
   const recordEvent = (text) => {
@@ -59,19 +60,19 @@ export default function ScorerDemoModal({ isOpen, onClose, isDarkMode }) {
 
             <div className="grid grid-cols-2 gap-2">
               <button
-                onClick={() => recordEvent('⚽ Goal: UDAYA Parambil Peedika (+1)')}
-                className="p-3.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs flex flex-col items-center justify-center shadow-sm active:scale-95 transition"
+                onClick={() => recordEvent(`⚽ Goal: ${openingMatch.teamHome.name} (+1)`)}
+                className="p-3.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex flex-col items-center justify-center shadow-sm active:scale-95 transition"
               >
                 <span className="text-xl">⚽</span>
-                <span>+ GOAL UDAYA</span>
+                <span>+ GOAL {openingMatch.teamHome.shortName || 'KRSC'}</span>
               </button>
 
               <button
-                onClick={() => recordEvent('⚽ Goal: NEW MALAYA MALABAR FC (+1)')}
+                onClick={() => recordEvent(`⚽ Goal: ${openingMatch.teamAway.name} (+1)`)}
                 className="p-3.5 rounded-xl bg-zinc-800 hover:bg-zinc-900 text-white font-bold text-xs flex flex-col items-center justify-center shadow-sm active:scale-95 transition"
               >
                 <span className="text-xl">⚽</span>
-                <span>+ GOAL NEW MALAYA</span>
+                <span>+ GOAL {openingMatch.teamAway.shortName || 'BASE'}</span>
               </button>
             </div>
 

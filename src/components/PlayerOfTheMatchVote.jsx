@@ -5,60 +5,60 @@ import { openingMatch } from '../data/tournamentData';
 
 const CANDIDATES = [
   {
-    id: 'ibrahim',
-    name: 'Ibrahim Soumahoro',
-    nameMl: 'ഇബ്രാഹിം സുമഹോറോ',
-    number: '9',
-    team: 'UDAYA Parambil Peedika',
-    teamShort: 'UDAYA',
+    id: 'usman',
+    name: 'Usman K. P.',
+    nameMl: 'ഉസ്മാൻ കെ. പി.',
+    number: '10',
+    team: 'BASE PERUMBAVUR',
+    teamShort: 'BASE',
     position: 'Striker / ഫോർവേഡ്',
-    origin: 'Ivory Coast 🇨🇮',
+    origin: 'Perumbavoor 🇮🇳',
     votes: 840,
-    accent: 'from-sky-600 to-blue-700',
-    border: 'border-blue-500',
+    accent: 'from-zinc-800 to-black',
+    border: 'border-zinc-500',
     tag: 'Marquee Striker'
   },
   {
-    id: 'jameel',
-    name: 'Jameel Kozhikode',
-    nameMl: 'ജമീൽ കോഴിക്കോട്',
-    number: '6',
-    team: 'NEW MALAYA MALABAR FC',
-    teamShort: 'NEW MALAYA',
+    id: 'rujeesh',
+    name: 'Rujeesh K.',
+    nameMl: 'രുജീഷ് കെ.',
+    number: '10',
+    team: 'KRSC KOZHIKKODE',
+    teamShort: 'KRSC',
     position: 'Playmaker / ക്യാപ്റ്റൻ',
     origin: 'Kozhikode 🇮🇳',
-    votes: 520,
-    accent: 'from-zinc-800 to-black',
-    border: 'border-zinc-500',
-    tag: 'EDEX Playmaker'
+    votes: 680,
+    accent: 'from-amber-500 to-red-800',
+    border: 'border-amber-400',
+    tag: 'KRSC Captain'
   },
   {
-    id: 'riyas',
-    name: 'Riyas K.',
-    nameMl: 'റിയാസ് കെ.',
+    id: 'bilal',
+    name: 'Bilal',
+    nameMl: 'ബിലാൽ',
     number: '7',
-    team: 'UDAYA Parambil Peedika',
-    teamShort: 'UDAYA',
-    position: 'Midfield Maestro / ക്യാപ്റ്റൻ',
-    origin: 'Peruvallur 🇮🇳',
-    votes: 310,
-    accent: 'from-sky-600 to-blue-800',
-    border: 'border-blue-400',
-    tag: 'Captain'
-  },
-  {
-    id: 'emmanuel',
-    name: 'Emmanuel',
-    nameMl: 'ഇമ്മാനുവൽ',
-    number: '4',
-    team: 'NEW MALAYA MALABAR FC',
-    teamShort: 'NEW MALAYA',
-    position: 'Center Back / ഡിഫെൻഡർ',
-    origin: 'Ghana 🇬🇭',
-    votes: 170,
+    team: 'BASE PERUMBAVUR',
+    teamShort: 'BASE',
+    position: 'Winger / വിങ്ങർ',
+    origin: 'Perumbavoor 🇮🇳',
+    votes: 410,
     accent: 'from-zinc-700 to-slate-900',
     border: 'border-zinc-400',
-    tag: 'Ghana Wall'
+    tag: 'Winger'
+  },
+  {
+    id: 'salman',
+    name: 'Salman',
+    nameMl: 'സൽമാൻ',
+    number: '7',
+    team: 'KRSC KOZHIKKODE',
+    teamShort: 'KRSC',
+    position: 'Midfield Maestro / മിഡ്ഫീൽഡർ',
+    origin: 'Kozhikode 🇮🇳',
+    votes: 320,
+    accent: 'from-amber-600 to-orange-700',
+    border: 'border-amber-500',
+    tag: 'Midfield Engine'
   }
 ];
 
@@ -107,7 +107,7 @@ export default function PlayerOfTheMatchVote({ lang, isDarkMode }) {
     const shareUrl = `${window.location.origin}${window.location.pathname}#live`;
     const text = encodeURIComponent(
       `⭐ *അഖിലേന്ത്യാ സെവൻസ് ടൂർണ്ണമെന്റ് സീസൺ 7 - മാൻ ഓഫ് ദി മാച്ച് വോട്ടിംഗ്!* ⚽\n\n` +
-      `🔥 UDAYA Parambil Peedika vs NEW MALAYA MALABAR FC ഉദ്ഘാടന മത്സരത്തിലെ കളിയിലെ താരമായി ഞാൻ വോട്ട് ചെയ്തത്: *${candidateName}* (${selectedCandidate?.teamShort || ''})\n\n` +
+      `🔥 ${openingMatch.teamHome.name} vs ${openingMatch.teamAway.name} ഉദ്ഘാടന മത്സരത്തിലെ കളിയിലെ താരമായി ഞാൻ വോട്ട് ചെയ്തത്: *${candidateName}* (${selectedCandidate?.teamShort || ''})\n\n` +
       `നിങ്ങളുടെ പ്രിയതാരത്തിന് ഇവിടെ വോട്ട് രേഖപ്പെടുത്തൂ: ${shareUrl}`
     );
 

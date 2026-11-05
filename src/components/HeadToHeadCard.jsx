@@ -60,12 +60,12 @@ export default function HeadToHeadCard({ lang, isDarkMode }) {
             </span>
 
             <div className="grid grid-cols-2 gap-3">
-              {/* UDAYA Form */}
+              {/* Home Team Form */}
               <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200">
                 <div className="flex items-center gap-1.5 mb-2">
                   <TeamLogo teamName={openingMatch.teamHome.name} className="w-5 h-5" />
                   <span className="text-xs font-black font-sports text-blue-900">
-                    UDAYA
+                    {openingMatch.teamHome.shortName || 'KRSC'}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -83,12 +83,12 @@ export default function HeadToHeadCard({ lang, isDarkMode }) {
                 </div>
               </div>
 
-              {/* NEW MALAYA Form */}
+              {/* Away Team Form */}
               <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200">
                 <div className="flex items-center gap-1.5 mb-2">
                   <TeamLogo teamName={openingMatch.teamAway.name} className="w-5 h-5" />
                   <span className="text-xs font-black font-sports text-zinc-900">
-                    NEW MALAYA
+                    {openingMatch.teamAway.shortName || 'BASE'}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -113,7 +113,7 @@ export default function HeadToHeadCard({ lang, isDarkMode }) {
             <div className="flex items-center justify-between text-center">
               <div>
                 <span className="text-xl font-black font-sports text-blue-700">2</span>
-                <p className="text-[10px] font-bold text-slate-600">UDAYA Wins</p>
+                <p className="text-[10px] font-bold text-slate-600">{openingMatch.teamHome.shortName || 'KRSC'} Wins</p>
               </div>
 
               <div>
@@ -123,7 +123,7 @@ export default function HeadToHeadCard({ lang, isDarkMode }) {
 
               <div>
                 <span className="text-xl font-black font-sports text-zinc-700">1</span>
-                <p className="text-[10px] font-bold text-slate-600">NEW MALAYA Wins</p>
+                <p className="text-[10px] font-bold text-slate-600">{openingMatch.teamAway.shortName || 'BASE'} Wins</p>
               </div>
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function HeadToHeadCard({ lang, isDarkMode }) {
           <div className="pt-1 text-xs text-slate-600 space-y-1.5">
             <div className="flex items-center justify-between py-1 border-b border-slate-100">
               <span className="font-medium text-slate-500">{lang === 'ml' ? 'പോരാട്ടം' : 'Battle'}:</span>
-              <span className="font-bold text-slate-900">Ibrahim (UDAYA #9) vs Jameel (NEW MALAYA #6)</span>
+              <span className="font-bold text-slate-900">Rujeesh ({openingMatch.teamHome.shortName || 'KRSC'} #10) vs Usman ({openingMatch.teamAway.shortName || 'BASE'} #10)</span>
             </div>
             <div className="flex items-center justify-between py-1 border-b border-slate-100">
               <span className="font-medium text-slate-500">{lang === 'ml' ? 'വേദി' : 'Pitch'}:</span>

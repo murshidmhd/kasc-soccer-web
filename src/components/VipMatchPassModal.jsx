@@ -3,10 +3,11 @@ import { X, Sparkles, Share2, Download, Check, Shield, Trophy, QrCode, AlertTria
 import confetti from 'canvas-confetti';
 import logoUdaya from '../assets/logo_udaya_transparent.png';
 import logoKasc from '../assets/logo_kasc.png';
+import { openingMatch } from '../data/tournamentData';
 
 export default function VipMatchPassModal({ isOpen, onClose, lang }) {
   const [fanName, setFanName] = useState('');
-  const [selectedClub, setSelectedClub] = useState('UDAYA PARAMBIL PEEDIKA');
+  const [selectedClub, setSelectedClub] = useState(openingMatch.teamHome.name);
   const [isGenerated, setIsGenerated] = useState(false);
   const [passNumber, setPassNumber] = useState('UDAYA-FAN-7782');
 
@@ -108,25 +109,25 @@ export default function VipMatchPassModal({ isOpen, onClose, lang }) {
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => setSelectedClub('UDAYA PARAMBIL PEEDIKA')}
+                    onClick={() => setSelectedClub(openingMatch.teamHome.name)}
                     className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-                      selectedClub === 'UDAYA PARAMBIL PEEDIKA'
-                        ? 'bg-purple-800 border-purple-500 text-white shadow-xs font-black'
+                      selectedClub === openingMatch.teamHome.name
+                        ? 'bg-amber-600 border-amber-400 text-white shadow-xs font-black'
                         : 'bg-slate-800 border-slate-700 text-slate-400'
                     }`}
                   >
-                    <span>💜 UDAYA</span>
+                    <span>🟡 {openingMatch.teamHome.shortName || 'KRSC'}</span>
                   </button>
                   <button
                     type="button"
-                    onClick={() => setSelectedClub('NEW MALAYA MALABAR FC')}
+                    onClick={() => setSelectedClub(openingMatch.teamAway.name)}
                     className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-                      selectedClub === 'NEW MALAYA MALABAR FC'
+                      selectedClub === openingMatch.teamAway.name
                         ? 'bg-zinc-800 border-amber-400 text-white shadow-xs font-black'
                         : 'bg-slate-800 border-slate-700 text-slate-400'
                     }`}
                   >
-                    <span>🖤 NEW MALAYA</span>
+                    <span>🖤 {openingMatch.teamAway.shortName || 'BASE'}</span>
                   </button>
                 </div>
               </div>

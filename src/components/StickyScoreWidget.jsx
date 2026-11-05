@@ -141,7 +141,7 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
           <div className="flex items-center gap-1.5 text-xs truncate min-w-0">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-ping shrink-0"></span>
             <span className="font-sports font-black tracking-wide truncate">
-              UDAYA {matchState.officialScoreHome} - {matchState.officialScoreAway} NEW MALAYA
+              {openingMatch.teamHome.shortName || 'KRSC'} {matchState.officialScoreHome} - {matchState.officialScoreAway} {openingMatch.teamAway.shortName || 'BASE'}
             </span>
             <span className="text-[10px] text-amber-400 font-mono shrink-0">({clock.display}{clock.isCapped ? ' Time' : ''})</span>
           </div>
@@ -261,10 +261,10 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
             <TeamLogo teamName={openingMatch.teamHome.name} className="w-7 h-7 shrink-0" />
             <div className="truncate min-w-0 flex-1">
               <span className="font-sports font-black text-xs sm:text-sm block truncate group-hover:text-blue-400 transition">
-                UDAYA
+                {openingMatch.teamHome.shortName || openingMatch.teamHome.name}
               </span>
               <span className="text-[9px] text-slate-400 block truncate hidden xs:block">
-                {openingMatch.teamHome.city || 'Parambil Peedika'}
+                {openingMatch.teamHome.city || 'Kozhikode'}
               </span>
             </div>
           </div>
@@ -282,10 +282,10 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
           <div className="flex items-center justify-end gap-1.5 flex-1 min-w-0 text-right">
             <div className="truncate min-w-0 flex-1">
               <span className="font-sports font-black text-xs sm:text-sm block truncate group-hover:text-amber-400 transition">
-                {openingMatch.teamAway.shortName || 'NEW MALAYA'}
+                {openingMatch.teamAway.shortName || openingMatch.teamAway.name}
               </span>
               <span className="text-[9px] text-slate-400 block truncate hidden xs:block">
-                {openingMatch.teamAway.city || 'Kozhikode'}
+                {openingMatch.teamAway.city || 'Perumbavoor'}
               </span>
             </div>
             <TeamLogo teamName={openingMatch.teamAway.name} className="w-7 h-7 shrink-0" />

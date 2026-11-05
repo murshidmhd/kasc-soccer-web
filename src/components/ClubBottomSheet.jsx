@@ -10,7 +10,7 @@ import {
   Share2 
 } from 'lucide-react';
 import TeamLogo from './TeamLogo';
-import { fixtures } from '../data/tournamentData';
+import { fixtures, openingMatch } from '../data/tournamentData';
 import clubHistoryData from '../data/clubHistory.json';
 
 // Single configuration switches requested by user
@@ -72,17 +72,16 @@ export default function ClubBottomSheet({
 
   // Determine Next Match:
   // Disagreement on Nov 7-13 between list & bracket views.
-  // Until FIXTURES_CONFIRMED = true, show next match ONLY for Nov 6 clubs (Udaya & New Malaya).
+  // Until FIXTURES_CONFIRMED = true, show next match ONLY for Nov 6 clubs (KRSC & Base Perumbavur).
   const isNov6Team = 
-    club.name.toLowerCase().includes('udaya') || 
-    club.name.toLowerCase().includes('new malaya') ||
-    club.name.toLowerCase().includes('malabar');
+    club.name.toLowerCase().includes('krsc') || 
+    club.name.toLowerCase().includes('base');
 
   const nov6Match = {
     date: '06 Nov 2026',
     time: '08:00 PM',
-    team1: 'UDAYA PARAMBIL PEEDIKA',
-    team2: 'NEW MALAYA MALABAR FC'
+    team1: openingMatch.teamHome.name,
+    team2: openingMatch.teamAway.name
   };
 
   const nextMatch = fixtures.find(

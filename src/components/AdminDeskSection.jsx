@@ -536,8 +536,8 @@ export default function AdminDeskSection({
           goalTeam: newEvent.team,
           scoreHome: matchState.officialScoreHome,
           scoreAway: matchState.officialScoreAway,
-          homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
-          awayTeamName: 'NEW MALAYA MALABAR FC',
+          homeTeamName: openingMatch.teamHome.name,
+          awayTeamName: openingMatch.teamAway.name,
           matchStatus: matchState.status === 'UPCOMING' ? 'MATCH HIGHLIGHT' : matchState.status,
           goalText: newEvent.text.trim()
         }
@@ -1049,7 +1049,7 @@ export default function AdminDeskSection({
                     isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200 shadow-sm'
                   }`}>
                     <span className="text-xs sm:text-sm font-bold text-sky-700 block truncate">
-                      UDAYA Parambil Peedika
+                      {openingMatch.teamHome.name}
                     </span>
                     <div className="text-5xl sm:text-6xl font-black font-sports text-slate-950">
                       {matchState.officialScoreHome}
@@ -1075,7 +1075,7 @@ export default function AdminDeskSection({
                     isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200 shadow-sm'
                   }`}>
                     <span className="text-xs sm:text-sm font-bold text-zinc-900 block truncate">
-                      NEW MALAYA MALABAR FC
+                      {openingMatch.teamAway.name}
                     </span>
                     <div className="text-5xl sm:text-6xl font-black font-sports text-slate-950">
                       {matchState.officialScoreAway}
@@ -1337,8 +1337,8 @@ export default function AdminDeskSection({
                                     goalTeam: ev.team,
                                     scoreHome: matchState.officialScoreHome,
                                     scoreAway: matchState.officialScoreAway,
-                                    homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
-                                    awayTeamName: 'NEW MALAYA MALABAR FC',
+                                    homeTeamName: openingMatch.teamHome.name,
+                                    awayTeamName: openingMatch.teamAway.name,
                                     matchStatus: matchState.status,
                                     goalText: ev.text
                                   }
