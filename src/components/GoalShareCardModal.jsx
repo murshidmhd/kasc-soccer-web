@@ -94,7 +94,7 @@ export default function GoalShareCardModal({
     setStatusMessage({ type: 'info', text: 'Opening Share Menu...' });
 
     const shareTitle = `⚽ GOAL! ${formData.scorerName} (${formData.minute}')`;
-    const shareText = `⚽ GOAL ALERT!\n${formData.scorerName} scores at ${formData.minute}'!\n${formData.homeTeamName} ${formData.scoreHome} - ${formData.scoreAway} ${formData.awayTeamName}\n\n🏆 Udaya & KASC All India Sevens Season 7\nLive Scores: ${SITE_URL}?v=udaya_s7`;
+    const shareText = `⚽ GOAL ALERT!\n${formData.scorerName} scores at ${formData.minute}'!\n${formData.homeTeamName} ${formData.scoreHome} - ${formData.scoreAway} ${formData.awayTeamName}\n\n🏆 Udaya & KASC All India Sevens Season 7\nLive Scores: ${SITE_URL}?v=udaya_white_s7`;
 
     const result = await shareGoalCard({
       blob: cardImage.blob,
