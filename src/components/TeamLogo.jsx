@@ -81,6 +81,19 @@ export default function TeamLogo({ teamName, className = "w-12 h-12", fallbackCl
     );
   }
 
+  if (teamName === '?' || teamName === 'TBD' || !teamName) {
+    return (
+      <div 
+        className={`${fallbackClassName || className} shrink-0 ${isCircle ? 'rounded-full' : (hasCustomRounding ? '' : 'rounded-2xl')} bg-purple-950/80 border border-purple-500/40 shadow-xs flex items-center justify-center text-center select-none`}
+        title="To Be Announced"
+      >
+        <span className="font-black font-sports text-gold text-sm sm:text-base leading-none">
+          ?
+        </span>
+      </div>
+    );
+  }
+
   // Stylish SVG / Typography Fallback Badge
   const config = teamBadgeConfigs[teamName] || {
     code: teamName ? teamName.substring(0, 4).toUpperCase() : 'FC',

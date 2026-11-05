@@ -122,21 +122,13 @@ export default function TournamentBracket({ lang, isDarkMode }) {
 
   // Helper to determine team name and decided state
   const getMatchTeamDisplay = (match, teamKey, slotKey) => {
-    // If bracket is confirmed, show actual team name if available
-    if (BRACKET_CONFIRMED) {
-      const name = match[teamKey];
-      if (name) return { name, isDecided: true };
-    }
-
-    // If bracket is unconfirmed (Rule 2):
-    // Show team names ONLY for Nov 6 opening match (m1)
-    if (match.id === 'm1') {
+    // Show team names ONLY for Nov 6 opening match (m1 / confirmed)
+    if (match?.confirmed || match?.id === 'm1') {
       return { name: match[teamKey], isDecided: true };
     }
 
-    // For all other slots, show "Winner of Match N" or slot placeholder
-    const placeholder = match[slotKey] || (teamKey === 'team1' ? `Winner of Match ${(match.matchNum * 2) - 1 || 'A'}` : `Winner of Match ${(match.matchNum * 2) || 'B'}`);
-    return { name: placeholder || 'To be confirmed', isDecided: false };
+    // For all other slots, show "?" per user specification
+    return { name: '?', isDecided: false };
   };
 
   return (

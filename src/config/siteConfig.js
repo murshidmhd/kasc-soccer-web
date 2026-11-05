@@ -33,7 +33,7 @@ export const SITE_URL = typeof window !== 'undefined' && window.location.origin 
   : 'https://udaya-football.vercel.app';
 
 // Feature Flags
-export const SHOW_BRACKET = false;
+export const SHOW_BRACKET = true;
 export const SHOW_LOCAL_ONLY_FEATURES = false;
 export const PRIZES_CONFIRMED = false;
 export const SHOW_SFA_CLAIMS = false;
