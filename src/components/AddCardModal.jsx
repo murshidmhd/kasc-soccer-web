@@ -36,7 +36,7 @@ const SQUADS_BY_CLUB = {
     shortName: 'KRSC',
     isDay1Match: true,
     players: [
-      { num: 10, name: 'Rujeesh K.', pos: 'FWD', isStar: true },
+      { num: 10, name: 'Abdul Vahid C', pos: 'FWD', isStar: true },
       { num: 1, name: 'Jithin', pos: 'GK', isStar: false },
       { num: 4, name: 'Midhun', pos: 'DEF', isStar: false },
       { num: 7, name: 'Favas', pos: 'MID', isStar: false },

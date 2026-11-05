@@ -72,8 +72,8 @@ export const squadPlayers = [
   // KRSC Kozhikkode Official Squad Video (Opening Match Stars - 1 Confirmed Player)
   {
     id: 'krsc_1',
-    name: 'Rujeesh K.',
-    nameMl: 'രുജീഷ് കെ.',
+    name: 'Abdul Vahid C',
+    nameMl: 'അബ്ദുൽ വാഹിദ് സി',
     number: '10',
     club: 'KRSC KOZHIKKODE',
     clubMl: 'കെ.ആർ.എസ്.സി കോഴിക്കോട്',

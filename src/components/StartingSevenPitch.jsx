@@ -94,7 +94,7 @@ const TOURNAMENT_SQUADS = {
       { num: 7, name: 'Favas', pos: 'CM', captain: false },
       { num: 8, name: 'Vysakh', pos: 'AM', captain: false },
       { num: 11, name: 'Arjun', pos: 'WF', captain: false },
-      { num: 10, name: 'Rujeesh K.', pos: 'ST', captain: true }
+      { num: 10, name: 'Abdul Vahid C', pos: 'ST', captain: true }
     ],
     subs: [
       { num: 14, name: 'Abhijith' },

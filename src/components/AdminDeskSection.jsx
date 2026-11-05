@@ -1277,7 +1277,7 @@ export default function AdminDeskSection({
                     { name: 'Shibil', team: 'away' },
                     { name: 'Ajmal', team: 'away' },
                     { name: 'Musthu', team: 'away' },
-                    { name: 'Rujeesh K.', team: 'home' },
+                    { name: 'Abdul Vahid C', team: 'home' },
                     { name: 'Shameer K.', team: 'home' },
                     { name: 'Ibrahim Soumahoro', team: 'home' }
                   ].map((p) => (

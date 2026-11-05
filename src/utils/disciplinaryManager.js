@@ -50,7 +50,7 @@ export function isPlayerMatch(nameA, nameB, numA, numB, teamA, teamB) {
         return true;
       }
     }
-    // High-confidence single significant token (e.g. Usman, Rujeesh, Soumahoro)
+    // High-confidence single significant token (e.g. Usman, Vahid, Soumahoro)
     if (tokensA.length === 1 || tokensB.length === 1) {
       return true;
     }

@@ -9,7 +9,7 @@ export default function ScorerDemoModal({ isOpen, onClose, isDarkMode }) {
   const [scorerLog, setScorerLog] = useState([
     'Match started: 08:00 PM',
     'Kickoff whistle blown by referee',
-    `12' - Goal ${openingMatch.teamHome.name} (Rujeesh)`,
+    `12' - Goal ${openingMatch.teamHome.name} (Abdul Vahid)`,
     `24' - Goal ${openingMatch.teamAway.name} (Usman)`,
   ]);
 

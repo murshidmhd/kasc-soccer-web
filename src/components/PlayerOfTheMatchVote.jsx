@@ -19,9 +19,9 @@ const CANDIDATES = [
     tag: 'Marquee Striker'
   },
   {
-    id: 'rujeesh',
-    name: 'Rujeesh K.',
-    nameMl: 'രുജീഷ് കെ.',
+    id: 'abdul_vahid',
+    name: 'Abdul Vahid C',
+    nameMl: 'അബ്ദുൽ വാഹിദ് സി',
     number: '10',
     team: 'KRSC KOZHIKKODE',
     teamShort: 'KRSC',
@@ -30,7 +30,7 @@ const CANDIDATES = [
     votes: 680,
     accent: 'from-amber-500 to-red-800',
     border: 'border-amber-400',
-    tag: 'KRSC Captain'
+    tag: 'KRSC Star'
   },
   {
     id: 'bilal',
