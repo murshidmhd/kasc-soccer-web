@@ -34,24 +34,23 @@ export default function Header({
   isDarkMode, 
   setIsDarkMode 
 }) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = useRef(null);
+  const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const desktopMenuRef = useRef(null);
 
-  // Close menu on click outside
+  // Close desktop menu on click outside
   useEffect(() => {
-    if (!isMenuOpen) return;
+    if (!isDesktopMenuOpen) return;
     const handleClickOutside = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setIsMenuOpen(false);
+      if (desktopMenuRef.current && !desktopMenuRef.current.contains(e.target)) {
+        setIsDesktopMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('touchstart', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
     };
-  }, [isMenuOpen]);
+  }, [isDesktopMenuOpen]);
 
   const shareOnWhatsApp = () => {
     const text = encodeURIComponent(
@@ -79,7 +78,6 @@ export default function Header({
       label: lang === 'ml' ? 'മത്സരക്രമം & ടൈംടേബിൾ' : 'Match Fixtures & Dates',
       icon: Calendar,
       action: () => {
-        setIsMenuOpen(false);
         setActiveTab('fixtures');
         window.location.hash = 'fixtures';
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -90,7 +88,6 @@ export default function Header({
       label: lang === 'ml' ? '24 ക്ലബ്ബുകളും സ്ക്വാഡും' : '24 Clubs & Squads',
       icon: Shield,
       action: () => {
-        setIsMenuOpen(false);
         setActiveTab('teams');
         window.location.hash = 'teams';
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -101,7 +98,6 @@ export default function Header({
       label: lang === 'ml' ? 'ടോപ് സ്കോറർ & സ്റ്റാറ്റ്സ്' : 'Top Scorers & Player Stats',
       icon: Star,
       action: () => {
-        setIsMenuOpen(false);
         setActiveTab('stats');
         window.location.hash = 'stats';
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -112,7 +108,6 @@ export default function Header({
       label: lang === 'ml' ? 'പെനാൽറ്റി ഷൂട്ടൗട്ട് ഗെയിം' : 'Penalty Shootout Game',
       icon: Gamepad2,
       action: () => {
-        setIsMenuOpen(false);
         setActiveTab('game');
         window.location.hash = 'game';
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -123,7 +118,6 @@ export default function Header({
       label: lang === 'ml' ? 'മാരത്തോൺ & മീഡിയ ഗാലറി' : 'Marathon & Media Gallery',
       icon: Award,
       action: () => {
-        setIsMenuOpen(false);
         setActiveTab('promo');
         window.location.hash = 'promo';
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -134,7 +128,6 @@ export default function Header({
       label: lang === 'ml' ? 'സ്റ്റേഡിയം GPS & വിവരങ്ങൾ' : 'Stadium Venue & GPS',
       icon: MapPin,
       action: () => {
-        setIsMenuOpen(false);
         setActiveTab('venue');
         window.location.hash = 'venue';
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -145,7 +138,6 @@ export default function Header({
       label: lang === 'ml' ? 'വി.ഐ.പി ഫാൻ പാസ്സ്' : 'VIP Fan Supporter Pass',
       icon: Sparkles,
       action: () => {
-        setIsMenuOpen(false);
         if (onOpenPassModal) onOpenPassModal();
       }
     },
@@ -154,7 +146,6 @@ export default function Header({
       label: lang === 'ml' ? 'ടിക്കറ്റ് നിരക്കുകൾ' : 'Ticket Tiers & Counter Rates',
       icon: Ticket,
       action: () => {
-        setIsMenuOpen(false);
         if (onOpenTicketModal) onOpenTicketModal();
       }
     },
@@ -163,7 +154,6 @@ export default function Header({
       label: lang === 'ml' ? '🎯 ടൂർണ്ണമെന്റ് ഗൈഡ് (App Tour)' : '🎯 Interactive App Tour',
       icon: Sparkles,
       action: () => {
-        setIsMenuOpen(false);
         if (onOpenTour) onOpenTour();
       }
     },
@@ -172,7 +162,6 @@ export default function Header({
       label: lang === 'ml' ? 'മാച്ച് പ്രഡിക്ഷൻ ഹബ്ബ്' : 'Match Prediction Hub',
       icon: Target,
       action: () => {
-        setIsMenuOpen(false);
         setActiveTab('predict');
       }
     },
@@ -181,7 +170,6 @@ export default function Header({
       label: lang === 'ml' ? '24 ക്ലബ് ഫാൻ വോട്ട്' : 'Fan Vote Battle',
       icon: Users,
       action: () => {
-        setIsMenuOpen(false);
         setActiveTab('vote');
         window.location.hash = 'vote';
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -259,18 +247,18 @@ export default function Header({
           })}
 
           {/* Desktop "More" Menu Dropdown */}
-          <div className="relative" ref={menuRef}>
+          <div className="relative" ref={desktopMenuRef}>
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={() => setIsDesktopMenuOpen(!isDesktopMenuOpen)}
               className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition text-navy-muted hover:text-white hover:bg-navy-800"
-              aria-expanded={isMenuOpen}
+              aria-expanded={isDesktopMenuOpen}
               aria-label="More Features Menu"
             >
               <span>{lang === 'ml' ? 'കൂടുതൽ' : 'More'}</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isDesktopMenuOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            {isMenuOpen && (
+            {isDesktopMenuOpen && (
               <div 
                 className="absolute right-0 mt-2 w-56 rounded-2xl border border-navy-700 bg-navy-900 text-white shadow-2xl py-2 z-50 animate-fadeIn"
               >
@@ -282,8 +270,14 @@ export default function Header({
                   return (
                     <button
                       key={item.id}
-                      onClick={item.action}
-                      className="w-full px-3.5 py-2.5 text-left text-xs font-bold flex items-center gap-2.5 hover:bg-navy-800 text-navy-muted hover:text-white transition"
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsDesktopMenuOpen(false);
+                        item.action();
+                      }}
+                      className="w-full px-3.5 py-2.5 text-left text-xs font-bold flex items-center gap-2.5 hover:bg-navy-800 active:bg-navy-750 text-white transition cursor-pointer"
                     >
                       <Icon className="w-4 h-4 text-sky shrink-0" />
                       <span className="truncate">{item.label}</span>
@@ -300,7 +294,8 @@ export default function Header({
           {/* Mobile "More" Menu Trigger (Rule 4) */}
           <div className="relative lg:hidden">
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl border border-navy-700 bg-navy-800 text-gold hover:text-white transition flex items-center justify-center active:scale-95 shrink-0"
               title="More Features"
               aria-label="More Features"
@@ -308,26 +303,31 @@ export default function Header({
               <MoreHorizontal className="w-4 h-4" />
             </button>
 
-            {isMenuOpen && (
+            {isMobileMenuOpen && (
               <>
                 {/* Backdrop overlay to close menu on click outside */}
                 <div 
-                  className="fixed inset-0 z-40 bg-navy-950/60"
-                  onClick={() => setIsMenuOpen(false)}
+                  className="fixed inset-0 z-40 bg-navy-950/70 backdrop-blur-[2px]"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  onTouchEnd={() => setIsMobileMenuOpen(false)}
                   aria-hidden="true"
                 />
 
-                {/* Dropdown positioned safely inside phone viewport (Fixes left clipping) */}
+                {/* Dropdown positioned safely inside phone viewport */}
                 <div 
-                  className="fixed top-14 left-3 right-3 sm:left-auto sm:right-4 sm:top-16 sm:absolute sm:w-64 max-h-[80vh] overflow-y-auto rounded-2xl border border-navy-700 bg-navy-900 text-white shadow-2xl py-2 z-50 animate-fadeIn"
+                  onClick={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
+                  className="fixed top-14 left-3 right-3 sm:left-auto sm:right-4 sm:top-16 sm:absolute sm:w-72 max-h-[80vh] overflow-y-auto rounded-2xl border border-navy-700 bg-navy-900 text-white shadow-2xl py-2 z-50 animate-fadeIn"
                 >
                   <div className="flex items-center justify-between px-3.5 py-1.5 border-b border-navy-800 mb-1">
                     <span className="text-[10px] font-sports font-black tracking-widest uppercase text-gold">
                       {lang === 'ml' ? 'കൂടുതൽ ഫീച്ചറുകൾ' : 'MORE FEATURES'}
                     </span>
                     <button 
-                      onClick={() => setIsMenuOpen(false)}
+                      type="button"
+                      onClick={() => setIsMobileMenuOpen(false)}
                       className="p-1 text-navy-muted hover:text-white"
+                      aria-label="Close menu"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -337,11 +337,14 @@ export default function Header({
                     return (
                       <button
                         key={item.id}
-                        onClick={() => {
-                          setIsMenuOpen(false);
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setIsMobileMenuOpen(false);
                           item.action();
                         }}
-                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold flex items-center gap-2.5 hover:bg-navy-800 text-navy-muted hover:text-white transition"
+                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold flex items-center gap-2.5 hover:bg-navy-800 active:bg-navy-750 text-white transition rounded-xl cursor-pointer"
                       >
                         <Icon className="w-4 h-4 text-sky shrink-0" />
                         <span className="truncate">{item.label}</span>
