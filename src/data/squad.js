@@ -83,6 +83,21 @@ export const squadPlayers = [
     fileSize: '969 KB',
     isAiGenerated: false,
   },
+  // KRSC Kozhikkode Official Squad Video (Opening Match Stars - 1 Confirmed Player)
+  {
+    id: 'krsc_1',
+    name: 'Rujeesh K.',
+    nameMl: 'രുജീഷ് കെ.',
+    number: '10',
+    club: 'KRSC KOZHIKKODE',
+    clubMl: 'കെ.ആർ.എസ്.സി കോഴിക്കോട്',
+    position: 'Forward / സ്ട്രൈക്കർ',
+    posterUrl: '/squad/posters/krsc_1.webp',
+    videoUrl: '/squad/videos/krsc_1.mp4',
+    devFallbackUrl: '/squad/videos/krsc_1.mp4',
+    fileSize: '907 KB',
+    isAiGenerated: false,
+  },
   // Udaya Parambil Peedika (Host Team)
   {
     id: 'p1',
@@ -315,6 +330,7 @@ export const squadPlayers = [
 export const squadClubs = [
   'All',
   'BASE PERUMBAVUR',
+  'KRSC KOZHIKKODE',
   'UDAYA Parambil Peedika',
   'SUPER STUDIO MALAPPURAM',
   'LINSHA MEDICALS MANNARKKAD',
@@ -324,6 +340,7 @@ export const squadClubs = [
 
 export const squadClubLabelsMl = {
   'BASE PERUMBAVUR': 'ബേസ് പെരുമ്പാവൂർ',
+  'KRSC KOZHIKKODE': 'കെ.ആർ.എസ്.സി കോഴിക്കോട്',
   'UDAYA Parambil Peedika': 'ഉദയ പറമ്പിൽ പീടിക',
   'SUPER STUDIO MALAPPURAM': 'സൂപ്പർ സ്റ്റുഡിയോ മലപ്പുറം',
   'LINSHA MEDICALS MANNARKKAD': 'ലിൻഷാ മെഡിക്കൽസ്',
@@ -334,6 +351,7 @@ export const squadClubLabelsMl = {
 // Official Squad Confirmation Status per Club (Rule 9f)
 export const clubSquadStatus = {
   'BASE PERUMBAVUR': 'confirmed',
+  'KRSC KOZHIKKODE': 'confirmed',
   'UDAYA Parambil Peedika': 'confirmed',
   'SUPER STUDIO MALAPPURAM': 'confirmed',
   'LINSHA MEDICALS MANNARKKAD': 'confirmed',
