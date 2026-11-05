@@ -13,21 +13,26 @@ import {
   AlertCircle
 } from 'lucide-react';
 import TeamLogo from './TeamLogo';
+import { fixtures } from '../data/tournamentData';
+import { SHOW_BRACKET } from '../config/siteConfig';
 
-// Single configuration constant (Data Rule 2)
-export const BRACKET_CONFIRMED = false;
+// Single configuration constant (Data Rule 2, Task 4)
+export const BRACKET_CONFIRMED = SHOW_BRACKET;
 
+// Drive round 1 from shared tournamentData.js fixtures (Task 4, Rule 17)
 export const BRACKET_DATA = {
-  round1: [
-    { id: 'm1', matchNum: 1, date: '06 Nov', time: '8:00 PM', team1: 'UDAYA PARAMBIL PEEDIKA', team2: 'NEW MALAYA MALABAR FC', status: 'Opening Match', winner: null, qfSlot: 'qf1' },
-    { id: 'm2', matchNum: 2, date: '07 Nov', time: '8:00 PM', team1: 'FIFA Manjeri', team2: 'Linsha Medicals Tirur', status: 'Upcoming', winner: null, qfSlot: 'qf1' },
-    { id: 'm3', matchNum: 3, date: '08 Nov', time: '8:00 PM', team1: 'Al-Madina Cherpulassery', team2: 'Royal Travel Kozhikode', status: 'Upcoming', winner: null, qfSlot: 'qf2' },
-    { id: 'm4', matchNum: 4, date: '09 Nov', time: '8:00 PM', team1: 'Usha Thrissur', team2: 'Black & White Kozhikode', status: 'Upcoming', winner: null, qfSlot: 'qf2' },
-    { id: 'm5', matchNum: 5, date: '10 Nov', time: '8:00 PM', team1: 'Super Studio Malappuram', team2: 'Gymkhana Thrissur', status: 'Upcoming', winner: null, qfSlot: 'qf3' },
-    { id: 'm6', matchNum: 6, date: '11 Nov', time: '8:00 PM', team1: 'Town Team Areekode', team2: 'Moon Star Kalpakanchery', status: 'Upcoming', winner: null, qfSlot: 'qf3' },
-    { id: 'm7', matchNum: 7, date: '12 Nov', time: '8:00 PM', team1: 'FC Nellikkuth', team2: 'Real FC Thennala', status: 'Upcoming', winner: null, qfSlot: 'qf4' },
-    { id: 'm8', matchNum: 8, date: '13 Nov', time: '8:00 PM', team1: 'KMG Mavoor', team2: 'Abhilash FC Kuppooth', status: 'Upcoming', winner: null, qfSlot: 'qf4' }
-  ],
+  round1: fixtures.slice(0, 8).map((f, i) => ({
+    id: f.id,
+    matchNum: i + 1,
+    date: f.date,
+    time: f.time,
+    team1: f.team1,
+    team2: f.team2,
+    status: f.id === 'm1' ? 'Opening Match' : 'Upcoming',
+    winner: null,
+    qfSlot: `qf${Math.floor(i / 2) + 1}`,
+    confirmed: f.confirmed
+  })),
   quarterFinals: [
     { id: 'qf1', matchNum: 'QF 1', date: '20 Nov', time: '8:00 PM', team1Slot: 'Winner Match 1', team2Slot: 'Winner Match 2', status: 'Quarter Final', winner: null, sfSlot: 'sf1' },
     { id: 'qf2', matchNum: 'QF 2', date: '22 Nov', time: '8:00 PM', team1Slot: 'Winner Match 3', team2Slot: 'Winner Match 4', status: 'Quarter Final', winner: null, sfSlot: 'sf1' },
@@ -56,6 +61,21 @@ export const getBracketData = () => {
 };
 
 export default function TournamentBracket({ lang, isDarkMode }) {
+  if (!SHOW_BRACKET) {
+    return (
+      <div className={`p-6 rounded-2xl border text-center ${
+        isDarkMode ? 'bg-navy-800 border-navy-700 text-white' : 'bg-white border-surface-border text-navy-900'
+      }`}>
+        <Calendar className="w-8 h-8 text-royal dark:text-sky mx-auto mb-2" />
+        <p className="text-xs sm:text-sm font-bold">
+          {lang === 'ml' 
+            ? 'മത്സരങ്ങൾ ദിവസേന പ്രഖ്യാപിക്കുന്നതാണ്. ഓരോ മത്സര ദിവസത്തിനും ശേഷം വീണ്ടും പരിശോധിക്കുക.' 
+            : 'Fixtures are announced daily. Check back after each match day.'}
+        </p>
+      </div>
+    );
+  }
+
   // In-memory state only (no localStorage per Rule 5)
   // Default opens on round containing next upcoming match (Round 1)
   const [activeRound, setActiveRound] = useState('r1'); // 'r1' | 'qf' | 'sf' | 'final'

@@ -318,8 +318,8 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
         )}
       </div>
 
-      {/* Main Match Scorecard */}
-      <div className="rounded-3xl overflow-hidden border p-4 sm:p-7 relative shadow-card transition-colors surface-card">
+      {/* Main Match Scorecard (Task 3, Rule 11: purple left border & UDAYA chip) */}
+      <div className="rounded-3xl overflow-hidden border border-l-4 border-l-purple-600 p-4 sm:p-7 relative shadow-card transition-colors surface-card">
         {/* Diagonal DEMO Watermark across score card (Development Only) */}
         {import.meta.env.DEV && isDemo && (
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-10 select-none">
@@ -384,6 +384,9 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           </div>
 
           <div className="flex items-center gap-2">
+            <span className="px-2 py-0.5 rounded-md bg-purple-700 text-white text-[10px] font-black uppercase tracking-wider">
+              UDAYA
+            </span>
             {getStatusBadge()}
           </div>
         </div>

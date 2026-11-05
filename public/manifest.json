@@ -1,0 +1,21 @@
+{
+  "name": "UDAYA & KASC All India Sevens Football Season 7",
+  "short_name": "Udaya Football",
+  "description": "Official Live Match Center, Scores, Fixtures & Tickets for All India Sevens Football Season 7",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1E0B3F",
+  "theme_color": "#1E0B3F",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

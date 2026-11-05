@@ -69,18 +69,23 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
           </p>
         </div>
 
-        {/* Next / Live Match Card */}
-        <div className={`w-full max-w-2xl mx-auto rounded-3xl p-5 sm:p-7 border-2 border-gold ring-1 ring-gold/40 surface-navy-card text-white shadow-card relative overflow-hidden transition-all ${
+        {/* Next / Live Match Card (Task 3, Rule 11: purple left border & chip for Udaya match) */}
+        <div className={`w-full max-w-2xl mx-auto rounded-3xl p-5 sm:p-7 border-2 border-gold border-l-4 border-l-purple-500 ring-1 ring-gold/40 surface-navy-card text-white shadow-card relative overflow-hidden transition-all ${
           isLive ? 'ring-2 ring-gold' : ''
         }`}>
           {/* Card Header: Gold highlight for next match / LIVE */}
-          <div className="flex items-center justify-between pb-3.5 border-b border-navy-700">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider btn-gold shadow-xs">
-              {isLive && <span className="w-2 h-2 rounded-full bg-navy-900 animate-ping"></span>}
-              <span>{isLive ? 'LIVE' : (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം' : 'Opening match')}</span>
-            </span>
+          <div className="flex items-center justify-between gap-2 flex-wrap pb-3.5 border-b border-navy-700">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wider btn-gold shadow-xs">
+                {isLive && <span className="w-2 h-2 rounded-full bg-navy-900 animate-ping"></span>}
+                <span>{isLive ? 'LIVE' : (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം' : 'Opening match')}</span>
+              </span>
+              <span className="px-2 py-0.5 rounded-md bg-purple-700 text-white text-[10px] font-black uppercase tracking-wider">
+                UDAYA
+              </span>
+            </div>
 
-            <div className="text-xs font-bold font-mono text-navy-muted">
+            <div className="text-[11px] sm:text-xs font-bold font-mono text-navy-muted shrink-0">
               <span>06 Nov • 8:00 PM IST</span>
             </div>
           </div>

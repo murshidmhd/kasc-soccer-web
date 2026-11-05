@@ -2,7 +2,7 @@ export const tournamentInfo = {
   name: "അഖിലേന്ത്യാ സെവൻസ് ടൂർണ്ണമെന്റ്",
   nameEn: "ALL INDIA SEVENS TOURNAMENT",
   season: "SEASON 7",
-  fullTitle: "UDAYA & KASC SOCCER - ALL INDIA SEVENS FOOTBALL TOURNAMENT",
+  fullTitle: "UDAYA & KASC FOOTBALL - ALL INDIA SEVENS FOOTBALL TOURNAMENT",
   organizersMalayalam: "ഉദയ പറമ്പിൽ പീടികയും KASC പെരുവള്ളൂരും സംയുക്തമായി സംഘടിപ്പിക്കുന്ന",
   organizersEn: "Organized by UDAYA Parambil Peedika & KASC Peruvallur",
   affiliation: "SFA (Sevens Football Association) Affiliated",
@@ -66,6 +66,7 @@ export const fixtures = [
     status: "Upcoming",
     score1: null,
     score2: null,
+    confirmed: true,
     badge1Color: "from-purple-700 to-indigo-950",
     badge2Color: "from-zinc-800 to-black",
     stadium: "Peruvallur Panjayath Stadium"
@@ -81,6 +82,7 @@ export const fixtures = [
     status: "Upcoming",
     score1: null,
     score2: null,
+    confirmed: false,
     badge1Color: "from-blue-600 to-indigo-900",
     badge2Color: "from-cyan-500 to-blue-700",
     stadium: "Peruvallur Panjayath Stadium"
@@ -96,6 +98,7 @@ export const fixtures = [
     status: "Upcoming",
     score1: null,
     score2: null,
+    confirmed: false,
     badge1Color: "from-emerald-600 to-teal-900",
     badge2Color: "from-rose-600 to-red-900",
     stadium: "Peruvallur Panjayath Stadium"
@@ -111,6 +114,7 @@ export const fixtures = [
     status: "Upcoming",
     score1: null,
     score2: null,
+    confirmed: false,
     badge1Color: "from-purple-600 to-indigo-900",
     badge2Color: "from-sky-500 to-blue-800",
     stadium: "Peruvallur Panjayath Stadium"
@@ -126,6 +130,7 @@ export const fixtures = [
     status: "Upcoming",
     score1: null,
     score2: null,
+    confirmed: false,
     badge1Color: "from-zinc-700 to-black",
     badge2Color: "from-red-700 to-black",
     stadium: "Peruvallur Panjayath Stadium"
@@ -141,6 +146,7 @@ export const fixtures = [
     status: "Upcoming",
     score1: null,
     score2: null,
+    confirmed: false,
     badge1Color: "from-green-600 to-emerald-900",
     badge2Color: "from-sky-400 to-blue-600",
     stadium: "Peruvallur Panjayath Stadium"
@@ -156,6 +162,7 @@ export const fixtures = [
     status: "Upcoming",
     score1: null,
     score2: null,
+    confirmed: false,
     badge1Color: "from-red-600 to-indigo-900",
     badge2Color: "from-red-600 to-rose-900",
     stadium: "Peruvallur Panjayath Stadium"
@@ -171,6 +178,7 @@ export const fixtures = [
     status: "Upcoming",
     score1: null,
     score2: null,
+    confirmed: false,
     badge1Color: "from-blue-700 to-orange-600",
     badge2Color: "from-amber-500 to-red-800",
     stadium: "Peruvallur Panjayath Stadium"
@@ -186,6 +194,7 @@ export const fixtures = [
     status: "Upcoming",
     score1: null,
     score2: null,
+    confirmed: false,
     badge1Color: "from-slate-900 to-blue-900",
     badge2Color: "from-zinc-900 to-black",
     stadium: "Peruvallur Panjayath Stadium"
@@ -201,6 +210,7 @@ export const fixtures = [
     status: "Upcoming",
     score1: null,
     score2: null,
+    confirmed: false,
     badge1Color: "from-red-700 to-black",
     badge2Color: "from-blue-700 to-indigo-950",
     stadium: "Peruvallur Panjayath Stadium"
@@ -216,6 +226,7 @@ export const fixtures = [
     status: "Upcoming",
     score1: null,
     score2: null,
+    confirmed: false,
     badge1Color: "from-amber-400 to-yellow-600",
     badge2Color: "from-red-600 to-amber-700",
     stadium: "Peruvallur Panjayath Stadium"
@@ -231,6 +242,7 @@ export const fixtures = [
     status: "Upcoming",
     score1: null,
     score2: null,
+    confirmed: false,
     badge1Color: "from-emerald-500 to-green-950",
     badge2Color: "from-red-600 to-rose-900",
     stadium: "Peruvallur Panjayath Stadium"
@@ -666,7 +678,7 @@ export const promoData = {
     sponsor: "FEZCO GROUP",
     sponsorMl: "ഫെസ്കോ ഗ്രൂപ്പ് (FEZCO GROUP)",
     desc: "As part of the promotional campaigns for the Udaya KASC All India Sevens, the 'Udaya Goal Vandi' mobile penalty shootout contest was organized across schools and local centers.",
-    descMl: "ഉദയ കാസ്ക് സോക്കർ അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ ടൂർണമെന്റിന്റെ പ്രചരണത്തിന്റെ ഭാഗമായി ഉദയ കലാ കായിക സാംസ്കാരിക വേദി പറമ്പിൽ പീടിക സംഘടിപ്പിച്ച “ഉദയ ഗോൾ വണ്ടി” ഷൂട്ട് ഔട്ട് മത്സരം സംഘടിപ്പിച്ചു.",
+    descMl: "ഉദയ കാസ്ക് ഫുട്ബോൾ അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ ടൂർണമെന്റിന്റെ പ്രചരണത്തിന്റെ ഭാഗമായി ഉദയ കലാ കായിക സാംസ്കാരിക വേദി പറമ്പിൽ പീടിക സംഘടിപ്പിച്ച “ഉദയ ഗോൾ വണ്ടി” ഷൂട്ട് ഔട്ട് മത്സരം സംഘടിപ്പിച്ചു.",
     locations: [
       { name: "AKHM UP School, Chatrathodi", nameMl: "AKHM UP സ്കൂൾ ചാത്രത്തൊടി" },
       { name: "Peruvallur Higher Secondary School", nameMl: "പെരുവള്ളൂർ ഹയർ സെക്കൻഡറി സ്കൂൾ" },

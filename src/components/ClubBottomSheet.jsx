@@ -86,7 +86,8 @@ export default function ClubBottomSheet({
   };
 
   const nextMatch = fixtures.find(
-    (m) => (m.team1.toLowerCase().includes(club.name.toLowerCase()) || 
+    (m) => m.confirmed &&
+           (m.team1.toLowerCase().includes(club.name.toLowerCase()) || 
             club.name.toLowerCase().includes(m.team1.toLowerCase()) ||
             m.team2.toLowerCase().includes(club.name.toLowerCase()) || 
             club.name.toLowerCase().includes(m.team2.toLowerCase())) &&
@@ -285,13 +286,13 @@ export default function ClubBottomSheet({
                 </div>
               </div>
             ) : (
-              <div className="p-3.5 rounded-2xl border border-surface-border dark:border-navy-700 surface-card-subtle flex items-center justify-between text-xs">
+              <div className="p-3.5 rounded-2xl border border-surface-border dark:border-navy-700 surface-card-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                 <div className="flex items-center gap-2 text-card-muted">
                   <Calendar className="w-4 h-4 text-royal dark:text-sky shrink-0" />
                   <span className="font-bold">{lang === 'ml' ? 'അടുത്ത മത്സരം' : 'Next Match'}</span>
                 </div>
-                <span className="font-sports font-bold text-card-title text-right">
-                  {lang === 'ml' ? 'മത്സരക്രമം ഉടൻ സ്ഥിരീകരിക്കും' : 'Fixture to be confirmed'}
+                <span className="font-sports font-bold text-card-title text-left sm:text-right">
+                  {lang === 'ml' ? 'മത്സരങ്ങൾ ദിവസേന പ്രഖ്യാപിക്കുന്നതാണ്. ഓരോ മത്സര ദിവസത്തിനും ശേഷം വീണ്ടും പരിശോധിക്കുക.' : 'Fixtures are announced daily. Check back after each match day.'}
                 </span>
               </div>
             )}

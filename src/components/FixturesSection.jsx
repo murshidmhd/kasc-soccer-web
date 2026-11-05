@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, MapPin, Trophy, ListFilter } from 'lucide-react';
 import { fixtures } from '../data/tournamentData';
+import { SHOW_BRACKET } from '../config/siteConfig';
 import TeamLogo from './TeamLogo';
 import TournamentBracket from './TournamentBracket';
 
 export default function FixturesSection({ lang, isDarkMode }) {
   // In-memory toggle between list and tree view (no localStorage per rules)
   const [viewMode, setViewMode] = useState('list');
+  const confirmedFixtures = fixtures.filter(m => m.confirmed);
 
   const getShortTag = (match) => {
     if (match.id === 'm1') {
@@ -53,82 +55,104 @@ export default function FixturesSection({ lang, isDarkMode }) {
           </div>
         </div>
 
-        {/* View Switcher: List View vs Knockout Bracket (Rule 6: in-memory state only) */}
-        <div className={`flex items-center gap-1 p-1 rounded-2xl border self-start sm:self-auto shadow-xs ${
-          isDarkMode ? 'bg-navy-900 border-navy-700' : 'bg-surface-light border-surface-border'
-        }`}>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`min-h-touch px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 active:scale-95 ${
-              viewMode === 'list'
-                ? 'bg-royal text-white shadow-xs'
-                : isDarkMode ? 'text-muted-on-navy hover:text-white' : 'text-navy-900 hover:text-royal'
-            }`}
-          >
-            <ListFilter className="w-4 h-4" />
-            <span>{lang === 'ml' ? 'ലിസ്റ്റ് വ്യൂ' : 'Match List'}</span>
-          </button>
-          <button
-            onClick={() => setViewMode('bracket')}
-            className={`min-h-touch px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 active:scale-95 ${
-              viewMode === 'bracket'
-                ? 'bg-royal text-white shadow-xs'
-                : isDarkMode ? 'text-muted-on-navy hover:text-white' : 'text-navy-900 hover:text-royal'
-            }`}
-          >
-            <Trophy className="w-4 h-4" />
-            <span>{lang === 'ml' ? 'ടൂർണ്ണമെന്റ് ട്രീ' : 'Knockout Tree'}</span>
-          </button>
-        </div>
+        {/* View Switcher: List View vs Knockout Bracket (Hidden when SHOW_BRACKET = false) */}
+        {SHOW_BRACKET && (
+          <div className={`flex items-center gap-1 p-1 rounded-2xl border self-start sm:self-auto shadow-xs ${
+            isDarkMode ? 'bg-navy-900 border-navy-700' : 'bg-surface-light border-surface-border'
+          }`}>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`min-h-touch px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 active:scale-95 ${
+                viewMode === 'list'
+                  ? 'bg-royal text-white shadow-xs'
+                  : isDarkMode ? 'text-muted-on-navy hover:text-white' : 'text-navy-900 hover:text-royal'
+              }`}
+            >
+              <ListFilter className="w-4 h-4" />
+              <span>{lang === 'ml' ? 'ലിസ്റ്റ് വ്യൂ' : 'Match List'}</span>
+            </button>
+            <button
+              onClick={() => setViewMode('bracket')}
+              className={`min-h-touch px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 active:scale-95 ${
+                viewMode === 'bracket'
+                  ? 'bg-royal text-white shadow-xs'
+                  : isDarkMode ? 'text-muted-on-navy hover:text-white' : 'text-navy-900 hover:text-royal'
+              }`}
+            >
+              <Trophy className="w-4 h-4" />
+              <span>{lang === 'ml' ? 'ടൂർണ്ണമെന്റ് ട്രീ' : 'Knockout Tree'}</span>
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* VIEW 1: TOURNAMENT BRACKET */}
-      {viewMode === 'bracket' && (
+      {/* VIEW 1: TOURNAMENT BRACKET (Guarded by SHOW_BRACKET) */}
+      {SHOW_BRACKET && viewMode === 'bracket' && (
         <div className="animate-fadeIn">
           <TournamentBracket lang={lang} isDarkMode={isDarkMode} />
         </div>
       )}
 
-      {/* VIEW 2: FIXTURES LIST GRID (FotMob style) */}
-      {viewMode === 'list' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 animate-fadeIn">
-          {fixtures.map((match) => {
-            const isNextMatch = match.id === 'm1' && match.status === 'Upcoming';
-            const isMatchLive = match.status === 'LIVE';
-            const isCompleted = match.status === 'Completed';
+      {/* VIEW 2: FIXTURES LIST GRID (Confirmed Matches Only - Task 4, Rule 15) */}
+      {(viewMode === 'list' || !SHOW_BRACKET) && (
+        confirmedFixtures.length === 0 ? (
+          <div className={`text-center py-12 px-6 rounded-3xl border ${
+            isDarkMode ? 'bg-navy-800 border-navy-700 text-white' : 'bg-white border-surface-border text-navy-900'
+          }`}>
+            <Calendar className="w-10 h-10 text-royal dark:text-sky mx-auto mb-3" />
+            <p className="text-sm sm:text-base font-bold">
+              {lang === 'ml' 
+                ? 'മത്സരങ്ങൾ ദിവസേന പ്രഖ്യാപിക്കുന്നതാണ്. ഓരോ മത്സര ദിവസത്തിനും ശേഷം വീണ്ടും പരിശോധിക്കുക.' 
+                : 'Fixtures are announced daily. Check back after each match day.'}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 animate-fadeIn">
+              {confirmedFixtures.map((match) => {
+                const isUdayaMatch = match.team1?.toUpperCase().includes('UDAYA') || match.team2?.toUpperCase().includes('UDAYA');
+                const isNextMatch = match.id === 'm1' && match.status === 'Upcoming';
+                const isMatchLive = match.status === 'LIVE';
+                const isCompleted = match.status === 'Completed';
 
-            const score1 = match.score1 !== null ? Number(match.score1) : null;
-            const score2 = match.score2 !== null ? Number(match.score2) : null;
-            const team1Won = isCompleted && score1 !== null && score2 !== null && score1 > score2;
-            const team2Won = isCompleted && score1 !== null && score2 !== null && score2 > score1;
+                const score1 = match.score1 !== null ? Number(match.score1) : null;
+                const score2 = match.score2 !== null ? Number(match.score2) : null;
+                const team1Won = isCompleted && score1 !== null && score2 !== null && score1 > score2;
+                const team2Won = isCompleted && score1 !== null && score2 !== null && score2 > score1;
 
-            return (
-              <div
-                key={match.id}
-                className={`rounded-2xl p-4 sm:p-5 transition-all duration-200 relative shadow-card ${
-                  isNextMatch
-                    ? 'border-2 border-gold ring-1 ring-gold/40 bg-white dark:bg-navy-800'
-                    : isDarkMode 
-                      ? 'bg-navy-800 border border-navy-700 text-white hover:border-navy-600' 
-                      : 'bg-white border border-surface-border text-navy-900 hover:border-navy-700/30'
-                }`}
-              >
-                {/* Top Match Info: Shortened tag & kickoff/date */}
-                <div className={`flex items-center justify-between text-xs pb-3 mb-3 border-b ${
-                  isDarkMode ? 'border-navy-700 text-navy-muted' : 'border-surface-border text-card-muted'
-                }`}>
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                return (
+                  <div
+                    key={match.id}
+                    className={`rounded-2xl p-4 sm:p-5 transition-all duration-200 relative shadow-card ${
+                      isUdayaMatch ? 'border-l-4 border-l-purple-600' : ''
+                    } ${
                       isNextMatch
-                        ? 'btn-gold'
-                        : isDarkMode
-                          ? 'bg-navy-700 text-navy-muted'
-                          : 'bg-surface-light text-navy-900 border border-surface-border'
+                        ? 'border-2 border-gold ring-1 ring-gold/40 bg-white dark:bg-navy-800'
+                        : isDarkMode 
+                          ? 'bg-navy-800 border border-navy-700 text-white hover:border-navy-600' 
+                          : 'bg-white border border-surface-border text-navy-900 hover:border-navy-700/30'
+                    }`}
+                  >
+                    {/* Top Match Info: Shortened tag & kickoff/date */}
+                    <div className={`flex items-center justify-between text-xs pb-3 mb-3 border-b ${
+                      isDarkMode ? 'border-navy-700 text-navy-muted' : 'border-surface-border text-card-muted'
                     }`}>
-                      {getShortTag(match)}
-                    </span>
-                    <span className="text-card-muted font-mono text-[11px]">{match.day}</span>
-                  </div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                          isNextMatch
+                            ? 'btn-gold'
+                            : isDarkMode
+                              ? 'bg-navy-700 text-navy-muted'
+                              : 'bg-surface-light text-navy-900 border border-surface-border'
+                        }`}>
+                          {getShortTag(match)}
+                        </span>
+                        {isUdayaMatch && (
+                          <span className="px-1.5 py-0.5 rounded-md bg-purple-700 text-white text-[10px] font-black uppercase tracking-wider">
+                            UDAYA
+                          </span>
+                        )}
+                        <span className="text-card-muted font-mono text-[11px]">{match.day}</span>
+                      </div>
 
                   <div className="flex items-center gap-1.5 font-bold">
                     {isMatchLive ? (
@@ -237,6 +261,7 @@ export default function FixturesSection({ lang, isDarkMode }) {
             );
           })}
         </div>
+        )
       )}
     </section>
   );

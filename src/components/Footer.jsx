@@ -9,8 +9,6 @@ import {
   Trophy,
   Flame
 } from 'lucide-react';
-import logoKasc from '../assets/logo_kasc.png';
-import logoUdaya from '../assets/logo_udaya_transparent.png';
 import logoSfa from '../assets/logo_sfa.png';
 import { 
   SHOW_SFA_CLAIMS, 
@@ -22,7 +20,8 @@ import {
   DEVELOPER_CREDIT, 
   SPONSORS_DATA,
   STADIUM_MAPS_URL,
-  ADMIN_SHORTCUT_ENABLED
+  ADMIN_SHORTCUT_ENABLED,
+  ORGANISERS
 } from '../config/siteConfig';
 
 function InstagramIcon({ className = "w-4 h-4" }) {
@@ -104,18 +103,18 @@ export default function Footer({ lang, isDarkMode, setActiveTab }) {
             <div className="flex items-center -space-x-2.5">
               <div className="w-12 h-12 rounded-full bg-white p-1 border-2 border-gold shadow-lg z-10 flex items-center justify-center shrink-0 ring-1 ring-gold/40">
                 <img 
-                  src={logoUdaya} 
-                  alt="Udaya Parambil Peedika (Host Club)" 
+                  src={ORGANISERS.primary.logo} 
+                  alt={lang === 'ml' ? ORGANISERS.primary.nameMl : ORGANISERS.primary.name} 
                   width={44} 
                   height={44} 
                   loading="lazy" 
                   className="w-full h-full object-contain rounded-full" 
                 />
               </div>
-              <div className="w-9 h-9 rounded-full bg-white p-0.5 border border-sky/80 shadow-md flex items-center justify-center shrink-0 opacity-90">
+              <div className="w-9 h-9 rounded-full bg-white p-0.5 border border-purple-400 shadow-md flex items-center justify-center shrink-0 opacity-90">
                 <img 
-                  src={logoKasc} 
-                  alt="KASC Peruvallur" 
+                  src={ORGANISERS.coOrganiser.logo} 
+                  alt={lang === 'ml' ? ORGANISERS.coOrganiser.nameMl : ORGANISERS.coOrganiser.name} 
                   width={34} 
                   height={34} 
                   loading="lazy" 
@@ -126,7 +125,9 @@ export default function Footer({ lang, isDarkMode, setActiveTab }) {
 
             <div className="min-w-0">
               <h3 className="font-sports font-black text-sm sm:text-base text-white tracking-wide leading-tight line-clamp-1">
-                UDAYA PARAMBIL PEEDIKA & KASC PERUVALLUR
+                {lang === 'ml' 
+                  ? `${ORGANISERS.primary.nameMl} & ${ORGANISERS.coOrganiser.nameMl}`
+                  : `${ORGANISERS.primary.name.toUpperCase()} & ${ORGANISERS.coOrganiser.name.toUpperCase()}`}
               </h3>
               <p className="text-xs text-gold font-sports font-bold tracking-wider uppercase mt-0.5">
                 All India Sevens Football Tournament • Season 7

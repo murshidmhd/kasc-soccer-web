@@ -8,28 +8,42 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Udaya Purple Palette Design Tokens (Task 2)
         navy: {
-          900: '#071433',
-          800: '#0B1F4D',
-          700: '#12306E',
+          900: '#1E0B3F', // purple-900
+          800: '#2E1065', // purple-800
+          700: '#4C1D95', // purple-700
         },
-        royal: '#1D4ED8',
-        sky: '#3B82F6',
-        gold: '#F5B301',
+        purple: {
+          950: '#130728',
+          900: '#1E0B3F',
+          800: '#2E1065',
+          700: '#4C1D95',
+          600: '#6D28D9',
+          500: '#8B5CF6',
+          400: '#A78BFA',
+          300: '#C4B5FD',
+          200: '#DDD6FE',
+          100: '#F6F3FF',
+          50: '#FAF5FF',
+        },
+        royal: '#6D28D9', // primary purple
+        sky: '#8B5CF6',   // light purple
+        gold: '#F5B301',  // single accent
         'text-on-navy': '#FFFFFF',
-        'muted-on-navy': '#B7C4E0',
+        'muted-on-navy': '#CFC3EE',
         surface: {
-          light: '#EAEFF6',
-          card: '#F4F7FA',
-          border: '#CDD7E6',
+          light: '#F6F3FF',
+          card: '#FFFFFF',
+          border: '#E4DBFA',
         },
         brand: {
-          dark: '#071433',
-          navy: '#0B1F4D',
-          card: '#12306E',
-          border: '#D9E2F2',
-          neon: '#3B82F6',
-          electric: '#1D4ED8',
+          dark: '#1E0B3F',
+          navy: '#2E1065',
+          card: '#4C1D95',
+          border: '#E4DBFA',
+          neon: '#8B5CF6',
+          electric: '#6D28D9',
           gold: '#F5B301',
           crimson: '#ef4444'
         }

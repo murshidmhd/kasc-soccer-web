@@ -18,10 +18,8 @@ import {
   Star,
   Target
 } from 'lucide-react';
-import logoKasc from '../assets/logo_kasc.png';
-import logoUdaya from '../assets/logo_udaya_transparent.png';
 import { tournamentInfo } from '../data/tournamentData';
-import { SITE_URL, SHOW_UNFINISHED, SHOW_LOCAL_ONLY_FEATURES } from '../config/siteConfig';
+import { SITE_URL, SHOW_UNFINISHED, SHOW_LOCAL_ONLY_FEATURES, ORGANISERS } from '../config/siteConfig';
 
 export default function Header({ 
   activeTab, 
@@ -54,8 +52,12 @@ export default function Header({
 
   const shareOnWhatsApp = () => {
     const shareUrl = `${SITE_URL}?v=udaya7`;
+    const orgLine = lang === 'ml'
+      ? `${ORGANISERS.primary.nameMl} & ${ORGANISERS.coOrganiser.nameMl}`
+      : `${ORGANISERS.primary.name} & ${ORGANISERS.coOrganiser.name}`;
     const text = encodeURIComponent(
-      `⚽ *അഖിലേന്ത്യാ സെവൻസ് ടൂർണ്ണമെന്റ് Season 7*\n` +
+      `⚽ *അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ ടൂർണ്ണമെന്റ് Season 7*\n` +
+      `🏆 ${orgLine}\n` +
       `📅 2026 Nov 06 - Dec 06\n` +
       `📍 Peruvallur Panjayath Stadium, Parambil Peedika\n` +
       `🔥 Opening Match: UDAYA Parambil Peedika vs NEW MALAYA MALABAR FC\n` +
@@ -194,22 +196,23 @@ export default function Header({
           onClick={() => { setActiveTab('live'); window.location.hash = 'live'; window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           className="flex items-center gap-1.5 sm:gap-2.5 cursor-pointer select-none min-w-0"
         >
+          {/* Host Club Logos (Udaya primary with larger emblem, KASC co-organiser) */}
           <div className="flex items-center -space-x-1.5 shrink-0">
             <img 
-              src={logoUdaya} 
-              alt="Udaya Parambil Peedika (Host Club)" 
-              width={40}
-              height={40}
-              className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-gold bg-white p-0.5 object-contain shadow-md z-10 shrink-0 ring-1 ring-gold/40" 
-              title="Udaya Parambil Peedika (Host Club)"
+              src={ORGANISERS.primary.logo} 
+              alt={lang === 'ml' ? ORGANISERS.primary.nameMl : ORGANISERS.primary.name} 
+              width={42}
+              height={42}
+              className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border-2 border-gold bg-white p-0.5 object-contain shadow-md z-10 shrink-0 ring-1 ring-gold/40" 
+              title={lang === 'ml' ? `${ORGANISERS.primary.nameMl} (${ORGANISERS.primary.roleMl})` : `${ORGANISERS.primary.name} (${ORGANISERS.primary.role})`}
             />
             <img 
-              src={logoKasc} 
-              alt="KASC Peruvallur" 
-              width={32}
-              height={32}
-              className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border border-sky/80 bg-white p-0.5 object-contain shadow-xs shrink-0 opacity-90" 
-              title="KASC Peruvallur"
+              src={ORGANISERS.coOrganiser.logo} 
+              alt={lang === 'ml' ? ORGANISERS.coOrganiser.nameMl : ORGANISERS.coOrganiser.name} 
+              width={28}
+              height={28}
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded-full border border-purple-400 bg-white p-0.5 object-contain shadow-xs shrink-0 opacity-90" 
+              title={lang === 'ml' ? `${ORGANISERS.coOrganiser.nameMl} (${ORGANISERS.coOrganiser.roleMl})` : `${ORGANISERS.coOrganiser.name} (${ORGANISERS.coOrganiser.role})`}
             />
           </div>
 
@@ -218,12 +221,14 @@ export default function Header({
               <span className="text-[11px] sm:text-base md:text-xl font-black font-sports tracking-tight text-white truncate">
                 {lang === 'ml' ? 'അഖിലേന്ത്യാ സെവൻസ്' : 'ALL INDIA SEVENS'}
               </span>
-              <span className="px-1 py-0.2 text-[8px] sm:text-[10px] font-black rounded bg-gold text-navy-900 uppercase tracking-wider shrink-0 shadow-xs">
+              <span className="px-1 py-0.2 text-[8px] sm:text-[10px] font-black rounded bg-gold text-purple-950 uppercase tracking-wider shrink-0 shadow-xs">
                 S7
               </span>
             </div>
-            <p className="text-[9px] sm:text-xs text-navy-muted font-medium truncate font-malayalam">
-              {lang === 'ml' ? 'ഉദയ & KASC പെരുവള്ളൂർ' : 'UDAYA & KASC Peruvallur'}
+            <p className="text-[9px] sm:text-xs text-muted-on-navy font-medium truncate font-malayalam">
+              {lang === 'ml' 
+                ? `${ORGANISERS.primary.nameMl} & ${ORGANISERS.coOrganiser.shortNameMl}` 
+                : `${ORGANISERS.primary.name} & ${ORGANISERS.coOrganiser.shortName}`}
             </p>
           </div>
         </div>
@@ -306,9 +311,9 @@ export default function Header({
 
             {isMobileMenuOpen && (
               <>
-                {/* Backdrop overlay to close menu on click outside */}
+                {/* Backdrop overlay to close menu on click outside (no blur per rules) */}
                 <div 
-                  className="fixed inset-0 z-40 bg-navy-950/70 backdrop-blur-[2px]"
+                  className="fixed inset-0 z-40 bg-black/60"
                   onClick={() => setIsMobileMenuOpen(false)}
                   onTouchEnd={() => setIsMobileMenuOpen(false)}
                   aria-hidden="true"

@@ -3,12 +3,37 @@
  * Akhilenthya Sevens Season 7 (Peruvallur Panjayath Stadium)
  */
 
+// Official Organisers (Task 3, Rule 9: Udaya primary, KASC co-organiser)
+export const ORGANISERS = {
+  primary: {
+    id: 'udaya',
+    name: 'Udaya Parambil Peedika',
+    nameMl: 'ഉദയ പറമ്പിൽ പീടിക',
+    shortName: 'UDAYA',
+    shortNameMl: 'ഉദയ',
+    role: 'Primary Organiser',
+    roleMl: 'മുഖ്യ സംഘാടകർ',
+    logo: '/logo_udaya_transparent.png'
+  },
+  coOrganiser: {
+    id: 'kasc',
+    name: 'KASC Peruvallur',
+    nameMl: 'KASC പെരുവള്ളൂർ',
+    shortName: 'KASC',
+    shortNameMl: 'കാസ്ക്',
+    role: 'Co-Organiser',
+    roleMl: 'സഹ സംഘാടകർ',
+    logo: '/logo_kasc.png'
+  }
+};
+
 // Canonical Production URL for sharing (auto-resolves current live domain with udaya-football fallback)
 export const SITE_URL = typeof window !== 'undefined' && window.location.origin && !window.location.origin.includes('localhost')
   ? window.location.origin
   : 'https://udaya-football.vercel.app';
 
 // Feature Flags
+export const SHOW_BRACKET = false;
 export const SHOW_LOCAL_ONLY_FEATURES = false;
 export const PRIZES_CONFIRMED = false;
 export const SHOW_SFA_CLAIMS = false;

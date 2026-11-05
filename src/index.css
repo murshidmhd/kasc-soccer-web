@@ -3,25 +3,25 @@
 @tailwind utilities;
 
 :root {
-  /* Premium Navy-Blue Design Tokens */
-  --navy-900: #071433;
-  --navy-800: #0B1F4D;
-  --navy-700: #12306E;
-  --royal: #1D4ED8;
-  --sky: #3B82F6;
+  /* Udaya Club Purple Design Tokens (Task 2) */
+  --navy-900: #1E0B3F;
+  --navy-800: #2E1065;
+  --navy-700: #4C1D95;
+  --royal: #6D28D9;
+  --sky: #8B5CF6;
   --gold: #F5B301;
   --text-on-navy: #FFFFFF;
-  --muted-on-navy: #B7C4E0;
+  --muted-on-navy: #CFC3EE;
 
-  /* Surface & Border Tokens (Soft Dark-White / Off-White Surface) */
-  --surface: #EAEFF6;
-  --surface-card: #F4F7FA;
-  --surface-border: #CDD7E6;
-  --text-main: #071433;
-  --text-muted: #4B5B78;
+  /* Surface & Border Tokens (Soft Light-Purple Surface) */
+  --surface: #F6F3FF;
+  --surface-card: #FFFFFF;
+  --surface-border: #E4DBFA;
+  --text-main: #1E0B3F;
+  --text-muted: #5B21B6;
 
-  /* 2-Stop Navy Gradient (180deg, navy-800 to navy-900) */
-  --navy-gradient: linear-gradient(180deg, #0B1F4D 0%, #071433 100%);
+  /* 2-Stop Purple Gradient (180deg, purple-800 to purple-900) */
+  --navy-gradient: linear-gradient(180deg, #2E1065 0%, #1E0B3F 100%);
 
   /* Design Tokens: Consistent Spacing Scale (4, 8, 12, 16, 24 px) */
   --space-1: 0.25rem;  /* 4px */
@@ -36,8 +36,8 @@
   --radius-btn: 0.75rem;     /* 12px */
   --radius-pill: 9999px;
 
-  --shadow-card: 0 1px 3px 0 rgba(7, 20, 51, 0.06), 0 1px 2px -1px rgba(7, 20, 51, 0.04);
-  --shadow-card-hover: 0 4px 6px -1px rgba(7, 20, 51, 0.09), 0 2px 4px -2px rgba(7, 20, 51, 0.05);
+  --shadow-card: 0 1px 3px 0 rgba(30, 11, 63, 0.06), 0 1px 2px -1px rgba(30, 11, 63, 0.04);
+  --shadow-card-hover: 0 4px 6px -1px rgba(30, 11, 63, 0.09), 0 2px 4px -2px rgba(30, 11, 63, 0.05);
 
   /* Mobile Touch Target minimum */
   --touch-min: 44px;
@@ -50,61 +50,61 @@
 }
 
 .dark {
-  /* Dark Mode Tokens (Deep Navy Night Theme) */
-  --surface: #071433;
-  --surface-card: #0B1F4D;
-  --surface-border: #12306E;
+  /* Dark Mode Tokens (Deep Purple Night Theme) */
+  --surface: #1E0B3F;
+  --surface-card: #2E1065;
+  --surface-border: #4C1D95;
   --text-main: #FFFFFF;
-  --text-muted: #B7C4E0;
+  --text-muted: #CFC3EE;
 }
 
 /* Step 2: Surface & Text Pairing Utilities */
 .surface-navy {
-  background-color: #071433 !important;
-  background-image: linear-gradient(180deg, #0B1F4D 0%, #071433 100%) !important;
+  background-color: #1E0B3F !important;
+  background-image: linear-gradient(180deg, #2E1065 0%, #1E0B3F 100%) !important;
   color: #FFFFFF !important;
 }
 
 .surface-navy-card {
-  background-color: #071433 !important;
+  background-color: #1E0B3F !important;
   color: #FFFFFF !important;
 }
 
 .surface-navy-box {
-  background-color: #0B1F4D !important;
+  background-color: #2E1065 !important;
   color: #FFFFFF !important;
-  border-color: #12306E !important;
+  border-color: #4C1D95 !important;
 }
 
 .surface-light {
-  background-color: #F4F7FC !important;
-  color: #0B1F4D !important;
+  background-color: #F6F3FF !important;
+  color: #1E0B3F !important;
 }
 .dark .surface-light {
-  background-color: #071433 !important;
+  background-color: #1E0B3F !important;
   color: #FFFFFF !important;
 }
 
 .surface-card {
   background-color: #FFFFFF !important;
-  color: #0B1F4D !important;
-  border-color: #D9E2F2 !important;
+  color: #1E0B3F !important;
+  border-color: #E4DBFA !important;
 }
 .dark .surface-card {
-  background-color: #0B1F4D !important;
+  background-color: #2E1065 !important;
   color: #FFFFFF !important;
-  border-color: #12306E !important;
+  border-color: #4C1D95 !important;
 }
 
 .surface-card-subtle {
-  background-color: #F4F7FC !important;
-  color: #0B1F4D !important;
-  border-color: #D9E2F2 !important;
+  background-color: #F6F3FF !important;
+  color: #1E0B3F !important;
+  border-color: #E4DBFA !important;
 }
 .dark .surface-card-subtle {
-  background-color: #071433 !important;
+  background-color: #1E0B3F !important;
   color: #FFFFFF !important;
-  border-color: #12306E !important;
+  border-color: #4C1D95 !important;
 }
 
 .text-navy-main {
@@ -112,46 +112,46 @@
 }
 
 .text-navy-muted {
-  color: #B7C4E0 !important;
+  color: #CFC3EE !important;
 }
 
 .text-card-title {
-  color: #0B1F4D !important;
+  color: #1E0B3F !important;
 }
 .dark .text-card-title {
   color: #FFFFFF !important;
 }
 
 .text-card-muted {
-  color: #4B5B78 !important;
+  color: #5B21B6 !important;
 }
 .dark .text-card-muted {
-  color: #B7C4E0 !important;
+  color: #CFC3EE !important;
 }
 
 .btn-royal {
-  background-color: #1D4ED8 !important;
+  background-color: #6D28D9 !important;
   color: #FFFFFF !important;
 }
 .btn-royal:hover {
-  background-color: #1e40af !important;
+  background-color: #5B21B6 !important;
 }
 
 .btn-gold {
   background-color: #F5B301 !important;
-  color: #071433 !important;
+  color: #1E0B3F !important;
 }
 .btn-gold:hover {
   background-color: #fbbf24 !important;
 }
 
 .btn-navy-outline {
-  background-color: #0B1F4D !important;
+  background-color: #2E1065 !important;
   color: #FFFFFF !important;
-  border: 1px solid #12306E !important;
+  border: 1px solid #4C1D95 !important;
 }
 .btn-navy-outline:hover {
-  background-color: #12306E !important;
+  background-color: #4C1D95 !important;
 }
 
 @layer base {

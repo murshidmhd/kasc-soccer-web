@@ -28,7 +28,7 @@ import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
 import NewUserGuidedTour from './components/NewUserGuidedTour';
 import { fixtures } from './data/tournamentData';
-import { SHOW_LOCAL_ONLY_FEATURES, WHATSAPP_CHANNEL_URL } from './config/siteConfig';
+import { SHOW_LOCAL_ONLY_FEATURES, WHATSAPP_CHANNEL_URL, SHOW_BRACKET } from './config/siteConfig';
 
 // Lazy-load heavy interactive mini-game to optimize 4G mobile page load speeds
 const SevensPenaltyGame = React.lazy(() => import('./components/SevensPenaltyGame'));
@@ -280,6 +280,54 @@ export default function App() {
                   onNavigateTab={handleTabChange}
                 />
 
+                {/* Udaya's Next Match Card (Task 3, Rule 11: shown only when an Udaya match is announced) */}
+                {(() => {
+                  const udayaMatch = fixtures.find(
+                    (m) => m.confirmed && (m.team1?.toUpperCase().includes('UDAYA') || m.team2?.toUpperCase().includes('UDAYA'))
+                  );
+                  if (!udayaMatch) return null;
+                  return (
+                    <div className="rounded-2xl p-4 sm:p-5 border-l-4 border-l-purple-600 border border-purple-200 dark:border-purple-900/60 bg-purple-50/60 dark:bg-purple-950/40 shadow-card transition-all">
+                      <div className="flex items-center justify-between pb-2 mb-3 border-b border-purple-200/60 dark:border-purple-800/40">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-700 text-white shadow-xs">
+                            UDAYA
+                          </span>
+                          <span className="text-xs sm:text-sm font-sports font-black uppercase tracking-wide text-purple-950 dark:text-purple-200">
+                            {lang === 'ml' ? 'ഉദയയുടെ അടുത്ത മത്സരം' : "UDAYA'S NEXT MATCH"}
+                          </span>
+                        </div>
+                        <span className="text-[11px] font-mono font-bold text-purple-800 dark:text-purple-300">
+                          {udayaMatch.date} • {udayaMatch.time}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 rounded-full bg-white p-0.5 border border-purple-300 dark:border-purple-700 shrink-0 flex items-center justify-center shadow-xs">
+                            <TeamLogo teamName={udayaMatch.team1} className="w-full h-full rounded-full object-contain" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs sm:text-sm font-sports font-black text-card-title truncate">
+                              {udayaMatch.team1} vs {udayaMatch.team2}
+                            </h4>
+                            <p className="text-[11px] text-card-muted font-medium truncate">
+                              {lang === 'ml' ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം' : 'Peruvallur Panjayath Stadium'}
+                            </p>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => handleTabChange('fixtures')}
+                          className="min-h-touch px-3 py-1.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs shrink-0 shadow-xs active:scale-95 transition"
+                        >
+                          {lang === 'ml' ? 'വിവരങ്ങൾ' : 'Details'}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {/* 2. Quick Action Row (Change 3: 4 equal buttons replacing feature hub) */}
                 <QuickActionRow
                   lang={lang}
@@ -314,35 +362,58 @@ export default function App() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-                    {fixtures.slice(0, 3).map((match) => {
-                      const isNextMatch = match.id === 'm1' && match.status === 'Upcoming';
-                      const isMatchLive = match.status === 'LIVE';
-                      const shortTag = match.id === 'm1' 
-                        ? (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം' : 'Opening match')
-                        : (lang === 'ml' ? 'റൗണ്ട് 1' : 'Round 1');
-
-                      return (
-                        <div
-                          key={match.id}
-                          className={`rounded-2xl p-4 transition-all shadow-card ${
-                            isNextMatch
-                              ? 'border-2 border-gold ring-1 ring-gold/40 bg-white dark:bg-navy-800'
-                              : 'bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700'
-                          }`}
-                        >
-                          {/* Header */}
-                          <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-surface-border dark:border-navy-700 text-xs font-semibold">
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
-                              isNextMatch 
-                                ? 'bg-gold text-navy-900' 
-                                : 'bg-surface-light dark:bg-navy-700 text-card-title'
-                            }`}>
-                              {shortTag}
-                            </span>
-                            <span className="font-mono text-card-muted text-[11px]">
-                              {match.dateFormatted || match.date}
-                            </span>
+                    {(() => {
+                      const confirmed = fixtures.filter((m) => m.confirmed);
+                      if (confirmed.length === 0) {
+                        return (
+                          <div className="col-span-full text-center py-8 px-4 rounded-2xl bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700">
+                            <p className="text-xs sm:text-sm font-semibold text-card-title">
+                              {lang === 'ml' 
+                                ? 'മത്സരങ്ങൾ ദിവസേന പ്രഖ്യാപിക്കുന്നതാണ്. ഓരോ മത്സര ദിവസത്തിനും ശേഷം വീണ്ടും പരിശോധിക്കുക.' 
+                                : 'Fixtures are announced daily. Check back after each match day.'}
+                            </p>
                           </div>
+                        );
+                      }
+                      return confirmed.slice(0, 3).map((match) => {
+                        const isUdayaMatch = match.team1?.toUpperCase().includes('UDAYA') || match.team2?.toUpperCase().includes('UDAYA');
+                        const isNextMatch = match.id === 'm1' && match.status === 'Upcoming';
+                        const isMatchLive = match.status === 'LIVE';
+                        const shortTag = match.id === 'm1' 
+                          ? (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം' : 'Opening match')
+                          : (lang === 'ml' ? 'റൗണ്ട് 1' : 'Round 1');
+
+                        return (
+                          <div
+                            key={match.id}
+                            className={`rounded-2xl p-4 transition-all shadow-card ${
+                              isUdayaMatch ? 'border-l-4 border-l-purple-600' : ''
+                            } ${
+                              isNextMatch
+                                ? 'border-2 border-gold ring-1 ring-gold/40 bg-white dark:bg-navy-800'
+                                : 'bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700'
+                            }`}
+                          >
+                            {/* Header */}
+                            <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-surface-border dark:border-navy-700 text-xs font-semibold">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
+                                  isNextMatch 
+                                    ? 'bg-gold text-navy-900' 
+                                    : 'bg-surface-light dark:bg-navy-700 text-card-title'
+                                }`}>
+                                  {shortTag}
+                                </span>
+                                {isUdayaMatch && (
+                                  <span className="px-1.5 py-0.5 rounded-md bg-purple-700 text-white text-[9px] font-black uppercase tracking-wider">
+                                    UDAYA
+                                  </span>
+                                )}
+                              </div>
+                              <span className="font-mono text-card-muted text-[11px]">
+                                {match.dateFormatted || match.date}
+                              </span>
+                            </div>
 
                           {/* Teams */}
                           <div className="space-y-2.5">
@@ -387,14 +458,17 @@ export default function App() {
                           </div>
                         </div>
                       );
-                    })}
+                    });
+                  })()}
                   </div>
                 </section>
 
-                {/* 3. Table or Knockout Bracket (Change 1 Rule 4) */}
-                <section className="space-y-3">
-                  <TournamentBracket lang={lang} isDarkMode={isDarkMode} />
-                </section>
+                {/* 3. Knockout Bracket (Hidden behind SHOW_BRACKET = false per Task 4, Rule 16) */}
+                {SHOW_BRACKET && (
+                  <section className="space-y-3">
+                    <TournamentBracket lang={lang} isDarkMode={isDarkMode} />
+                  </section>
+                )}
 
                 {/* 4. Clubs Strip (Home compact scroll-snap strip with View All 24) */}
                 <HomeClubsStrip 

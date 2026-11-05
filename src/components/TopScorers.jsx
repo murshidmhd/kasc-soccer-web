@@ -33,9 +33,9 @@ export default function TopScorers({ lang, isDarkMode }) {
   const [playerSearchQuery, setPlayerSearchQuery] = useState('');
   const [selectedClubFilter, setSelectedClubFilter] = useState('All');
 
-  // Compute all tournament stats once and memoize so ticker doesn't recompute
+  // Compute all tournament stats once and memoize so ticker doesn't recompute (Confirmed matches only - Task 4, Rule 15)
   const stats = useMemo(() => {
-    return calculateTournamentStats([], fixtures, matchState);
+    return calculateTournamentStats([], fixtures.filter((m) => m.confirmed), matchState);
   }, [matchState]);
 
   // Check if a final match is finished to display the tournament champion

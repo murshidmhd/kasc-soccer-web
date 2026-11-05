@@ -12,7 +12,7 @@ import {
   Calendar,
   Star
 } from 'lucide-react';
-import { SITE_URL } from '../config/siteConfig';
+import { SITE_URL, ORGANISERS } from '../config/siteConfig';
 
 export default function WelcomeBottomSheet({ 
   lang, 
@@ -170,9 +170,13 @@ export default function WelcomeBottomSheet({
   };
 
   // Share functionality (Rule 5a: Web Share with WhatsApp & Copy link fallbacks)
+  const orgLine = lang === 'ml'
+    ? `${ORGANISERS.primary.nameMl} & ${ORGANISERS.coOrganiser.nameMl}`
+    : `${ORGANISERS.primary.name} & ${ORGANISERS.coOrganiser.name}`;
+
   const shareMessage = lang === 'ml'
-    ? `⚽ അഖിലേന്ത്യാ സെവൻസ് ടൂർണ്ണമെന്റ് Season 7 • പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം\nലൈവ് സ്കോറുകളും ഫിക്സ്ചറുകളും കാണാൻ സന്ദർശിക്കുക:`
-    : `⚽ Akhilenthya Sevens Football Tournament Season 7 • Peruvallur Panjayath Stadium\nFollow live scores & fixtures:`;
+    ? `⚽ അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ ടൂർണ്ണമെന്റ് Season 7 • ${orgLine} • പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം\nലൈവ് സ്കോറുകളും ഫിക്സ്ചറുകളും കാണാൻ സന്ദർശിക്കുക:`
+    : `⚽ Akhilenthya Sevens Football Tournament Season 7 • ${orgLine} • Peruvallur Panjayath Stadium\nFollow live scores & fixtures:`;
 
   const handleShare = async () => {
     if (typeof navigator !== 'undefined' && navigator.share) {
