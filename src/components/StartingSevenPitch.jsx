@@ -6,7 +6,7 @@ import {
   Calendar
 } from 'lucide-react';
 import TeamLogo from './TeamLogo';
-import { getStoredMatchState } from '../utils/matchStateManager';
+import { getStoredMatchState, saveOfficialMatchState } from '../utils/matchStateManager';
 import { SHOW_LINEUPS } from '../config/siteConfig';
 
 // Inline SVG Shirt Icon with Shirt Number (Rule 8)
@@ -447,6 +447,57 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                 </div>
               );
             })()}
+
+            {/* Quick Card Action Buttons for Field Referee / Scorer */}
+            <div className="grid grid-cols-2 gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const state = getStoredMatchState();
+                  const newEvt = {
+                    id: `card-${Date.now()}`,
+                    type: 'yellow_card',
+                    team: selectedTeam,
+                    player: activePlayer.name,
+                    minute: state.matchMinute || 25,
+                    text: 'Yellow card caution',
+                    timestamp: new Date().toISOString()
+                  };
+                  saveOfficialMatchState({
+                    ...state,
+                    events: [...(state.events || []), newEvt]
+                  });
+                }}
+                className="py-2.5 px-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95"
+              >
+                <span className="w-2.5 h-3.5 rounded-2xs bg-amber-400 border border-amber-600 inline-block" />
+                <span>{lang === 'ml' ? '+ മഞ്ഞ കാർഡ്' : '+ Yellow Card'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const state = getStoredMatchState();
+                  const newEvt = {
+                    id: `card-${Date.now()}`,
+                    type: 'red_card',
+                    team: selectedTeam,
+                    player: activePlayer.name,
+                    minute: state.matchMinute || 25,
+                    text: 'Red card dismissal',
+                    timestamp: new Date().toISOString()
+                  };
+                  saveOfficialMatchState({
+                    ...state,
+                    events: [...(state.events || []), newEvt]
+                  });
+                }}
+                className="py-2.5 px-3 rounded-xl bg-red-600/15 hover:bg-red-600/25 border border-red-500/40 text-red-300 font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95"
+              >
+                <span className="w-2.5 h-3.5 rounded-2xs bg-red-600 border border-red-700 inline-block" />
+                <span>{lang === 'ml' ? '+ ചുവപ്പ് കാർഡ്' : '+ Red Card'}</span>
+              </button>
+            </div>
 
             <button
               onClick={() => setActivePlayer(null)}

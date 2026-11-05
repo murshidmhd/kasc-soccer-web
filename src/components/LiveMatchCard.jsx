@@ -21,6 +21,7 @@ import {
 import { openingMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
 import GoalShareCardModal from './GoalShareCardModal';
+import AddCardModal from './AddCardModal';
 import { 
   getStoredMatchState, 
   submitFanCrowdGoal, 
@@ -44,6 +45,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
   const [isDemo, setIsDemo] = useState(isDemoModeActive);
   const [demoCommentary, setDemoCommentary] = useState([]);
   const [goalShareModal, setGoalShareModal] = useState({ isOpen: false, goalData: null });
+  const [isAddCardModalOpen, setIsAddCardModalOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(() => (typeof navigator !== 'undefined' ? navigator.onLine : true));
   const [nowTs, setNowTs] = useState(Date.now());
 
@@ -447,31 +449,45 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                     )}
                   </div>
 
-                  <button
-                    onClick={() => setGoalShareModal({
-                      isOpen: true,
-                      goalData: {
-                        scorerName: matchState.events?.find(e => e.type === 'goal')?.player || 'Match Update',
-                        minute: matchState.matchMinute || 30,
-                        goalTeam: 'home',
-                        scoreHome: matchState.officialScoreHome,
-                        scoreAway: matchState.officialScoreAway,
-                        homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
-                        awayTeamName: 'NEW MALAYA MALABAR FC',
-                        matchStatus: matchState.status,
-                        goalText: 'Official Live Match Score'
-                      }
-                    })}
-                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:hover:bg-blue-900 text-royal dark:text-sky text-[10px] font-bold border border-blue-200 dark:border-blue-800 transition active:scale-95 mt-0.5"
-                    title="Generate WhatsApp Status Card"
-                  >
-                    <Share2 className="w-3 h-3" />
-                    <span>Share Status Card</span>
-                  </button>
+                  <div className="flex items-center gap-1.5 flex-wrap justify-center mt-0.5">
+                    <button
+                      onClick={() => setGoalShareModal({
+                        isOpen: true,
+                        goalData: {
+                          scorerName: matchState.events?.find(e => e.type === 'goal')?.player || 'Match Update',
+                          minute: matchState.matchMinute || 30,
+                          goalTeam: 'home',
+                          scoreHome: matchState.officialScoreHome,
+                          scoreAway: matchState.officialScoreAway,
+                          homeTeamName: 'UDAYA PARAMBIL PEEDIKA',
+                          awayTeamName: 'NEW MALAYA MALABAR FC',
+                          matchStatus: matchState.status,
+                          goalText: 'Official Live Match Score'
+                        }
+                      })}
+                      className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:hover:bg-blue-900 text-royal dark:text-sky text-[10px] font-bold border border-blue-200 dark:border-blue-800 transition active:scale-95"
+                      title="Generate WhatsApp Status Card"
+                    >
+                      <Share2 className="w-3 h-3" />
+                      <span>Share Status Card</span>
+                    </button>
+
+                    <button
+                      onClick={() => setIsAddCardModalOpen(true)}
+                      className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/60 dark:hover:bg-amber-900 text-amber-900 dark:text-amber-300 text-[10px] font-bold border border-amber-300 dark:border-amber-800 transition active:scale-95"
+                      title="Record Yellow or Red Card"
+                    >
+                      <span className="flex items-center -space-x-1">
+                        <span className="w-2 h-2.5 rounded-2xs bg-amber-400 border border-amber-600 inline-block" />
+                        <span className="w-2 h-2.5 rounded-2xs bg-red-600 border border-red-700 inline-block" />
+                      </span>
+                      <span>{lang === 'ml' ? 'കാർഡ് ചേർക്കുക' : '+ Add Card'}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             ) : (
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 flex flex-col items-center">
                 <div className="text-2xl sm:text-4xl font-black font-sports text-royal dark:text-sky">
                   VS
                 </div>
@@ -479,6 +495,18 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                 <div className="text-[10px] sm:text-xs font-black text-card-title bg-surface-light dark:bg-navy-900 px-2.5 py-1 rounded-lg border border-surface-border dark:border-navy-700 shadow-2xs">
                   06 Nov • 8:00 PM
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAddCardModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/60 dark:hover:bg-amber-900 text-amber-900 dark:text-amber-300 text-[10px] font-black border border-amber-300 dark:border-amber-800 transition active:scale-95 shadow-2xs mt-1"
+                  title="Record Yellow or Red Card"
+                >
+                  <span className="flex items-center -space-x-1">
+                    <span className="w-2.5 h-3.5 rounded-2xs bg-amber-400 border border-amber-600 inline-block" />
+                    <span className="w-2.5 h-3.5 rounded-2xs bg-red-600 border border-red-700 inline-block" />
+                  </span>
+                  <span>{lang === 'ml' ? 'കാർഡ് ചേർക്കുക' : '+ Add Card'}</span>
+                </button>
               </div>
             )}
           </div>
@@ -507,6 +535,46 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                 ? 'നവംബർ 6 ന് രാത്രി 8:00 ന് ഗ്രൗണ്ട് റഫറി വിസിൽ മുഴങ്ങുന്നതോടെ ഔദ്യോഗിക ലൈവ് സ്കോർബോർഡും ടൈംലൈനും സജീവമാകും.'
                 : 'Official live scoreboard, goal alerts and referee timeline will activate at match kickoff.'}
             </p>
+          </div>
+        )}
+
+        {/* Match Disciplinary Bookings & Events Strip (Shows all recorded cards) */}
+        {matchState.events && matchState.events.length > 0 && (
+          <div className="mt-4 p-3.5 rounded-2xl bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700 animate-fadeIn text-left">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-surface-border dark:border-navy-700">
+              <span className="text-[11px] font-black uppercase tracking-wider text-card-title flex items-center gap-1.5">
+                <span className="flex items-center -space-x-1">
+                  <span className="w-2.5 h-3.5 rounded-2xs bg-amber-400 border border-amber-600 inline-block" />
+                  <span className="w-2.5 h-3.5 rounded-2xs bg-red-600 border border-red-700 inline-block" />
+                </span>
+                <span>{lang === 'ml' ? 'മത്സരത്തിലെ കാർഡുകൾ (Bookings)' : 'Match Bookings'}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsAddCardModalOpen(true)}
+                className="text-[10px] font-bold text-royal dark:text-sky underline"
+              >
+                {lang === 'ml' ? '+ കൂടുതൽ ചേർക്കുക' : '+ Add More'}
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {matchState.events.map((evt) => {
+                const isYellow = evt.type === 'yellow_card';
+                const isRed = evt.type === 'red_card';
+                const teamLabel = evt.team === 'away' ? 'New Malaya' : 'Udaya';
+                return (
+                  <div
+                    key={evt.id}
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700 shadow-2xs text-xs"
+                  >
+                    <span>{isYellow ? '🟨' : isRed ? '🟥' : evt.type === 'goal' ? '⚽' : '📌'}</span>
+                    <span className="font-mono font-bold text-royal dark:text-sky">{evt.minute}'</span>
+                    <span className="font-bold text-card-title">{evt.player}</span>
+                    <span className="text-[10px] text-card-muted">({teamLabel})</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -606,7 +674,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
 
             {/* Dual Tab: Live Commentary Feed vs Referee Timeline */}
             <div className="space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-200 dark:border-navy-700 pb-2">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-navy-700 pb-2 flex-wrap gap-2">
                 <div className="flex items-center gap-1 bg-slate-200/80 dark:bg-navy-800 p-1 rounded-xl text-xs font-bold">
                   <button
                     onClick={() => setTimelineTab('commentary')}
@@ -630,6 +698,19 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                     <span>{lang === 'ml' ? 'റഫറി ഇവന്റ്സ്' : 'Referee Timeline'}</span>
                   </button>
                 </div>
+
+                <button
+                  onClick={() => setIsAddCardModalOpen(true)}
+                  className="min-h-[40px] px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-900 dark:text-amber-200 text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-2xs shrink-0"
+                  title="Add Yellow / Red Card"
+                >
+                  <span className="flex items-center -space-x-1">
+                    <span className="w-2.5 h-3.5 rounded-2xs bg-amber-400 border border-amber-600 inline-block" />
+                    <span className="w-2.5 h-3.5 rounded-2xs bg-red-600 border border-red-700 inline-block" />
+                  </span>
+                  <span className="hidden sm:inline">{lang === 'ml' ? 'കാർഡ് ചേർക്കുക' : '+ Add Card'}</span>
+                  <span className="sm:hidden">{lang === 'ml' ? 'കാർഡ്' : '+ Card'}</span>
+                </button>
               </div>
 
               {/* View 1: Auto-Generated Commentary Feed (Newest First) */}
@@ -747,6 +828,14 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           matchStatus: matchState.status
         }}
         isDarkMode={isDarkMode}
+      />
+
+      {/* Disciplinary Card Booking Modal (Yellow & Red Cards) */}
+      <AddCardModal
+        isOpen={isAddCardModalOpen}
+        onClose={() => setIsAddCardModalOpen(false)}
+        isDarkMode={isDarkMode}
+        lang={lang}
       />
     </section>
   );
