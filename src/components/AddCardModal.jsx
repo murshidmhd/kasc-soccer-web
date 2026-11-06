@@ -40,7 +40,7 @@ const SQUADS_BY_CLUB = {
       { num: 10, name: 'Abdul Vahid C', pos: 'FWD', isStar: true },
       { num: 1, name: 'Jithin', pos: 'GK', isStar: false },
       { num: 4, name: 'Midhun', pos: 'DEF', isStar: false },
-      { num: 7, name: 'Favas', pos: 'MID', isStar: false },
+      { num: 7, name: 'None', pos: 'MID', isStar: false },
       { num: 9, name: 'Vysakh', pos: 'ST', isStar: false },
       { num: 11, name: 'Arjun Jayaraj', pos: 'CF', isStar: true },
       { num: 14, name: 'Abhijith', pos: 'SUB', isStar: false }

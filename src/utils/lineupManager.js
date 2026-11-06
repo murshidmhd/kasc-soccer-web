@@ -31,7 +31,7 @@ export const DEFAULT_TOURNAMENT_SQUADS = {
       { num: 1, name: 'Jithin', pos: 'GK', captain: false, isGK: true, baseRating: 0.0 },
       { num: 4, name: 'Midhun', pos: 'CB', captain: false, baseRating: 0.0 },
       { num: 3, name: 'Rahul K.', pos: 'RB', captain: false, baseRating: 0.0 },
-      { num: 7, name: 'Favas', pos: 'CM', captain: false, photoUrl: '/players/krsc_mid_1.jpg', baseRating: 0.0 },
+      { num: 7, name: 'None', pos: 'CM', captain: false, photoUrl: '/players/krsc_mid_1.jpg', baseRating: 0.0 },
       { num: 99, name: 'None', pos: 'CM', captain: false, photoUrl: '/players/krsc_mid_2.jpg', baseRating: 0.0 },
       { num: 11, name: 'Arjun Jayaraj', displayName: 'Arjun Jayaraj', fullName: 'Arjun Jayaraj', pos: 'CF', captain: false, photoUrl: '/players/arjun_jayaraj.webp', baseRating: 0.0 },
       { num: 10, name: 'Abdul Vahid C', displayName: 'Vahid C', pos: 'ST', captain: true, photoUrl: '/players/abdul_vahid.webp', baseRating: 0.0 }
