@@ -1034,7 +1034,14 @@ function DualPitchPlayerNode({
   shirtColor,
   onClick
 }) {
-  const shortName = player.name.split(' ')[0] || player.name;
+  const shortName = player.displayName || (() => {
+    const raw = (player.name || '').trim();
+    const lower = raw.toLowerCase();
+    if (lower.startsWith('muhammed ')) return raw.slice(9).trim();
+    if (lower.startsWith('mohammed ')) return raw.slice(9).trim();
+    if (lower.startsWith('abdul ')) return raw.slice(6).trim();
+    return raw.split(' ')[0] || raw;
+  })();
   const hasRedCard = playerInfo?.hasRedCard;
   const hasYellowCard = playerInfo?.hasYellowCard;
 

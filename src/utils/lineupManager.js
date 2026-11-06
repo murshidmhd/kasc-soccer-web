@@ -33,7 +33,7 @@ export const DEFAULT_TOURNAMENT_SQUADS = {
       { num: 7, name: 'Favas', pos: 'CM', captain: false, baseRating: 7.4 },
       { num: 8, name: 'Vysakh', pos: 'AM', captain: false, baseRating: 7.5 },
       { num: 11, name: 'Arjun', pos: 'WF', captain: false, baseRating: 7.6 },
-      { num: 10, name: 'Abdul Vahid C', pos: 'ST', captain: true, photoUrl: '/players/abdul_vahid.webp', baseRating: 8.3 }
+      { num: 10, name: 'Abdul Vahid C', displayName: 'Vahid C', pos: 'ST', captain: true, photoUrl: '/players/abdul_vahid.webp', baseRating: 8.3 }
     ],
     subs: [
       { num: 14, name: 'Abhijith', pos: 'SUB', baseRating: 6.8 },
@@ -52,7 +52,7 @@ export const DEFAULT_TOURNAMENT_SQUADS = {
     formation: '2-2-2',
     starting: [
       { num: 1, name: 'Aneesh', pos: 'GK', captain: false, isGK: true, baseRating: 7.3 },
-      { num: 4, name: 'Muhammed Sajad', pos: 'CB', captain: false, photoUrl: '/players/muhammed_sajad.webp', baseRating: 7.4 },
+      { num: 4, name: 'Sajad', fullName: 'Muhammed Sajad', displayName: 'Sajad', pos: 'CB', captain: false, photoUrl: '/players/muhammed_sajad.webp', baseRating: 7.4 },
       { num: 5, name: 'Musthafa', pos: 'SW', captain: false, baseRating: 7.2 },
       { num: 11, name: 'Ajmal', pos: 'CM', captain: false, baseRating: 7.5 },
       { num: 7, name: 'Aju Ashi', pos: 'WF', captain: false, photoUrl: '/players/aju_ashi.webp', baseRating: 7.8 },
@@ -86,11 +86,17 @@ function mergeSquadsWithDefaults(storedSquads) {
     const defaultByNum = new Map(allDefaults.map((p) => [p.num, p]));
     const defaultByName = new Map(allDefaults.map((p) => [p.name?.toLowerCase().trim(), p]));
 
-    // Enrich starting players with photoUrl
+    // Enrich starting players with photoUrl, name, displayName, and fullName
     team.starting = (team.starting || defaultTeam.starting).map((p) => {
       const match = defaultByNum.get(p.num) || defaultByName.get(p.name?.toLowerCase().trim());
-      if (match?.photoUrl && (!p.photoUrl || p.photoUrl !== match.photoUrl)) {
-        return { ...p, photoUrl: match.photoUrl };
+      if (match) {
+        return {
+          ...p,
+          name: match.name || p.name,
+          displayName: match.displayName || p.displayName,
+          fullName: match.fullName || p.fullName,
+          photoUrl: match.photoUrl || p.photoUrl
+        };
       }
       return p;
     });
@@ -100,8 +106,14 @@ function mergeSquadsWithDefaults(storedSquads) {
     const startingNames = new Set(team.starting.map((p) => p.name?.toLowerCase().trim()));
     const subs = [...(team.subs || [])].map((s) => {
       const match = defaultByNum.get(s.num) || defaultByName.get(s.name?.toLowerCase().trim());
-      if (match?.photoUrl && (!s.photoUrl || s.photoUrl !== match.photoUrl)) {
-        return { ...s, photoUrl: match.photoUrl };
+      if (match) {
+        return {
+          ...s,
+          name: match.name || s.name,
+          displayName: match.displayName || s.displayName,
+          fullName: match.fullName || s.fullName,
+          photoUrl: match.photoUrl || s.photoUrl
+        };
       }
       return s;
     });

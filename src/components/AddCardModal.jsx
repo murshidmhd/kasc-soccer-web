@@ -19,10 +19,11 @@ const SQUADS_BY_CLUB = {
     players: [
       { num: 10, name: 'Ashik Usman', pos: 'FWD', isStar: true },
       { num: 7, name: 'Aju Ashi', pos: 'WGR', isStar: true },
-      { num: 4, name: 'Muhammed Sajad', pos: 'DEF', isStar: true },
+      { num: 4, name: 'Sajad', fullName: 'Muhammed Sajad', pos: 'DEF', isStar: true },
       { num: 11, name: 'Ajmal', pos: 'MID', isStar: true },
       { num: 9, name: 'Fahad', pos: 'ST', isStar: true },
       { num: 1, name: 'Aneesh', pos: 'GK', isStar: false },
+      { num: 3, name: 'Ameer', pos: 'SUB', isStar: false },
       { num: 5, name: 'Musthafa', pos: 'CB', isStar: false },
       { num: 6, name: 'Jameel', pos: 'SW', isStar: false },
       { num: 8, name: 'Nabeel', pos: 'CM', isStar: false },
