@@ -22,12 +22,12 @@ export default function MatchHighlightPopup({ isDarkMode }) {
   const slides = [
     {
       url: lastMatchResult.winnerPosterUrl,
-      label: '🏆 Match Result',
+      label: '🏆  Player of the Match',
       sublabel: `${lastMatchResult.homeTeam} ${lastMatchResult.homeScore} – ${lastMatchResult.awayScore} ${lastMatchResult.awayTeam}`
     },
     {
       url: lastMatchResult.motmPosterUrl,
-      label: '⭐ Player of the Match',
+      label: '⭐ Match Result ',
       sublabel: lastMatchResult.motmName
     }
   ];
