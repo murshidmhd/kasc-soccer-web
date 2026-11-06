@@ -63,9 +63,9 @@ export const ADMIN_SHORTCUT_ENABLED = true;
 // Official Tournament WhatsApp Broadcast Channel (Hidden when empty)
 export const WHATSAPP_CHANNEL_URL = '';
 
-// Committee Contact Details
-export const COMMITTEE_PHONE = '+91 70120 46930';
-export const COMMITTEE_WHATSAPP = 'https://wa.me/917012046930?text=Hi%20UDAYA%20%26%20KASC%20Committee%2C%20I%20have%20an%20inquiry%20regarding%20Season%207';
+// Committee Contact Details (Hotline & WhatsApp numbers removed for privacy)
+export const COMMITTEE_PHONE = '';
+export const COMMITTEE_WHATSAPP = '';
 export const COMMITTEE_INSTAGRAM = 'https://www.instagram.com/kasc_peruvallur';
 export const COMMITTEE_YOUTUBE = ''; // Hidden if empty
 

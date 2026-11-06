@@ -71,17 +71,16 @@ export default function VenueSection({ lang, isDarkMode }) {
                 <span>{lang === 'ml' ? 'സ്റ്റേഡിയം റൂട്ട് മാപ്പ്' : 'Get Stadium Directions'}</span>
               </a>
 
-              <a
-                href={`tel:${tournamentInfo.mediaContact}`}
-                className={`inline-flex items-center gap-2 min-h-touch px-4 py-3 rounded-xl font-bold text-xs sm:text-sm border transition active:scale-95 ${
+              <div
+                className={`inline-flex items-center gap-2 min-h-touch px-4 py-3 rounded-xl font-bold text-xs sm:text-sm border ${
                   isDarkMode 
-                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700' 
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
+                    ? 'bg-slate-800 text-slate-200 border-slate-700' 
+                    : 'bg-slate-100 text-slate-800 border-slate-300'
                 }`}
               >
                 <Phone className="w-4 h-4 text-emerald-500" />
                 <span>Desk: {tournamentInfo.mediaContact}</span>
-              </a>
+              </div>
             </div>
           </div>
 
