@@ -98,7 +98,9 @@ export default function StickyScoreWidget({ activeTab, setActiveTab, isDarkMode 
           title="Show Live Match Score"
         >
           <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-          <span className="font-sports font-black">UDY {matchState.officialScoreHome}-{matchState.officialScoreAway} MAL</span>
+          <span className="font-sports font-black">
+            {openingMatch.teamHome.shortName || 'KRSC'} {matchState.officialScoreHome}-{matchState.officialScoreAway} {openingMatch.teamAway.shortName || 'BASE'}
+          </span>
           <span className="text-[10px] text-amber-400 font-mono">({clock.display}{clock.isCapped ? ' Time' : ''})</span>
         </button>
       );

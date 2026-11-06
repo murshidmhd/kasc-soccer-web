@@ -22,17 +22,19 @@ export default function GoalShareCardModal({
   initialGoalData = {},
   isDarkMode = false
 }) {
-  const [formData, setFormData] = useState({
-    scorerName: initialGoalData.scorerName || initialGoalData.player || 'Ashik Usman',
-    minute: initialGoalData.minute || 24,
-    goalTeam: initialGoalData.team || initialGoalData.goalTeam || 'away',
-    scoreHome: initialGoalData.scoreHome ?? 0,
-    scoreAway: initialGoalData.scoreAway ?? 1,
-    homeTeamName: initialGoalData.homeTeamName || openingMatch.teamHome.name,
-    awayTeamName: initialGoalData.awayTeamName || openingMatch.teamAway.name,
-    matchStatus: initialGoalData.matchStatus || 'LIVE 2ND HALF',
-    goalText: initialGoalData.goalText || initialGoalData.text || 'Stunning top corner finish'
+  const resolveGoalData = (data = {}) => ({
+    scorerName: data.scorerName || data.player || '',
+    minute: data.minute ?? 1,
+    goalTeam: data.team || data.goalTeam || 'home',
+    scoreHome: data.scoreHome ?? 0,
+    scoreAway: data.scoreAway ?? 0,
+    homeTeamName: data.homeTeamName || openingMatch.teamHome.name,
+    awayTeamName: data.awayTeamName || openingMatch.teamAway.name,
+    matchStatus: data.matchStatus || 'LIVE MATCH',
+    goalText: data.goalText || data.text || 'Goal scored'
   });
+
+  const [formData, setFormData] = useState(() => resolveGoalData(initialGoalData));
 
   const [cardImage, setCardImage] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -42,17 +44,7 @@ export default function GoalShareCardModal({
   // Sync initial props when opened
   useEffect(() => {
     if (isOpen) {
-      setFormData({
-        scorerName: initialGoalData.scorerName || initialGoalData.player || 'Ashik Usman',
-        minute: initialGoalData.minute ?? 24,
-        goalTeam: initialGoalData.team || initialGoalData.goalTeam || 'away',
-        scoreHome: initialGoalData.scoreHome ?? 0,
-        scoreAway: initialGoalData.scoreAway ?? 1,
-        homeTeamName: initialGoalData.homeTeamName || openingMatch.teamHome.name,
-        awayTeamName: initialGoalData.awayTeamName || openingMatch.teamAway.name,
-        matchStatus: initialGoalData.matchStatus || 'LIVE 2ND HALF',
-        goalText: initialGoalData.goalText || initialGoalData.text || 'Stunning top corner finish'
-      });
+      setFormData(resolveGoalData(initialGoalData));
     }
   }, [isOpen, initialGoalData]);
 

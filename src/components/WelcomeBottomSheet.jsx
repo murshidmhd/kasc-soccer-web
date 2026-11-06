@@ -81,6 +81,8 @@ export default function WelcomeBottomSheet({
     timerRef.current = setTimeout(() => {
       // Re-verify conditions right before opening
       if (document.hidden) return;
+      const currentHash = window.location.hash.replace('#', '').toLowerCase();
+      if (currentHash !== '' && currentHash !== 'live') return;
       previousFocusedElement.current = document.activeElement;
       setIsOpen(true);
 

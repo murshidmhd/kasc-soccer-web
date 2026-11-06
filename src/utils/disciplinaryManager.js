@@ -51,7 +51,16 @@ export function isPlayerMatch(nameA, nameB, numA, numB, teamA, teamB) {
       }
     }
     // High-confidence single significant token (e.g. Usman, Vahid, Soumahoro)
+    // Only match if teams are not opposing
     if (tokensA.length === 1 || tokensB.length === 1) {
+      if (teamA && teamB) {
+        const tA = teamA.toLowerCase();
+        const tB = teamB.toLowerCase();
+        if (tA.includes(tB) || tB.includes(tA)) {
+          return true;
+        }
+        return false;
+      }
       return true;
     }
   }
@@ -99,20 +108,29 @@ export function getAllDisciplinaryRecords() {
     if (matchState && Array.isArray(matchState.events)) {
       matchState.events.forEach((evt) => {
         if ((evt.type === 'yellow_card' || evt.type === 'red_card') && !seenIds.has(evt.id)) {
-          const mappedRecord = {
-            id: evt.id,
-            cardType: evt.type,
-            player: evt.player || 'Player',
-            playerName: evt.player || 'Player',
-            playerNumber: evt.playerNumber || null,
-            team: evt.team || 'home',
-            teamName: evt.teamName || (evt.team === 'away' ? 'BASE PERUMBAVUR' : 'KRSC KOZHIKKODE'),
-            minute: evt.minute || 1,
-            reason: evt.text || (evt.type === 'red_card' ? 'Red Card Dismissal' : 'Caution / Tactical Foul'),
-            timestamp: evt.timestamp || new Date().toISOString()
-          };
-          records.push(mappedRecord);
-          seenIds.add(evt.id);
+          // Check if already captured in dedicated disciplinary records by similarity
+          const isDuplicate = records.some((r) => 
+            r.cardType === evt.type &&
+            r.minute === (evt.minute || 1) &&
+            isPlayerMatch(r.playerName, evt.player, r.playerNumber, evt.playerNumber, r.teamName, evt.teamName)
+          );
+
+          if (!isDuplicate) {
+            const mappedRecord = {
+              id: evt.id,
+              cardType: evt.type,
+              player: evt.player || 'Player',
+              playerName: evt.player || 'Player',
+              playerNumber: evt.playerNumber || null,
+              team: evt.team || 'home',
+              teamName: evt.teamName || (evt.team === 'away' ? 'BASE PERUMBAVUR' : 'KRSC KOZHIKKODE'),
+              minute: evt.minute || 1,
+              reason: evt.text || (evt.type === 'red_card' ? 'Red Card Dismissal' : 'Caution / Tactical Foul'),
+              timestamp: evt.timestamp || new Date().toISOString()
+            };
+            records.push(mappedRecord);
+            seenIds.add(evt.id);
+          }
         }
       });
     }

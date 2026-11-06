@@ -27,6 +27,9 @@ import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
 import NewUserGuidedTour from './components/NewUserGuidedTour';
 import { fixtures } from './data/tournamentData';
+import { getStoredMatchState, applyRemoteMatchState } from './utils/matchStateManager';
+import { applyRemoteLineupTactics } from './utils/lineupManager';
+import { subscribeToMatchState, subscribeToLineup } from './utils/firebaseSync';
 import { SHOW_LOCAL_ONLY_FEATURES, WHATSAPP_CHANNEL_URL, SHOW_BRACKET } from './config/siteConfig';
 
 // Lazy-load heavy interactive mini-game to optimize 4G mobile page load speeds
@@ -92,6 +95,30 @@ export default function App() {
   const [isTourOpenManually, setIsTourOpenManually] = useState(false);
   const [matchSubTab, setMatchSubTab] = useState('lineup'); // 'lineup' | 'predict' | 'game' | 'h2h' | 'all'
   const [isOnline, setIsOnline] = useState(() => (typeof navigator !== 'undefined' ? navigator.onLine : true));
+  const [matchState, setMatchState] = useState(getStoredMatchState);
+
+  // Sync matchState with global updates
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      setMatchState(e.detail || getStoredMatchState());
+    };
+    window.addEventListener('kasc_match_state_updated', handleUpdate);
+    return () => window.removeEventListener('kasc_match_state_updated', handleUpdate);
+  }, []);
+
+  // Real-time Cloud Subscriptions (Push updates from Admin to all fans globally)
+  useEffect(() => {
+    const unsubMatch = subscribeToMatchState((remoteState) => {
+      applyRemoteMatchState(remoteState);
+    });
+    const unsubLineup = subscribeToLineup((remoteLineup) => {
+      applyRemoteLineupTactics(remoteLineup);
+    });
+    return () => {
+      if (typeof unsubMatch === 'function') unsubMatch();
+      if (typeof unsubLineup === 'function') unsubLineup();
+    };
+  }, []);
 
   // Network online/offline monitor
   useEffect(() => {
@@ -782,7 +809,7 @@ export default function App() {
           setLang={setLang}
           isDarkMode={isDarkMode}
           setIsDarkMode={setIsDarkMode}
-          isLiveMatch={false}
+          isLiveMatch={matchState.status === '1ST_HALF' || matchState.status === 'HALF_TIME' || matchState.status === '2ND_HALF'}
           isOtherModalOpen={isAdminModalOpen || isTicketModalOpen || isVipPassModalOpen || isTourOpenManually}
           onNavigate={handleTabChange}
         />

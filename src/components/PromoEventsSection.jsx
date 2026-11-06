@@ -142,6 +142,7 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
               <span className="truncate">{lang === 'ml' ? 'ഗോൾ വണ്ടി' : 'Goal Vandi'}</span>
             </button>
             <button
+              id="promo-marathon-tab"
               onClick={() => setActiveSubTab('marathon')}
               className={`min-h-touch py-2 px-1 sm:px-4 rounded-xl text-[11px] sm:text-xs font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 transition active:scale-95 text-center ${
                 activeSubTab === 'marathon'

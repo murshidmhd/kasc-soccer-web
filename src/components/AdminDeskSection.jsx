@@ -217,7 +217,11 @@ export default function AdminDeskSection({
       playerNum: Number(motmForm.playerNum),
       playerName: motmForm.playerName || playerObj.name || 'Star Player',
       pos: motmForm.pos || playerObj.pos || 'Forward',
-      photoUrl: playerObj.photoUrl || motmForm.photoUrl || (motmForm.teamKey === 'base' && Number(motmForm.playerNum) === 10 ? '/players/ashik_usman.webp' : Number(motmForm.playerNum) === 7 ? '/players/aju_ashi.webp' : ''),
+      photoUrl: playerObj.photoUrl || motmForm.photoUrl || (
+        motmForm.teamKey === 'base' && Number(motmForm.playerNum) === 10 ? '/players/ashik_usman.webp' : 
+        Number(motmForm.playerNum) === 7 ? '/players/aju_ashi.webp' : 
+        (motmForm.teamKey === 'krsc' && Number(motmForm.playerNum) === 11) ? '/players/arjun_jayaraj.webp' : ''
+      ),
       rating: motmForm.rating || '9.2',
       awardTitle: motmForm.awardTitle || 'Man of the Match (MVP)',
       goals: parseInt(motmForm.goals, 10) || 0,
@@ -802,6 +806,10 @@ export default function AdminDeskSection({
                 </h2>
                 <span className="px-2 py-0.5 rounded-full bg-red-600 text-[10px] font-black uppercase shrink-0">
                   {activeScorer.role === 'PRIMARY' ? 'Primary Scorer' : 'Backup Scorer'}
+                </span>
+                <span className="hidden xs:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>Cloud Sync</span>
                 </span>
               </div>
               <p className="text-xs text-blue-200 mt-0.5">

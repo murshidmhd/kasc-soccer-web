@@ -1,4 +1,5 @@
 import { HALF_LENGTH_MINUTES, MAX_MATCH_MINUTES } from '../config/siteConfig.js';
+import { pushMatchStateToFirebase } from './firebaseSync.js';
 
 // Match State, Offline Queue, Scorer Redundancy, and Anti-Spam Rate Limiter for KASC Sevens
 
@@ -211,16 +212,17 @@ export function addExtraTimeMinutes(minutesToAdd = 5) {
     const currentExtra = typeof currentState.extraTimeMinutes === 'number' ? currentState.extraTimeMinutes : 0;
     const newExtra = currentExtra + minutesToAdd;
     
-    // If timer was capped and stopped, resume timer from current capped seconds
+    // If timer was running or capped, calculate current elapsed seconds
     const currentClock = getCalculatedMatchTime(currentState);
+    const isRunning = Boolean(currentState.isTimerRunning);
     
     const updatedState = {
       ...currentState,
       extraTimeMinutes: newExtra,
       matchSeconds: currentClock.totalSeconds,
       matchMinute: Math.floor(currentClock.totalSeconds / 60),
-      isTimerRunning: true,
-      timerStartedAt: Date.now(),
+      isTimerRunning: isRunning,
+      timerStartedAt: isRunning ? Date.now() : null,
       lastUpdated: new Date().toISOString()
     };
     
@@ -242,7 +244,7 @@ export function getStoredMatchState() {
       return realOfficialMatchState;
     }
     const parsed = JSON.parse(raw);
-    if (!isDemoModeActive() && (parsed.updatedBy === 'Demo Simulation Mode' || (parsed.status === '2ND_HALF' && parsed.officialScoreHome === 2 && parsed.officialScoreAway === 1))) {
+    if (!isDemoModeActive() && parsed.updatedBy === 'Demo Simulation Mode') {
       localStorage.removeItem(DEMO_MODE_KEY);
       localStorage.removeItem(MATCH_STORAGE_KEY);
       return realOfficialMatchState;
@@ -378,18 +380,86 @@ export function saveOfficialMatchState(newState, skipHistory = false) {
       const current = getStoredMatchState();
       pushMatchHistory(current);
     }
+
+    let stateCopy = { ...newState };
+    if (stateCopy.isTimerRunning && stateCopy.timerStartedAt) {
+      const currentClock = getCalculatedMatchTime(stateCopy);
+      stateCopy.matchSeconds = currentClock.totalSeconds;
+      stateCopy.matchMinute = Math.floor(currentClock.totalSeconds / 60);
+      if (currentClock.isCapped) {
+        stateCopy.isTimerRunning = false;
+        stateCopy.timerStartedAt = null;
+      } else {
+        stateCopy.timerStartedAt = Date.now();
+      }
+    }
+
     const updated = {
-      ...newState,
+      ...stateCopy,
       isVerified: true,
       scoreEnteredByDesk: true,
       lastUpdated: new Date().toISOString()
     };
     localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(updated));
     window.dispatchEvent(new CustomEvent('kasc_match_state_updated', { detail: updated }));
+
+    // Instant cross-tab BroadcastChannel broadcast
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        const bc = new BroadcastChannel('kasc_realtime_match_sync');
+        bc.postMessage({ type: 'MATCH_STATE_UPDATED', payload: updated });
+        bc.close();
+      } catch (e) {
+        // BroadcastChannel optional fallback
+      }
+    }
+
+    // Async push to Firebase Cloud Realtime Database (updates all fans globally)
+    pushMatchStateToFirebase(updated).catch((err) => {
+      console.warn('[Firebase Sync] Push deferred:', err);
+    });
+
     return updated;
   } catch (err) {
     console.error('Failed to save match state', err);
     return newState;
+  }
+}
+
+// Apply remote match state received from Firebase or BroadcastChannel
+export function applyRemoteMatchState(remoteState) {
+  if (!remoteState || typeof remoteState !== 'object') return;
+  try {
+    const current = getStoredMatchState();
+    const remoteTs = remoteState.lastUpdated ? new Date(remoteState.lastUpdated).getTime() : 0;
+    const currentTs = current.lastUpdated ? new Date(current.lastUpdated).getTime() : 0;
+
+    // Apply if remote state is newer or has differing core score/status
+    const isNewer = remoteTs >= currentTs;
+    const isDiff = remoteState.status !== current.status ||
+      remoteState.officialScoreHome !== current.officialScoreHome ||
+      remoteState.officialScoreAway !== current.officialScoreAway;
+
+    if (isNewer || isDiff) {
+      localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(remoteState));
+      window.dispatchEvent(new CustomEvent('kasc_match_state_updated', { detail: remoteState }));
+    }
+  } catch (err) {
+    console.error('Failed to apply remote match state', err);
+  }
+}
+
+// Setup background cross-tab BroadcastChannel listener
+if (typeof window !== 'undefined' && typeof BroadcastChannel !== 'undefined') {
+  try {
+    const liveSyncChannel = new BroadcastChannel('kasc_realtime_match_sync');
+    liveSyncChannel.onmessage = (event) => {
+      if (event?.data?.type === 'MATCH_STATE_UPDATED' && event.data.payload) {
+        applyRemoteMatchState(event.data.payload);
+      }
+    };
+  } catch (e) {
+    // Ignore BroadcastChannel errors
   }
 }
 

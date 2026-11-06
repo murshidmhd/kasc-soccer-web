@@ -28,8 +28,8 @@ export default function NewUserGuidedTour({
       id: 'trailer',
       icon: Play,
       iconColor: 'text-amber-400 bg-amber-400/20',
-      badgeMl: '1/4 • ട്രെയിലർ',
-      badgeEn: '1/4 • Trailer',
+      badgeMl: '1/5 • ട്രെയിലർ',
+      badgeEn: '1/5 • Trailer',
       titleMl: '🎬 ഒഫീഷ്യൽ ടൂർണ്ണമെന്റ് ട്രെയിലർ',
       titleEn: '🎬 Official Tournament Trailer',
       descMl: 'ഹോം പേജിലെ ഈ ബട്ടൺ ക്ലിക്ക് ചെയ്ത് സീസൺ 7 ഒഫീഷ്യൽ ഹൈ-ഡെഫനിഷൻ വീഡിയോ ദൃശ്യങ്ങൾ കാണാം!',
@@ -41,8 +41,8 @@ export default function NewUserGuidedTour({
       id: 'fixtures',
       icon: Calendar,
       iconColor: 'text-blue-400 bg-blue-400/20',
-      badgeMl: '2/4 • ഫിക്സ്ചർ',
-      badgeEn: '2/4 • Fixtures',
+      badgeMl: '2/5 • ഫിക്സ്ചർ',
+      badgeEn: '2/5 • Fixtures',
       titleMl: '📅 മത്സരക്രമവും ടൈംടേബിളും',
       titleEn: '📅 Match Schedule & Timetable',
       descMl: 'ഉദ്ഘാടന മത്സരം മുതൽ ഫൈനൽ വരെയുള്ള 24 മത്സരങ്ങളുടെ തീയതികളും കിക്കോഫ് സമയവും ഇവിടെ പരിശോധിക്കാം.',
@@ -54,8 +54,8 @@ export default function NewUserGuidedTour({
       id: 'teams',
       icon: Shield,
       iconColor: 'text-emerald-400 bg-emerald-400/20',
-      badgeMl: '3/4 • ക്ലബ്ബുകൾ',
-      badgeEn: '3/4 • 24 Clubs',
+      badgeMl: '3/5 • ക്ലബ്ബുകൾ',
+      badgeEn: '3/5 • 24 Clubs',
       titleMl: '🛡️ 24 ക്ലബ്ബുകളും സ്ക്വാഡ് ലിസ്റ്റും',
       titleEn: '🛡️ 24 Clubs & Squad Lists',
       descMl: 'അഖിലേന്ത്യാ സെവൻസിൽ മാറ്റുരയ്ക്കുന്ന 24 പ്രമുഖ ക്ലബ്ബുകളെയും അവരുടെ ഒഫീഷ്യൽ താരങ്ങളെയും കാണാൻ ഇവിടെ ക്ലിക്ക് ചെയ്യുക.',
@@ -66,13 +66,27 @@ export default function NewUserGuidedTour({
       id: 'stats',
       icon: Star,
       iconColor: 'text-purple-400 bg-purple-400/20',
-      badgeMl: '4/4 • താരങ്ങൾ',
-      badgeEn: '4/4 • Top Scorers',
+      badgeMl: '4/5 • താരങ്ങൾ',
+      badgeEn: '4/5 • Top Scorers',
       titleMl: '⭐ ടോപ് സ്കോറർ & ഗോൾഡൻ ബൂട്ട്',
       titleEn: '⭐ Golden Boot & Player Directory',
       descMl: 'ടൂർണ്ണമെന്റിലെ ലീഡിംഗ് ഗോൾ സ്കോറർമാരെയും ഗോൾഡൻ ബൂട്ട് റേസും ലൈവ് സ്റ്റാറ്റ്സും ഇവിടെ കാണാം!',
       descEn: 'Follow the Golden Boot race, top goal scorers, and player performances.',
       tab: 'stats'
+    },
+    {
+      id: 'marathon',
+      icon: Award,
+      iconColor: 'text-amber-400 bg-amber-400/20',
+      badgeMl: '5/5 • മാരത്തോൺ',
+      badgeEn: '5/5 • Marathon',
+      titleMl: '🏃 8 KM Mini Marathon',
+      titleEn: '🏃 8 KM Mini Marathon',
+      descMl: 'മാരത്തോൺ പേജിൽ 2026 ഒക്ടോബർ 25-ലെ പരിപാടിയുടെ വിവരങ്ങൾ, വിജയികൾ, സമ്മാനങ്ങൾ, ഔദ്യോഗിക പോസ്റ്റർ, ഫോട്ടോ ഗാലറി എന്നിവ കാണാം.',
+      descEn: 'Check the 8 km event details, winners and prizes, official poster, and photo gallery from the marathon held on 25 October 2026.',
+      targetId: 'promo-marathon-tab',
+      autoClickTarget: true,
+      tab: 'promo'
     }
   ];
 
@@ -123,8 +137,10 @@ export default function NewUserGuidedTour({
       if (target.targetId) {
         setTimeout(() => {
           const el = document.getElementById(target.targetId);
-          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
+          if (!el) return;
+          if (target.autoClickTarget) el.click();
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, target.tab && target.tab !== activeTab ? 250 : 100);
       }
     } else {
       handleDismiss();

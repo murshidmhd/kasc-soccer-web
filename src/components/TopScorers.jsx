@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Trophy, 
   Award, 
@@ -30,12 +30,21 @@ import {
 } from '../config/siteConfig';
 
 export default function TopScorers({ lang, isDarkMode }) {
-  const [matchState] = useState(getStoredMatchState);
+  const [matchState, setMatchState] = useState(getStoredMatchState);
   const [activeStatsTab, setActiveStatsTab] = useState('players'); // 'players' | 'leaders'
   const [showTopTen, setShowTopTen] = useState(false);
   const [playerSearchQuery, setPlayerSearchQuery] = useState('');
   const [selectedClubFilter, setSelectedClubFilter] = useState('All');
   const [selectedCardPlayer, setSelectedCardPlayer] = useState(null);
+
+  // Sync matchState when referee desk updates goals or events
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      setMatchState(e.detail || getStoredMatchState());
+    };
+    window.addEventListener('kasc_match_state_updated', handleUpdate);
+    return () => window.removeEventListener('kasc_match_state_updated', handleUpdate);
+  }, []);
 
   // Compute all tournament stats once and memoize (Confirmed matches only)
   const stats = useMemo(() => {
