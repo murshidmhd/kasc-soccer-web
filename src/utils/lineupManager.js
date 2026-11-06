@@ -60,6 +60,7 @@ export const DEFAULT_TOURNAMENT_SQUADS = {
       { num: 10, name: 'Ashik Usman', pos: 'CF', captain: true, photoUrl: '/players/ashik_usman.webp', baseRating: 8.8 }
     ],
     subs: [
+      { num: 3, name: 'Ameer', pos: 'SUB', photoUrl: '/players/ameer.webp', baseRating: 7.3 },
       { num: 22, name: 'Suhair', pos: 'SUB', baseRating: 6.9 },
       { num: 6, name: 'Jameel', pos: 'SUB', baseRating: 6.8 },
       { num: 8, name: 'Nabeel', pos: 'SUB', baseRating: 6.7 },
@@ -70,6 +71,57 @@ export const DEFAULT_TOURNAMENT_SQUADS = {
 };
 
 const STORAGE_KEY = 'kasc_lineup_tactics_v1';
+
+function mergeSquadsWithDefaults(storedSquads) {
+  if (!storedSquads) return DEFAULT_TOURNAMENT_SQUADS;
+  const merged = { ...storedSquads };
+  for (const teamKey of ['krsc', 'base']) {
+    const defaultTeam = DEFAULT_TOURNAMENT_SQUADS[teamKey];
+    if (!merged[teamKey]) {
+      merged[teamKey] = defaultTeam;
+      continue;
+    }
+    const team = { ...merged[teamKey] };
+    const allDefaults = [...(defaultTeam.starting || []), ...(defaultTeam.subs || [])];
+    const defaultByNum = new Map(allDefaults.map((p) => [p.num, p]));
+    const defaultByName = new Map(allDefaults.map((p) => [p.name?.toLowerCase().trim(), p]));
+
+    // Enrich starting players with photoUrl
+    team.starting = (team.starting || defaultTeam.starting).map((p) => {
+      const match = defaultByNum.get(p.num) || defaultByName.get(p.name?.toLowerCase().trim());
+      if (match?.photoUrl && (!p.photoUrl || p.photoUrl !== match.photoUrl)) {
+        return { ...p, photoUrl: match.photoUrl };
+      }
+      return p;
+    });
+
+    // Check subs: enrich existing subs and ensure all default subs exist
+    const startingNums = new Set(team.starting.map((p) => p.num));
+    const startingNames = new Set(team.starting.map((p) => p.name?.toLowerCase().trim()));
+    const subs = [...(team.subs || [])].map((s) => {
+      const match = defaultByNum.get(s.num) || defaultByName.get(s.name?.toLowerCase().trim());
+      if (match?.photoUrl && (!s.photoUrl || s.photoUrl !== match.photoUrl)) {
+        return { ...s, photoUrl: match.photoUrl };
+      }
+      return s;
+    });
+
+    const subNums = new Set(subs.map((s) => s.num));
+    const subNames = new Set(subs.map((s) => s.name?.toLowerCase().trim()));
+
+    for (const defSub of defaultTeam.subs || []) {
+      const inStarting = startingNums.has(defSub.num) || startingNames.has(defSub.name?.toLowerCase().trim());
+      const inSubs = subNums.has(defSub.num) || subNames.has(defSub.name?.toLowerCase().trim());
+      if (!inStarting && !inSubs) {
+        subs.push(defSub);
+      }
+    }
+
+    team.subs = subs;
+    merged[teamKey] = team;
+  }
+  return merged;
+}
 
 export function getLineupTactics() {
   if (typeof window === 'undefined') {
@@ -92,7 +144,7 @@ export function getLineupTactics() {
     const parsed = JSON.parse(raw);
     return {
       formations: parsed.formations || { home: '2-2-2', away: '2-2-2' },
-      squads: parsed.squads || DEFAULT_TOURNAMENT_SQUADS,
+      squads: mergeSquadsWithDefaults(parsed.squads),
       manOfTheMatch: parsed.manOfTheMatch || null
     };
   } catch (e) {

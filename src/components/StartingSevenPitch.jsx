@@ -583,9 +583,22 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                     className="w-full p-2 rounded-xl bg-surface-card border border-surface-border dark:border-navy-700 hover:border-royal flex items-center justify-between text-left transition active:scale-98"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 font-mono font-black text-xs flex items-center justify-center">
-                        #{sub.num}
-                      </div>
+                      {sub.photoUrl ? (
+                        <div className="w-7 h-7 rounded-lg overflow-hidden border border-amber-500/30 bg-slate-900 shrink-0">
+                          <img
+                            src={sub.photoUrl}
+                            alt={sub.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-7 h-7 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 font-mono font-black text-xs flex items-center justify-center shrink-0">
+                          #{sub.num}
+                        </div>
+                      )}
                       <div>
                         <span className="text-xs font-bold font-sports text-card-title block leading-tight">
                           {sub.name}
@@ -633,9 +646,22 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                     className="w-full p-2 rounded-xl bg-surface-card border border-surface-border dark:border-navy-700 hover:border-royal flex items-center justify-between text-left transition active:scale-98"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-600 dark:text-blue-400 font-mono font-black text-xs flex items-center justify-center">
-                        #{sub.num}
-                      </div>
+                      {sub.photoUrl ? (
+                        <div className="w-7 h-7 rounded-lg overflow-hidden border border-blue-500/30 bg-slate-900 shrink-0">
+                          <img
+                            src={sub.photoUrl}
+                            alt={sub.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-7 h-7 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-600 dark:text-blue-400 font-mono font-black text-xs flex items-center justify-center shrink-0">
+                          #{sub.num}
+                        </div>
+                      )}
                       <div>
                         <span className="text-xs font-bold font-sports text-card-title block leading-tight">
                           {sub.name}

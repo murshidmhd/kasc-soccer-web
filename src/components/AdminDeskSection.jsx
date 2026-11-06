@@ -1662,7 +1662,7 @@ export default function AdminDeskSection({
                         : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
                     }`}
                   >
-                    BASE PERUMBAVUR (7 Starters + 5 Subs)
+                    BASE PERUMBAVUR ({lineupTactics?.squads?.base?.starting?.length || 7} Starters + {lineupTactics?.squads?.base?.subs?.length || 6} Subs)
                   </button>
                   <button
                     type="button"
@@ -1673,7 +1673,7 @@ export default function AdminDeskSection({
                         : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
                     }`}
                   >
-                    KRSC KOZHIKKODE (7 Starters + 3 Subs)
+                    KRSC KOZHIKKODE ({lineupTactics?.squads?.krsc?.starting?.length || 7} Starters + {lineupTactics?.squads?.krsc?.subs?.length || 3} Subs)
                   </button>
                 </div>
 
@@ -1697,8 +1697,19 @@ export default function AdminDeskSection({
                             className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shadow-2xs"
                           >
                             <div className="flex items-center gap-2 min-w-0">
-                              <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center font-mono font-black text-xs text-slate-900 dark:text-white shrink-0">
-                                #{player.num}
+                              <div className="w-8 h-8 rounded-lg overflow-hidden border border-slate-300 dark:border-slate-700 bg-slate-900 flex items-center justify-center font-mono font-black text-xs text-slate-900 dark:text-white shrink-0">
+                                {player.photoUrl ? (
+                                  <img
+                                    src={player.photoUrl}
+                                    alt={player.name}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = 'none';
+                                    }}
+                                  />
+                                ) : (
+                                  `#${player.num}`
+                                )}
                               </div>
                               <div className="min-w-0 leading-tight">
                                 <span className="text-xs font-black text-slate-900 dark:text-white truncate block">
@@ -1762,7 +1773,18 @@ export default function AdminDeskSection({
                               key={`bench-${s.num}-${s.name}`}
                               className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5"
                             >
-                              <span className="font-mono text-[10px] text-slate-400">#{s.num}</span>
+                              {s.photoUrl ? (
+                                <img
+                                  src={s.photoUrl}
+                                  alt={s.name}
+                                  className="w-4 h-4 rounded-full object-cover shrink-0"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                  }}
+                                />
+                              ) : (
+                                <span className="font-mono text-[10px] text-slate-400">#{s.num}</span>
+                              )}
                               <span>{s.name}</span>
                               <span className="text-[9px] uppercase px-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-500">{s.pos || 'SUB'}</span>
                             </div>
@@ -1848,7 +1870,7 @@ export default function AdminDeskSection({
                             playerNum: found.num,
                             playerName: found.name,
                             pos: found.pos,
-                            photoUrl: found.photoUrl || (motmForm.teamKey === 'base' && found.num === 10 ? '/players/ashik_usman.webp' : found.num === 7 ? '/players/aju_ashi.webp' : '')
+                            photoUrl: found.photoUrl || ''
                           }));
                         }
                       }}
