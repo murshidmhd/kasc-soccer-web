@@ -170,6 +170,7 @@ export function saveDisciplinaryRecord(cardData) {
         team: finalRecord.team,
         teamName: finalRecord.teamName,
         player: finalRecord.playerName,
+        playerNumber: finalRecord.playerNumber,
         minute: finalRecord.minute,
         text: finalRecord.reason,
         timestamp: finalRecord.timestamp

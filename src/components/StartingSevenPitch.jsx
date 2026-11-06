@@ -9,7 +9,12 @@ import {
 } from 'lucide-react';
 import TeamLogo from './TeamLogo';
 import { getStoredMatchState } from '../utils/matchStateManager';
-import { getPlayerDisciplinaryStatus, getAllDisciplinaryRecords } from '../utils/disciplinaryManager';
+import { 
+  getPlayerDisciplinaryStatus, 
+  getAllDisciplinaryRecords,
+  normalizePlayerName,
+  isPlayerMatch
+} from '../utils/disciplinaryManager';
 import { SHOW_LINEUPS } from '../config/siteConfig';
 import { openingMatch } from '../data/tournamentData';
 
@@ -130,6 +135,46 @@ const TOURNAMENT_SQUADS = {
   }
 };
 
+// Helper to match an event with a squad player safely across all variations
+function matchesPlayer(evt, player, teamKey) {
+  if (!evt || !player) return false;
+
+  // 1. Team check (prevent cross-team pollution)
+  if (evt.team) {
+    const isHome = teamKey === 'krsc';
+    const isEvtHome = evt.team === 'home' || evt.team === 'krsc' || (evt.teamName && evt.teamName.toLowerCase().includes('krsc'));
+    const isEvtAway = evt.team === 'away' || evt.team === 'base' || (evt.teamName && evt.teamName.toLowerCase().includes('base'));
+    if (isHome && isEvtAway) return false;
+    if (!isHome && isEvtHome) return false;
+  }
+
+  // 2. Check by Jersey Number (if both have number)
+  const evtNum = evt.playerNumber || evt.num;
+  if (evtNum && player.num && String(evtNum) === String(player.num)) {
+    return true;
+  }
+
+  // 3. Normalized Name Matching
+  const evtName = normalizePlayerName(evt.player || evt.playerName || evt.scorerName || '');
+  const targetName = normalizePlayerName(player.name || '');
+  if (!evtName || !targetName) return false;
+
+  // Exact or Substring
+  if (evtName === targetName || evtName.includes(targetName) || targetName.includes(evtName)) {
+    return true;
+  }
+
+  // Token match (e.g. "Vahid" matching "Abdul Vahid C", "Ashik" matching "Ashik Usman")
+  const evtTokens = evtName.split(' ').filter(t => t.length >= 3);
+  const targetTokens = targetName.split(' ').filter(t => t.length >= 3);
+  const hasSharedToken = evtTokens.some(t => targetTokens.includes(t));
+  if (hasSharedToken) {
+    return true;
+  }
+
+  return false;
+}
+
 export default function StartingSevenPitch({ lang, isDarkMode }) {
   const [selectedTeamKey, setSelectedTeamKey] = useState('krsc'); // Default to KRSC Kozhikkode
   const [activePlayer, setActivePlayer] = useState(null);
@@ -138,27 +183,35 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
 
   // Listen to match updates and disciplinary card updates
   useEffect(() => {
-    const currentState = getStoredMatchState();
-    if (currentState?.events) {
-      setMatchEvents(currentState.events);
-    }
+    const syncAll = () => {
+      const currentState = getStoredMatchState();
+      setMatchEvents([...(currentState?.events || [])]);
+      setDisciplinaryCards([...getAllDisciplinaryRecords()]);
+    };
 
-    const handleMatchUpdate = (e) => {
-      if (e.detail?.events) {
-        setMatchEvents(e.detail.events);
+    // Initial load
+    syncAll();
+
+    // Listen to local window events
+    window.addEventListener('kasc_match_state_updated', syncAll);
+    window.addEventListener('kasc_disciplinary_updated', syncAll);
+
+    // Cross-tab / cross-window storage event listener
+    const handleStorage = (e) => {
+      if (
+        !e.key || 
+        e.key === 'kasc_official_match_state_v2' || 
+        e.key === 'kasc_player_disciplinary_records_v1'
+      ) {
+        syncAll();
       }
-      setDisciplinaryCards(getAllDisciplinaryRecords());
     };
+    window.addEventListener('storage', handleStorage);
 
-    const handleDisciplinaryUpdate = () => {
-      setDisciplinaryCards(getAllDisciplinaryRecords());
-    };
-
-    window.addEventListener('kasc_match_state_updated', handleMatchUpdate);
-    window.addEventListener('kasc_disciplinary_updated', handleDisciplinaryUpdate);
     return () => {
-      window.removeEventListener('kasc_match_state_updated', handleMatchUpdate);
-      window.removeEventListener('kasc_disciplinary_updated', handleDisciplinaryUpdate);
+      window.removeEventListener('kasc_match_state_updated', syncAll);
+      window.removeEventListener('kasc_disciplinary_updated', syncAll);
+      window.removeEventListener('storage', handleStorage);
     };
   }, []);
 
@@ -167,29 +220,72 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
   const currentSquad = TOURNAMENT_SQUADS[selectedTeamKey] || TOURNAMENT_SQUADS.krsc;
 
   // Helper to compute goals & cards strictly from REAL MATCH EVENTS & DISCIPLINARY DB
-  const getPlayerStatsAndDisciplinary = (playerName, playerNum) => {
-    let goals = 0;
-    const lowerName = (playerName || '').toLowerCase();
-    const numStr = String(playerNum || '');
+  const getPlayerStatsAndDisciplinary = (playerOrName, optionalNum = null) => {
+    const playerObj = typeof playerOrName === 'object' && playerOrName !== null
+      ? playerOrName
+      : { name: playerOrName, num: optionalNum };
 
-    // Check goals from match events
+    let goals = 0;
+    let yellowCardsCount = 0;
+    let redCardsCount = 0;
+    let latestCard = null;
+
+    // 1. Scan matchEvents directly for goals, red cards, yellow cards
     (matchEvents || []).forEach((evt) => {
-      const evtPlayer = (evt.player || evt.scorerName || '').toLowerCase();
-      if ((evtPlayer && (evtPlayer.includes(lowerName) || lowerName.includes(evtPlayer))) || (evt.playerNumber && String(evt.playerNumber) === numStr)) {
-        if (evt.type === 'goal') goals += 1;
+      if (matchesPlayer(evt, playerObj, selectedTeamKey)) {
+        if (evt.type === 'goal') {
+          goals += 1;
+        } else if (evt.type === 'red_card' || evt.type === 'red') {
+          redCardsCount += 1;
+          if (!latestCard || latestCard.cardType !== 'red_card') {
+            latestCard = {
+              minute: evt.minute || 1,
+              reason: evt.text || 'Red Card Dismissal',
+              cardType: 'red_card'
+            };
+          }
+        } else if (evt.type === 'yellow_card' || evt.type === 'yellow') {
+          yellowCardsCount += 1;
+          if (!latestCard) {
+            latestCard = {
+              minute: evt.minute || 1,
+              reason: evt.text || 'Caution',
+              cardType: 'yellow_card'
+            };
+          }
+        }
       }
     });
 
-    // Check disciplinary cards from dedicated database
-    const disciplinary = getPlayerDisciplinaryStatus(playerName, playerNum, currentSquad.name);
+    // 2. Also merge with dedicated disciplinary records
+    const disciplinary = getPlayerDisciplinaryStatus(playerObj.name, playerObj.num, currentSquad.name);
+    if (disciplinary.hasRedCard) {
+      redCardsCount = Math.max(redCardsCount, disciplinary.redCardsCount || 1);
+      if (!latestCard || latestCard.cardType !== 'red_card') {
+        latestCard = disciplinary.latestCard || latestCard;
+      }
+    }
+    if (disciplinary.hasYellowCard) {
+      yellowCardsCount = Math.max(yellowCardsCount, disciplinary.yellowCardsCount || 1);
+      if (!latestCard) {
+        latestCard = disciplinary.latestCard;
+      }
+    }
+
+    // Kerala Sevens Rule: 2 yellow cards = Red Card / Expulsion & Suspension
+    const hasRedCard = redCardsCount > 0 || yellowCardsCount >= 2;
+    const hasYellowCard = yellowCardsCount > 0 && !hasRedCard;
+    const isSuspended = hasRedCard;
 
     return {
       goals,
-      disciplinary,
-      hasRedCard: disciplinary.hasRedCard,
-      hasYellowCard: disciplinary.hasYellowCard,
-      isSuspended: disciplinary.isSuspended,
-      latestCard: disciplinary.latestCard
+      hasRedCard,
+      hasYellowCard,
+      redCardsCount,
+      yellowCardsCount,
+      isSuspended,
+      latestCard,
+      disciplinary
     };
   };
 
@@ -368,6 +464,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                 <span className="font-bold truncate max-w-[100px]">{sub.name}</span>
                 {playerInfo.hasRedCard && <span className="text-xs">🟥</span>}
                 {playerInfo.hasYellowCard && !playerInfo.hasRedCard && <span className="text-xs">🟨</span>}
+                {playerInfo.goals > 0 && <span className="text-xs font-mono font-bold text-emerald-500">⚽ {playerInfo.goals}</span>}
               </button>
             );
           })}

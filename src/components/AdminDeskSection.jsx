@@ -55,7 +55,45 @@ import logoUdaya from '../assets/logo_udaya_transparent.webp';
 import logoKasc from '../assets/logo_kasc.webp';
 import GoalShareCardModal from './GoalShareCardModal';
 import AddCardModal from './AddCardModal';
-import { saveDisciplinaryRecord } from '../utils/disciplinaryManager';
+import { saveDisciplinaryRecord, removeDisciplinaryRecord } from '../utils/disciplinaryManager';
+
+// Official Matchday Squads for Day 1 Opening Match (KRSC vs BASE)
+const MATCHDAY_SQUADS = {
+  home: {
+    teamName: 'KRSC KOZHIKKODE',
+    shortName: 'KRSC',
+    players: [
+      { num: 10, name: 'Abdul Vahid C', pos: 'ST' },
+      { num: 11, name: 'Arjun', pos: 'WF' },
+      { num: 8, name: 'Vysakh', pos: 'AM' },
+      { num: 7, name: 'Favas', pos: 'CM' },
+      { num: 4, name: 'Midhun', pos: 'CB' },
+      { num: 3, name: 'Rahul K.', pos: 'RB' },
+      { num: 1, name: 'Jithin', pos: 'GK' },
+      { num: 14, name: 'Abhijith', pos: 'SUB' },
+      { num: 15, name: 'Sarath', pos: 'SUB' },
+      { num: 18, name: 'Nithin', pos: 'SUB' }
+    ]
+  },
+  away: {
+    teamName: 'BASE PERUMBAVUR',
+    shortName: 'BASE',
+    players: [
+      { num: 10, name: 'Ashik Usman', pos: 'CF' },
+      { num: 9, name: 'Fahad', pos: 'ST' },
+      { num: 7, name: 'Aju Ashi', pos: 'WF' },
+      { num: 11, name: 'Ajmal', pos: 'CM' },
+      { num: 5, name: 'Musthafa', pos: 'SW' },
+      { num: 4, name: 'Muhammed Sajad', pos: 'CB' },
+      { num: 1, name: 'Aneesh', pos: 'GK' },
+      { num: 22, name: 'Suhair', pos: 'SUB' },
+      { num: 6, name: 'Jameel', pos: 'SUB' },
+      { num: 8, name: 'Nabeel', pos: 'SUB' },
+      { num: 14, name: 'Nizar', pos: 'SUB' },
+      { num: 17, name: 'Ajmal Jr', pos: 'SUB' }
+    ]
+  }
+};
 
 export default function AdminDeskSection({ 
   isDarkMode, 
@@ -98,6 +136,7 @@ export default function AdminDeskSection({
     type: 'goal',
     team: 'home',
     player: '',
+    playerNumber: null,
     minute: 31,
     text: ''
   });
@@ -489,21 +528,43 @@ export default function AdminDeskSection({
   };
 
   const handleAddOfficialEvent = () => {
-    if (!newEvent.player.trim()) return;
+    const rawPlayer = newEvent.player.trim();
+    if (!rawPlayer) return;
+
+    // Resolve player number and team name
+    const currentTeamSquad = MATCHDAY_SQUADS[newEvent.team] || MATCHDAY_SQUADS.home;
+    const matchedSquadPlayer = currentTeamSquad.players.find(
+      (p) => p.name.toLowerCase() === rawPlayer.toLowerCase() || p.num === newEvent.playerNumber
+    );
+    const finalPlayerNumber = newEvent.playerNumber || matchedSquadPlayer?.num || null;
+    const finalTeamName = newEvent.team === 'away' ? openingMatch.teamAway.name : openingMatch.teamHome.name;
 
     const eventObj = {
       id: `evt-${Date.now()}`,
       minute: newEvent.minute,
       team: newEvent.team,
-      player: newEvent.player.trim(),
+      teamName: finalTeamName,
+      player: rawPlayer,
+      playerNumber: finalPlayerNumber,
       type: newEvent.type,
-      text: newEvent.text.trim() || `${newEvent.type.toUpperCase()} recorded`,
-      isOfficial: true
+      text: newEvent.text.trim() || (newEvent.type === 'goal' ? 'Goal Scored' : newEvent.type === 'red_card' ? 'Red Card Dismissal' : newEvent.type === 'yellow_card' ? 'Caution' : 'Penalty Kick'),
+      isOfficial: true,
+      timestamp: new Date().toISOString()
     };
 
     setMatchState((prev) => {
+      // Auto-increment official score if goal is logged
+      const nextHome = (newEvent.type === 'goal' && newEvent.team === 'home') 
+        ? prev.officialScoreHome + 1 
+        : prev.officialScoreHome;
+      const nextAway = (newEvent.type === 'goal' && newEvent.team === 'away') 
+        ? prev.officialScoreAway + 1 
+        : prev.officialScoreAway;
+
       const next = {
         ...prev,
+        officialScoreHome: nextHome,
+        officialScoreAway: nextAway,
         events: [eventObj, ...(prev.events || [])]
       };
       saveOfficialMatchState(next);
@@ -516,13 +577,16 @@ export default function AdminDeskSection({
       saveDisciplinaryRecord({
         id: eventObj.id,
         cardType: newEvent.type,
-        playerName: newEvent.player.trim(),
+        player: rawPlayer,
+        playerName: rawPlayer,
+        playerNumber: finalPlayerNumber,
         team: newEvent.team,
-        teamName: newEvent.team === 'away' ? openingMatch.teamAway.name : openingMatch.teamHome.name,
+        teamName: finalTeamName,
         minute: newEvent.minute,
-        reason: newEvent.text.trim() || (newEvent.type === 'red_card' ? 'Red Card Dismissal' : 'Caution'),
+        reason: newEvent.text.trim() || (newEvent.type === 'red_card' ? 'Red Card Dismissal' : 'Caution / Tactical challenge'),
         matchId: openingMatch.id,
-        matchTitle: `${openingMatch.teamHome.name} vs ${openingMatch.teamAway.name}`
+        matchTitle: `${openingMatch.teamHome.name} vs ${openingMatch.teamAway.name}`,
+        timestamp: eventObj.timestamp
       });
     }
 
@@ -531,11 +595,11 @@ export default function AdminDeskSection({
       setGoalShareModal({
         isOpen: true,
         goalData: {
-          scorerName: newEvent.player.trim(),
+          scorerName: rawPlayer,
           minute: newEvent.minute,
           goalTeam: newEvent.team,
-          scoreHome: matchState.officialScoreHome,
-          scoreAway: matchState.officialScoreAway,
+          scoreHome: newEvent.team === 'home' ? matchState.officialScoreHome + 1 : matchState.officialScoreHome,
+          scoreAway: newEvent.team === 'away' ? matchState.officialScoreAway + 1 : matchState.officialScoreAway,
           homeTeamName: openingMatch.teamHome.name,
           awayTeamName: openingMatch.teamAway.name,
           matchStatus: matchState.status === 'UPCOMING' ? 'MATCH HIGHLIGHT' : matchState.status,
@@ -544,23 +608,35 @@ export default function AdminDeskSection({
       });
     }
 
-    setNewEvent({
-      type: 'goal',
-      team: 'home',
+    setNewEvent((prev) => ({
+      ...prev,
       player: '',
-      minute: matchState.matchMinute || 30,
+      playerNumber: null,
       text: ''
-    });
+    }));
 
     confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
-    setNotification(newEvent.type === 'goal' ? '⚽ Goal Recorded & Status Card Ready!' : 'Official Match Event Added!');
+    setNotification(newEvent.type === 'goal' ? '⚽ Goal Recorded & Lineup Pitch Updated!' : newEvent.type === 'red_card' ? '🟥 Red Card Logged & Player Sent Off on Lineup!' : '🟨 Yellow Card Logged & Lineup Updated!');
     setTimeout(() => setNotification(''), 2500);
   };
 
   const handleDeleteEvent = (id) => {
+    // Also remove from disciplinary storage if it was a card
+    removeDisciplinaryRecord(id);
+
     setMatchState((prev) => {
+      const deletedEvent = (prev.events || []).find((e) => e.id === id);
+      const nextHome = (deletedEvent && deletedEvent.type === 'goal' && deletedEvent.team === 'home')
+        ? Math.max(0, prev.officialScoreHome - 1)
+        : prev.officialScoreHome;
+      const nextAway = (deletedEvent && deletedEvent.type === 'goal' && deletedEvent.team === 'away')
+        ? Math.max(0, prev.officialScoreAway - 1)
+        : prev.officialScoreAway;
+
       const next = {
         ...prev,
+        officialScoreHome: nextHome,
+        officialScoreAway: nextAway,
         events: (prev.events || []).filter((e) => e.id !== id)
       };
       saveOfficialMatchState(next);
@@ -1238,11 +1314,11 @@ export default function AdminDeskSection({
                     <label className="text-[10px] font-bold text-slate-500 block mb-1">Team</label>
                     <select
                       value={newEvent.team}
-                      onChange={(e) => setNewEvent({ ...newEvent, team: e.target.value })}
+                      onChange={(e) => setNewEvent({ ...newEvent, team: e.target.value, player: '', playerNumber: null })}
                       className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white border-slate-300 shadow-2xs"
                     >
-                      <option value="home">{openingMatch.teamHome.name}</option>
-                      <option value="away">{openingMatch.teamAway.name}</option>
+                      <option value="home">{openingMatch.teamHome.name} (KRSC)</option>
+                      <option value="away">{openingMatch.teamAway.name} (BASE)</option>
                     </select>
                   </div>
 
@@ -1251,8 +1327,8 @@ export default function AdminDeskSection({
                     <input
                       type="text"
                       value={newEvent.player}
-                      onChange={(e) => setNewEvent({ ...newEvent, player: e.target.value })}
-                      placeholder="e.g. Ashik Usman"
+                      onChange={(e) => setNewEvent({ ...newEvent, player: e.target.value, playerNumber: null })}
+                      placeholder={newEvent.team === 'away' ? 'e.g. Ashik Usman' : 'e.g. Abdul Vahid C'}
                       className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white border-slate-300 shadow-2xs"
                     />
                   </div>
@@ -1268,27 +1344,39 @@ export default function AdminDeskSection({
                   </div>
                 </div>
 
-                {/* Quick Player Suggestions */}
-                <div className="flex flex-wrap items-center gap-1 pt-1">
-                  <span className="text-[10px] text-slate-400 font-bold mr-1">Quick Select:</span>
-                  {[
-                    { name: 'Ashik Usman', team: 'away' },
-                    { name: 'Aju Ashi', team: 'away' },
-                    { name: 'Muhammed Sajad', team: 'away' },
-                    { name: 'Fahad', team: 'away' },
-                    { name: 'Abdul Vahid C', team: 'home' },
-                    { name: 'Shameer K.', team: 'home' },
-                    { name: 'Ibrahim Soumahoro', team: 'home' }
-                  ].map((p) => (
-                    <button
-                      key={p.name}
-                      type="button"
-                      onClick={() => setNewEvent({ ...newEvent, player: p.name, team: p.team })}
-                      className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition"
-                    >
-                      {p.name}
-                    </button>
-                  ))}
+                {/* Quick Player Suggestions for Selected Matchday Team */}
+                <div className="space-y-1.5 pt-1">
+                  <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold">
+                    <span>
+                      {newEvent.team === 'away' ? 'BASE PERUMBAVUR Matchday Squad:' : 'KRSC KOZHIKKODE Matchday Squad:'}
+                    </span>
+                    <span className="text-[9px] text-slate-400">Click to select player</span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1.5 max-h-24 overflow-y-auto pr-1">
+                    {(MATCHDAY_SQUADS[newEvent.team]?.players || []).map((p) => {
+                      const isSelected = newEvent.player === p.name;
+                      return (
+                        <button
+                          key={`${p.num}-${p.name}`}
+                          type="button"
+                          onClick={() => setNewEvent((prev) => ({
+                            ...prev,
+                            player: p.name,
+                            playerNumber: p.num
+                          }))}
+                          className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition active:scale-95 flex items-center gap-1 ${
+                            isSelected
+                              ? 'bg-blue-600 text-white border-blue-700 shadow-xs'
+                              : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                          }`}
+                        >
+                          <span className="font-mono opacity-70">#{p.num}</span>
+                          <span>{p.name}</span>
+                          <span className="text-[8px] opacity-60 uppercase">({p.pos})</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2 pt-1">
