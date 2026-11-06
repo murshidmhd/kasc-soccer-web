@@ -427,6 +427,7 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
             playsInline
             muted={isMuted}
             preload="none"
+            crossOrigin="anonymous"
             poster={activePlayer?.posterUrl || undefined}
             loop={filteredPlayers.length === 1}
             onTimeUpdate={onTimeUpdate}
