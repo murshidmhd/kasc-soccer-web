@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Sparkles, ChevronLeft, ChevronRight, Eye, ZoomIn, X, LayoutGrid, Layers } from 'lucide-react';
 import { tournamentInfo } from '../data/tournamentData';
-import countdown3 from '../assets/promo/countdown_3days.jpg';
-import countdown4 from '../assets/promo/countdown_4days.jpg';
-import countdown5 from '../assets/promo/countdown_5days.jpg';
-import countdown6 from '../assets/promo/countdown_6days.jpg';
-import countdown8 from '../assets/promo/countdown_8days.jpg';
-import countdown9 from '../assets/promo/countdown_9days.jpg';
-import countdown10 from '../assets/promo/countdown_10days.jpg';
-import countdown11 from '../assets/promo/countdown_11days.jpg';
+import countdown3 from '../assets/promo/countdown_3days.webp';
+import countdown4 from '../assets/promo/countdown_4days.webp';
+import countdown5 from '../assets/promo/countdown_5days.webp';
+import countdown6 from '../assets/promo/countdown_6days.webp';
+import countdown8 from '../assets/promo/countdown_8days.webp';
+import countdown9 from '../assets/promo/countdown_9days.webp';
+import countdown10 from '../assets/promo/countdown_10days.webp';
+import countdown11 from '../assets/promo/countdown_11days.webp';
 
 const COUNTDOWN_SLIDES = [
   { id: 3, days: '03 DAYS TO GO', titleMl: '03 ദിനങ്ങൾ ബാക്കി', img: countdown3, date: '03 Nov 2026', tag: 'TODAY', highlight: 'Team Unity Floodlights' },
@@ -305,6 +305,9 @@ export default function Countdown({ lang, isDarkMode }) {
                     <img 
                       src={slide.img} 
                       alt={slide.days}
+                      width={240}
+                      height={320}
+                      loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                     />
                     <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/70 text-[10px] font-black font-sports text-amber-300 backdrop-blur-xs">

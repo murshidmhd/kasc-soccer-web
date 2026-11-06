@@ -51,8 +51,8 @@ import {
 } from '../utils/matchStateManager';
 import { HALF_LENGTH_MINUTES, MAX_MATCH_MINUTES } from '../config/siteConfig';
 import { tournamentInfo, openingMatch } from '../data/tournamentData';
-import logoUdaya from '../assets/logo_udaya_transparent.png';
-import logoKasc from '../assets/logo_kasc.png';
+import logoUdaya from '../assets/logo_udaya_transparent.webp';
+import logoKasc from '../assets/logo_kasc.webp';
 import GoalShareCardModal from './GoalShareCardModal';
 import AddCardModal from './AddCardModal';
 import { saveDisciplinaryRecord } from '../utils/disciplinaryManager';

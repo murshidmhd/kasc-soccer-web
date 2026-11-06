@@ -73,6 +73,8 @@ export default function TeamLogo({ teamName, className = "w-12 h-12", fallbackCl
         <img 
           src={logoUrl} 
           alt={teamName || 'Club Logo'} 
+          width={64}
+          height={64}
           onError={() => setHasImageError(true)}
           className="w-full h-full object-contain filter drop-shadow-2xs"
           loading="lazy"

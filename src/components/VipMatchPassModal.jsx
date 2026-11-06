@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { X, Sparkles, Share2, Download, Check, Shield, Trophy, QrCode, AlertTriangle, ArrowLeft } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import logoUdaya from '../assets/logo_udaya_transparent.png';
-import logoKasc from '../assets/logo_kasc.png';
+import logoUdaya from '../assets/logo_udaya_transparent.webp';
+import logoKasc from '../assets/logo_kasc.webp';
 import { openingMatch } from '../data/tournamentData';
 
 export default function VipMatchPassModal({ isOpen, onClose, lang }) {

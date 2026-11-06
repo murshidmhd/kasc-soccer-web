@@ -3,7 +3,8 @@ import { Calendar, Ticket, Clock, Play, X, Film, Shield, Star, Sparkles } from '
 import { tournamentInfo, openingMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
 import { getStoredMatchState } from '../utils/matchStateManager';
-import teaserPoster from '../assets/tournament_teaser_poster.jpg';
+import teaserPoster from '../assets/tournament_teaser_poster.webp';
+import { SHOW_HOME_TEASER, VIDEO_AUTOPLAY_ENABLED } from '../config/siteConfig';
 
 export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketModal, onNavigate }) {
   const [matchState, setMatchState] = useState(getStoredMatchState);
@@ -211,63 +212,65 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
             </button>
           </div>
 
-          {/* Official Trailer Video Card with Poster & Play Button (User request: video image with play button) */}
-          <div className="mt-3.5">
-            <button
-              id="hero-trailer-btn"
-              onClick={() => setIsTrailerOpen(true)}
-              className="relative w-full h-24 sm:h-28 rounded-2xl overflow-hidden border border-gold/40 hover:border-gold shadow-lg group transition active:scale-98 text-left flex items-center"
-              aria-label="Watch Official Tournament Trailer"
-            >
-              {/* Background Video Poster */}
-              <img
-                src={teaserPoster}
-                alt="Tournament Trailer"
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-90"
-              />
-              {/* Dark Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-navy-950/95 via-navy-950/75 to-navy-900/40" />
+          {/* Official Trailer Video Card with Poster & Play Button (Hidden behind SHOW_HOME_TEASER) */}
+          {SHOW_HOME_TEASER && (
+            <div className="mt-3.5">
+              <button
+                id="hero-trailer-btn"
+                onClick={() => setIsTrailerOpen(true)}
+                className="relative w-full h-24 sm:h-28 rounded-2xl overflow-hidden border border-gold/40 hover:border-gold shadow-lg group transition active:scale-98 text-left flex items-center"
+                aria-label="Watch Official Tournament Trailer"
+              >
+                {/* Background Video Poster */}
+                <img
+                  src={teaserPoster}
+                  alt="Tournament Trailer"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-90"
+                />
+                {/* Dark Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-navy-950/95 via-navy-950/75 to-navy-900/40" />
 
-              {/* Foreground Content */}
-              <div className="relative z-10 w-full px-3.5 sm:px-5 py-2.5 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  {/* Glowing Play Button with pulse animation */}
-                  <div className="relative shrink-0">
-                    <span className="absolute -inset-1 rounded-full bg-gold/30 animate-ping opacity-75" />
-                    <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-gold to-amber-500 text-navy-950 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                      <Play className="w-5 h-5 fill-navy-950 text-navy-950 ml-0.5" />
+                {/* Foreground Content */}
+                <div className="relative z-10 w-full px-3.5 sm:px-5 py-2.5 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    {/* Glowing Play Button with pulse animation */}
+                    <div className="relative shrink-0">
+                      <span className="absolute -inset-1 rounded-full bg-gold/30 animate-ping opacity-75" />
+                      <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-gold to-amber-500 text-navy-950 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                        <Play className="w-5 h-5 fill-navy-950 text-navy-950 ml-0.5" />
+                      </div>
+                    </div>
+
+                    {/* Title and Action Text */}
+                    <div className="min-w-0">
+                      <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-600/90 text-white text-[10px] font-black uppercase tracking-wider mb-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                        <span>{lang === 'ml' ? 'ഒഫീഷ്യൽ ട്രെയിലർ' : 'Official Trailer'}</span>
+                      </div>
+                      <h3 className="font-sports font-black text-xs sm:text-sm text-white uppercase tracking-wider truncate drop-shadow-sm">
+                        {lang === 'ml' ? 'സീസൺ 7 വീഡിയോ കാണുക' : 'Watch Season 7 Teaser'}
+                      </h3>
+                      <p className="text-[11px] text-gold font-semibold truncate">
+                        {lang === 'ml' ? 'ക്ലിക്ക് ചെയ്ത് പ്ലേ ചെയ്യാം • Tap to Play' : 'Click to watch preview • Full HD'}
+                      </p>
                     </div>
                   </div>
 
-                  {/* Title and Action Text */}
-                  <div className="min-w-0">
-                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-600/90 text-white text-[10px] font-black uppercase tracking-wider mb-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                      <span>{lang === 'ml' ? 'ഒഫീഷ്യൽ ട്രെയിലർ' : 'Official Trailer'}</span>
-                    </div>
-                    <h3 className="font-sports font-black text-xs sm:text-sm text-white uppercase tracking-wider truncate drop-shadow-sm">
-                      {lang === 'ml' ? 'സീസൺ 7 വീഡിയോ കാണുക' : 'Watch Season 7 Teaser'}
-                    </h3>
-                    <p className="text-[11px] text-gold font-semibold truncate">
-                      {lang === 'ml' ? 'ക്ലിക്ക് ചെയ്ത് പ്ലേ ചെയ്യാം • Tap to Play' : 'Click to watch preview • Full HD'}
-                    </p>
+                  {/* Right Badge */}
+                  <div className="hidden xs:flex flex-col items-end shrink-0">
+                    <span className="px-2 py-1 rounded-lg bg-navy-900/80 border border-gold/30 text-gold text-[10px] font-black uppercase tracking-wider">
+                      HD VIDEO
+                    </span>
                   </div>
                 </div>
-
-                {/* Right Badge */}
-                <div className="hidden xs:flex flex-col items-end shrink-0">
-                  <span className="px-2 py-1 rounded-lg bg-navy-900/80 border border-gold/30 text-gold text-[10px] font-black uppercase tracking-wider">
-                    HD VIDEO
-                  </span>
-                </div>
-              </div>
-            </button>
-          </div>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Fullscreen Tournament Trailer Lightbox Modal */}
-      {isTrailerOpen && (
+      {SHOW_HOME_TEASER && isTrailerOpen && (
         <div 
           onClick={() => setIsTrailerOpen(false)}
           className="fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-6 bg-navy-900/95 animate-fadeIn"
@@ -295,8 +298,10 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
             <div className="p-2 sm:p-4 bg-black flex items-center justify-center">
               <video
                 src="/tournament_teaser.mp4"
+                poster={teaserPoster}
                 controls
-                autoPlay
+                preload="none"
+                autoPlay={VIDEO_AUTOPLAY_ENABLED}
                 playsInline
                 className="w-full max-h-[70vh] rounded-xl object-contain shadow-2xl"
               />

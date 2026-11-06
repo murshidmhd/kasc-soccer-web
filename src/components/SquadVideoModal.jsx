@@ -13,6 +13,7 @@ import {
   WifiOff, 
   Shield 
 } from 'lucide-react';
+import { VIDEO_AUTOPLAY_ENABLED } from '../config/siteConfig';
 
 export default function SquadVideoModal({ 
   isOpen, 
@@ -22,11 +23,11 @@ export default function SquadVideoModal({
   onNavigate, 
   lang 
 }) {
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(VIDEO_AUTOPLAY_ENABLED);
   const [isMuted, setIsMuted] = useState(true);
-  const [isBuffering, setIsBuffering] = useState(true);
+  const [isBuffering, setIsBuffering] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [userRequestedVideoLoad, setUserRequestedVideoLoad] = useState(false);
+  const [userRequestedVideoLoad, setUserRequestedVideoLoad] = useState(VIDEO_AUTOPLAY_ENABLED);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
 
@@ -78,17 +79,17 @@ export default function SquadVideoModal({
     };
   }, []);
 
-  // Reset video states on player change
+  // Reset video states on player change (Item 1: preload="none", no autoplay until user taps play)
   useEffect(() => {
     if (!isOpen) return;
-    setIsBuffering(true);
+    setIsBuffering(false);
     setHasError(false);
-    setIsPlaying(true);
-    setUserRequestedVideoLoad(false);
+    setIsPlaying(VIDEO_AUTOPLAY_ENABLED);
+    setUserRequestedVideoLoad(VIDEO_AUTOPLAY_ENABLED);
 
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
-      if (!shouldHoldVideoForDataSaver) {
+      if (VIDEO_AUTOPLAY_ENABLED && !shouldHoldVideoForDataSaver) {
         const playPromise = videoRef.current.play();
         if (playPromise !== undefined) {
           playPromise.catch(() => {
@@ -101,6 +102,7 @@ export default function SquadVideoModal({
 
   // Handle Play/Pause toggle
   const togglePlay = () => {
+    setUserRequestedVideoLoad(true);
     if (!videoRef.current) return;
     if (videoRef.current.paused) {
       videoRef.current.play();
@@ -233,8 +235,8 @@ export default function SquadVideoModal({
         onClick={togglePlay}
         className="relative flex-1 w-full max-w-lg mx-auto flex items-center justify-center overflow-hidden cursor-pointer"
       >
-        {/* Poster Fallback / Background while loading or on error */}
-        {(shouldHoldVideoForDataSaver || hasError || !currentVideoSource) && (
+        {/* Poster Fallback / Background while loading, on error, or before user taps play */}
+        {(!userRequestedVideoLoad || shouldHoldVideoForDataSaver || hasError || !currentVideoSource) && (
           <div className="absolute inset-0 flex items-center justify-center p-4">
             {currentPlayer.posterUrl ? (
               <img
@@ -252,8 +254,8 @@ export default function SquadVideoModal({
           </div>
         )}
 
-        {/* Video Element (Rule 5: playsInline, loop, muted, preload="none") */}
-        {currentVideoSource && !shouldHoldVideoForDataSaver && (
+        {/* Video Element (Item 1: preload="none", no download until play tapped) */}
+        {currentVideoSource && userRequestedVideoLoad && !shouldHoldVideoForDataSaver && (
           <video
             ref={videoRef}
             src={currentVideoSource}
@@ -261,7 +263,7 @@ export default function SquadVideoModal({
             playsInline
             loop
             muted={isMuted}
-            preload="metadata"
+            preload="none"
             className="w-full h-full object-contain max-h-[82vh] transition-opacity duration-200"
             onWaiting={() => setIsBuffering(true)}
             onPlaying={() => setIsBuffering(false)}
@@ -307,9 +309,12 @@ export default function SquadVideoModal({
         )}
 
         {/* Play / Pause Tap Overlay Indicator */}
-        {!isPlaying && !isBuffering && !hasError && !shouldHoldVideoForDataSaver && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20 bg-black/20">
-            <div className="w-16 h-16 rounded-full bg-navy-900/80 border border-gold text-gold flex items-center justify-center shadow-lg">
+        {(!userRequestedVideoLoad || (!isPlaying && !isBuffering && !hasError && !shouldHoldVideoForDataSaver)) && (
+          <div 
+            onClick={togglePlay}
+            className="absolute inset-0 flex items-center justify-center z-20 bg-black/20 cursor-pointer"
+          >
+            <div className="w-16 h-16 rounded-full bg-navy-900/80 border border-gold text-gold flex items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95">
               <Play className="w-8 h-8 fill-gold ml-1" />
             </div>
           </div>

@@ -2,7 +2,7 @@ import superStudio from './super_studio_malappuram.png';
 import linshaMedicals from './linsha_medicals_mannarkkad.png';
 import sabanKottakkal from './saban_kottakkal.png';
 import alMadeena from './al_madeena_cherpulasseri.png';
-import basePerumbavur from './base_perumbavur.png';
+import basePerumbavur from './base_perumbavur.webp';
 import kmgMavoor from './kmg_mavoor.png';
 import fcPerinthalmanna from './fc_perinthalmanna.png';
 import unitedFcNellikkuth from './united_fc_nellikkuth.png';
@@ -16,11 +16,11 @@ import townTeamAreekode from './town_team_areekode.png';
 import sevenStarPalakkad from './seven_star_fc_palakkad.png';
 import realFcThennala from './real_fc_thennala.png';
 import powerdippoThrissur from './powerdippo_thrissur.png';
-import krscKozhikkode from './krsc_kozhikkode.png';
+import krscKozhikkode from './krsc_kozhikkode.webp';
 import huntersKoothuparamba from './hunters_koothuparamba.png';
 import abilashFcKuppooth from './abilash_fc_kuppooth.png';
 import afcWayanad from './afc_wayanad.png';
-import udayaParambilPeedika from './udaya_parambil_peedika.png';
+import udayaParambilPeedika from './udaya_parambil_peedika.webp';
 import ushaFcThrissur from './usha_fc_thrissur.png';
 
 export const teamLogos = {

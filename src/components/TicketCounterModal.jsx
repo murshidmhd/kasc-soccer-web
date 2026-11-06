@@ -13,8 +13,8 @@ import {
   AlertCircle,
   ArrowLeft
 } from 'lucide-react';
-import logoUdaya from '../assets/logo_udaya_transparent.png';
-import logoKasc from '../assets/logo_kasc.png';
+import logoUdaya from '../assets/logo_udaya_transparent.webp';
+import logoKasc from '../assets/logo_kasc.webp';
 import { tournamentInfo } from '../data/tournamentData';
 
 const TICKET_TIERS = [

@@ -4,7 +4,7 @@ import { participatingTeams } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
 import { EmptyState } from './SkeletonLoader';
 import ClubBottomSheet from './ClubBottomSheet';
-import teamsOfficialPoster from '../assets/teams_official_poster.jpg';
+import teamsOfficialPoster from '../assets/teams_official_poster.webp';
 
 export const SHOW_SFA_CLAIMS = false;
 
@@ -222,7 +222,10 @@ export default function TeamsSection({ lang, isDarkMode }) {
             <div className="overflow-auto p-2 sm:p-4 flex items-center justify-center bg-navy-950">
               <img 
                 src={teamsOfficialPoster} 
-                alt="24 Teams Poster" 
+                alt="24 Teams Poster"
+                width={900}
+                height={856}
+                loading="lazy"
                 className="max-h-[78vh] w-auto rounded-xl object-contain shadow-2xl border border-navy-800"
               />
             </div>

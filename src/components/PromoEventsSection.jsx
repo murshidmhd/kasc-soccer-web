@@ -18,25 +18,25 @@ import {
 } from 'lucide-react';
 import { promoData } from '../data/tournamentData';
 
-// Import local promo & marathon images
-import countdown3 from '../assets/promo/countdown_3days.jpg';
-import countdown4 from '../assets/promo/countdown_4days.jpg';
-import countdown5 from '../assets/promo/countdown_5days.jpg';
-import countdown6 from '../assets/promo/countdown_6days.jpg';
-import countdown8 from '../assets/promo/countdown_8days.jpg';
-import countdown9 from '../assets/promo/countdown_9days.jpg';
-import countdown10 from '../assets/promo/countdown_10days.jpg';
-import countdown11 from '../assets/promo/countdown_11days.jpg';
-import winner1st from '../assets/promo/marathon_winner_1st.jpg';
-import winner2nd from '../assets/promo/marathon_winner_2nd.jpg';
-import winner3rd from '../assets/promo/marathon_winner_3rd.jpg';
-import flagoffImg from '../assets/promo/marathon_flagoff.jpg';
-import runnersCrowdImg from '../assets/promo/marathon_runners_crowd.jpg';
-import marathonPosterImg from '../assets/promo/marathon_official_poster.jpg';
-import goalvandiVehicle from '../assets/promo/goalvandi_vehicle.jpg';
-import goalvandiWinners from '../assets/promo/goalvandi_winners_collage.jpg';
-import goalvandiSchool from '../assets/promo/goalvandi_school_crowd.jpg';
-import goalvandiAction from '../assets/promo/goalvandi_shootout_action.jpg';
+// Import local promo & marathon images (WebP converted for bandwidth optimization)
+import countdown3 from '../assets/promo/countdown_3days.webp';
+import countdown4 from '../assets/promo/countdown_4days.webp';
+import countdown5 from '../assets/promo/countdown_5days.webp';
+import countdown6 from '../assets/promo/countdown_6days.webp';
+import countdown8 from '../assets/promo/countdown_8days.webp';
+import countdown9 from '../assets/promo/countdown_9days.webp';
+import countdown10 from '../assets/promo/countdown_10days.webp';
+import countdown11 from '../assets/promo/countdown_11days.webp';
+import winner1st from '../assets/promo/marathon_winner_1st.webp';
+import winner2nd from '../assets/promo/marathon_winner_2nd.webp';
+import winner3rd from '../assets/promo/marathon_winner_3rd.webp';
+import flagoffImg from '../assets/promo/marathon_flagoff.webp';
+import runnersCrowdImg from '../assets/promo/marathon_runners_crowd.webp';
+import marathonPosterImg from '../assets/promo/marathon_official_poster.webp';
+import goalvandiVehicle from '../assets/promo/goalvandi_vehicle.webp';
+import goalvandiWinners from '../assets/promo/goalvandi_winners_collage.webp';
+import goalvandiSchool from '../assets/promo/goalvandi_school_crowd.webp';
+import goalvandiAction from '../assets/promo/goalvandi_shootout_action.webp';
 
 const imageMap = {
   'countdown_3days.jpg': countdown3,
@@ -56,7 +56,25 @@ const imageMap = {
   'goalvandi_vehicle.jpg': goalvandiVehicle,
   'goalvandi_winners_collage.jpg': goalvandiWinners,
   'goalvandi_school_crowd.jpg': goalvandiSchool,
-  'goalvandi_shootout_action.jpg': goalvandiAction
+  'goalvandi_shootout_action.jpg': goalvandiAction,
+  'countdown_3days.webp': countdown3,
+  'countdown_4days.webp': countdown4,
+  'countdown_5days.webp': countdown5,
+  'countdown_6days.webp': countdown6,
+  'countdown_8days.webp': countdown8,
+  'countdown_9days.webp': countdown9,
+  'countdown_10days.webp': countdown10,
+  'countdown_11days.webp': countdown11,
+  'marathon_winner_1st.webp': winner1st,
+  'marathon_winner_2nd.webp': winner2nd,
+  'marathon_winner_3rd.webp': winner3rd,
+  'marathon_flagoff.webp': flagoffImg,
+  'marathon_runners_crowd.webp': runnersCrowdImg,
+  'marathon_official_poster.webp': marathonPosterImg,
+  'goalvandi_vehicle.webp': goalvandiVehicle,
+  'goalvandi_winners_collage.webp': goalvandiWinners,
+  'goalvandi_school_crowd.webp': goalvandiSchool,
+  'goalvandi_shootout_action.webp': goalvandiAction
 };
 
 export default function PromoEventsSection({ lang, isDarkMode }) {
@@ -222,6 +240,9 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                   <img 
                     src={imageMap['goalvandi_vehicle.jpg']} 
                     alt="Goal Vandi Vehicle"
+                    width={220}
+                    height={293}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-3 text-white">
@@ -365,6 +386,9 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                   <img 
                     src={marathonPosterImg} 
                     alt="Official Marathon Announcement Poster"
+                    width={220}
+                    height={293}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-3 text-white">
@@ -407,6 +431,9 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                       <img
                         src={img}
                         alt={p.winner}
+                        width={300}
+                        height={225}
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                       />
                       <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-slate-950/85 text-white text-[11px] font-black font-sports backdrop-blur-xs flex items-center gap-1">
@@ -469,6 +496,9 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                       <img
                         src={img}
                         alt={item.title}
+                        width={300}
+                        height={225}
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                       />
                       <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/60 text-white text-[10px] font-bold backdrop-blur-xs">
@@ -567,6 +597,9 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                     <img
                       src={img}
                       alt={poster.title}
+                      width={240}
+                      height={320}
+                      loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                     />
                     <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-red-600 text-white text-[10px] font-black font-sports uppercase tracking-wider shadow-xs">

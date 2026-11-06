@@ -17,12 +17,14 @@ import {
 import { squadPlayers, squadClubs, squadClubLabelsMl } from '../data/squad';
 import { getPlayerDisciplinaryStatus, getAllDisciplinaryRecords } from '../utils/disciplinaryManager';
 import TeamLogo from './TeamLogo';
+import { VIDEO_AUTOPLAY_ENABLED } from '../config/siteConfig';
 
 export default function SquadSpotlightSection({ lang, isDarkMode }) {
   const [selectedClub, setSelectedClub] = useState('All');
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(true); // In-memory only per Rule 13
   const [isPlaying, setIsPlaying] = useState(false);
+  const [hasUserTappedPlay, setHasUserTappedPlay] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(6);
   const [isBuffering, setIsBuffering] = useState(false);
@@ -139,6 +141,14 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
       return;
     }
 
+    // Bandwidth Optimization (Item 1): No video file downloads until user taps play
+    if (!VIDEO_AUTOPLAY_ENABLED && !hasUserTappedPlay) {
+      video.pause();
+      setIsPlaying(false);
+      setAutoplayBlocked(true);
+      return;
+    }
+
     video.src = sourceUrl;
     video.muted = isMuted;
 
@@ -150,7 +160,7 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
       return;
     }
 
-    if (!isPressing) {
+    if (!isPressing && (VIDEO_AUTOPLAY_ENABLED || hasUserTappedPlay)) {
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise
@@ -213,14 +223,21 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
     }
   };
 
-  // User Tap-to-play trigger (Step 2, Rule 10)
+  // User Tap-to-play trigger (Item 1: Video file downloads only when tapped)
   const handleStartPlay = (e) => {
     if (e) e.stopPropagation();
     setIsDataSaving(false);
     setAutoplayBlocked(false);
     setVideoError(null);
-    if (videoRef.current) {
-      videoRef.current.play()
+    setHasUserTappedPlay(true);
+    const video = videoRef.current;
+    if (video && activePlayer) {
+      const targetSource = activePlayer.devFallbackUrl || activePlayer.videoUrl;
+      if (!video.src || !video.src.includes(targetSource)) {
+        video.src = targetSource;
+        video.load();
+      }
+      video.play()
         .then(() => setIsPlaying(true))
         .catch((err) => {
           console.error('[Squad Spotlight] Play rejected on user tap:', err);
@@ -280,6 +297,12 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
 
   // Gesture Controls: Tap left third = prev, Tap right third = next, Press and hold = pause (Rule 5)
   const handleCardClick = (e) => {
+    // If user has not initiated video playback yet, any card tap starts playback
+    if (!hasUserTappedPlay && !VIDEO_AUTOPLAY_ENABLED) {
+      handleStartPlay(e);
+      return;
+    }
+
     if (isStoppedAfterCycles) {
       setIsStoppedAfterCycles(false);
       setCycleCount(0);
@@ -398,13 +421,13 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
           onPointerLeave={handlePointerUp}
           className="relative w-[85vw] max-w-[340px] aspect-[9/16] rounded-3xl overflow-hidden surface-navy shadow-2xl border border-navy-700 cursor-pointer select-none group"
         >
-          {/* Shared Single <video> Element (Rule 7) */}
+          {/* Shared Single <video> Element (Rule 7, Bandwidth Optimized: preload="none", no autoplay until tapped) */}
           <video
             ref={videoRef}
-            autoPlay
             playsInline
             muted={isMuted}
-            preload="auto"
+            preload="none"
+            poster={activePlayer?.posterUrl || undefined}
             loop={filteredPlayers.length === 1}
             onTimeUpdate={onTimeUpdate}
             onWaiting={onWaiting}
@@ -415,7 +438,9 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
               isPlaying ? 'opacity-100' : 'opacity-85'
             }`}
           >
-            {sourceUrl && <source src={sourceUrl} type="video/mp4" />}
+            {(hasUserTappedPlay || VIDEO_AUTOPLAY_ENABLED) && sourceUrl && (
+              <source src={sourceUrl} type="video/mp4" />
+            )}
           </video>
 
           {/* Small Dev-Only Debug Line (Step 2, Rule 12 - hidden in production) */}
@@ -433,18 +458,18 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
             </div>
           )}
 
-          {/* Hidden Next Video Prefetcher (Rule 11: Preload only NEXT clip) */}
-          {nextClipUrl && (
+          {/* Hidden Next Video Prefetcher (Disabled to save bandwidth per Item 1) */}
+          {VIDEO_AUTOPLAY_ENABLED && nextClipUrl && (
             <video 
               src={nextClipUrl} 
-              preload="metadata" 
+              preload="none" 
               className="hidden" 
               aria-hidden="true" 
             />
           )}
 
-          {/* Poster Fallback (shown on low system, data saving, video buffering, or before play) */}
-          {(isLowSystem || !isPlaying || isDataSaving || videoError) && activePlayer?.posterUrl && (
+          {/* Poster Fallback (shown until user taps play, while buffering, or in data saving mode) */}
+          {(!hasUserTappedPlay || !isPlaying || isLowSystem || isDataSaving || videoError) && activePlayer?.posterUrl && (
             <img
               src={activePlayer.posterUrl}
               alt={activePlayer.name}
@@ -478,8 +503,8 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
             </div>
           )}
 
-          {/* Visible Tap to Play Button Overlay (Step 2, Rule 10) */}
-          {!isPlaying && !isBuffering && !videoError && !isStoppedAfterCycles && (
+          {/* Visible Tap to Play Button Overlay (Step 2, Rule 10 & Item 1) */}
+          {(!hasUserTappedPlay || (!isPlaying && !isBuffering && !videoError && !isStoppedAfterCycles)) && (
             <div 
               onClick={handleStartPlay}
               className="absolute inset-0 z-20 flex flex-col items-center justify-center p-4 bg-navy-950/35 group cursor-pointer"

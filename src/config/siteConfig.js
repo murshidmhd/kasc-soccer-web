@@ -13,7 +13,7 @@ export const ORGANISERS = {
     shortNameMl: 'ഉദയ',
     role: 'Primary Organiser',
     roleMl: 'മുഖ്യ സംഘാടകർ',
-    logo: '/logo_udaya_transparent.png'
+    logo: '/logo_udaya_transparent.webp'
   },
   coOrganiser: {
     id: 'kasc',
@@ -23,7 +23,7 @@ export const ORGANISERS = {
     shortNameMl: 'കാസ്ക്',
     role: 'Co-Organiser',
     roleMl: 'സഹ സംഘാടകർ',
-    logo: '/logo_kasc.png'
+    logo: '/logo_kasc.webp'
   }
 };
 
@@ -44,6 +44,14 @@ export const FAN_REPORTS_ENABLED = false;
 export const TROPHY_IS_ILLUSTRATION = true;
 export const SHOW_NATIONALITY = false;
 export const AWARDS_NOTE = true;
+
+// Bandwidth & Media Control Flags
+export const VIDEO_AUTOPLAY_ENABLED = false;
+export const SHOW_HOME_TEASER = false;
+
+// Polling intervals (Ready for live backend)
+export const LIVE_POLL_MS = 10000;
+export const IDLE_POLL_MS = 60000;
 
 // Match Length & Clock Caps (Kerala Sevens: 30 mins 1st half, 60 mins full match)
 export const HALF_LENGTH_MINUTES = 30;
@@ -77,7 +85,7 @@ export const SPONSORS_DATA = [
   { 
     name: 'FEZCO GROUP (Official Title Sponsor)', 
     tier: 'Official Title Sponsor',
-    logoUrl: '/fezco_title_sponsor_poster.jpg', 
+    logoUrl: '/fezco_title_sponsor_poster.webp', 
     url: '#' 
   }
 ];

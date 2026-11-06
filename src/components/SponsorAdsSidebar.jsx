@@ -1,6 +1,6 @@
 import React from 'react';
 import { Sparkles, Award, ShieldCheck } from 'lucide-react';
-import fezcoPoster from '../assets/fezco_title_sponsor_poster.jpg';
+import fezcoPoster from '../assets/fezco_title_sponsor_poster.webp';
 
 export default function SponsorAdsSidebar({ lang, isDarkMode }) {
   return (
@@ -32,6 +32,9 @@ export default function SponsorAdsSidebar({ lang, isDarkMode }) {
           <img 
             src={fezcoPoster} 
             alt="FEZCO GROUP - Official Title Sponsor" 
+            width={801}
+            height={1000}
+            loading="lazy"
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </div>

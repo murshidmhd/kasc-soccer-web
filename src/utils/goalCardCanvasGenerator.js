@@ -1,8 +1,8 @@
 // Client-side 1080x1920 Canvas Goal Status Card Generator & Web Share API
 // Zero server cost • Branded Kerala Sevens Season 7 WhatsApp Status & Story card
 
-import logoUdaya from '../assets/logo_udaya_transparent.png';
-import logoKasc from '../assets/logo_kasc_transparent.png';
+import logoUdaya from '../assets/logo_udaya_transparent.webp';
+import logoKasc from '../assets/logo_kasc_transparent.webp';
 import logoSfa from '../assets/logo_sfa.png';
 import { getTeamLogoUrl } from '../assets/teams/index';
 
