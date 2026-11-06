@@ -193,25 +193,60 @@ function matchesPlayer(evt, player, teamKey) {
 }
 
 // Maps 7 squad players into 7 formation coordinate slots by tactical positions
-function mapSquadToPositions(squad, positions) {
+function mapSquadToPositions(squad, positions, side = 'home') {
   const gk = squad.starting.find(p => p.isGK || p.pos === 'GK') || squad.starting[0];
   const outfielders = squad.starting.filter(p => p !== gk);
   
-  // Tactical sort: Defenders -> Midfielders -> Attackers
-  const roleRank = { 
-    'CB': 1, 'RB': 1, 'LB': 1, 'SW': 1, 'DEF': 1, 
-    'CM': 2, 'AM': 2, 'MF': 2, 'MID': 2, 
-    'ST': 3, 'CF': 3, 'WF': 3, 'FWD': 3 
+  const roleCategory = (pos) => {
+    if (['CB', 'RB', 'LB', 'SW', 'DEF'].includes(pos)) return 'DEF';
+    if (['CM', 'AM', 'MF', 'MID', 'DM', 'LM', 'RM'].includes(pos)) return 'MID';
+    if (['ST', 'CF', 'WF', 'FWD', 'LW', 'RW', 'SS'].includes(pos)) return 'FWD';
+    return 'MID';
   };
-  const sortedOutfield = [...outfielders].sort((a, b) => (roleRank[a.pos] || 2) - (roleRank[b.pos] || 2));
+
+  const gkSlot = positions.find(pos => pos.role === 'GK') || positions[0];
+  const outfieldSlots = positions.filter(pos => pos.role !== 'GK');
+
+  // Order outfieldSlots from DEF (closest to team's own goal) to FWD (closest to halfway line)
+  // For 'home': own goal is at top (y = 8), so DEF is smaller y, FWD is larger y
+  // For 'away': own goal is at bottom (y = 92), so DEF is larger y, FWD is smaller y
+  const sortedOutfieldSlots = [...outfieldSlots].sort((a, b) => {
+    if (side === 'home') {
+      return a.y - b.y;
+    } else {
+      return b.y - a.y;
+    }
+  });
+
+  // Group players by category: DEF, MID, FWD
+  const defPlayers = [];
+  const midPlayers = [];
+  const fwdPlayers = [];
+
+  outfielders.forEach(p => {
+    const cat = roleCategory(p.pos);
+    if (cat === 'DEF') defPlayers.push(p);
+    else if (cat === 'MID') midPlayers.push(p);
+    else fwdPlayers.push(p);
+  });
+
+  // For forwards: order WF first (so WF can take wide/attacking midfield slot if midfield has fewer players),
+  // then ST, then CF (so CF takes the frontline attacking slot!)
+  const sortedFwd = [...fwdPlayers].sort((a, b) => {
+    if (a.pos === 'WF' && b.pos !== 'WF') return -1;
+    if (b.pos === 'WF' && a.pos !== 'WF') return 1;
+    if (a.pos === 'ST' && b.pos === 'CF') return -1;
+    if (b.pos === 'ST' && a.pos === 'CF') return 1;
+    return 0;
+  });
+
+  const tacticallyOrderedPlayers = [...defPlayers, ...midPlayers, ...sortedFwd];
 
   const result = [];
-  const gkSlot = positions.find(pos => pos.role === 'GK') || positions[0];
   if (gk) result.push({ player: gk, posData: gkSlot });
 
-  const outfieldSlots = positions.filter(pos => pos.role !== 'GK');
-  sortedOutfield.forEach((player, idx) => {
-    const slot = outfieldSlots[idx] || { x: 50, y: 50 };
+  tacticallyOrderedPlayers.forEach((player, idx) => {
+    const slot = sortedOutfieldSlots[idx] || { x: 50, y: side === 'home' ? 30 : 70 };
     result.push({ player, posData: slot });
   });
 
@@ -224,6 +259,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
   const [matchEvents, setMatchEvents] = useState([]);
   const [disciplinaryCards, setDisciplinaryCards] = useState(() => getAllDisciplinaryRecords());
   const [lineupTactics, setLineupTactics] = useState(getLineupTactics);
+  const [showSubstitutes, setShowSubstitutes] = useState(false);
 
   // Synchronize with Match State, Disciplinary DB, and Lineup Tactics
   useEffect(() => {
@@ -343,8 +379,8 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
   const awayPositions = useMemo(() => getSevensFormationPositions(awayFormation, 'away'), [awayFormation]);
 
   // Positioned player nodes
-  const homePositionedPlayers = useMemo(() => mapSquadToPositions(krscSquad, homePositions), [krscSquad, homePositions]);
-  const awayPositionedPlayers = useMemo(() => mapSquadToPositions(baseSquad, awayPositions), [baseSquad, awayPositions]);
+  const homePositionedPlayers = useMemo(() => mapSquadToPositions(krscSquad, homePositions, 'home'), [krscSquad, homePositions]);
+  const awayPositionedPlayers = useMemo(() => mapSquadToPositions(baseSquad, awayPositions, 'away'), [baseSquad, awayPositions]);
 
   // Winning team / Leader computation
   const leadingTeam = useMemo(() => {
@@ -547,18 +583,35 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         ))}
       </div>
 
-      {/* 4. Dedicated Substitutes Bench Section */}
+      {/* 4. Dedicated Substitutes Bench Section with Toggle Button */}
       <div className="space-y-3 pt-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <h4 className="text-xs sm:text-sm font-black font-sports uppercase tracking-wider text-card-title flex items-center gap-1.5">
             <span>{lang === 'ml' ? 'പകരക്കാർ (സബ്സ്റ്റിറ്റ്യൂട്ട്സ്)' : 'SUBSTITUTES BENCH'}</span>
             <span className="text-[10px] text-card-muted font-mono font-normal">
               (KRSC: {krscSquad.subs?.length || 0} • BASE: {baseSquad.subs?.length || 0})
             </span>
           </h4>
+
+          {/* Toggle Button for Substitutes */}
+          <button
+            type="button"
+            onClick={() => setShowSubstitutes((prev) => !prev)}
+            className="px-3 py-1.5 rounded-xl text-xs font-bold font-sports flex items-center gap-1.5 transition active:scale-95 bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700 text-card-title hover:border-royal shadow-2xs cursor-pointer"
+            aria-expanded={showSubstitutes}
+            aria-label="Toggle substitutes bench"
+          >
+            <span>
+              {showSubstitutes 
+                ? (lang === 'ml' ? 'സബ്സ്റ്റിറ്റ്യൂട്ടുകൾ മറയ്ക്കുക' : 'Hide Substitutes') 
+                : (lang === 'ml' ? 'സബ്സ്റ്റിറ്റ്യൂട്ടുകൾ കാണിക്കുക' : 'Show Substitutes')}
+            </span>
+            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showSubstitutes ? 'rotate-180' : ''}`} />
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {showSubstitutes && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 animate-fadeIn">
           {/* KRSC Bench */}
           <div className="p-3 rounded-2xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700 space-y-2">
             <div className="flex items-center justify-between pb-1.5 border-b border-surface-border dark:border-navy-700">
@@ -685,6 +738,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
             </div>
           </div>
         </div>
+        )}
       </div>
 
       {/* 5. Man of the Match (Player of the Match) Section - Only Visible when Awarded by Admin */}
