@@ -636,22 +636,19 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                     className="w-full p-2 rounded-xl bg-surface-card border border-surface-border dark:border-navy-700 hover:border-royal flex items-center justify-between text-left transition active:scale-98"
                   >
                     <div className="flex items-center gap-2.5">
-                      {sub.photoUrl ? (
-                        <div className="w-7 h-7 rounded-lg overflow-hidden border border-amber-500/30 bg-slate-900 shrink-0">
+                      <div className="w-7 h-7 rounded-lg overflow-hidden border border-amber-500/30 bg-amber-500/15 text-amber-600 dark:text-amber-400 font-mono font-black text-xs flex items-center justify-center shrink-0 relative">
+                        <span className="absolute inset-0 flex items-center justify-center">#{sub.num}</span>
+                        {sub.photoUrl && (
                           <img
                             src={sub.photoUrl}
                             alt={sub.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover relative z-1"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
                             }}
                           />
-                        </div>
-                      ) : (
-                        <div className="w-7 h-7 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 font-mono font-black text-xs flex items-center justify-center shrink-0">
-                          #{sub.num}
-                        </div>
-                      )}
+                        )}
+                      </div>
                       <div>
                         <span className="text-xs font-bold font-sports text-card-title block leading-tight">
                           {sub.name}
@@ -699,22 +696,19 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                     className="w-full p-2 rounded-xl bg-surface-card border border-surface-border dark:border-navy-700 hover:border-royal flex items-center justify-between text-left transition active:scale-98"
                   >
                     <div className="flex items-center gap-2.5">
-                      {sub.photoUrl ? (
-                        <div className="w-7 h-7 rounded-lg overflow-hidden border border-blue-500/30 bg-slate-900 shrink-0">
+                      <div className="w-7 h-7 rounded-lg overflow-hidden border border-blue-500/30 bg-blue-500/15 text-blue-600 dark:text-blue-400 font-mono font-black text-xs flex items-center justify-center shrink-0 relative">
+                        <span className="absolute inset-0 flex items-center justify-center">#{sub.num}</span>
+                        {sub.photoUrl && (
                           <img
                             src={sub.photoUrl}
                             alt={sub.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover relative z-1"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
                             }}
                           />
-                        </div>
-                      ) : (
-                        <div className="w-7 h-7 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-600 dark:text-blue-400 font-mono font-black text-xs flex items-center justify-center shrink-0">
-                          #{sub.num}
-                        </div>
-                      )}
+                        )}
+                      </div>
                       <div>
                         <span className="text-xs font-bold font-sports text-card-title block leading-tight">
                           {sub.name}
@@ -933,21 +927,23 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-3 border-b border-navy-700">
               <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-2xl overflow-hidden border border-white/20 bg-slate-900 shadow-md shrink-0">
-                  {activePlayer.photoUrl ? (
+                <div className="w-14 h-14 rounded-2xl overflow-hidden border border-white/20 bg-slate-900 shadow-md shrink-0 relative">
+                  <JerseyShirtIcon
+                    number={activePlayer.num}
+                    color={activePlayer.shirtColor || '#1D4ED8'}
+                    isGK={activePlayer.isGK}
+                    captain={activePlayer.captain}
+                    hasRedCard={getPlayerStatsAndDisciplinary(activePlayer, activePlayer.teamKey).hasRedCard}
+                    className="w-full h-full absolute inset-0"
+                  />
+                  {activePlayer.photoUrl && (
                     <img
                       src={activePlayer.photoUrl}
                       alt={activePlayer.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <JerseyShirtIcon
-                      number={activePlayer.num}
-                      color={activePlayer.shirtColor || '#1D4ED8'}
-                      isGK={activePlayer.isGK}
-                      captain={activePlayer.captain}
-                      hasRedCard={getPlayerStatsAndDisciplinary(activePlayer, activePlayer.teamKey).hasRedCard}
-                      className="w-full h-full"
+                      className="w-full h-full object-cover relative z-1"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
                     />
                   )}
                 </div>
@@ -1135,23 +1131,24 @@ function DualPitchPlayerNode({
             ? 'ring-2 ring-rose-500 border-2 border-rose-600 bg-rose-950/60' 
             : 'border border-white/30 bg-slate-900/90'
         }`}>
-          {player.photoUrl ? (
+          {/* Fallback Jersey Shirt Icon always present underneath */}
+          <JerseyShirtIcon
+            number={player.num}
+            color={shirtColor}
+            isGK={player.isGK}
+            captain={player.captain}
+            hasRedCard={hasRedCard}
+            className="w-full h-full absolute inset-0"
+          />
+
+          {player.photoUrl && (
             <img
               src={player.photoUrl}
               alt={player.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover relative z-1"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}
-            />
-          ) : (
-            <JerseyShirtIcon
-              number={player.num}
-              color={shirtColor}
-              isGK={player.isGK}
-              captain={player.captain}
-              hasRedCard={hasRedCard}
-              className="w-full h-full"
             />
           )}
 
