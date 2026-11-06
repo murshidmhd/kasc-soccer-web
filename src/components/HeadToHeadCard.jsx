@@ -132,7 +132,7 @@ export default function HeadToHeadCard({ lang, isDarkMode }) {
           <div className="pt-1 text-xs text-slate-600 space-y-1.5">
             <div className="flex items-center justify-between py-1 border-b border-slate-100">
               <span className="font-medium text-slate-500">{lang === 'ml' ? 'പോരാട്ടം' : 'Battle'}:</span>
-              <span className="font-bold text-slate-900">Abdul Vahid ({openingMatch.teamHome.shortName || 'KRSC'} #10) vs Usman ({openingMatch.teamAway.shortName || 'BASE'} #10)</span>
+              <span className="font-bold text-slate-900">Abdul Vahid ({openingMatch.teamHome.shortName || 'KRSC'} #10) vs Ashik Usman ({openingMatch.teamAway.shortName || 'BASE'} #10)</span>
             </div>
             <div className="flex items-center justify-between py-1 border-b border-slate-100">
               <span className="font-medium text-slate-500">{lang === 'ml' ? 'വേദി' : 'Pitch'}:</span>

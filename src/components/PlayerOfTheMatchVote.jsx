@@ -5,9 +5,9 @@ import { openingMatch } from '../data/tournamentData';
 
 const CANDIDATES = [
   {
-    id: 'usman',
-    name: 'Usman K. P.',
-    nameMl: 'ഉസ്മാൻ കെ. പി.',
+    id: 'ashik_usman',
+    name: 'Ashik Usman',
+    nameMl: 'ആഷിക് ഉസ്മാൻ',
     number: '10',
     team: 'BASE PERUMBAVUR',
     teamShort: 'BASE',
@@ -33,9 +33,9 @@ const CANDIDATES = [
     tag: 'KRSC Star'
   },
   {
-    id: 'bilal',
-    name: 'Bilal',
-    nameMl: 'ബിലാൽ',
+    id: 'aju_ashi',
+    name: 'Aju Ashi',
+    nameMl: 'അജു ആഷി',
     number: '7',
     team: 'BASE PERUMBAVUR',
     teamShort: 'BASE',

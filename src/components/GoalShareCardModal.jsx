@@ -23,7 +23,7 @@ export default function GoalShareCardModal({
   isDarkMode = false
 }) {
   const [formData, setFormData] = useState({
-    scorerName: initialGoalData.scorerName || initialGoalData.player || 'Usman K. P.',
+    scorerName: initialGoalData.scorerName || initialGoalData.player || 'Ashik Usman',
     minute: initialGoalData.minute || 24,
     goalTeam: initialGoalData.team || initialGoalData.goalTeam || 'away',
     scoreHome: initialGoalData.scoreHome ?? 0,
@@ -43,7 +43,7 @@ export default function GoalShareCardModal({
   useEffect(() => {
     if (isOpen) {
       setFormData({
-        scorerName: initialGoalData.scorerName || initialGoalData.player || 'Usman K. P.',
+        scorerName: initialGoalData.scorerName || initialGoalData.player || 'Ashik Usman',
         minute: initialGoalData.minute ?? 24,
         goalTeam: initialGoalData.team || initialGoalData.goalTeam || 'away',
         scoreHome: initialGoalData.scoreHome ?? 0,

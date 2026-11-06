@@ -10,7 +10,7 @@ export default function ScorerDemoModal({ isOpen, onClose, isDarkMode }) {
     'Match started: 08:00 PM',
     'Kickoff whistle blown by referee',
     `12' - Goal ${openingMatch.teamHome.name} (Abdul Vahid)`,
-    `24' - Goal ${openingMatch.teamAway.name} (Usman)`,
+    `24' - Goal ${openingMatch.teamAway.name} (Ashik Usman)`,
   ]);
 
   const recordEvent = (text) => {

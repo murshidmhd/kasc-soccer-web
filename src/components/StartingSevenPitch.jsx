@@ -113,12 +113,12 @@ const TOURNAMENT_SQUADS = {
     formation: '1-2-2-2',
     starting: [
       { num: 1, name: 'Aneesh', pos: 'GK', captain: false, isGK: true },
-      { num: 4, name: 'Shibil', pos: 'CB', captain: false },
+      { num: 4, name: 'Muhammed Sajad', pos: 'CB', captain: false },
       { num: 5, name: 'Musthafa', pos: 'SW', captain: false },
       { num: 11, name: 'Ajmal', pos: 'CM', captain: false },
-      { num: 7, name: 'Bilal', pos: 'WF', captain: false },
-      { num: 9, name: 'Musthu', pos: 'ST', captain: false },
-      { num: 10, name: 'Usman K. P.', pos: 'CF', captain: true }
+      { num: 7, name: 'Aju Ashi', pos: 'WF', captain: false },
+      { num: 9, name: 'Fahad', pos: 'ST', captain: false },
+      { num: 10, name: 'Ashik Usman', pos: 'CF', captain: true }
     ],
     subs: [
       { num: 22, name: 'Suhair' },

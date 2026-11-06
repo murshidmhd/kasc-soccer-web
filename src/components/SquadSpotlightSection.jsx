@@ -30,7 +30,8 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isStoppedAfterCycles, setIsStoppedAfterCycles] = useState(false);
   const [isDataSaving, setIsDataSaving] = useState(false);
-  const [isSectionVisible, setIsSectionVisible] = useState(false);
+  const [isLowSystem, setIsLowSystem] = useState(false);
+  const [isSectionVisible, setIsSectionVisible] = useState(true); // Autoplay ready on site open
   const [isPressing, setIsPressing] = useState(false);
   const [videoError, setVideoError] = useState(null);
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
@@ -62,18 +63,21 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
   const activePlayer = filteredPlayers[activeIndex] || filteredPlayers[0];
   const sourceUrl = activePlayer?.devFallbackUrl || activePlayer?.videoUrl;
 
-  // Data saving detection (Rule 12)
+  // Low system & Data saving detection: If low device, stop video and show image
   useEffect(() => {
+    const isLowCpu = typeof navigator !== 'undefined' && typeof navigator.hardwareConcurrency === 'number' && navigator.hardwareConcurrency <= 2;
+    const isLowMemory = typeof navigator !== 'undefined' && typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 2;
+    const isSlowConn = typeof navigator !== 'undefined' && ['2g', 'slow-2g'].includes(navigator.connection?.effectiveType);
     const isSaveData = typeof navigator !== 'undefined' && navigator.connection?.saveData === true;
-    const isSlowConn = typeof navigator !== 'undefined' && ['2g', '3g', 'slow-2g'].includes(navigator.connection?.effectiveType);
-    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    if (isSaveData || isSlowConn || prefersReducedMotion) {
+    if (isLowCpu || isLowMemory || isSlowConn || isSaveData || prefersReducedMotion) {
+      setIsLowSystem(true);
       setIsDataSaving(true);
     }
   }, []);
 
-  // IntersectionObserver: Section >= 60% visible to autoplay (Rule 8)
+  // IntersectionObserver: Section visibility tracking (lower threshold for instant startup)
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -81,31 +85,30 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.15) {
           setIsSectionVisible(true);
-        } else {
+        } else if (!entry.isIntersecting) {
           setIsSectionVisible(false);
           if (videoRef.current) {
             videoRef.current.pause();
-            videoRef.current.currentTime = 0;
             setIsPlaying(false);
           }
         }
       },
-      { threshold: [0.55] }
+      { threshold: [0.15] }
     );
 
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
-  // VisibilityChange: Pause when tab is hidden (Rule 8)
+  // VisibilityChange: Pause when tab is hidden, resume when active if not low system
   useEffect(() => {
     const handleVisibility = () => {
       if (document.hidden && videoRef.current) {
         videoRef.current.pause();
         setIsPlaying(false);
-      } else if (!document.hidden && isSectionVisible && !isStoppedAfterCycles && !isDataSaving) {
+      } else if (!document.hidden && isSectionVisible && !isLowSystem && !isDataSaving) {
         if (videoRef.current) {
           videoRef.current.play().catch(() => {});
           setIsPlaying(true);
@@ -115,9 +118,9 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
 
     document.addEventListener('visibilitychange', handleVisibility);
     return () => document.removeEventListener('visibilitychange', handleVisibility);
-  }, [isSectionVisible, isStoppedAfterCycles, isDataSaving]);
+  }, [isSectionVisible, isLowSystem, isDataSaving]);
 
-  // Handle active player change & video source setup (Rule 7: ONE shared video element)
+  // Handle active player change & video source setup (Autoplays on site open, fallback image on low system)
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !activePlayer) return;
@@ -125,7 +128,6 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
     setCurrentTime(0);
     setIsBuffering(false);
     setVideoError(null);
-    setAutoplayBlocked(false);
     clearTimeout(bufferTimerRef.current);
     clearTimeout(stallTimerRef.current);
 
@@ -140,7 +142,15 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
     video.src = sourceUrl;
     video.muted = isMuted;
 
-    if (isSectionVisible && !isStoppedAfterCycles && !isDataSaving && !isPressing) {
+    // If on low system or data saving: do not force autoplay, show crisp poster image
+    if (isLowSystem || isDataSaving) {
+      video.pause();
+      setIsPlaying(false);
+      setAutoplayBlocked(true);
+      return;
+    }
+
+    if (!isPressing) {
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise
@@ -149,6 +159,7 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
             setAutoplayBlocked(false);
           })
           .catch((err) => {
+            // Autoplay blocked by browser policy / battery saver: cleanly fall back to poster image
             setIsPlaying(false);
             setAutoplayBlocked(true);
           });
@@ -157,7 +168,7 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
       setAutoplayBlocked(true);
     }
 
-    // Set stall fallback timer for 8 seconds (Rule 14)
+    // Set stall fallback timer for 8 seconds
     stallTimerRef.current = setTimeout(() => {
       if (video.readyState < 2 && !videoError) {
         handleNextPlayer(false);
@@ -168,7 +179,7 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
       clearTimeout(bufferTimerRef.current);
       clearTimeout(stallTimerRef.current);
     };
-  }, [activeIndex, selectedClub, isSectionVisible, isStoppedAfterCycles, isDataSaving]);
+  }, [activeIndex, selectedClub, isSectionVisible, isLowSystem, isDataSaving]);
 
   // Video error listener with console logging (Step 2, Rule 9)
   const onVideoError = (e) => {
@@ -254,23 +265,12 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
     setActiveIndex((prev) => {
       const next = prev + 1;
       if (next >= filteredPlayers.length) {
-        // Completed 1 full cycle
-        if (!userTriggered && !hasInteracted) {
-          setCycleCount((c) => {
-            const nextCycle = c + 1;
-            // Rule 10: Stop after 3 full cycles with no user interaction
-            if (nextCycle >= 3) {
-              setIsStoppedAfterCycles(true);
-              if (videoRef.current) videoRef.current.pause();
-            }
-            return nextCycle;
-          });
-        }
-        return 0; // Loop back to first player
+        // Continuous loop across all players as requested
+        return 0; // Loop back to first player continuously
       }
       return next;
     });
-  }, [filteredPlayers.length, hasInteracted]);
+  }, [filteredPlayers.length]);
 
   const handlePrevPlayer = useCallback(() => {
     setHasInteracted(true);
@@ -401,9 +401,11 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
           {/* Shared Single <video> Element (Rule 7) */}
           <video
             ref={videoRef}
+            autoPlay
             playsInline
             muted={isMuted}
-            preload="metadata"
+            preload="auto"
+            loop={filteredPlayers.length === 1}
             onTimeUpdate={onTimeUpdate}
             onWaiting={onWaiting}
             onPlaying={onPlaying}
@@ -441,8 +443,8 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
             />
           )}
 
-          {/* Poster Fallback (shown while video is buffering or in data saving mode) */}
-          {(!isPlaying || isDataSaving || videoError) && activePlayer?.posterUrl && (
+          {/* Poster Fallback (shown on low system, data saving, video buffering, or before play) */}
+          {(isLowSystem || !isPlaying || isDataSaving || videoError) && activePlayer?.posterUrl && (
             <img
               src={activePlayer.posterUrl}
               alt={activePlayer.name}

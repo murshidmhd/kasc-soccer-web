@@ -1252,7 +1252,7 @@ export default function AdminDeskSection({
                       type="text"
                       value={newEvent.player}
                       onChange={(e) => setNewEvent({ ...newEvent, player: e.target.value })}
-                      placeholder="e.g. Usman K. P."
+                      placeholder="e.g. Ashik Usman"
                       className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white border-slate-300 shadow-2xs"
                     />
                   </div>
@@ -1272,11 +1272,10 @@ export default function AdminDeskSection({
                 <div className="flex flex-wrap items-center gap-1 pt-1">
                   <span className="text-[10px] text-slate-400 font-bold mr-1">Quick Select:</span>
                   {[
-                    { name: 'Usman K. P.', team: 'away' },
-                    { name: 'Bilal', team: 'away' },
-                    { name: 'Shibil', team: 'away' },
-                    { name: 'Ajmal', team: 'away' },
-                    { name: 'Musthu', team: 'away' },
+                    { name: 'Ashik Usman', team: 'away' },
+                    { name: 'Aju Ashi', team: 'away' },
+                    { name: 'Muhammed Sajad', team: 'away' },
+                    { name: 'Fahad', team: 'away' },
                     { name: 'Abdul Vahid C', team: 'home' },
                     { name: 'Shameer K.', team: 'home' },
                     { name: 'Ibrahim Soumahoro', team: 'home' }

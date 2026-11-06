@@ -12,11 +12,11 @@
  */
 
 export const squadPlayers = [
-  // Base Perumbavur Official Squad Videos (Match 1 Stars - Usman Front & Spotlight)
+  // Base Perumbavur Official Squad Videos (Match 1 Stars - in user order: Ashik Usman, Aju Ashi, Muhammed Sajad, Fahad)
   {
     id: 'base_1',
-    name: 'Usman K. P.',
-    nameMl: 'ഉസ്മാൻ കെ. പി.',
+    name: 'Ashik Usman',
+    nameMl: 'ആഷിക് ഉസ്മാൻ',
     number: '10',
     club: 'BASE PERUMBAVUR',
     clubMl: 'ബേസ് പെരുമ്പാവൂർ',
@@ -29,8 +29,8 @@ export const squadPlayers = [
   },
   {
     id: 'base_2',
-    name: 'Bilal',
-    nameMl: 'ബിലാൽ',
+    name: 'Aju Ashi',
+    nameMl: 'അജു ആഷി',
     number: '7',
     club: 'BASE PERUMBAVUR',
     clubMl: 'ബേസ് പെരുമ്പാവൂർ',
@@ -43,8 +43,8 @@ export const squadPlayers = [
   },
   {
     id: 'base_3',
-    name: 'Shibil',
-    nameMl: 'ഷിബിൽ',
+    name: 'Muhammed Sajad',
+    nameMl: 'മുഹമ്മദ് സജാദ്',
     number: '4',
     club: 'BASE PERUMBAVUR',
     clubMl: 'ബേസ് പെരുമ്പാവൂർ',
@@ -57,8 +57,8 @@ export const squadPlayers = [
   },
   {
     id: 'base_5',
-    name: 'Musthu',
-    nameMl: 'മുസ്തു',
+    name: 'Fahad',
+    nameMl: 'ഫഹദ്',
     number: '9',
     club: 'BASE PERUMBAVUR',
     clubMl: 'ബേസ് പെരുമ്പാവൂർ',
