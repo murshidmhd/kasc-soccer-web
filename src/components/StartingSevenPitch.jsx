@@ -20,10 +20,16 @@ import {
   normalizePlayerName,
   isPlayerMatch
 } from '../utils/disciplinaryManager';
+import { 
+  getLineupTactics, 
+  SEVENS_FORMATIONS, 
+  DEFAULT_TOURNAMENT_SQUADS 
+} from '../utils/lineupManager';
 import { SHOW_LINEUPS } from '../config/siteConfig';
 import { openingMatch } from '../data/tournamentData';
 
-// Inline SVG Shirt Icon with Shirt Number
+// Fallback Opening Match & Tournament Squads
+export const TOURNAMENT_SQUADS = DEFAULT_TOURNAMENT_SQUADS;
 export function JerseyShirtIcon({ 
   number, 
   color = '#1D4ED8', 
@@ -86,62 +92,8 @@ export function JerseyShirtIcon({
   );
 }
 
-// Official Opening Match & Tournament Squads (Day 1: KRSC vs BASE PERUMBAVUR Focus)
-export const TOURNAMENT_SQUADS = {
-  krsc: {
-    id: 'krsc',
-    name: 'KRSC KOZHIKKODE',
-    shortName: 'KRSC',
-    nameMl: 'കെ.ആർ.എസ്.സി കോഴിക്കോട്',
-    shirtColor: '#EAB308', // Gold / Yellow
-    status: 'confirmed',
-    confirmedAt: '06 Nov 7:00 PM',
-    formation: '2-2-2',
-    starting: [
-      { num: 1, name: 'Jithin', pos: 'GK', captain: false, isGK: true, baseRating: 7.2 },
-      { num: 4, name: 'Midhun', pos: 'CB', captain: false, baseRating: 7.1 },
-      { num: 3, name: 'Rahul K.', pos: 'RB', captain: false, baseRating: 7.0 },
-      { num: 7, name: 'Favas', pos: 'CM', captain: false, baseRating: 7.4 },
-      { num: 8, name: 'Vysakh', pos: 'AM', captain: false, baseRating: 7.5 },
-      { num: 11, name: 'Arjun', pos: 'WF', captain: false, baseRating: 7.6 },
-      { num: 10, name: 'Abdul Vahid C', pos: 'ST', captain: true, photoUrl: '/players/abdul_vahid.webp', baseRating: 8.3 }
-    ],
-    subs: [
-      { num: 14, name: 'Abhijith', pos: 'SUB', baseRating: 6.8 },
-      { num: 15, name: 'Sarath', pos: 'SUB', baseRating: 6.7 },
-      { num: 18, name: 'Nithin', pos: 'SUB', baseRating: 6.7 }
-    ]
-  },
-  base: {
-    id: 'base',
-    name: 'BASE PERUMBAVUR',
-    shortName: 'BASE',
-    nameMl: 'ബേസ് പെരുമ്പാവൂർ',
-    shirtColor: '#1E3A8A', // Deep Blue
-    status: 'confirmed',
-    confirmedAt: '06 Nov 7:00 PM',
-    formation: '2-2-2',
-    starting: [
-      { num: 1, name: 'Aneesh', pos: 'GK', captain: false, isGK: true, baseRating: 7.3 },
-      { num: 4, name: 'Muhammed Sajad', pos: 'CB', captain: false, photoUrl: '/players/muhammed_sajad.webp', baseRating: 7.4 },
-      { num: 5, name: 'Musthafa', pos: 'SW', captain: false, baseRating: 7.2 },
-      { num: 11, name: 'Ajmal', pos: 'CM', captain: false, baseRating: 7.5 },
-      { num: 7, name: 'Aju Ashi', pos: 'WF', captain: false, photoUrl: '/players/aju_ashi.webp', baseRating: 7.8 },
-      { num: 9, name: 'Fahad', pos: 'ST', captain: false, photoUrl: '/players/fahad.webp', baseRating: 7.7 },
-      { num: 10, name: 'Ashik Usman', pos: 'CF', captain: true, photoUrl: '/players/ashik_usman.webp', baseRating: 8.8 }
-    ],
-    subs: [
-      { num: 22, name: 'Suhair', pos: 'SUB', baseRating: 6.9 },
-      { num: 6, name: 'Jameel', pos: 'SUB', baseRating: 6.8 },
-      { num: 8, name: 'Nabeel', pos: 'SUB', baseRating: 6.7 },
-      { num: 14, name: 'Nizar', pos: 'SUB', baseRating: 6.6 },
-      { num: 17, name: 'Ajmal Jr', pos: 'SUB', baseRating: 6.8 }
-    ]
-  }
-};
-
 // Available 7-a-side formations (Notation excludes Goalkeeper: 6 outfielders)
-export const SEVENS_FORMATIONS = ['2-2-2', '2-3-1', '3-2-1', '3-1-2', '1-3-2'];
+export { SEVENS_FORMATIONS };
 
 /**
  * 7-A-Side Dynamic Formation Coordinates Generator
@@ -271,27 +223,31 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
   const [matchState, setMatchState] = useState(getStoredMatchState);
   const [matchEvents, setMatchEvents] = useState([]);
   const [disciplinaryCards, setDisciplinaryCards] = useState(() => getAllDisciplinaryRecords());
+  const [lineupTactics, setLineupTactics] = useState(getLineupTactics);
 
-  // Independent 7-a-side formations for Home & Away
-  const [homeFormation, setHomeFormation] = useState('2-2-2');
-  const [awayFormation, setAwayFormation] = useState('2-2-2');
-
-  // Synchronize with Match State and Disciplinary Database
+  // Synchronize with Match State, Disciplinary DB, and Lineup Tactics
   useEffect(() => {
     const syncAll = () => {
       const currentState = getStoredMatchState();
       setMatchState(currentState);
       setMatchEvents([...(currentState?.events || [])]);
       setDisciplinaryCards([...getAllDisciplinaryRecords()]);
+      setLineupTactics(getLineupTactics());
     };
 
     syncAll();
 
     window.addEventListener('kasc_match_state_updated', syncAll);
     window.addEventListener('kasc_disciplinary_updated', syncAll);
+    window.addEventListener('kasc_lineup_tactics_updated', syncAll);
 
     const handleStorage = (e) => {
-      if (!e.key || e.key === 'kasc_official_match_state_v2' || e.key === 'kasc_player_disciplinary_records_v1') {
+      if (
+        !e.key || 
+        e.key === 'kasc_official_match_state_v2' || 
+        e.key === 'kasc_player_disciplinary_records_v1' ||
+        e.key === 'kasc_lineup_tactics_v1'
+      ) {
         syncAll();
       }
     };
@@ -300,11 +256,19 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
     return () => {
       window.removeEventListener('kasc_match_state_updated', syncAll);
       window.removeEventListener('kasc_disciplinary_updated', syncAll);
+      window.removeEventListener('kasc_lineup_tactics_updated', syncAll);
       window.removeEventListener('storage', handleStorage);
     };
   }, []);
 
   if (!SHOW_LINEUPS) return null;
+
+  // Formations and squads strictly governed by Admin Desk
+  const homeFormation = lineupTactics?.formations?.home || '2-2-2';
+  const awayFormation = lineupTactics?.formations?.away || '2-2-2';
+  const krscSquad = lineupTactics?.squads?.krsc || DEFAULT_TOURNAMENT_SQUADS.krsc;
+  const baseSquad = lineupTactics?.squads?.base || DEFAULT_TOURNAMENT_SQUADS.base;
+  const manOfTheMatch = lineupTactics?.manOfTheMatch;
 
   // Helper to compute goals & cards strictly from REAL MATCH EVENTS & DISCIPLINARY DB
   const getPlayerStatsAndDisciplinary = (playerOrName, teamKey = 'krsc') => {
@@ -343,7 +307,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
       }
     });
 
-    const clubName = teamKey === 'base' ? TOURNAMENT_SQUADS.base.name : TOURNAMENT_SQUADS.krsc.name;
+    const clubName = teamKey === 'base' ? baseSquad.name : krscSquad.name;
     const disciplinary = getPlayerDisciplinaryStatus(playerObj.name, playerObj.num, clubName);
     if (disciplinary.hasRedCard) {
       redCardsCount = Math.max(redCardsCount, disciplinary.redCardsCount || 1);
@@ -379,8 +343,8 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
   const awayPositions = useMemo(() => getSevensFormationPositions(awayFormation, 'away'), [awayFormation]);
 
   // Positioned player nodes
-  const homePositionedPlayers = useMemo(() => mapSquadToPositions(TOURNAMENT_SQUADS.krsc, homePositions), [homePositions]);
-  const awayPositionedPlayers = useMemo(() => mapSquadToPositions(TOURNAMENT_SQUADS.base, awayPositions), [awayPositions]);
+  const homePositionedPlayers = useMemo(() => mapSquadToPositions(krscSquad, homePositions), [krscSquad, homePositions]);
+  const awayPositionedPlayers = useMemo(() => mapSquadToPositions(baseSquad, awayPositions), [baseSquad, awayPositions]);
 
   // Winning team / Leader computation
   const leadingTeam = useMemo(() => {
@@ -388,26 +352,23 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
     const awayScore = matchState?.officialScoreAway ?? 0;
     if (homeScore > awayScore) {
       return {
-        ...TOURNAMENT_SQUADS.krsc,
+        ...krscSquad,
         scoreHome: homeScore,
         scoreAway: awayScore,
         side: 'home'
       };
     } else if (awayScore > homeScore) {
       return {
-        ...TOURNAMENT_SQUADS.base,
+        ...baseSquad,
         scoreHome: homeScore,
         scoreAway: awayScore,
         side: 'away'
       };
     }
     return null;
-  }, [matchState]);
+  }, [matchState, krscSquad, baseSquad]);
 
   const isMatchFinished = matchState?.status === 'FULL_TIME' || matchState?.status === 'COMPLETED';
-
-  // Man of the Match stats (Marquee striker Ashik Usman #10)
-  const ashikStats = getPlayerStatsAndDisciplinary(TOURNAMENT_SQUADS.base.starting[6], 'base');
 
   return (
     <section id="pitch-lineup" className="rounded-3xl border border-surface-border dark:border-navy-700 surface-card p-3 sm:p-6 shadow-card space-y-6">
@@ -458,29 +419,23 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         </div>
       </div>
 
-      {/* 2. Team Formations & Match Banner Controller */}
+      {/* 2. Official Match Formations (Governed by Referee / Committee Admin) */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4 p-2 sm:p-2.5 rounded-2xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700">
         {/* KRSC Kozhikkode (Home Team - Upper Half) */}
         <div className="flex items-center justify-between gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-xl bg-surface-card border border-surface-border dark:border-navy-700">
           <div className="flex items-center gap-1.5 min-w-0">
             <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white p-0.5 border border-surface-border shadow-xs flex items-center justify-center shrink-0">
-              <TeamLogo teamName="KRSC KOZHIKKODE" className="w-full h-full object-contain rounded-full" />
+              <TeamLogo teamName={krscSquad.name} className="w-full h-full object-contain rounded-full" />
             </div>
             <div className="min-w-0 leading-tight">
               <span className="text-[11px] sm:text-xs font-black font-sports text-card-title block">KRSC</span>
               <span className="text-[8px] sm:text-[9px] text-amber-500 font-bold uppercase block">TOP</span>
             </div>
           </div>
-          <div className="shrink-0">
-            <select
-              value={homeFormation}
-              onChange={(e) => setHomeFormation(e.target.value)}
-              className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[11px] sm:text-xs font-bold font-mono rounded-lg bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700 text-card-title cursor-pointer shadow-2xs"
-            >
-              {SEVENS_FORMATIONS.map((f) => (
-                <option key={`home-${f}`} value={f}>{f}</option>
-              ))}
-            </select>
+          <div className="shrink-0 flex items-center gap-1">
+            <span className="px-2 py-0.5 text-[11px] sm:text-xs font-black font-mono rounded-lg bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700 text-card-title shadow-2xs" title="Official Formation (Set by Committee Admin)">
+              {homeFormation}
+            </span>
           </div>
         </div>
 
@@ -488,23 +443,17 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         <div className="flex items-center justify-between gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-xl bg-surface-card border border-surface-border dark:border-navy-700">
           <div className="flex items-center gap-1.5 min-w-0">
             <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white p-0.5 border border-surface-border shadow-xs flex items-center justify-center shrink-0">
-              <TeamLogo teamName="BASE PERUMBAVUR" className="w-full h-full object-contain rounded-full" />
+              <TeamLogo teamName={baseSquad.name} className="w-full h-full object-contain rounded-full" />
             </div>
             <div className="min-w-0 leading-tight">
               <span className="text-[11px] sm:text-xs font-black font-sports text-card-title block">BASE</span>
               <span className="text-[8px] sm:text-[9px] text-blue-500 font-bold uppercase block">BOT</span>
             </div>
           </div>
-          <div className="shrink-0">
-            <select
-              value={awayFormation}
-              onChange={(e) => setAwayFormation(e.target.value)}
-              className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[11px] sm:text-xs font-bold font-mono rounded-lg bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700 text-card-title cursor-pointer shadow-2xs"
-            >
-              {SEVENS_FORMATIONS.map((f) => (
-                <option key={`away-${f}`} value={f}>{f}</option>
-              ))}
-            </select>
+          <div className="shrink-0 flex items-center gap-1">
+            <span className="px-2 py-0.5 text-[11px] sm:text-xs font-black font-mono rounded-lg bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700 text-card-title shadow-2xs" title="Official Formation (Set by Committee Admin)">
+              {awayFormation}
+            </span>
           </div>
         </div>
       </div>
@@ -579,8 +528,8 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
             teamKey="krsc"
             posData={posData}
             playerInfo={getPlayerStatsAndDisciplinary(player, 'krsc')}
-            shirtColor={TOURNAMENT_SQUADS.krsc.shirtColor}
-            onClick={() => setActivePlayer({ ...player, clubName: 'KRSC KOZHIKKODE', shirtColor: TOURNAMENT_SQUADS.krsc.shirtColor, teamKey: 'krsc' })}
+            shirtColor={krscSquad.shirtColor}
+            onClick={() => setActivePlayer({ ...player, clubName: krscSquad.name, shirtColor: krscSquad.shirtColor, teamKey: 'krsc' })}
           />
         ))}
 
@@ -592,8 +541,8 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
             teamKey="base"
             posData={posData}
             playerInfo={getPlayerStatsAndDisciplinary(player, 'base')}
-            shirtColor={TOURNAMENT_SQUADS.base.shirtColor}
-            onClick={() => setActivePlayer({ ...player, clubName: 'BASE PERUMBAVUR', shirtColor: TOURNAMENT_SQUADS.base.shirtColor, teamKey: 'base' })}
+            shirtColor={baseSquad.shirtColor}
+            onClick={() => setActivePlayer({ ...player, clubName: baseSquad.name, shirtColor: baseSquad.shirtColor, teamKey: 'base' })}
           />
         ))}
       </div>
@@ -604,7 +553,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
           <h4 className="text-xs sm:text-sm font-black font-sports uppercase tracking-wider text-card-title flex items-center gap-1.5">
             <span>{lang === 'ml' ? 'പകരക്കാർ (സബ്സ്റ്റിറ്റ്യൂട്ട്സ്)' : 'SUBSTITUTES BENCH'}</span>
             <span className="text-[10px] text-card-muted font-mono font-normal">
-              (KRSC: {TOURNAMENT_SQUADS.krsc.subs.length} • BASE: {TOURNAMENT_SQUADS.base.subs.length})
+              (KRSC: {krscSquad.subs?.length || 0} • BASE: {baseSquad.subs?.length || 0})
             </span>
           </h4>
         </div>
@@ -615,22 +564,22 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
             <div className="flex items-center justify-between pb-1.5 border-b border-surface-border dark:border-navy-700">
               <div className="flex items-center gap-1.5">
                 <div className="w-5 h-5 rounded-full bg-white p-0.5 border border-surface-border shadow-2xs flex items-center justify-center">
-                  <TeamLogo teamName="KRSC KOZHIKKODE" className="w-full h-full object-contain" />
+                  <TeamLogo teamName={krscSquad.name} className="w-full h-full object-contain" />
                 </div>
                 <span className="text-[11px] font-black font-sports text-card-title">
-                  KRSC KOZHIKKODE BENCH
+                  {krscSquad.shortName} BENCH
                 </span>
               </div>
-              <span className="text-[10px] text-card-muted font-bold">3 Players</span>
+              <span className="text-[10px] text-card-muted font-bold">{krscSquad.subs?.length || 0} Players</span>
             </div>
 
             <div className="space-y-1.5">
-              {TOURNAMENT_SQUADS.krsc.subs.map((sub) => {
+              {(krscSquad.subs || []).map((sub) => {
                 const info = getPlayerStatsAndDisciplinary(sub, 'krsc');
                 return (
                   <button
                     key={`sub-${sub.num}-${sub.name}`}
-                    onClick={() => setActivePlayer({ ...sub, clubName: 'KRSC KOZHIKKODE', shirtColor: TOURNAMENT_SQUADS.krsc.shirtColor, teamKey: 'krsc' })}
+                    onClick={() => setActivePlayer({ ...sub, clubName: krscSquad.name, shirtColor: krscSquad.shirtColor, teamKey: 'krsc' })}
                     className="w-full p-2 rounded-xl bg-surface-card border border-surface-border dark:border-navy-700 hover:border-royal flex items-center justify-between text-left transition active:scale-98"
                   >
                     <div className="flex items-center gap-2.5">
@@ -665,22 +614,22 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
             <div className="flex items-center justify-between pb-1.5 border-b border-surface-border dark:border-navy-700">
               <div className="flex items-center gap-1.5">
                 <div className="w-5 h-5 rounded-full bg-white p-0.5 border border-surface-border shadow-2xs flex items-center justify-center">
-                  <TeamLogo teamName="BASE PERUMBAVUR" className="w-full h-full object-contain" />
+                  <TeamLogo teamName={baseSquad.name} className="w-full h-full object-contain" />
                 </div>
                 <span className="text-[11px] font-black font-sports text-card-title">
-                  BASE PERUMBAVUR BENCH
+                  {baseSquad.shortName} BENCH
                 </span>
               </div>
-              <span className="text-[10px] text-card-muted font-bold">5 Players</span>
+              <span className="text-[10px] text-card-muted font-bold">{baseSquad.subs?.length || 0} Players</span>
             </div>
 
             <div className="space-y-1.5">
-              {TOURNAMENT_SQUADS.base.subs.map((sub) => {
+              {(baseSquad.subs || []).map((sub) => {
                 const info = getPlayerStatsAndDisciplinary(sub, 'base');
                 return (
                   <button
                     key={`sub-${sub.num}-${sub.name}`}
-                    onClick={() => setActivePlayer({ ...sub, clubName: 'BASE PERUMBAVUR', shirtColor: TOURNAMENT_SQUADS.base.shirtColor, teamKey: 'base' })}
+                    onClick={() => setActivePlayer({ ...sub, clubName: baseSquad.name, shirtColor: baseSquad.shirtColor, teamKey: 'base' })}
                     className="w-full p-2 rounded-xl bg-surface-card border border-surface-border dark:border-navy-700 hover:border-royal flex items-center justify-between text-left transition active:scale-98"
                   >
                     <div className="flex items-center gap-2.5">
@@ -712,90 +661,100 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         </div>
       </div>
 
-      {/* 5. Man of the Match (Player of the Match) Section */}
-      <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-surface-card to-amber-900/10 p-4 sm:p-5 shadow-card space-y-3">
-        <div className="flex items-center justify-between pb-3 border-b border-surface-border dark:border-navy-700">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gold text-navy-950 flex items-center justify-center font-black shadow-sm">
-              <Star className="w-4 h-4 fill-current" />
+      {/* 5. Man of the Match (Player of the Match) Section - Only Visible when Awarded by Admin */}
+      {manOfTheMatch && manOfTheMatch.enabled && (
+        <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-surface-card to-amber-900/10 p-4 sm:p-5 shadow-card space-y-3 animate-fadeIn">
+          <div className="flex items-center justify-between pb-3 border-b border-surface-border dark:border-navy-700">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-gold text-navy-950 flex items-center justify-center font-black shadow-sm">
+                <Star className="w-4 h-4 fill-current" />
+              </div>
+              <div>
+                <h4 className="text-xs sm:text-sm font-black font-sports uppercase tracking-wider text-card-title flex items-center gap-1.5">
+                  <span>{lang === 'ml' ? 'മാൻ ഓഫ് ദ മാച്ച് (MVP)' : 'MAN OF THE MATCH'}</span>
+                  <span className="px-1.5 py-0.2 rounded-md bg-gold text-navy-950 text-[9px] font-black uppercase">
+                    {manOfTheMatch.awardTitle || 'Official MVP'}
+                  </span>
+                </h4>
+                <p className="text-[11px] text-card-muted">
+                  {lang === 'ml' ? 'റഫറി കമ്മിറ്റി തിരഞ്ഞെടുത്ത മികച്ച കളിക്കാരൻ' : 'Official Player of the Match Awarded by Committee'}
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-black font-sports uppercase tracking-wider text-card-title flex items-center gap-1.5">
-                <span>{lang === 'ml' ? 'മാൻ ഓഫ് ദ മാച്ച് (MVP)' : 'MAN OF THE MATCH'}</span>
-                <span className="px-1.5 py-0.2 rounded-md bg-gold text-navy-950 text-[9px] font-black uppercase">
-                  Opening Star
-                </span>
-              </h4>
-              <p className="text-[11px] text-card-muted">
-                {lang === 'ml' ? 'ഉദ്ഘാടന മത്സരത്തിലെ മികച്ച പ്രകടനം' : 'Opening Match Top Performer'}
-              </p>
+            <div className="text-right">
+              <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-mono font-black text-xs shadow-xs">
+                <span>⭐</span>
+                <span>{manOfTheMatch.rating || '9.0'}</span>
+              </div>
+              <span className="block text-[9px] text-card-muted font-bold mt-0.5">Sofascore MVP</span>
             </div>
           </div>
-          <div className="text-right">
-            <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-mono font-black text-xs shadow-xs">
-              <span>⭐</span>
-              <span>9.2</span>
+
+          <div className="flex flex-col sm:flex-row items-center gap-4 pt-1">
+            {/* Player Photo */}
+            <div className="relative shrink-0">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-amber-400 shadow-lg shadow-amber-500/20 bg-slate-900">
+                {manOfTheMatch.photoUrl ? (
+                  <img
+                    src={manOfTheMatch.photoUrl}
+                    alt={manOfTheMatch.playerName}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <JerseyShirtIcon
+                    number={manOfTheMatch.playerNum || 10}
+                    color={manOfTheMatch.teamKey === 'krsc' ? krscSquad.shirtColor : baseSquad.shirtColor}
+                    className="w-full h-full"
+                  />
+                )}
+              </div>
+              <div className="absolute -bottom-2 inset-x-0 mx-auto w-max px-2 py-0.5 rounded-full bg-gold text-navy-950 font-sports font-black text-[9px] border border-white shadow-2xs">
+                #{manOfTheMatch.playerNum || 10} {manOfTheMatch.pos || 'STAR'}
+              </div>
             </div>
-            <span className="block text-[9px] text-card-muted font-bold mt-0.5">Sofascore MVP</span>
+
+            {/* Player Bio & Stats */}
+            <div className="flex-1 text-center sm:text-left space-y-2 min-w-0">
+              <div>
+                <h5 className="text-base sm:text-lg font-black font-sports text-card-title leading-tight">
+                  {manOfTheMatch.playerName}
+                </h5>
+                <p className="text-xs text-amber-500 font-sports font-bold">
+                  {manOfTheMatch.teamName || (manOfTheMatch.teamKey === 'krsc' ? krscSquad.name : baseSquad.name)} • {manOfTheMatch.pos || 'Player of the Match'}
+                </p>
+              </div>
+
+              {/* Performance Stats Strip */}
+              <div className="grid grid-cols-4 gap-2 text-center">
+                <div className="p-2 rounded-xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700">
+                  <span className="block text-[10px] text-card-muted font-bold">Goals</span>
+                  <span className="text-xs sm:text-sm font-black font-mono text-emerald-500">
+                    {manOfTheMatch.goals ?? 1}
+                  </span>
+                </div>
+                <div className="p-2 rounded-xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700">
+                  <span className="block text-[10px] text-card-muted font-bold">Shots</span>
+                  <span className="text-xs sm:text-sm font-black font-mono text-card-title">
+                    {manOfTheMatch.shots ?? 4}
+                  </span>
+                </div>
+                <div className="p-2 rounded-xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700">
+                  <span className="block text-[10px] text-card-muted font-bold">Dribbles</span>
+                  <span className="text-xs sm:text-sm font-black font-mono text-card-title">
+                    {manOfTheMatch.dribbles ?? 3}
+                  </span>
+                </div>
+                <div className="p-2 rounded-xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700">
+                  <span className="block text-[10px] text-card-muted font-bold">Rating</span>
+                  <span className="text-xs sm:text-sm font-black font-mono text-emerald-400">
+                    {manOfTheMatch.rating || '9.0'}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div className="flex flex-col sm:flex-row items-center gap-4 pt-1">
-          {/* Player Photo with Real Ashik Usman image */}
-          <div className="relative shrink-0">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-amber-400 shadow-lg shadow-amber-500/20 bg-slate-900">
-              <img
-                src="/players/ashik_usman.webp"
-                alt="Ashik Usman"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="absolute -bottom-2 inset-x-0 mx-auto w-max px-2 py-0.5 rounded-full bg-gold text-navy-950 font-sports font-black text-[9px] border border-white shadow-2xs">
-              #10 CAPTAIN
-            </div>
-          </div>
-
-          {/* Player Bio & Stats */}
-          <div className="flex-1 text-center sm:text-left space-y-2 min-w-0">
-            <div>
-              <h5 className="text-base sm:text-lg font-black font-sports text-card-title leading-tight">
-                Ashik Usman
-              </h5>
-              <p className="text-xs text-amber-500 font-sports font-bold">
-                BASE PERUMBAVUR • Forward / Marquee Striker
-              </p>
-            </div>
-
-            {/* Performance Stats Strip */}
-            <div className="grid grid-cols-4 gap-2 text-center">
-              <div className="p-2 rounded-xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700">
-                <span className="block text-[10px] text-card-muted font-bold">Goals</span>
-                <span className="text-xs sm:text-sm font-black font-mono text-emerald-500">
-                  {ashikStats.goals || 1}
-                </span>
-              </div>
-              <div className="p-2 rounded-xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700">
-                <span className="block text-[10px] text-card-muted font-bold">Shots</span>
-                <span className="text-xs sm:text-sm font-black font-mono text-card-title">
-                  5
-                </span>
-              </div>
-              <div className="p-2 rounded-xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700">
-                <span className="block text-[10px] text-card-muted font-bold">Dribbles</span>
-                <span className="text-xs sm:text-sm font-black font-mono text-card-title">
-                  4
-                </span>
-              </div>
-              <div className="p-2 rounded-xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700">
-                <span className="block text-[10px] text-card-muted font-bold">Rating</span>
-                <span className="text-xs sm:text-sm font-black font-mono text-emerald-400">
-                  9.2
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* 6. Today's Winner Showcase Section */}
       <div className={`rounded-3xl border p-4 sm:p-5 transition shadow-card ${

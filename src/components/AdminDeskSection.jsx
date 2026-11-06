@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   ShieldCheck, 
   Lock, 
@@ -25,7 +25,10 @@ import {
   WifiOff,
   UserCheck,
   Share2,
-  Camera
+  Camera,
+  Star,
+  Award,
+  ArrowUpDown
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { 
@@ -56,44 +59,17 @@ import logoKasc from '../assets/logo_kasc.webp';
 import GoalShareCardModal from './GoalShareCardModal';
 import AddCardModal from './AddCardModal';
 import { saveDisciplinaryRecord, removeDisciplinaryRecord } from '../utils/disciplinaryManager';
-
-// Official Matchday Squads for Day 1 Opening Match (KRSC vs BASE)
-const MATCHDAY_SQUADS = {
-  home: {
-    teamName: 'KRSC KOZHIKKODE',
-    shortName: 'KRSC',
-    players: [
-      { num: 10, name: 'Abdul Vahid C', pos: 'ST' },
-      { num: 11, name: 'Arjun', pos: 'WF' },
-      { num: 8, name: 'Vysakh', pos: 'AM' },
-      { num: 7, name: 'Favas', pos: 'CM' },
-      { num: 4, name: 'Midhun', pos: 'CB' },
-      { num: 3, name: 'Rahul K.', pos: 'RB' },
-      { num: 1, name: 'Jithin', pos: 'GK' },
-      { num: 14, name: 'Abhijith', pos: 'SUB' },
-      { num: 15, name: 'Sarath', pos: 'SUB' },
-      { num: 18, name: 'Nithin', pos: 'SUB' }
-    ]
-  },
-  away: {
-    teamName: 'BASE PERUMBAVUR',
-    shortName: 'BASE',
-    players: [
-      { num: 10, name: 'Ashik Usman', pos: 'CF' },
-      { num: 9, name: 'Fahad', pos: 'ST' },
-      { num: 7, name: 'Aju Ashi', pos: 'WF' },
-      { num: 11, name: 'Ajmal', pos: 'CM' },
-      { num: 5, name: 'Musthafa', pos: 'SW' },
-      { num: 4, name: 'Muhammed Sajad', pos: 'CB' },
-      { num: 1, name: 'Aneesh', pos: 'GK' },
-      { num: 22, name: 'Suhair', pos: 'SUB' },
-      { num: 6, name: 'Jameel', pos: 'SUB' },
-      { num: 8, name: 'Nabeel', pos: 'SUB' },
-      { num: 14, name: 'Nizar', pos: 'SUB' },
-      { num: 17, name: 'Ajmal Jr', pos: 'SUB' }
-    ]
-  }
-};
+import { 
+  getLineupTactics, 
+  updateTeamFormation, 
+  updatePlayerPosition, 
+  swapStarterAndSub, 
+  setManOfTheMatchAward, 
+  resetLineupTactics,
+  SEVENS_FORMATIONS,
+  TACTICAL_POSITIONS,
+  DEFAULT_TOURNAMENT_SQUADS
+} from '../utils/lineupManager';
 
 export default function AdminDeskSection({ 
   isDarkMode, 
@@ -147,6 +123,114 @@ export default function AdminDeskSection({
     goalData: null
   });
   const [isCardBookingOpen, setIsCardBookingOpen] = useState(false);
+
+  // Lineup & Tactics Governance State
+  const [lineupTactics, setLineupTactics] = useState(getLineupTactics);
+  const [selectedTacticsTeam, setSelectedTacticsTeam] = useState('base'); // 'base' or 'krsc'
+  const [motmForm, setMotmForm] = useState({
+    teamKey: 'base',
+    playerNum: 10,
+    playerName: 'Ashik Usman',
+    rating: '9.2',
+    awardTitle: 'Man of the Match (MVP)',
+    pos: 'CF',
+    photoUrl: '/players/ashik_usman.webp',
+    goals: 1,
+    shots: 5,
+    dribbles: 4
+  });
+
+  // Keep lineup tactics synced across tabs and local events
+  useEffect(() => {
+    const syncTactics = () => {
+      setLineupTactics(getLineupTactics());
+    };
+    window.addEventListener('kasc_lineup_tactics_updated', syncTactics);
+    return () => {
+      window.removeEventListener('kasc_lineup_tactics_updated', syncTactics);
+    };
+  }, []);
+
+  const dynamicMatchdaySquads = useMemo(() => {
+    const krsc = lineupTactics?.squads?.krsc || DEFAULT_TOURNAMENT_SQUADS.krsc;
+    const base = lineupTactics?.squads?.base || DEFAULT_TOURNAMENT_SQUADS.base;
+    return {
+      home: {
+        teamName: krsc.name,
+        shortName: krsc.shortName,
+        players: [...(krsc.starting || []), ...(krsc.subs || [])]
+      },
+      away: {
+        teamName: base.name,
+        shortName: base.shortName,
+        players: [...(base.starting || []), ...(base.subs || [])]
+      }
+    };
+  }, [lineupTactics]);
+
+  const handleAdminFormationChange = (teamKey, newFormation) => {
+    const updated = updateTeamFormation(teamKey, newFormation);
+    setLineupTactics(updated);
+    confetti({ particleCount: 35, spread: 50, origin: { y: 0.7 } });
+    setNotification(`⚡ Formation updated to ${newFormation} for ${teamKey.toUpperCase()} & applied to Live Pitch!`);
+    setTimeout(() => setNotification(''), 3000);
+  };
+
+  const handleAdminPositionChange = (teamKey, playerNum, newPosition) => {
+    const updated = updatePlayerPosition(teamKey, playerNum, newPosition);
+    setLineupTactics(updated);
+    setNotification(`🔄 Player #${playerNum} repositioned to ${newPosition}! Pitch updated.`);
+    setTimeout(() => setNotification(''), 2500);
+  };
+
+  const handleAdminSwapPlayers = (teamKey, starterNum, subNum) => {
+    if (!subNum) return;
+    const updated = swapStarterAndSub(teamKey, starterNum, parseInt(subNum, 10));
+    setLineupTactics(updated);
+    confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
+    setNotification(`🔁 Substituted Starter #${starterNum} with Bench Player #${subNum}!`);
+    setTimeout(() => setNotification(''), 3000);
+  };
+
+  const handleAdminResetTactics = () => {
+    const res = resetLineupTactics();
+    setLineupTactics(res);
+    setNotification('↩️ Lineups, Formations & MOTM reset to default tournament sheet.');
+    setTimeout(() => setNotification(''), 3000);
+  };
+
+  const handlePublishMotm = () => {
+    const teamSquad = lineupTactics.squads[motmForm.teamKey];
+    const playerObj = [...teamSquad.starting, ...(teamSquad.subs || [])].find(p => p.num === Number(motmForm.playerNum)) || {};
+    
+    const motmData = {
+      enabled: true,
+      teamKey: motmForm.teamKey,
+      teamName: teamSquad.name,
+      playerNum: Number(motmForm.playerNum),
+      playerName: motmForm.playerName || playerObj.name || 'Star Player',
+      pos: motmForm.pos || playerObj.pos || 'Forward',
+      photoUrl: playerObj.photoUrl || motmForm.photoUrl || (motmForm.teamKey === 'base' && Number(motmForm.playerNum) === 10 ? '/players/ashik_usman.webp' : Number(motmForm.playerNum) === 7 ? '/players/aju_ashi.webp' : ''),
+      rating: motmForm.rating || '9.2',
+      awardTitle: motmForm.awardTitle || 'Man of the Match (MVP)',
+      goals: parseInt(motmForm.goals, 10) || 0,
+      shots: parseInt(motmForm.shots, 10) || 4,
+      dribbles: parseInt(motmForm.dribbles, 10) || 3
+    };
+
+    setManOfTheMatchAward(motmData);
+    setLineupTactics(getLineupTactics());
+    confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+    setNotification(`🏆 MAN OF THE MATCH AWARDED TO ${motmData.playerName}! Now visible to all fans on the website.`);
+    setTimeout(() => setNotification(''), 3500);
+  };
+
+  const handleHideMotm = () => {
+    setManOfTheMatchAward(null);
+    setLineupTactics(getLineupTactics());
+    setNotification('🔒 Man of the Match hidden from the public website.');
+    setTimeout(() => setNotification(''), 2500);
+  };
 
   // Live ticking interval for the clock inside Admin Desk
   useEffect(() => {
@@ -532,7 +616,7 @@ export default function AdminDeskSection({
     if (!rawPlayer) return;
 
     // Resolve player number and team name
-    const currentTeamSquad = MATCHDAY_SQUADS[newEvent.team] || MATCHDAY_SQUADS.home;
+    const currentTeamSquad = dynamicMatchdaySquads[newEvent.team] || dynamicMatchdaySquads.home;
     const matchedSquadPlayer = currentTeamSquad.players.find(
       (p) => p.name.toLowerCase() === rawPlayer.toLowerCase() || p.num === newEvent.playerNumber
     );
@@ -1353,7 +1437,7 @@ export default function AdminDeskSection({
                     <span className="text-[9px] text-slate-400">Click to select player</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5 max-h-24 overflow-y-auto pr-1">
-                    {(MATCHDAY_SQUADS[newEvent.team]?.players || []).map((p) => {
+                    {(dynamicMatchdaySquads[newEvent.team]?.players || []).map((p) => {
                       const isSelected = newEvent.player === p.name;
                       return (
                         <button
@@ -1490,6 +1574,378 @@ export default function AdminDeskSection({
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>Sync Crowd to Official Score</span>
                   </button>
+                </div>
+              </div>
+
+              {/* SECTION E: 7-A-SIDE FORMATIONS & SQUAD TACTICAL GOVERNANCE */}
+              <div className={`p-4 sm:p-5 rounded-3xl border space-y-4 ${
+                isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 rounded-xl bg-purple-500/20 text-purple-400 font-black">
+                      <ArrowUpDown className="w-4 h-4" />
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-black font-sports uppercase tracking-wider text-slate-700 dark:text-slate-200">
+                        7-A-Side Formations & Tactical Squad Control
+                      </h4>
+                      <p className="text-[10px] text-slate-500">
+                        Admin-only control: Adjust formations, change player roles (e.g. CB to CF), and swap starters.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAdminResetTactics}
+                    className="px-2.5 py-1 text-[10px] font-bold rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 transition"
+                  >
+                    Reset to Default Squads
+                  </button>
+                </div>
+
+                {/* Formation Selectors (Home vs Away) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                  {/* KRSC Formation */}
+                  <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <div>
+                      <span className="text-xs font-black font-sports text-slate-900 dark:text-white block">
+                        KRSC KOZHIKKODE
+                      </span>
+                      <span className="text-[10px] text-amber-500 font-bold uppercase">HOME TEAM (TOP)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-bold text-slate-500">Formation:</span>
+                      <select
+                        value={lineupTactics?.formations?.home || '2-2-2'}
+                        onChange={(e) => handleAdminFormationChange('krsc', e.target.value)}
+                        className="px-2.5 py-1 text-xs font-bold font-mono rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white cursor-pointer shadow-xs"
+                      >
+                        {SEVENS_FORMATIONS.map((f) => (
+                          <option key={`admin-krsc-${f}`} value={f}>{f}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* BASE Formation */}
+                  <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <div>
+                      <span className="text-xs font-black font-sports text-slate-900 dark:text-white block">
+                        BASE PERUMBAVUR
+                      </span>
+                      <span className="text-[10px] text-blue-500 font-bold uppercase">AWAY TEAM (BOTTOM)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-bold text-slate-500">Formation:</span>
+                      <select
+                        value={lineupTactics?.formations?.away || '2-2-2'}
+                        onChange={(e) => handleAdminFormationChange('base', e.target.value)}
+                        className="px-2.5 py-1 text-xs font-bold font-mono rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white cursor-pointer shadow-xs"
+                      >
+                        {SEVENS_FORMATIONS.map((f) => (
+                          <option key={`admin-base-${f}`} value={f}>{f}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Team Roster Selection Tabs */}
+                <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedTacticsTeam('base')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black font-sports uppercase transition ${
+                      selectedTacticsTeam === 'base'
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
+                    }`}
+                  >
+                    BASE PERUMBAVUR (7 Starters + 5 Subs)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedTacticsTeam('krsc')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black font-sports uppercase transition ${
+                      selectedTacticsTeam === 'krsc'
+                        ? 'bg-amber-500 text-slate-950 shadow-xs'
+                        : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
+                    }`}
+                  >
+                    KRSC KOZHIKKODE (7 Starters + 3 Subs)
+                  </button>
+                </div>
+
+                {/* Editable Starting 7 Players List */}
+                {(() => {
+                  const currentSquad = lineupTactics?.squads?.[selectedTacticsTeam] || DEFAULT_TOURNAMENT_SQUADS[selectedTacticsTeam];
+                  const starters = currentSquad.starting || [];
+                  const subs = currentSquad.subs || [];
+
+                  return (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs font-bold text-slate-500">
+                        <span>Starting 7 on Turf (Click dropdown to change player role/position):</span>
+                        <span className="text-[10px] text-emerald-600 font-mono">7 Active Players</span>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {starters.map((player) => (
+                          <div
+                            key={`starter-${player.num}-${player.name}`}
+                            className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shadow-2xs"
+                          >
+                            <div className="flex items-center gap-2 min-w-0">
+                              <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center font-mono font-black text-xs text-slate-900 dark:text-white shrink-0">
+                                #{player.num}
+                              </div>
+                              <div className="min-w-0 leading-tight">
+                                <span className="text-xs font-black text-slate-900 dark:text-white truncate block">
+                                  {player.name} {player.captain ? ' (C)' : ''}
+                                </span>
+                                <span className="text-[10px] text-slate-400 font-mono">
+                                  Current: <strong className="text-blue-500">{player.pos}</strong>
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              {/* Position Role Selector */}
+                              <select
+                                value={player.pos}
+                                onChange={(e) => handleAdminPositionChange(selectedTacticsTeam, player.num, e.target.value)}
+                                className="px-2 py-1 text-xs font-bold font-mono rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white cursor-pointer"
+                                title="Change Player Tactical Position (e.g. CB to CF)"
+                              >
+                                {TACTICAL_POSITIONS.map((pos) => (
+                                  <option key={`pos-${player.num}-${pos.code}`} value={pos.code}>
+                                    {pos.code} - {pos.category}
+                                  </option>
+                                ))}
+                              </select>
+
+                              {/* Quick Swap with Bench */}
+                              {subs.length > 0 && (
+                                <select
+                                  defaultValue=""
+                                  onChange={(e) => {
+                                    if (e.target.value) {
+                                      handleAdminSwapPlayers(selectedTacticsTeam, player.num, e.target.value);
+                                      e.target.value = "";
+                                    }
+                                  }}
+                                  className="px-1.5 py-1 text-[10px] font-bold rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-600 dark:text-amber-400 cursor-pointer"
+                                  title="Substitute with player from bench"
+                                >
+                                  <option value="" disabled>Swap ⇅</option>
+                                  {subs.map((s) => (
+                                    <option key={`swap-sub-${s.num}`} value={s.num}>
+                                      Sub #{s.num} {s.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Substitutes Bench List */}
+                      <div className="pt-2">
+                        <span className="text-[11px] font-bold text-slate-500 block mb-1">
+                          Substitutes Bench ({subs.length} players):
+                        </span>
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {subs.map((s) => (
+                            <div 
+                              key={`bench-${s.num}-${s.name}`}
+                              className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5"
+                            >
+                              <span className="font-mono text-[10px] text-slate-400">#{s.num}</span>
+                              <span>{s.name}</span>
+                              <span className="text-[9px] uppercase px-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-500">{s.pos || 'SUB'}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* SECTION F: MAN OF THE MATCH (MVP) AWARD CONTROL */}
+              <div className={`p-4 sm:p-5 rounded-3xl border space-y-4 ${
+                isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 rounded-xl bg-amber-500/20 text-amber-400 font-black">
+                      <Star className="w-4 h-4 fill-current" />
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-black font-sports uppercase tracking-wider text-slate-700 dark:text-slate-200">
+                        Man of the Match (MVP) Governance
+                      </h4>
+                      <p className="text-[10px] text-slate-500">
+                        Hidden by default. Admin selects and publishes the award after match completion.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Current MOTM Status Badge */}
+                  <div>
+                    {lineupTactics?.manOfTheMatch?.enabled ? (
+                      <span className="px-2.5 py-1 rounded-full bg-emerald-600 text-white font-mono font-bold text-[10px] flex items-center gap-1 shadow-2xs">
+                        <span>✓</span>
+                        <span>LIVE ON FAN SITE: #{lineupTactics.manOfTheMatch.playerNum} {lineupTactics.manOfTheMatch.playerName}</span>
+                      </span>
+                    ) : (
+                      <span className="px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono font-bold text-[10px]">
+                        🔒 MOTM Currently Hidden
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* MOTM Award Selection Controls */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-500 block mb-1">Award Winning Team</label>
+                    <select
+                      value={motmForm.teamKey}
+                      onChange={(e) => {
+                        const newTeam = e.target.value;
+                        const squad = lineupTactics.squads[newTeam] || DEFAULT_TOURNAMENT_SQUADS[newTeam];
+                        const defaultP = squad.starting[6] || squad.starting[0];
+                        setMotmForm((prev) => ({
+                          ...prev,
+                          teamKey: newTeam,
+                          playerNum: defaultP.num,
+                          playerName: defaultP.name,
+                          pos: defaultP.pos,
+                          photoUrl: defaultP.photoUrl || ''
+                        }));
+                      }}
+                      className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white shadow-2xs"
+                    >
+                      <option value="base">BASE PERUMBAVUR</option>
+                      <option value="krsc">KRSC KOZHIKKODE</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-500 block mb-1">Select MVP Player</label>
+                    <select
+                      value={motmForm.playerNum}
+                      onChange={(e) => {
+                        const pNum = Number(e.target.value);
+                        const squad = lineupTactics.squads[motmForm.teamKey] || DEFAULT_TOURNAMENT_SQUADS[motmForm.teamKey];
+                        const found = [...squad.starting, ...(squad.subs || [])].find(p => p.num === pNum);
+                        if (found) {
+                          setMotmForm((prev) => ({
+                            ...prev,
+                            playerNum: found.num,
+                            playerName: found.name,
+                            pos: found.pos,
+                            photoUrl: found.photoUrl || (motmForm.teamKey === 'base' && found.num === 10 ? '/players/ashik_usman.webp' : found.num === 7 ? '/players/aju_ashi.webp' : '')
+                          }));
+                        }
+                      }}
+                      className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white shadow-2xs"
+                    >
+                      {(() => {
+                        const squad = lineupTactics.squads[motmForm.teamKey] || DEFAULT_TOURNAMENT_SQUADS[motmForm.teamKey];
+                        const allPlayers = [...squad.starting, ...(squad.subs || [])];
+                        return allPlayers.map((p) => (
+                          <option key={`motm-option-${p.num}`} value={p.num}>
+                            #{p.num} {p.name} ({p.pos})
+                          </option>
+                        ));
+                      })()}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-500 block mb-1">Official Rating</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="5.0"
+                      max="10.0"
+                      value={motmForm.rating}
+                      onChange={(e) => setMotmForm({ ...motmForm, rating: e.target.value })}
+                      placeholder="e.g. 9.2"
+                      className="w-full p-2.5 text-xs font-bold font-mono rounded-xl border bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white shadow-2xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-500 block mb-1">Award Title</label>
+                    <input
+                      type="text"
+                      value={motmForm.awardTitle}
+                      onChange={(e) => setMotmForm({ ...motmForm, awardTitle: e.target.value })}
+                      placeholder="e.g. Man of the Match"
+                      className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white shadow-2xs"
+                    />
+                  </div>
+                </div>
+
+                {/* Quick Performance Numbers */}
+                <div className="grid grid-cols-3 gap-2.5">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-500 block mb-1">Goals Scored</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={motmForm.goals}
+                      onChange={(e) => setMotmForm({ ...motmForm, goals: parseInt(e.target.value, 10) || 0 })}
+                      className="w-full p-2 text-xs font-mono font-bold rounded-xl border bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-500 block mb-1">Shots on Target</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={motmForm.shots}
+                      onChange={(e) => setMotmForm({ ...motmForm, shots: parseInt(e.target.value, 10) || 0 })}
+                      className="w-full p-2 text-xs font-mono font-bold rounded-xl border bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-500 block mb-1">Completed Dribbles</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={motmForm.dribbles}
+                      onChange={(e) => setMotmForm({ ...motmForm, dribbles: parseInt(e.target.value, 10) || 0 })}
+                      className="w-full p-2 text-xs font-mono font-bold rounded-xl border bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={handlePublishMotm}
+                    className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5 active:scale-98 transition cursor-pointer"
+                  >
+                    <Star className="w-4 h-4 fill-current" />
+                    <span>Publish Man of the Match to Fan Site</span>
+                  </button>
+
+                  {lineupTactics?.manOfTheMatch?.enabled && (
+                    <button
+                      type="button"
+                      onClick={handleHideMotm}
+                      className="py-3 px-4 rounded-xl bg-rose-600/15 hover:bg-rose-600/25 border border-rose-600/40 text-rose-500 font-bold text-xs uppercase transition active:scale-95 cursor-pointer"
+                    >
+                      Hide MOTM
+                    </button>
+                  )}
                 </div>
               </div>
 
