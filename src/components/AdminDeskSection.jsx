@@ -71,6 +71,7 @@ import {
   TACTICAL_POSITIONS,
   DEFAULT_TOURNAMENT_SQUADS
 } from '../utils/lineupManager';
+import AdminLineupPitchEditor from './AdminLineupPitchEditor';
 
 export default function AdminDeskSection({ 
   isDarkMode, 
@@ -1590,6 +1591,13 @@ export default function AdminDeskSection({
                     <span>Sync Crowd to Official Score</span>
                   </button>
                 </div>
+              </div>
+
+              {/* SECTION E0: VISUAL LINEUP PITCH EDITOR (New - Tap to Edit Players) */}
+              <div className={`p-4 sm:p-5 rounded-3xl border space-y-4 ${
+                isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <AdminLineupPitchEditor isDarkMode={isDarkMode} />
               </div>
 
               {/* SECTION E: 7-A-SIDE FORMATIONS & SQUAD TACTICAL GOVERNANCE */}

@@ -384,6 +384,49 @@ export function updatePlayerRating(teamKey, playerNum, rating) {
   return updated;
 }
 
+/**
+ * Update full player info (name, number, position, photoUrl, rating, captain, goals, cards)
+ * teamKey: 'krsc' | 'base'
+ * playerNum: jersey number (old number to find the player)
+ * updates: partial player object fields to merge in
+ */
+export function updatePlayerInfo(teamKey, playerNum, updates) {
+  const current = getLineupTactics();
+  const squad = current.squads[teamKey];
+  if (!squad) return current;
+
+  const numVal = Number(playerNum);
+
+  const applyUpdates = (p) => {
+    if (p.num !== numVal) return p;
+    return {
+      ...p,
+      ...updates,
+      // If jersey number changed, update num field too
+      num: updates.num !== undefined ? Number(updates.num) : p.num,
+      adminModifiedRating: updates.baseRating !== undefined ? true : p.adminModifiedRating
+    };
+  };
+
+  const updatedStarting = (squad.starting || []).map(applyUpdates);
+  const updatedSubs = (squad.subs || []).map(applyUpdates);
+
+  const updated = {
+    ...current,
+    squads: {
+      ...current.squads,
+      [teamKey]: {
+        ...squad,
+        starting: updatedStarting,
+        subs: updatedSubs
+      }
+    }
+  };
+
+  saveLineupTactics(updated);
+  return updated;
+}
+
 export function resetLineupTactics() {
   const resetData = {
     formations: { home: '2-2-2', away: '2-2-2' },
