@@ -27,18 +27,18 @@ export const DEFAULT_TOURNAMENT_SQUADS = {
     confirmedAt: '06 Nov 7:00 PM',
     formation: '2-2-2',
     starting: [
-      { num: 1, name: 'Jithin', pos: 'GK', captain: false, isGK: true, baseRating: 7.2 },
-      { num: 4, name: 'Midhun', pos: 'CB', captain: false, baseRating: 7.1 },
-      { num: 3, name: 'Rahul K.', pos: 'RB', captain: false, baseRating: 7.0 },
-      { num: 7, name: 'Favas', pos: 'CM', captain: false, baseRating: 7.4 },
-      { num: 8, name: 'Vysakh', pos: 'AM', captain: false, baseRating: 7.5 },
-      { num: 11, name: 'Arjun', pos: 'WF', captain: false, baseRating: 7.6 },
-      { num: 10, name: 'Abdul Vahid C', displayName: 'Vahid C', pos: 'ST', captain: true, photoUrl: '/players/abdul_vahid.webp', baseRating: 8.3 }
+      { num: 1, name: 'Jithin', pos: 'GK', captain: false, isGK: true, baseRating: 0.0 },
+      { num: 4, name: 'Midhun', pos: 'CB', captain: false, baseRating: 0.0 },
+      { num: 3, name: 'Rahul K.', pos: 'RB', captain: false, baseRating: 0.0 },
+      { num: 7, name: 'Favas', pos: 'CM', captain: false, baseRating: 0.0 },
+      { num: 8, name: 'Vysakh', pos: 'AM', captain: false, baseRating: 0.0 },
+      { num: 11, name: 'Arjun', pos: 'WF', captain: false, baseRating: 0.0 },
+      { num: 10, name: 'Abdul Vahid C', displayName: 'Vahid C', pos: 'ST', captain: true, photoUrl: '/players/abdul_vahid.webp', baseRating: 0.0 }
     ],
     subs: [
-      { num: 14, name: 'Abhijith', pos: 'SUB', baseRating: 6.8 },
-      { num: 15, name: 'Sarath', pos: 'SUB', baseRating: 6.7 },
-      { num: 18, name: 'Nithin', pos: 'SUB', baseRating: 6.7 }
+      { num: 14, name: 'Abhijith', pos: 'SUB', baseRating: 0.0 },
+      { num: 15, name: 'Sarath', pos: 'SUB', baseRating: 0.0 },
+      { num: 18, name: 'Nithin', pos: 'SUB', baseRating: 0.0 }
     ]
   },
   base: {
@@ -51,26 +51,26 @@ export const DEFAULT_TOURNAMENT_SQUADS = {
     confirmedAt: '06 Nov 7:00 PM',
     formation: '2-2-2',
     starting: [
-      { num: 1, name: 'Aneesh', pos: 'GK', captain: false, isGK: true, baseRating: 7.3 },
-      { num: 4, name: 'Sajad', fullName: 'Muhammed Sajad', displayName: 'Sajad', pos: 'CB', captain: false, photoUrl: '/players/muhammed_sajad.webp', baseRating: 7.4 },
-      { num: 5, name: 'Musthafa', pos: 'SW', captain: false, baseRating: 7.2 },
-      { num: 11, name: 'Ajmal', pos: 'CM', captain: false, baseRating: 7.5 },
-      { num: 7, name: 'Aju Ashi', pos: 'WF', captain: false, photoUrl: '/players/aju_ashi.webp', baseRating: 7.8 },
-      { num: 9, name: 'Fahad', pos: 'ST', captain: false, photoUrl: '/players/fahad.webp', baseRating: 7.7 },
-      { num: 10, name: 'Ashik Usman', pos: 'CF', captain: true, photoUrl: '/players/ashik_usman.webp', baseRating: 8.8 }
+      { num: 1, name: 'Aneesh', pos: 'GK', captain: false, isGK: true, baseRating: 0.0 },
+      { num: 4, name: 'Sajad', fullName: 'Muhammed Sajad', displayName: 'Sajad', pos: 'CB', captain: false, photoUrl: '/players/muhammed_sajad.webp', baseRating: 0.0 },
+      { num: 5, name: 'Musthafa', pos: 'SW', captain: false, baseRating: 0.0 },
+      { num: 11, name: 'Ajmal', pos: 'CM', captain: false, baseRating: 0.0 },
+      { num: 7, name: 'Aju Ashi', pos: 'WF', captain: false, photoUrl: '/players/aju_ashi.webp', baseRating: 0.0 },
+      { num: 9, name: 'Fahad', pos: 'ST', captain: false, photoUrl: '/players/fahad.webp', baseRating: 0.0 },
+      { num: 10, name: 'Ashik Usman', pos: 'CF', captain: true, photoUrl: '/players/ashik_usman.webp', baseRating: 0.0 }
     ],
     subs: [
-      { num: 3, name: 'Ameer', pos: 'SUB', photoUrl: '/players/ameer.webp', baseRating: 7.3 },
-      { num: 22, name: 'Suhair', pos: 'SUB', baseRating: 6.9 },
-      { num: 6, name: 'Jameel', pos: 'SUB', baseRating: 6.8 },
-      { num: 8, name: 'Nabeel', pos: 'SUB', baseRating: 6.7 },
-      { num: 14, name: 'Nizar', pos: 'SUB', baseRating: 6.6 },
-      { num: 17, name: 'Ajmal Jr', pos: 'SUB', baseRating: 6.8 }
+      { num: 3, name: 'Ameer', pos: 'SUB', photoUrl: '/players/ameer.webp', baseRating: 0.0 },
+      { num: 22, name: 'Suhair', pos: 'SUB', baseRating: 0.0 },
+      { num: 6, name: 'Jameel', pos: 'SUB', baseRating: 0.0 },
+      { num: 8, name: 'Nabeel', pos: 'SUB', baseRating: 0.0 },
+      { num: 14, name: 'Nizar', pos: 'SUB', baseRating: 0.0 },
+      { num: 17, name: 'Ajmal Jr', pos: 'SUB', baseRating: 0.0 }
     ]
   }
 };
 
-const STORAGE_KEY = 'kasc_lineup_tactics_v1';
+const STORAGE_KEY = 'kasc_lineup_tactics_v2';
 
 function mergeSquadsWithDefaults(storedSquads) {
   if (!storedSquads) return DEFAULT_TOURNAMENT_SQUADS;
@@ -291,6 +291,37 @@ export function setManOfTheMatchAward(motmData) {
       awardedAt: new Date().toISOString()
     } : null
   };
+  saveLineupTactics(updated);
+  return updated;
+}
+
+export function updatePlayerRating(teamKey, playerNum, rating) {
+  const current = getLineupTactics();
+  const squad = current.squads[teamKey];
+  if (!squad) return current;
+
+  const numVal = Number(playerNum);
+  const ratingVal = Math.min(10.0, Math.max(0.0, Number(rating) || 0.0));
+
+  const updatedStarting = (squad.starting || []).map((p) => 
+    p.num === numVal ? { ...p, baseRating: ratingVal, adminModifiedRating: true } : p
+  );
+  const updatedSubs = (squad.subs || []).map((s) => 
+    s.num === numVal ? { ...s, baseRating: ratingVal, adminModifiedRating: true } : s
+  );
+
+  const updated = {
+    ...current,
+    squads: {
+      ...current.squads,
+      [teamKey]: {
+        ...squad,
+        starting: updatedStarting,
+        subs: updatedSubs
+      }
+    }
+  };
+
   saveLineupTactics(updated);
   return updated;
 }

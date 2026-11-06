@@ -63,6 +63,7 @@ import {
   getLineupTactics, 
   updateTeamFormation, 
   updatePlayerPosition, 
+  updatePlayerRating,
   swapStarterAndSub, 
   setManOfTheMatchAward, 
   resetLineupTactics,
@@ -181,6 +182,12 @@ export default function AdminDeskSection({
     setLineupTactics(updated);
     setNotification(`🔄 Player #${playerNum} repositioned to ${newPosition}! Pitch updated.`);
     setTimeout(() => setNotification(''), 2500);
+  };
+
+  const handleAdminRatingChange = (teamKey, playerNum, newRating) => {
+    const parsed = parseFloat(newRating);
+    const updated = updatePlayerRating(teamKey, playerNum, isNaN(parsed) ? 0.0 : parsed);
+    setLineupTactics(updated);
   };
 
   const handleAdminSwapPlayers = (teamKey, starterNum, subNum) => {
@@ -1697,7 +1704,7 @@ export default function AdminDeskSection({
                             className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shadow-2xs"
                           >
                             <div className="flex items-center gap-2 min-w-0">
-                              <div className="w-8 h-8 rounded-lg overflow-hidden border border-slate-300 dark:border-slate-700 bg-slate-900 flex items-center justify-center font-mono font-black text-xs text-slate-900 dark:text-white shrink-0">
+                              <div className="w-8 h-8 rounded-lg overflow-hidden border border-slate-300 dark:border-slate-700 bg-slate-800 flex items-center justify-center font-mono font-black text-xs text-white shrink-0 relative">
                                 {player.photoUrl ? (
                                   <img
                                     src={player.photoUrl}
@@ -1705,11 +1712,13 @@ export default function AdminDeskSection({
                                     className="w-full h-full object-cover"
                                     onError={(e) => {
                                       e.currentTarget.style.display = 'none';
+                                      e.currentTarget.nextSibling && (e.currentTarget.nextSibling.style.display = 'flex');
                                     }}
                                   />
-                                ) : (
-                                  `#${player.num}`
-                                )}
+                                ) : null}
+                                <span style={{display: player.photoUrl ? 'none' : 'flex'}} className="absolute inset-0 items-center justify-center text-[9px] font-black text-center leading-tight text-white px-0.5">
+                                  {(player.name || '').split(' ')[0]?.slice(0,5) || `#${player.num}`}
+                                </span>
                               </div>
                               <div className="min-w-0 leading-tight">
                                 <span className="text-xs font-black text-slate-900 dark:text-white truncate block">
@@ -1735,6 +1744,20 @@ export default function AdminDeskSection({
                                   </option>
                                 ))}
                               </select>
+
+                              {/* Admin Rating Input */}
+                              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 px-1.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700" title="Player Match Rating (Set by Admin)">
+                                <span className="text-[10px] font-mono text-amber-500 font-black">★</span>
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="10"
+                                  step="0.1"
+                                  value={player.baseRating || 0}
+                                  onChange={(e) => handleAdminRatingChange(selectedTacticsTeam, player.num, e.target.value)}
+                                  className="w-10 bg-transparent text-xs font-mono font-bold text-slate-900 dark:text-white focus:outline-hidden"
+                                />
+                              </div>
 
                               {/* Quick Swap with Bench */}
                               {subs.length > 0 && (

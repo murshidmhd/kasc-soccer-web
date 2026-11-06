@@ -143,12 +143,18 @@ export default function NewUserGuidedTour({
       role="dialog"
       aria-label="New User Interactive Tournament Tour"
     >
-      <div className="rounded-3xl border-2 border-gold/70 bg-navy-950/95 backdrop-blur-md text-white shadow-2xl p-4 sm:p-5 relative overflow-hidden">
+      <div 
+        className="rounded-3xl border-2 border-gold/90 text-white p-4 sm:p-5 relative overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, #2D1061 0%, #1E0B3F 50%, #130728 100%)',
+          boxShadow: '0 20px 50px -10px rgba(30, 11, 63, 0.95), 0 0 0 1px rgba(245, 179, 1, 0.4)'
+        }}
+      >
         {/* Glowing Ambient Halo */}
         <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-gold/15 blur-xl pointer-events-none" />
 
         {/* Top Header Row */}
-        <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-navy-800">
+        <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-purple-800/60">
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-full bg-gold/20 text-gold text-[10px] font-black uppercase tracking-wider flex items-center gap-1 border border-gold/40">
               <Sparkles className="w-3 h-3 text-gold" />
@@ -159,7 +165,7 @@ export default function NewUserGuidedTour({
                 <span
                   key={idx}
                   className={`w-1.5 h-1.5 rounded-full transition-all ${
-                    idx === currentStep ? 'w-4 bg-gold' : 'bg-navy-700'
+                    idx === currentStep ? 'w-4 bg-gold shadow-xs' : 'bg-purple-800/80'
                   }`}
                 />
               ))}
@@ -168,7 +174,7 @@ export default function NewUserGuidedTour({
 
           <button
             onClick={handleDismiss}
-            className="w-7 h-7 rounded-full bg-navy-800 hover:bg-navy-700 text-navy-muted hover:text-white flex items-center justify-center transition active:scale-95"
+            className="w-7 h-7 rounded-full bg-purple-900/90 hover:bg-purple-800 text-purple-200 hover:text-white flex items-center justify-center transition active:scale-95"
             aria-label="Skip Tour"
             title="Skip Tour"
           >
@@ -178,7 +184,7 @@ export default function NewUserGuidedTour({
 
         {/* Content Body */}
         <div className="flex items-start gap-3 my-2">
-          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 border border-white/10 ${current.iconColor}`}>
+          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 border border-purple-500/30 bg-purple-900/60 ${current.iconColor}`}>
             <StepIcon className="w-5 h-5" />
           </div>
 
@@ -186,17 +192,17 @@ export default function NewUserGuidedTour({
             <h4 className="font-sports font-black text-sm text-white uppercase tracking-wider leading-snug">
               {lang === 'ml' ? current.titleMl : current.titleEn}
             </h4>
-            <p className="text-xs text-navy-muted mt-1 leading-relaxed font-malayalam">
+            <p className="text-xs text-purple-200/90 mt-1 leading-relaxed font-malayalam">
               {lang === 'ml' ? current.descMl : current.descEn}
             </p>
           </div>
         </div>
 
         {/* Bottom Actions */}
-        <div className="flex items-center justify-between gap-2 pt-2.5 mt-2 border-t border-navy-800/80">
+        <div className="flex items-center justify-between gap-2 pt-2.5 mt-2 border-t border-purple-800/60">
           <button
             onClick={handleDismiss}
-            className="text-[11px] font-bold text-navy-muted hover:text-white px-2 py-1 transition"
+            className="text-[11px] font-bold text-purple-300 hover:text-white px-2 py-1 transition"
           >
             {lang === 'ml' ? 'ഒഴിവാക്കുക (Skip)' : 'Skip Tour'}
           </button>

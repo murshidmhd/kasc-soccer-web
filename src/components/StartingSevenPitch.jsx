@@ -663,7 +663,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                       {info.hasRedCard && <span className="text-xs">🟥</span>}
                       {info.hasYellowCard && !info.hasRedCard && <span className="text-xs">🟨</span>}
                       <span className="px-1.5 py-0.5 rounded-md text-[9px] font-mono font-bold bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700 text-card-muted">
-                        {sub.baseRating || 6.8}
+                        {Number(sub.baseRating || 0.0).toFixed(1)}
                       </span>
                     </div>
                   </button>
@@ -723,7 +723,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                       {info.hasRedCard && <span className="text-xs">🟥</span>}
                       {info.hasYellowCard && !info.hasRedCard && <span className="text-xs">🟨</span>}
                       <span className="px-1.5 py-0.5 rounded-md text-[9px] font-mono font-bold bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700 text-card-muted">
-                        {sub.baseRating || 6.8}
+                        {Number(sub.baseRating || 0.0).toFixed(1)}
                       </span>
                     </div>
                   </button>
@@ -1047,10 +1047,28 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
 
                   {/* Match Performance Rating */}
                   <div className="p-3 rounded-2xl bg-navy-800/60 border border-navy-700 flex items-center justify-between">
-                    <span className="text-xs font-bold text-navy-muted">Official Match Rating</span>
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-600 text-white font-mono font-black text-xs">
-                      {((activePlayer.baseRating || 7.2) + (goals * 0.8) - (hasRedCard ? 1.8 : hasYellowCard ? 0.4 : 0)).toFixed(1)} / 10
+                    <span className="text-xs font-bold text-navy-muted">
+                      {lang === 'ml' ? 'മാച്ച് റേറ്റിംഗ്' : 'Official Match Rating'}
                     </span>
+                    {(() => {
+                      const base = Number(activePlayer.baseRating || 0.0);
+                      const finalRating = base > 0 
+                        ? Math.min(9.9, Math.max(1.0, base + (goals * 0.8) - (hasRedCard ? 1.8 : hasYellowCard ? 0.4 : 0)))
+                        : (goals > 0 ? Math.min(9.9, 6.0 + goals * 0.8) : 0.0);
+                      return (
+                        <span className={`px-2 py-0.5 rounded-md font-mono font-black text-xs ${
+                          finalRating >= 7.0 
+                            ? 'bg-emerald-600 text-white' 
+                            : finalRating >= 6.0 
+                              ? 'bg-amber-500 text-navy-950 font-black' 
+                              : finalRating > 0 
+                                ? 'bg-rose-600 text-white'
+                                : 'bg-slate-700 text-white/90 border border-white/20'
+                        }`}>
+                          {finalRating.toFixed(1)} / 10 {finalRating === 0 ? (lang === 'ml' ? '(പെൻഡിംഗ്)' : '(Pending)') : ''}
+                        </span>
+                      );
+                    })()}
                   </div>
 
                   {!hasAnyEvents && (
@@ -1095,20 +1113,26 @@ function DualPitchPlayerNode({
   const hasRedCard = playerInfo?.hasRedCard;
   const hasYellowCard = playerInfo?.hasYellowCard;
 
-  // Calculate dynamic rating with match performance
+  // Calculate dynamic rating with match performance (Defaults to 0.0 until rated)
   const dynamicRating = useMemo(() => {
-    let r = player.baseRating || 7.2;
-    if (playerInfo?.goals > 0) r += playerInfo.goals * 0.8;
-    if (playerInfo?.hasYellowCard) r -= 0.4;
-    if (playerInfo?.hasRedCard) r -= 1.8;
-    return Math.min(9.9, Math.max(5.0, r));
+    let r = Number(player.baseRating || 0.0);
+    if (r === 0) {
+      if (playerInfo?.goals > 0) r = 6.0 + playerInfo.goals * 0.8;
+      else return 0.0;
+    }
+    if (playerInfo?.goals > 0 && r > 0) r += playerInfo.goals * 0.8;
+    if (playerInfo?.hasYellowCard && r > 0) r -= 0.4;
+    if (playerInfo?.hasRedCard && r > 0) r -= 1.8;
+    return Math.min(9.9, Math.max(0.0, r));
   }, [player.baseRating, playerInfo]);
 
   const ratingColor = dynamicRating >= 7.0 
     ? 'bg-emerald-600 text-white' 
     : dynamicRating >= 6.0 
       ? 'bg-amber-500 text-navy-950 font-black' 
-      : 'bg-rose-600 text-white';
+      : dynamicRating > 0
+        ? 'bg-rose-600 text-white'
+        : 'bg-slate-700/85 text-white/90 border border-white/20';
 
   return (
     <button

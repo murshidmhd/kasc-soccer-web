@@ -4,7 +4,7 @@ import { tournamentInfo, openingMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
 import { getStoredMatchState } from '../utils/matchStateManager';
 import teaserPoster from '../assets/tournament_teaser_poster.webp';
-import { SHOW_HOME_TEASER, VIDEO_AUTOPLAY_ENABLED } from '../config/siteConfig';
+import { SHOW_HOME_TEASER, VIDEO_AUTOPLAY_ENABLED, OFFICIAL_TRAILER_URL } from '../config/siteConfig';
 
 export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketModal, onNavigate }) {
   const [matchState, setMatchState] = useState(getStoredMatchState);
@@ -297,10 +297,10 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
 
             <div className="p-2 sm:p-4 bg-black flex items-center justify-center">
               <video
-                src="/tournament_teaser.mp4"
+                src={OFFICIAL_TRAILER_URL}
                 poster={teaserPoster}
                 controls
-                preload="none"
+                preload="metadata"
                 autoPlay={VIDEO_AUTOPLAY_ENABLED}
                 playsInline
                 className="w-full max-h-[70vh] rounded-xl object-contain shadow-2xl"

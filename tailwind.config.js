@@ -10,6 +10,7 @@ export default {
       colors: {
         // Udaya Purple Palette Design Tokens (Task 2)
         navy: {
+          950: '#130728', // purple-950
           900: '#1E0B3F', // purple-900
           800: '#2E1065', // purple-800
           700: '#4C1D95', // purple-700

@@ -48,6 +48,7 @@ export const AWARDS_NOTE = true;
 // Bandwidth & Media Control Flags
 export const VIDEO_AUTOPLAY_ENABLED = true;
 export const SHOW_HOME_TEASER = true;
+export const OFFICIAL_TRAILER_URL = 'https://res.cloudinary.com/dnqwl0w8/video/upload/v1793959434/THE_ROAR_BEGINS_A_new_chapter_of_Sevens_football.Shot_entirely_on_apple--_shotoniphone_sev.mp4';
 
 // Polling intervals (Ready for live backend)
 export const LIVE_POLL_MS = 10000;
@@ -80,12 +81,43 @@ export const DEVELOPER_CREDIT = {
   show: true
 };
 
-// Official Tournament Sponsors Array (Official Title Sponsor: FEZCO GROUP)
+// Official Tournament Sponsors Array (The 3 Confirmed Sponsors)
 export const SPONSORS_DATA = [
   { 
-    name: 'FEZCO GROUP (Official Title Sponsor)', 
+    id: 'fezco',
+    name: 'FEZCO GROUP', 
+    nameMl: 'ഫെസ്കോ ഗ്രൂപ്പ്',
     tier: 'Official Title Sponsor',
-    logoUrl: '/fezco_title_sponsor_poster.webp', 
+    tierMl: 'ഔദ്യോഗിക ടൈറ്റിൽ സ്പോൺസർ',
+    tagline: 'Presenting Official Title Sponsor Season 7',
+    taglineMl: 'അഖിലേന്ത്യാ സെവൻസ് സീസൺ 7 ഒഫീഷ്യൽ ടൈറ്റിൽ സ്പോൺസർ',
+    logoUrl: '/sponsors/fezco_logo.webp', 
+    posterUrl: '/fezco_title_sponsor_poster.webp',
+    theme: 'dark',
+    url: '#' 
+  },
+  { 
+    id: 'motonex',
+    name: 'MOTONEX AUTO CARE', 
+    nameMl: 'മോട്ടോനെക്സ് ഓട്ടോ കെയർ',
+    tier: 'Official Auto Care Partner',
+    tierMl: 'ഔദ്യോഗിക ഓട്ടോ കെയർ പാർട്ണർ',
+    tagline: 'The Reliable Restoration',
+    taglineMl: 'ദ റിലയബിൾ റെസ്റ്റോറേഷൻ',
+    logoUrl: '/sponsors/motonex_logo.webp', 
+    theme: 'light',
+    url: '#' 
+  },
+  { 
+    id: 'bitlogic',
+    name: 'BIT LOGIC SYSTEMS', 
+    nameMl: 'ബിറ്റ് ലോജിക് സിസ്റ്റംസ്',
+    tier: 'Smart Techno Hub Partner',
+    tierMl: 'സ്മാർട്ട് ടെക്നോ ഹബ് പാർട്ണർ',
+    tagline: 'Systems & Smart Techno Hub',
+    taglineMl: 'സിസ്റ്റംസ് & സ്മാർട്ട് ടെക്നോ ഹബ്',
+    logoUrl: '/sponsors/bitlogic_logo.webp', 
+    theme: 'light',
     url: '#' 
   }
 ];

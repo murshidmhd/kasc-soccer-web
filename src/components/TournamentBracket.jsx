@@ -21,7 +21,7 @@ export const BRACKET_CONFIRMED = SHOW_BRACKET;
 
 // Drive round 1 from shared tournamentData.js fixtures (Task 4, Rule 17)
 export const BRACKET_DATA = {
-  round1: fixtures.slice(0, 8).map((f, i) => ({
+  round1: fixtures.map((f, i) => ({
     id: f.id,
     matchNum: i + 1,
     date: f.date,
@@ -313,6 +313,19 @@ export default function TournamentBracket({ lang, isDarkMode }) {
                 </div>
               );
             })}
+
+            {bracketData.round1.length < 8 && (
+              <div className="p-4 rounded-2xl bg-surface-light dark:bg-navy-900 border border-dashed border-surface-border dark:border-navy-700 text-center space-y-1">
+                <p className="text-xs font-bold text-card-title">
+                  {lang === 'ml' ? 'ബാക്കി റൗണ്ട് 1 മത്സരങ്ങൾ ഉടൻ പ്രഖ്യാപിക്കും' : 'Remaining Round 1 Fixtures TBA'}
+                </p>
+                <p className="text-[11px] text-card-muted">
+                  {lang === 'ml' 
+                    ? 'കമ്മിറ്റി ഫിക്സ്ചർ പൂർണ്ണമാക്കിയാലുടൻ ബാക്കി ടീമുകളുടെ മത്സരങ്ങൾ ഇവിടെ അപ്ഡേറ്റ് ചെയ്യുന്നതാണ്.' 
+                    : 'The remaining matchups will be published here as soon as released by the tournament committee.'}
+                </p>
+              </div>
+            )}
           </div>
         )}
 
@@ -523,7 +536,9 @@ export default function TournamentBracket({ lang, isDarkMode }) {
               {/* Col 1: Round 1 */}
               <div className="space-y-4">
                 <span className="text-xs font-bold text-gold uppercase tracking-wider block text-center pb-1 border-b border-navy-800">
-                  Round 1 (8 Matches)
+                  {lang === 'ml' 
+                    ? `റൗണ്ട് 1 (സ്ഥിരീകരിച്ച ${bracketData.round1.length} മത്സരങ്ങൾ)` 
+                    : `Round 1 (Confirmed ${bracketData.round1.length} Matches)`}
                 </span>
                 {bracketData.round1.map((m) => (
                   <div key={m.id} className="p-2.5 rounded-xl bg-navy-900 border border-navy-700 text-xs space-y-1">
@@ -532,6 +547,13 @@ export default function TournamentBracket({ lang, isDarkMode }) {
                     <div className="font-bold truncate text-white">{m.team2}</div>
                   </div>
                 ))}
+                {bracketData.round1.length < 8 && (
+                  <div className="p-2.5 rounded-xl bg-navy-900/60 border border-dashed border-navy-700 text-center">
+                    <span className="text-[10px] text-navy-muted font-bold block">
+                      {lang === 'ml' ? 'ബാക്കി മത്സരങ്ങൾ ഉടൻ പ്രഖ്യാപിക്കും' : 'Remaining Matches TBA'}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Col 2: Quarters */}
