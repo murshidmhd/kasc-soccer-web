@@ -1,5 +1,6 @@
 // Official 7-A-Side Lineup & Tactics Governance Manager
 // Manages formations, tactical roles, starting/substitute swaps, and Man of the Match awards
+import { pushLineupToFirebase } from './firebaseSync.js';
 
 export const SEVENS_FORMATIONS = ['2-2-2', '2-3-1', '3-2-1', '3-1-2', '1-3-2'];
 
@@ -30,15 +31,17 @@ export const DEFAULT_TOURNAMENT_SQUADS = {
       { num: 1, name: 'Jithin', pos: 'GK', captain: false, isGK: true, baseRating: 0.0 },
       { num: 4, name: 'Midhun', pos: 'CB', captain: false, baseRating: 0.0 },
       { num: 3, name: 'Rahul K.', pos: 'RB', captain: false, baseRating: 0.0 },
-      { num: 7, name: 'Favas', pos: 'CM', captain: false, baseRating: 0.0 },
-      { num: 8, name: 'Vysakh', pos: 'AM', captain: false, baseRating: 0.0 },
-      { num: 11, name: 'Arjun', pos: 'WF', captain: false, baseRating: 0.0 },
+      { num: 7, name: 'Favas', pos: 'CM', captain: false, photoUrl: '/players/krsc_mid_1.jpg', baseRating: 0.0 },
+      { num: 99, name: 'None', pos: 'CM', captain: false, photoUrl: '/players/krsc_mid_2.jpg', baseRating: 0.0 },
+      { num: 11, name: 'Arjun Jayaraj', displayName: 'Arjun Jayaraj', fullName: 'Arjun Jayaraj', pos: 'CF', captain: false, photoUrl: '/players/arjun_jayaraj.webp', baseRating: 0.0 },
       { num: 10, name: 'Abdul Vahid C', displayName: 'Vahid C', pos: 'ST', captain: true, photoUrl: '/players/abdul_vahid.webp', baseRating: 0.0 }
     ],
     subs: [
       { num: 14, name: 'Abhijith', pos: 'SUB', baseRating: 0.0 },
+      { num: 8, name: 'Vysakh', pos: 'SUB', baseRating: 0.0 },
       { num: 15, name: 'Sarath', pos: 'SUB', baseRating: 0.0 },
-      { num: 18, name: 'Nithin', pos: 'SUB', baseRating: 0.0 }
+      { num: 18, name: 'Nithin', pos: 'SUB', baseRating: 0.0 },
+      { num: 0, name: 'None', pos: 'CF', baseRating: 0.0 }
     ]
   },
   base: {
@@ -86,7 +89,7 @@ function mergeSquadsWithDefaults(storedSquads) {
     const defaultByNum = new Map(allDefaults.map((p) => [p.num, p]));
     const defaultByName = new Map(allDefaults.map((p) => [p.name?.toLowerCase().trim(), p]));
 
-    // Enrich starting players with photoUrl, name, displayName, and fullName
+    // Enrich starting players with photoUrl, name, displayName, fullName, and pos
     team.starting = (team.starting || defaultTeam.starting).map((p) => {
       const match = defaultByNum.get(p.num) || defaultByName.get(p.name?.toLowerCase().trim());
       if (match) {
@@ -95,11 +98,23 @@ function mergeSquadsWithDefaults(storedSquads) {
           name: match.name || p.name,
           displayName: match.displayName || p.displayName,
           fullName: match.fullName || p.fullName,
+          pos: match.pos || p.pos,
           photoUrl: match.photoUrl || p.photoUrl
         };
       }
       return p;
     });
+
+    // Move the new KRSC midfielder into the starting seven for existing saved lineups.
+    if (teamKey === 'krsc' && !team.starting.some((p) => p.num === 99)) {
+      const replacementIndex = team.starting.findIndex((p) => p.num === 8 || p.name?.toLowerCase().trim() === 'vysakh');
+      const newMidfielder = defaultTeam.starting.find((p) => p.num === 99);
+      if (replacementIndex !== -1 && newMidfielder) {
+        const displacedMidfielder = team.starting[replacementIndex];
+        team.starting[replacementIndex] = newMidfielder;
+        team.subs = [...(team.subs || []), { ...displacedMidfielder, pos: 'SUB' }];
+      }
+    }
 
     // Check subs: enrich existing subs and ensure all default subs exist
     const startingNums = new Set(team.starting.map((p) => p.num));
@@ -126,6 +141,8 @@ function mergeSquadsWithDefaults(storedSquads) {
       const inSubs = subNums.has(defSub.num) || subNames.has(defSub.name?.toLowerCase().trim());
       if (!inStarting && !inSubs) {
         subs.push(defSub);
+        subNums.add(defSub.num);
+        if (defSub.name) subNames.add(defSub.name.toLowerCase().trim());
       }
     }
 
@@ -174,8 +191,49 @@ export function saveLineupTactics(data) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     window.dispatchEvent(new CustomEvent('kasc_lineup_tactics_updated', { detail: data }));
+
+    // Instant cross-tab BroadcastChannel broadcast
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        const bc = new BroadcastChannel('kasc_realtime_lineup_sync');
+        bc.postMessage({ type: 'LINEUP_TACTICS_UPDATED', payload: data });
+        bc.close();
+      } catch (e) {
+        // BroadcastChannel optional fallback
+      }
+    }
+
+    // Async push to Firebase Cloud Realtime Database (updates all fans globally)
+    pushLineupToFirebase(data).catch((err) => {
+      console.warn('[Firebase Sync] Lineup push deferred:', err);
+    });
   } catch (e) {
     console.error('Error saving lineup tactics:', e);
+  }
+}
+
+// Apply remote lineup tactics received from Firebase or BroadcastChannel
+export function applyRemoteLineupTactics(remoteData) {
+  if (!remoteData || typeof remoteData !== 'object' || typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteData));
+    window.dispatchEvent(new CustomEvent('kasc_lineup_tactics_updated', { detail: remoteData }));
+  } catch (e) {
+    console.error('Error applying remote lineup tactics:', e);
+  }
+}
+
+// Setup background cross-tab BroadcastChannel listener for lineups
+if (typeof window !== 'undefined' && typeof BroadcastChannel !== 'undefined') {
+  try {
+    const lineupSyncChannel = new BroadcastChannel('kasc_realtime_lineup_sync');
+    lineupSyncChannel.onmessage = (event) => {
+      if (event?.data?.type === 'LINEUP_TACTICS_UPDATED' && event.data.payload) {
+        applyRemoteLineupTactics(event.data.payload);
+      }
+    };
+  } catch (e) {
+    // Ignore BroadcastChannel errors
   }
 }
 
