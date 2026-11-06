@@ -5,6 +5,8 @@ import Hero from './components/Hero';
 import StadiumAnnouncementBanner from './components/StadiumAnnouncementBanner';
 import LiveMatchCard from './components/LiveMatchCard';
 import MatchPredictionCard from './components/MatchPredictionCard';
+import NextMatchCard from './components/NextMatchCard';
+import MatchHighlightPopup from './components/MatchHighlightPopup';
 import PlayerOfTheMatchVote from './components/PlayerOfTheMatchVote';
 import HeadToHeadCard from './components/HeadToHeadCard';
 import FixturesSection from './components/FixturesSection';
@@ -617,6 +619,23 @@ export default function App() {
                         />
                       </div>
                     )}
+
+                    {/* Section 3: Next Match – KMG Mavoor vs Shooters Padanna (Day 2) */}
+                    {(matchSubTab === 'lineup' || matchSubTab === 'h2h' || matchSubTab === 'all') && (
+                      <div className="animate-fadeIn">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">📅</span>
+                          <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                            {lang === 'ml' ? 'അടുത്ത മത്സരം (Day 2)' : 'Next Match (Day 2)'}
+                          </span>
+                        </div>
+                        <NextMatchCard
+                          lang={lang}
+                          isDarkMode={isDarkMode}
+                          onFixtures={() => handleTabChange('fixtures')}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   {/* Right 4 cols: Side Sponsor Ads */}
@@ -823,6 +842,9 @@ export default function App() {
         isOpenManually={isTourOpenManually}
         onCloseManual={() => setIsTourOpenManually(false)}
       />
+
+      {/* Last Match Highlight Popup — shows once per session on page load */}
+      <MatchHighlightPopup isDarkMode={isDarkMode} />
     </div>
   );
 }

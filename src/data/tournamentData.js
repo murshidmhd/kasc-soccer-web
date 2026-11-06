@@ -63,15 +63,80 @@ export const fixtures = [
     stage: "Round 1 (Opening Match)",
     team1: "KRSC KOZHIKKODE",
     team2: "BASE PERUMBAVUR",
+    status: "Completed",
+    score1: 1,
+    score2: 0,
+    confirmed: true,
+    badge1Color: "from-amber-500 to-red-800",
+    badge2Color: "from-zinc-800 to-black",
+    stadium: "Peruvallur Panjayath Stadium",
+    motm: "Matti",
+    motmTeam: "KRSC KOZHIKKODE",
+    winnerPosterUrl: "/match1_winner_poster.jpg",
+    motmPosterUrl: "/match1_motm_matti.jpg"
+  },
+  {
+    id: "m2",
+    day: "Day 2",
+    date: "07 Nov 2026",
+    time: "08:45 PM",
+    stage: "Round 1 (Match 2)",
+    team1: "KMG MAVOOR",
+    team2: "SHOOTERS PADANNA",
     status: "Upcoming",
     score1: null,
     score2: null,
     confirmed: true,
-    badge1Color: "from-amber-500 to-red-800",
-    badge2Color: "from-zinc-800 to-black",
+    badge1Color: "from-green-700 to-emerald-950",
+    badge2Color: "from-emerald-500 to-green-950",
     stadium: "Peruvallur Panjayath Stadium"
   }
 ];
+
+// Last completed match highlight (for opening popup)
+export const lastMatchResult = {
+  matchId: "m1",
+  homeTeam: "BASE PERUMBAVUR",
+  awayTeam: "KRSC KOZHIKKODE",
+  homeScore: 0,
+  awayScore: 1,
+  winnerTeam: "KRSC KOZHIKKODE",
+  stage: "Round 1 (Opening Match)",
+  date: "06 Nov 2026",
+  motmName: "Matti",
+  motmTeam: "KRSC KOZHIKKODE",
+  winnerPosterUrl: "/match1_winner_poster.jpg",
+  motmPosterUrl: "/match1_motm_matti.jpg",
+};
+
+// Next upcoming match (Day 2)
+export const nextMatch = {
+  id: "match-02",
+  stage: "Round 1 (Match 2 — Day 2)",
+  date: "Saturday, 07 Nov 2026",
+  time: "8:45 PM IST",
+  venue: "Peruvallur Panjayath Stadium",
+  teamHome: {
+    id: "kmg-mavoor",
+    name: "KMG MAVOOR",
+    nameMl: "കെ.എം.ജി മാവൂർ",
+    shortName: "KMG",
+    city: "Mavoor",
+    color: "#15803d",
+    textColor: "#ffffff",
+    badgeBg: "from-green-700 to-emerald-950",
+  },
+  teamAway: {
+    id: "shooters-padanna",
+    name: "SHOOTERS PADANNA",
+    nameMl: "ഷൂട്ടേഴ്സ് പടന്ന",
+    shortName: "SHOOTERS",
+    city: "Padanna",
+    color: "#10b981",
+    textColor: "#ffffff",
+    badgeBg: "from-emerald-500 to-green-950",
+  }
+};
 
 export const participatingTeams = [
   {
