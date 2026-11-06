@@ -1819,7 +1819,20 @@ export default function AdminDeskSection({
                 })()}
               </div>
 
-              {/* SECTION F: MAN OF THE MATCH (MVP) AWARD CONTROL */}
+              {/* SECTION F: MAN OF THE MATCH (MVP) AWARD CONTROL - Only available after FULL_TIME */}
+              {matchState.status !== 'FULL_TIME' ? (
+                <div className={`p-4 sm:p-5 rounded-3xl border space-y-2 ${isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 rounded-xl bg-slate-500/20 text-slate-400 font-black">
+                      <Star className="w-4 h-4" />
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-black font-sports uppercase tracking-wider text-slate-500">Man of the Match (MVP) Governance</h4>
+                      <p className="text-[10px] text-slate-400">🔒 Available only after Full Time (60:00). Match must be completed first.</p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
               <div className={`p-4 sm:p-5 rounded-3xl border space-y-4 ${
                 isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
@@ -1993,8 +2006,7 @@ export default function AdminDeskSection({
                   )}
                 </div>
               </div>
-
-              {/* ACTION FOOTER */}
+              )}
               <div className="pt-2">
                 <button
                   onClick={handleSaveAndBroadcast}

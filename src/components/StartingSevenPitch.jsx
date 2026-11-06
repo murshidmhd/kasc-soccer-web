@@ -282,7 +282,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         !e.key || 
         e.key === 'kasc_official_match_state_v2' || 
         e.key === 'kasc_player_disciplinary_records_v1' ||
-        e.key === 'kasc_lineup_tactics_v1'
+        e.key === 'kasc_lineup_tactics_v2'
       ) {
         syncAll();
       }
