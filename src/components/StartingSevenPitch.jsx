@@ -642,7 +642,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                           <img
                             src={sub.photoUrl}
                             alt={sub.name}
-                            className="w-full h-full object-cover relative z-1"
+                            className="w-full h-full object-cover absolute inset-0 z-10"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
                             }}
@@ -702,7 +702,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                           <img
                             src={sub.photoUrl}
                             alt={sub.name}
-                            className="w-full h-full object-cover relative z-1"
+                            className="w-full h-full object-cover absolute inset-0 z-10"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
                             }}
@@ -940,7 +940,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                     <img
                       src={activePlayer.photoUrl}
                       alt={activePlayer.name}
-                      className="w-full h-full object-cover relative z-1"
+                      className="w-full h-full object-cover absolute inset-0 z-10"
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                       }}
@@ -1145,7 +1145,7 @@ function DualPitchPlayerNode({
             <img
               src={player.photoUrl}
               alt={player.name}
-              className="w-full h-full object-cover relative z-1"
+              className="w-full h-full object-cover absolute inset-0 z-10"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}

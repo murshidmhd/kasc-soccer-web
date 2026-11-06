@@ -46,8 +46,8 @@ export const SHOW_NATIONALITY = false;
 export const AWARDS_NOTE = true;
 
 // Bandwidth & Media Control Flags
-export const VIDEO_AUTOPLAY_ENABLED = false;
-export const SHOW_HOME_TEASER = false;
+export const VIDEO_AUTOPLAY_ENABLED = true;
+export const SHOW_HOME_TEASER = true;
 
 // Polling intervals (Ready for live backend)
 export const LIVE_POLL_MS = 10000;
