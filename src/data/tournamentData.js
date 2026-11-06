@@ -70,38 +70,6 @@ export const fixtures = [
     badge1Color: "from-amber-500 to-red-800",
     badge2Color: "from-zinc-800 to-black",
     stadium: "Peruvallur Panjayath Stadium"
-  },
-  {
-    id: "m2",
-    day: "Day 2",
-    date: "07 Nov 2026",
-    time: "08:45 PM",
-    stage: "Round 1",
-    team1: "SUPER STUDIO MALAPPURAM",
-    team2: "AYC UCHARAKADAVU",
-    status: "Upcoming",
-    score1: null,
-    score2: null,
-    confirmed: true,
-    badge1Color: "from-blue-600 to-indigo-900",
-    badge2Color: "from-cyan-500 to-blue-700",
-    stadium: "Peruvallur Panjayath Stadium"
-  },
-  {
-    id: "m3",
-    day: "Day 3",
-    date: "08 Nov 2026",
-    time: "08:45 PM",
-    stage: "Round 1",
-    team1: "LINSHA MEDICALS MANNARKKAD",
-    team2: "SOCCER SPORTING SHORNUR",
-    status: "Upcoming",
-    score1: null,
-    score2: null,
-    confirmed: true,
-    badge1Color: "from-emerald-600 to-teal-900",
-    badge2Color: "from-rose-600 to-red-900",
-    stadium: "Peruvallur Panjayath Stadium"
   }
 ];
 
