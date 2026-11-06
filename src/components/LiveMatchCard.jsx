@@ -27,9 +27,6 @@ import {
   getUserRateLimitStatus,
   getCalculatedMatchTime,
   getDaysToKickoff,
-  isDemoModeActive,
-  setDemoModeActive,
-  getDemoCommentaryIfDev,
   SEVENS_HALF_MINUTES,
   SEVENS_TOTAL_MINUTES
 } from '../utils/matchStateManager';
@@ -41,8 +38,6 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
   const [rateLimit, setRateLimit] = useState(getUserRateLimitStatus);
   const [toastMessage, setToastMessage] = useState(null);
   const [timelineTab, setTimelineTab] = useState('commentary'); // 'timeline' | 'commentary'
-  const [isDemo, setIsDemo] = useState(isDemoModeActive);
-  const [demoCommentary, setDemoCommentary] = useState([]);
   const [goalShareModal, setGoalShareModal] = useState({ isOpen: false, goalData: null });
   const [isOnline, setIsOnline] = useState(() => (typeof navigator !== 'undefined' ? navigator.onLine : true));
   const [nowTs, setNowTs] = useState(Date.now());
@@ -67,26 +62,11 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
       setClock(getCalculatedMatchTime(newState));
     };
 
-    const handleDemoChange = (e) => {
-      setIsDemo(Boolean(e.detail));
-    };
-
     window.addEventListener('kasc_match_state_updated', handleStateUpdate);
-    window.addEventListener('kasc_demo_mode_changed', handleDemoChange);
     return () => {
       window.removeEventListener('kasc_match_state_updated', handleStateUpdate);
-      window.removeEventListener('kasc_demo_mode_changed', handleDemoChange);
     };
   }, []);
-
-  // Dynamic load of demo commentary strictly in DEV mode
-  useEffect(() => {
-    if (import.meta.env.DEV && isDemo) {
-      getDemoCommentaryIfDev().then(setDemoCommentary);
-    } else {
-      setDemoCommentary([]);
-    }
-  }, [isDemo]);
 
   // Continuous 1-second ticker interval for live moving clock, rate limit & relative time
   useEffect(() => {
@@ -154,16 +134,6 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
 
   // Auto-generate commentary feed from logged events (newest first)
   const commentaryLines = useMemo(() => {
-    if (import.meta.env.DEV && isDemo && demoCommentary.length > 0) {
-      return demoCommentary.map((item, idx) => ({
-        id: `demo-${idx}`,
-        minute: item.min,
-        type: item.type,
-        mainLine: lang === 'ml' ? item.textMl : item.textEn,
-        noteText: null
-      }));
-    }
-
     if (!matchState.events || matchState.events.length === 0) {
       return [];
     }
@@ -224,14 +194,14 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
         type: evt.type
       };
     });
-  }, [matchState.events, isDemo, demoCommentary, lang]);
+  }, [matchState.events, lang]);
 
   const getStatusBadge = () => {
     if (!isLive) {
       return (
         <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950/70 text-blue-900 dark:text-blue-200 font-bold text-xs border border-blue-200 dark:border-blue-800 flex items-center gap-1.5">
           <Calendar className="w-3.5 h-3.5 text-blue-700 dark:text-blue-400" />
-          <span>{lang === 'ml' ? '06 നവം • 8:00 PM' : '06 Nov • 8:00 PM'}</span>
+          <span>{lang === 'ml' ? '06 നവം • 8:45 PM' : '06 Nov • 8:45 PM'}</span>
         </span>
       );
     }
@@ -295,62 +265,13 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           <p className="text-xs text-slate-600 dark:text-slate-300 font-medium leading-[1.5]">
             {isLive
               ? (lang === 'ml' ? 'ഔദ്യോഗിക തത്സമയ സ്കോറും പന്ത് തട്ടുന്ന നിമിഷങ്ങളും' : 'Official live score verified by Ground Referee Desk')
-              : (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം: 2026 നവംബർ 06, രാത്രി 8:00 മണിക്ക്' : 'Opening Match: Nov 06, 2026, 8:00 PM IST')}
+              : (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം: 2026 നവംബർ 06, രാത്രി 8:45 മണിക്ക്' : 'Opening Match: Nov 06, 2026, 8:45 PM IST')}
           </p>
         </div>
-
-        {/* Demo Mode Toggle (DEV Only, completely impossible in production) */}
-        {import.meta.env.DEV && (
-          <div className="flex items-center gap-2 self-start sm:self-auto">
-            <button
-              onClick={() => {
-                const next = !isDemo;
-                setDemoModeActive(next);
-                setIsDemo(next);
-              }}
-              className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
-                isDemo 
-                  ? 'bg-gold text-navy-900 border-gold font-black shadow-xs' 
-                  : 'bg-white dark:bg-navy-700 border-surface-border dark:border-navy-600 text-navy-900 dark:text-muted-on-navy hover:bg-surface-light dark:hover:bg-navy-600'
-              }`}
-              title="Toggle sample demo match simulation (dev only)"
-            >
-              <span>⚡ Demo:</span>
-              <span className="font-black underline">{isDemo ? 'ON' : 'OFF'}</span>
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Main Match Scorecard */}
       <div className={`rounded-3xl overflow-hidden border ${isUdayaMatch ? 'border-l-4 border-l-purple-600' : ''} p-4 sm:p-7 relative shadow-card transition-colors surface-card`}>
-        {/* Diagonal DEMO Watermark across score card (Development Only) */}
-        {import.meta.env.DEV && isDemo && (
-          <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-10 select-none">
-            <span className="text-6xl sm:text-8xl font-black font-sports text-red-500/15 dark:text-red-400/20 uppercase tracking-widest -rotate-12 border-4 border-dashed border-red-500/20 dark:border-red-400/30 py-2 px-8 rounded-3xl">
-              DEMO
-            </span>
-          </div>
-        )}
-
-        {/* DEMO MODE ACTIVE WARNING BANNER (DEV Only) */}
-        {import.meta.env.DEV && isDemo && (
-          <div className="mb-4 p-2.5 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-900 dark:text-amber-200 text-xs font-bold flex items-center justify-between gap-2 relative z-20">
-            <div className="flex items-center gap-1.5">
-              <span className="text-base">⚡</span>
-              <span>DEMO MODE ACTIVE: Showing simulated sample match. Toggle OFF for real pre-kickoff state.</span>
-            </div>
-            <button
-              onClick={() => {
-                setDemoModeActive(false);
-                setIsDemo(false);
-              }}
-              className="text-[11px] underline font-black text-amber-950 dark:text-amber-100 shrink-0"
-            >
-              Turn Off
-            </button>
-          </div>
-        )}
 
         {/* Calm Live Scores Broadcast Banner (Rule 4) */}
         {WHATSAPP_CHANNEL_URL && (
@@ -379,7 +300,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/70 text-blue-900 dark:text-blue-200 font-bold text-[10px] sm:text-xs border border-blue-200 dark:border-blue-800">
               <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-              <span>{isDemo ? 'Demo' : 'Official Matchday 1'}</span>
+              <span>Official Matchday 1</span>
             </span>
             <span className="text-[11px] text-card-muted hidden sm:inline">•</span>
             <span className="text-[11px] text-card-muted font-medium hidden sm:inline">
@@ -410,7 +331,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
             </span>
           </div>
 
-          {/* Center Official Scores (if Live or Demo) OR Single Kickoff Date/Time (if Upcoming) */}
+          {/* Center Official Scores (if Live) OR Single Kickoff Date/Time (if Upcoming) */}
           <div className="col-span-4 flex flex-col items-center justify-center">
             {isLive ? (
               <div className="space-y-1">
@@ -426,17 +347,12 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
 
                 {/* Trust Details */}
                 <div className="flex flex-col items-center gap-1">
-                  {isDemo ? (
-                    <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/70 border border-amber-300 dark:border-amber-700 text-amber-900 dark:text-amber-200 text-[10px] font-bold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                      <span>Demo</span>
-                    </div>
-                  ) : isScoreEnteredByDesk ? (
+                  {isScoreEnteredByDesk && (
                     <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                       <span>Ground Referee Score</span>
                     </div>
-                  ) : null}
+                  )}
 
                   {/* Relative timestamp ticker & Reconnecting offline indicator */}
                   <div className="flex items-center gap-2">
@@ -483,7 +399,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                 </div>
                 {/* One short line for kickoff date and time, no repeated days text */}
                 <div className="text-[10px] sm:text-xs font-black text-card-title bg-surface-light dark:bg-navy-900 px-2.5 py-1 rounded-lg border border-surface-border dark:border-navy-700 shadow-2xs">
-                  06 Nov • 8:00 PM
+                  06 Nov • 8:45 PM
                 </div>
               </div>
             )}
@@ -510,7 +426,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
             </div>
             <p className="text-[11px] text-card-muted leading-relaxed">
               {lang === 'ml'
-                ? 'നവംബർ 6 ന് രാത്രി 8:00 ന് ഗ്രൗണ്ട് റഫറി വിസിൽ മുഴങ്ങുന്നതോടെ ഔദ്യോഗിക ലൈവ് സ്കോർബോർഡും ടൈംലൈനും സജീവമാകും.'
+                ? 'നവംബർ 6 ന് രാത്രി 8:45 ന് ഗ്രൗണ്ട് റഫറി വിസിൽ മുഴങ്ങുന്നതോടെ ഔദ്യോഗിക ലൈവ് സ്കോർബോർഡും ടൈംലൈനും സജീവമാകും.'
                 : 'Official live scoreboard, goal alerts and referee timeline will activate at match kickoff.'}
             </p>
           </div>
@@ -561,7 +477,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           </div>
         )}
 
-        {/* LIVE-ONLY SECTION: All live elements hidden until kickoff or demo mode */}
+        {/* LIVE-ONLY SECTION: All live elements hidden until match kickoff */}
         {isLive && (
           <div className="mt-6 pt-5 border-t border-slate-200 dark:border-navy-700 bg-slate-50 dark:bg-navy-900/60 -mx-4 -mb-4 sm:-mx-7 sm:-mb-7 p-4 sm:p-6 rounded-b-3xl space-y-4">
             {/* FAN CROWD GOAL REPORTING: Controlled strictly by FAN_REPORTS_ENABLED */}

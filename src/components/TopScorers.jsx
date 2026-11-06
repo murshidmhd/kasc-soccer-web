@@ -110,7 +110,7 @@ export default function TopScorers({ lang, isDarkMode }) {
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-navy-800/80 border border-navy-700 self-start sm:self-center">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-[11px] font-bold text-slate-200">
-              {lang === 'ml' ? 'ഉദ്ഘാടനം: നവംബർ 06, രാത്രി 8 PM' : 'Kickoff: Nov 06, 8:00 PM'}
+              {lang === 'ml' ? 'ഉദ്ഘാടനം: നവംബർ 06, രാത്രി 8:45 PM' : 'Kickoff: Nov 06, 8:45 PM'}
             </span>
           </div>
         </div>
@@ -334,7 +334,7 @@ export default function TopScorers({ lang, isDarkMode }) {
                 </h3>
                 <p className="text-xs text-card-muted leading-relaxed">
                   {lang === 'ml'
-                    ? 'നവംബർ 06 വെള്ളിയാഴ്ച രാത്രി 8:00 മണിക്ക് ഉദ്ഘാടന മത്സരം ആരംഭിക്കുന്നതോടെ ഗോൾഡൻ ബൂട്ട്, ക്ലീൻ ഷീറ്റ്, ഫെയർ പ്ലേ പട്ടികകൾ റഫറി സ്കോർ കാർഡുകളിൽ നിന്ന് തത്സമയം അപ്ഡേറ്റ് ചെയ്യപ്പെടും.'
+                    ? 'നവംബർ 06 വെള്ളിയാഴ്ച രാത്രി 8:45 മണിക്ക് ഉദ്ഘാടന മത്സരം ആരംഭിക്കുന്നതോടെ ഗോൾഡൻ ബൂട്ട്, ക്ലീൻ ഷീറ്റ്, ഫെയർ പ്ലേ പട്ടികകൾ റഫറി സ്കോർ കാർഡുകളിൽ നിന്ന് തത്സമയം അപ്ഡേറ്റ് ചെയ്യപ്പെടും.'
                     : 'The Golden Boot, Golden Glove, and Fair Play standings will activate live from the referee scorer desk once Match 1 kicks off on Friday, Nov 06.'}
                 </p>
               </div>

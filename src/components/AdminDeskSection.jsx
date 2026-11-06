@@ -800,7 +800,7 @@ export default function AdminDeskSection({
                   <div>
                     {matchState.status === 'UPCOMING' && (
                       <span className="px-3 py-1 rounded-full bg-slate-800 text-slate-300 font-bold text-xs border border-slate-700">
-                        ⚪ Pre-Match (8:00 PM)
+                        ⚪ Pre-Match (8:45 PM)
                       </span>
                     )}
                     {(matchState.status === '1ST_HALF' || matchState.status === '2ND_HALF') && (

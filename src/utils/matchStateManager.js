@@ -18,7 +18,7 @@ export const MAX_REPORTS_PER_USER = 3; // Strict 3 reports max per device
 export const SEVENS_HALF_MINUTES = HALF_LENGTH_MINUTES;
 export const SEVENS_TOTAL_MINUTES = MAX_MATCH_MINUTES;
 
-// Real Official Match State (Pre-Kickoff, authentic state before Nov 6, 2026, 8:00 PM IST)
+// Real Official Match State (Pre-Kickoff, authentic state before Nov 6, 2026, 8:45 PM IST)
 export const realOfficialMatchState = {
   officialScoreHome: 0,
   officialScoreAway: 0,
@@ -43,18 +43,9 @@ export const realOfficialMatchState = {
 
 export const DEMO_MODE_KEY = 'kasc_demo_mode_active';
 
-// Demo mode is available strictly in DEV builds or when ?demo=1 is present in non-production
+// Demo mode disabled: today is matchday, live referee desk controls official match state
 export function isDemoModeActive() {
-  if (!import.meta.env.DEV) {
-    return false;
-  }
-  try {
-    const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
-    const hasDemoParam = urlParams?.get('demo') === '1';
-    return hasDemoParam || localStorage.getItem(DEMO_MODE_KEY) === 'true';
-  } catch (e) {
-    return false;
-  }
+  return false;
 }
 
 // In production builds, demo toggling is impossible and does nothing
@@ -91,7 +82,7 @@ export async function getDemoCommentaryIfDev() {
 }
 
 export function getDaysToKickoff() {
-  const kickoff = new Date('2026-11-06T20:00:00+05:30').getTime();
+  const kickoff = new Date('2026-11-06T20:45:00+05:30').getTime();
   const diff = kickoff - Date.now();
   if (diff <= 0) return 0;
   return Math.ceil(diff / (1000 * 60 * 60 * 24));
@@ -252,6 +243,8 @@ export function getStoredMatchState() {
     }
     const parsed = JSON.parse(raw);
     if (!isDemoModeActive() && (parsed.updatedBy === 'Demo Simulation Mode' || (parsed.status === '2ND_HALF' && parsed.officialScoreHome === 2 && parsed.officialScoreAway === 1))) {
+      localStorage.removeItem(DEMO_MODE_KEY);
+      localStorage.removeItem(MATCH_STORAGE_KEY);
       return realOfficialMatchState;
     }
     return parsed;

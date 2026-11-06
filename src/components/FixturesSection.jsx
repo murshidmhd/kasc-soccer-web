@@ -52,8 +52,8 @@ export default function FixturesSection({ lang, isDarkMode }) {
             <MapPin className="w-3.5 h-3.5 text-royal dark:text-sky shrink-0" />
             <span>
               {lang === 'ml' 
-                ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം, പറമ്പിൽ പീടിക • രാത്രി 8:00 PM IST' 
-                : 'Peruvallur Panjayath Stadium, Parambil Peedika • 8:00 PM IST Floodlit'}
+                ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം, പറമ്പിൽ പീടിക • രാത്രി 8:45 PM IST' 
+                : 'Peruvallur Panjayath Stadium, Parambil Peedika • 8:45 PM IST Floodlit'}
             </span>
           </div>
         </div>

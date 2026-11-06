@@ -193,7 +193,7 @@ export default function Footer({ lang, isDarkMode, setActiveTab }) {
             <MapPin className="w-4 h-4 text-gold shrink-0" />
             <div className="truncate">
               <span className="text-white font-bold block truncate">Peruvallur Panjayath Stadium</span>
-              <span className="text-[11px] text-navy-muted">Parambil Peedika, Malappuram • 8:00 PM IST</span>
+              <span className="text-[11px] text-navy-muted">Parambil Peedika, Malappuram • 8:45 PM IST</span>
             </div>
           </div>
 

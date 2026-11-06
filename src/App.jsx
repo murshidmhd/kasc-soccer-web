@@ -33,10 +33,9 @@ import { SHOW_LOCAL_ONLY_FEATURES, WHATSAPP_CHANNEL_URL, SHOW_BRACKET } from './
 const SevensPenaltyGame = React.lazy(() => import('./components/SevensPenaltyGame'));
 // Lazy-load Squad Spotlight video showcase (Rule 12: does not delay live score or fixtures)
 const SquadSpotlightSection = React.lazy(() => import('./components/SquadSpotlightSection'));
-// Lazy-load Dev-only Admin and Scorer Desk components
+// Lazy-load Dev-only Admin Desk component
 const AdminDeskSection = React.lazy(() => import('./components/AdminDeskSection'));
 const AdminScoreModal = React.lazy(() => import('./components/AdminScoreModal'));
-const ScorerDemoModal = React.lazy(() => import('./components/ScorerDemoModal'));
 // Lazy-load First-Visit Welcome Bottom Sheet (Rule 9: performance optimized)
 const WelcomeBottomSheet = React.lazy(() => import('./components/WelcomeBottomSheet'));
 
@@ -87,7 +86,6 @@ export default function App() {
   const [lang, setLang] = useState('ml'); // Default Malayalam
   const [isDarkMode, setIsDarkMode] = useState(false); // Default Clean White Theme
   const [activeTab, setActiveTab] = useState('live'); // 'live' | 'fixtures' | 'teams' | 'stats' | 'promo' | 'venue'
-  const [isScorerDemoOpen, setIsScorerDemoOpen] = useState(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   const [isVipPassModalOpen, setIsVipPassModalOpen] = useState(false);
@@ -272,7 +270,6 @@ export default function App() {
                   isDarkMode={isDarkMode}
                   onOpenAdminModal={() => setIsAdminModalOpen(true)}
                   onOpenPassModal={() => setIsVipPassModalOpen(true)}
-                  onOpenDemoModal={() => setIsScorerDemoOpen(true)}
                   onOpenTicketModal={() => setIsTicketModalOpen(true)}
                   onNavigateTab={handleTabChange}
                 />
@@ -344,7 +341,7 @@ export default function App() {
                           {lang === 'ml' ? 'ഇന്നത്തെ & വരാനിരിക്കുന്ന മത്സരങ്ങൾ' : "TODAY'S & UPCOMING FIXTURES"}
                         </h3>
                         <p className="text-xs text-card-muted font-medium leading-[1.5]">
-                          {lang === 'ml' ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം • രാത്രി 8:00 PM IST' : 'Peruvallur Panjayath Stadium • 8:00 PM IST'}
+                          {lang === 'ml' ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം • രാത്രി 8:45 PM IST' : 'Peruvallur Panjayath Stadium • 8:45 PM IST'}
                         </p>
                       </div>
                     </div>
@@ -451,7 +448,7 @@ export default function App() {
                               {isMatchLive && <span className="w-1.5 h-1.5 rounded-full bg-gold animate-ping"></span>}
                               {isMatchLive ? 'LIVE' : (isNextMatch ? (lang === 'ml' ? 'അടുത്ത മത്സരം' : 'Next Match') : (lang === 'ml' ? 'വരാനിരിക്കുന്നു' : 'Upcoming'))}
                             </span>
-                            <span className="text-card-muted font-mono">8:00 PM IST</span>
+                            <span className="text-card-muted font-mono">{match.time || '8:45 PM IST'}</span>
                           </div>
                         </div>
                       );
@@ -760,11 +757,6 @@ export default function App() {
             lang={lang}
             onClose={() => setIsAdminModalOpen(false)}
           />
-          <ScorerDemoModal
-            isOpen={isScorerDemoOpen}
-            isDarkMode={isDarkMode}
-            onClose={() => setIsScorerDemoOpen(false)}
-          />
         </React.Suspense>
       )}
 
@@ -791,7 +783,7 @@ export default function App() {
           isDarkMode={isDarkMode}
           setIsDarkMode={setIsDarkMode}
           isLiveMatch={false}
-          isOtherModalOpen={isAdminModalOpen || isScorerDemoOpen || isTicketModalOpen || isVipPassModalOpen || isTourOpenManually}
+          isOtherModalOpen={isAdminModalOpen || isTicketModalOpen || isVipPassModalOpen || isTourOpenManually}
           onNavigate={handleTabChange}
         />
       </React.Suspense>

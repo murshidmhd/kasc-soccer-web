@@ -93,7 +93,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
             </div>
 
             <div className="text-[11px] sm:text-xs font-bold font-mono text-navy-muted shrink-0">
-              <span>06 Nov • 8:00 PM IST</span>
+              <span>06 Nov • 8:45 PM IST</span>
             </div>
           </div>
 

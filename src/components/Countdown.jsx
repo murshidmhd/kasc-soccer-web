@@ -144,8 +144,8 @@ export default function Countdown({ lang, isDarkMode }) {
             <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
             <span>
               {lang === 'ml'
-                ? '2026 നവംബർ 06 വെള്ളി | രാത്രി 8:00 മണിക്ക് ആരംഭിക്കുന്നു'
-                : 'Starts Friday, 06 November 2026 at 8:00 PM IST'}
+                ? '2026 നവംബർ 06 വെള്ളി | രാത്രി 8:45 മണിക്ക് ആരംഭിക്കുന്നു'
+                : 'Starts Friday, 06 November 2026 at 8:45 PM IST'}
             </span>
           </div>
 

@@ -34,19 +34,19 @@ export const BRACKET_DATA = {
     confirmed: f.confirmed
   })),
   quarterFinals: [
-    { id: 'qf1', matchNum: 'QF 1', date: '20 Nov', time: '8:00 PM', team1Slot: 'Winner Match 1', team2Slot: 'Winner Match 2', status: 'Quarter Final', winner: null, sfSlot: 'sf1' },
-    { id: 'qf2', matchNum: 'QF 2', date: '22 Nov', time: '8:00 PM', team1Slot: 'Winner Match 3', team2Slot: 'Winner Match 4', status: 'Quarter Final', winner: null, sfSlot: 'sf1' },
-    { id: 'qf3', matchNum: 'QF 3', date: '24 Nov', time: '8:00 PM', team1Slot: 'Winner Match 5', team2Slot: 'Winner Match 6', status: 'Quarter Final', winner: null, sfSlot: 'sf2' },
-    { id: 'qf4', matchNum: 'QF 4', date: '26 Nov', time: '8:00 PM', team1Slot: 'Winner Match 7', team2Slot: 'Winner Match 8', status: 'Quarter Final', winner: null, sfSlot: 'sf2' }
+    { id: 'qf1', matchNum: 'QF 1', date: '20 Nov', time: '8:45 PM', team1Slot: 'Winner Match 1', team2Slot: 'Winner Match 2', status: 'Quarter Final', winner: null, sfSlot: 'sf1' },
+    { id: 'qf2', matchNum: 'QF 2', date: '22 Nov', time: '8:45 PM', team1Slot: 'Winner Match 3', team2Slot: 'Winner Match 4', status: 'Quarter Final', winner: null, sfSlot: 'sf1' },
+    { id: 'qf3', matchNum: 'QF 3', date: '24 Nov', time: '8:45 PM', team1Slot: 'Winner Match 5', team2Slot: 'Winner Match 6', status: 'Quarter Final', winner: null, sfSlot: 'sf2' },
+    { id: 'qf4', matchNum: 'QF 4', date: '26 Nov', time: '8:45 PM', team1Slot: 'Winner Match 7', team2Slot: 'Winner Match 8', status: 'Quarter Final', winner: null, sfSlot: 'sf2' }
   ],
   semiFinals: [
-    { id: 'sf1', matchNum: 'SF 1', date: '30 Nov', time: '8:00 PM', team1Slot: 'Winner QF 1', team2Slot: 'Winner QF 2', status: 'Semi Final', winner: null, finalSlot: 'final' },
-    { id: 'sf2', matchNum: 'SF 2', date: '02 Dec', time: '8:00 PM', team1Slot: 'Winner QF 3', team2Slot: 'Winner QF 4', status: 'Semi Final', winner: null, finalSlot: 'final' }
+    { id: 'sf1', matchNum: 'SF 1', date: '30 Nov', time: '8:45 PM', team1Slot: 'Winner QF 1', team2Slot: 'Winner QF 2', status: 'Semi Final', winner: null, finalSlot: 'final' },
+    { id: 'sf2', matchNum: 'SF 2', date: '02 Dec', time: '8:45 PM', team1Slot: 'Winner QF 3', team2Slot: 'Winner QF 4', status: 'Semi Final', winner: null, finalSlot: 'final' }
   ],
   grandFinal: {
     id: 'final',
     matchNum: 'FINAL',
-    date: '06 Dec 2026 • 8:00 PM',
+    date: '06 Dec 2026 • 8:45 PM',
     venue: 'Peruvallur Panjayath Stadium',
     team1Slot: 'Winner Semi Final 1',
     team2Slot: 'Winner Semi Final 2',
@@ -149,7 +149,7 @@ export default function TournamentBracket({ lang, isDarkMode }) {
           {/* Venue shown once at the top of the page (Rule 12) */}
           <p className="text-xs text-card-muted font-medium mt-0.5 flex items-center gap-1 leading-[1.4]">
             <MapPin className="w-3.5 h-3.5 text-royal dark:text-sky shrink-0" />
-            <span>Peruvallur Panjayath Stadium • 8:00 PM IST</span>
+            <span>Peruvallur Panjayath Stadium • 8:45 PM IST</span>
           </p>
         </div>
 
@@ -432,7 +432,7 @@ export default function TournamentBracket({ lang, isDarkMode }) {
                   </div>
                 </div>
                 <span className="text-xs font-mono text-gold font-bold">
-                  8:00 PM IST
+                  8:45 PM IST
                 </span>
               </div>
 

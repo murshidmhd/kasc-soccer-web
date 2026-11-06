@@ -107,11 +107,11 @@ export default function VenueSection({ lang, isDarkMode }) {
               }`}>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Kickoff Time:</span>
-                  <span className="font-bold text-amber-700">8:00 PM Sharp</span>
+                  <span className="font-bold text-amber-700">8:45 PM Sharp</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Halves:</span>
-                  <span className="font-bold text-slate-900">25 + 25 Minutes</span>
+                  <span className="font-bold text-slate-900">30 + 30 Minutes</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Tie Breaker:</span>

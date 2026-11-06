@@ -79,7 +79,7 @@ export default function ClubBottomSheet({
 
   const nov6Match = {
     date: '06 Nov 2026',
-    time: '08:00 PM',
+    time: '08:45 PM',
     team1: openingMatch.teamHome.name,
     team2: openingMatch.teamAway.name
   };

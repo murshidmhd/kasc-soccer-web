@@ -140,7 +140,7 @@ export default function HeadToHeadCard({ lang, isDarkMode }) {
             </div>
             <div className="flex items-center justify-between py-1">
               <span className="font-medium text-slate-500">{lang === 'ml' ? 'കിക്കോഫ്' : 'Kickoff'}:</span>
-              <span className="font-bold text-blue-700">8:00 PM IST Floodlight</span>
+              <span className="font-bold text-blue-700">8:45 PM IST Floodlight</span>
             </div>
           </div>
         </div>

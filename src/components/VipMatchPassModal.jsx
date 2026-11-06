@@ -209,7 +209,7 @@ export default function VipMatchPassModal({ isOpen, onClose, lang }) {
                   </div>
                   <div className="flex items-center justify-between">
                     <span>📅 Kickoff:</span>
-                    <strong className="text-amber-400">06 Nov 2026 • 8:00 PM IST</strong>
+                    <strong className="text-amber-400">06 Nov 2026 • 8:45 PM IST</strong>
                   </div>
                 </div>
               </div>
