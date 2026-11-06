@@ -44,7 +44,7 @@ export default function StadiumAnnouncementBanner({ lang, isDarkMode }) {
           </div>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl surface-card-subtle border border-surface-border dark:border-navy-700 text-xs text-gold font-bold font-mono">
             <Calendar className="w-3.5 h-3.5 text-gold" />
-            <span>06 Nov • 8 PM</span>
+            <span>06 Nov • 8:45 PM</span>
           </div>
         </div>
       </div>

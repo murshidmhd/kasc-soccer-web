@@ -127,37 +127,11 @@ const TOURNAMENT_SQUADS = {
       { num: 14, name: 'Nizar' },
       { num: 17, name: 'Ajmal Jr' }
     ]
-  },
-  udaya: {
-    id: 'udaya',
-    name: 'UDAYA PARAMBIL PEEDIKA',
-    shortName: 'UDAYA',
-    nameMl: 'ഉദയ പറമ്പിൽ പീടിക',
-    shirtColor: '#7C3AED', // Purple
-    status: 'confirmed',
-    confirmedAt: '06 Nov 6:30 PM',
-    formation: '1-2-2-2',
-    starting: [
-      { num: 1, name: 'Shamseer', pos: 'GK', captain: false, isGK: true },
-      { num: 4, name: 'Shameer K.', pos: 'CB', captain: false },
-      { num: 3, name: 'Faisal M.', pos: 'RB', captain: false },
-      { num: 7, name: 'Riyas K.', pos: 'CM', captain: true },
-      { num: 8, name: 'Suhail P.', pos: 'AM', captain: false },
-      { num: 9, name: 'Ibrahim Soumahoro', pos: 'ST', captain: false },
-      { num: 10, name: 'Asif Ali', pos: 'CF', captain: false }
-    ],
-    subs: [
-      { num: 13, name: 'Junaid' },
-      { num: 11, name: 'Salman' },
-      { num: 14, name: 'Anas' },
-      { num: 15, name: 'Haris' },
-      { num: 18, name: 'Rahul' }
-    ]
   }
 };
 
 export default function StartingSevenPitch({ lang, isDarkMode }) {
-  const [selectedTeamKey, setSelectedTeamKey] = useState('base'); // Default to BASE PERUMBAVUR / Usman
+  const [selectedTeamKey, setSelectedTeamKey] = useState('krsc'); // Default to KRSC Kozhikkode
   const [activePlayer, setActivePlayer] = useState(null);
   const [matchEvents, setMatchEvents] = useState([]);
   const [disciplinaryCards, setDisciplinaryCards] = useState(() => getAllDisciplinaryRecords());
@@ -190,7 +164,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
 
   if (!SHOW_LINEUPS) return null;
 
-  const currentSquad = TOURNAMENT_SQUADS[selectedTeamKey] || TOURNAMENT_SQUADS.base;
+  const currentSquad = TOURNAMENT_SQUADS[selectedTeamKey] || TOURNAMENT_SQUADS.krsc;
 
   // Helper to compute goals & cards strictly from REAL MATCH EVENTS & DISCIPLINARY DB
   const getPlayerStatsAndDisciplinary = (playerName, playerNum) => {
@@ -264,23 +238,8 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         </div>
       </div>
 
-      {/* 2. Team Switcher (Match 1 Stars: BASE PERUMBAVUR & KRSC KOZHIKKODE + UDAYA) */}
-      <div className="p-1 rounded-2xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700 grid grid-cols-3 gap-1.5">
-        <button
-          onClick={() => { setSelectedTeamKey('base'); setActivePlayer(null); }}
-          className={`min-h-[44px] px-2.5 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 ${
-            selectedTeamKey === 'base'
-              ? 'btn-royal text-white shadow-xs font-black'
-              : 'text-card-muted hover:text-card-title'
-          }`}
-          aria-label="View Base Perumbavur Lineup"
-        >
-          <div className="w-5 h-5 rounded-full bg-white p-0.5 border border-surface-border dark:border-navy-700 shadow-2xs flex items-center justify-center shrink-0">
-            <TeamLogo teamName="BASE PERUMBAVUR" className="w-full h-full rounded-full object-contain" />
-          </div>
-          <span className="truncate">BASE</span>
-        </button>
-
+      {/* 2. Team Switcher (Today's Opening Match: KRSC KOZHIKKODE vs BASE PERUMBAVUR) */}
+      <div className="p-1 rounded-2xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700 grid grid-cols-2 gap-1.5">
         <button
           onClick={() => { setSelectedTeamKey('krsc'); setActivePlayer(null); }}
           className={`min-h-[44px] px-2.5 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 ${
@@ -297,18 +256,18 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         </button>
 
         <button
-          onClick={() => { setSelectedTeamKey('udaya'); setActivePlayer(null); }}
+          onClick={() => { setSelectedTeamKey('base'); setActivePlayer(null); }}
           className={`min-h-[44px] px-2.5 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 ${
-            selectedTeamKey === 'udaya'
+            selectedTeamKey === 'base'
               ? 'btn-royal text-white shadow-xs font-black'
               : 'text-card-muted hover:text-card-title'
           }`}
-          aria-label="View Udaya Parambil Peedika Lineup"
+          aria-label="View Base Perumbavur Lineup"
         >
           <div className="w-5 h-5 rounded-full bg-white p-0.5 border border-surface-border dark:border-navy-700 shadow-2xs flex items-center justify-center shrink-0">
-            <TeamLogo teamName="UDAYA PARAMBIL PEEDIKA" className="w-full h-full rounded-full object-contain" />
+            <TeamLogo teamName="BASE PERUMBAVUR" className="w-full h-full rounded-full object-contain" />
           </div>
-          <span className="truncate">UDAYA</span>
+          <span className="truncate">BASE</span>
         </button>
       </div>
 

@@ -568,7 +568,7 @@ export default function TournamentBracket({ lang, isDarkMode }) {
                   Grand Finale
                 </span>
                 <div className="p-4 rounded-2xl bg-gradient-to-r from-navy-800 to-navy-900 border-2 border-gold text-white text-xs space-y-2 shadow-xl">
-                  <div className="text-[10px] text-gold font-black uppercase">🏆 DEC 06 • 8 PM</div>
+                  <div className="text-[10px] text-gold font-black uppercase">🏆 DEC 06 • 8:45 PM</div>
                   <div className="font-sports font-black text-sm text-gold">{bracketData.grandFinal.trophy}</div>
                   <div className="text-navy-muted truncate">{bracketData.grandFinal.team1Slot}</div>
                   <div className="text-gold font-bold text-center">VS</div>
