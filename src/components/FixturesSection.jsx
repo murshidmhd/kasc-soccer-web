@@ -128,7 +128,7 @@ export default function FixturesSection({ lang, isDarkMode }) {
               const team2Name = isConfirmed ? match.team2 : '?';
 
               const isUdayaMatch = isConfirmed && (match.team1?.toUpperCase().includes('UDAYA') || match.team2?.toUpperCase().includes('UDAYA'));
-              const isNextMatch = match.id === 'm1' && match.status === 'Upcoming';
+              const isNextMatch = match.status === 'Upcoming' && isConfirmed;
               const isMatchLive = match.status === 'LIVE';
               const isCompleted = match.status === 'Completed';
 

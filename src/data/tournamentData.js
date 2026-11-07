@@ -78,7 +78,7 @@ export const fixtures = [
   {
     id: "m2",
     day: "Day 2",
-    date: "07 Nov 2026",
+    date: "08 Nov 2026",
     time: "08:45 PM",
     stage: "Round 1 (Match 2)",
     team1: "KMG MAVOOR",
@@ -113,7 +113,7 @@ export const lastMatchResult = {
 export const nextMatch = {
   id: "match-02",
   stage: "Round 1 (Match 2 — Day 2)",
-  date: "Saturday, 07 Nov 2026",
+  date: "Sunday, 08 Nov 2026",
   time: "8:45 PM IST",
   venue: "Peruvallur Panjayath Stadium",
   teamHome: {

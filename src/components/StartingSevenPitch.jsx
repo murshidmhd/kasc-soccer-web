@@ -193,7 +193,7 @@ function matchesPlayer(evt, player, teamKey) {
 }
 
 // Maps 7 squad players into 7 formation coordinate slots by tactical positions
-function mapSquadToPositions(squad, positions, side = 'home') {
+export function mapSquadToPositions(squad, positions, side = 'home') {
   const gk = squad.starting.find(p => p.isGK || p.pos === 'GK') || squad.starting[0];
   const outfielders = squad.starting.filter(p => p !== gk);
   

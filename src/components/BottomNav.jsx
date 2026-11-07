@@ -18,10 +18,10 @@ export default function BottomNav({ activeTab, setActiveTab, isDarkMode, lang })
 
   return (
     <nav 
-      className="fixed bottom-0 inset-x-0 z-50 sm:hidden border-t border-navy-700 surface-navy px-1 transition-colors"
+      className="fixed bottom-0 inset-x-0 z-50 sm:hidden border-t border-white/10 rounded-t-2xl bg-gradient-to-r from-violet-950/75 via-slate-950/80 to-indigo-950/75 backdrop-blur-2xl shadow-[0_-10px_32px_rgba(8,6,30,0.45)] px-1 transition-colors before:absolute before:inset-x-10 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/35 before:to-transparent"
       style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom, 0px))' }}
     >
-      <div className="grid grid-cols-5 items-center w-full max-w-md mx-auto">
+      <div className="grid grid-cols-5 items-stretch w-full max-w-md mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
@@ -29,19 +29,23 @@ export default function BottomNav({ activeTab, setActiveTab, isDarkMode, lang })
             <button
               key={item.id}
               onClick={() => handleTabClick(item.id)}
-              className="min-h-[52px] flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition active:scale-95 w-full min-w-0 relative"
+              className={`min-h-[56px] flex flex-col items-center justify-center gap-0.5 py-1 px-0 rounded-xl border transition active:scale-95 w-full min-w-0 relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70 ${
+                isActive
+                  ? 'bg-white/[0.09] border-white/15 shadow-inner shadow-white/5 backdrop-blur-md'
+                  : 'bg-transparent border-transparent hover:bg-white/[0.05]'
+              }`}
               aria-label={item.label}
             >
-              <Icon className={`w-6 h-6 shrink-0 transition-colors ${
+              <Icon className={`w-5 h-5 shrink-0 transition-colors ${
                 isActive ? 'text-gold' : 'text-navy-muted'
               }`} />
-              <span className={`text-[11px] mt-0.5 tracking-tight truncate w-full text-center leading-tight transition-colors ${
+              <span className={`text-[9px] mt-0 tracking-tight w-full min-w-0 text-center leading-[1.1] transition-colors ${
                 isActive ? 'text-gold font-black' : 'text-navy-muted font-medium'
               }`}>
                 {item.label}
               </span>
               {isActive && (
-                <span className="w-1.5 h-1.5 rounded-full bg-gold mt-0.5 shrink-0 animate-fadeIn"></span>
+                <span className="absolute top-0 inset-x-5 h-0.5 rounded-full bg-gradient-to-r from-transparent via-gold to-transparent shadow-[0_0_10px_rgba(245,179,1,0.75)] animate-fadeIn"></span>
               )}
             </button>
           );

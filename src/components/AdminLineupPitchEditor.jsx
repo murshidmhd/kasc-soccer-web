@@ -42,7 +42,7 @@ import {
   DEFAULT_TOURNAMENT_SQUADS
 } from '../utils/lineupManager';
 import { saveDisciplinaryRecord, removeDisciplinaryRecord } from '../utils/disciplinaryManager';
-import { getSevensFormationPositions, JerseyShirtIcon } from './StartingSevenPitch';
+import { getSevensFormationPositions, mapSquadToPositions, JerseyShirtIcon } from './StartingSevenPitch';
 
 // ─── Pitch colours per team ───────────────────────────────────────────────────
 const TEAM_META = {
@@ -86,12 +86,12 @@ function PitchPlayerToken({ player, posData, shirtColor, goals, hasYellow, hasRe
         top:  `${posData.y}%`,
         transform: 'translate(-50%, -50%)'
       }}
-      className={`group flex flex-col items-center cursor-pointer focus:outline-hidden transition active:scale-90 z-20 ${hasRed ? 'opacity-80' : ''}`}
+      className={`group flex flex-col items-center justify-center cursor-pointer focus:outline-hidden transition active:scale-90 z-20 pointer-events-auto ${hasRed ? 'opacity-85' : ''}`}
       aria-label={`Edit ${player.name}`}
     >
       {/* Avatar ring */}
       <div className="relative">
-        <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden shadow-lg border transition-transform group-hover:scale-110 group-hover:ring-2 group-hover:ring-white relative ${
+        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden shadow-lg border transition-transform group-hover:scale-105 relative ${
           hasRed ? 'ring-2 ring-rose-500 border-rose-600 bg-rose-950/60' : 'border-white/30 bg-slate-900/90'
         }`}>
           <JerseyShirtIcon
@@ -146,7 +146,7 @@ function PitchPlayerToken({ player, posData, shirtColor, goals, hasYellow, hasRe
       </div>
 
       {/* Name pill */}
-      <div className={`mt-0.5 px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-sports font-bold tracking-tight text-center leading-tight shadow max-w-[76px] truncate ${
+      <div className={`mt-0.5 px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-sports font-bold tracking-tight text-center leading-tight shadow-sm max-w-[76px] sm:max-w-[85px] truncate ${
         hasRed ? 'bg-rose-700 text-white border border-rose-500' : 'bg-navy-950/85 text-white border border-white/10'
       }`}>
         <span className="opacity-70 mr-0.5 text-[9px] font-mono">#{player.num}</span>
@@ -161,9 +161,13 @@ function PitchHalf({ teamKey, squad, formation, disciplinaryMap, goalsMap, onPla
   const meta = TEAM_META[teamKey];
   const side = meta.side;
   const positions = useMemo(() => getSevensFormationPositions(formation, side), [formation, side]);
+  const positionedPlayers = useMemo(
+    () => mapSquadToPositions(squad, positions, side),
+    [squad, positions, side]
+  );
 
   return (
-    <div className={`relative w-full ${side === 'home' ? 'h-[48%]' : 'h-[48%]'}`}>
+    <div className="absolute inset-0 pointer-events-none">
       {/* Team label */}
       <div className={`absolute ${side === 'home' ? 'top-1' : 'bottom-1'} left-2 z-30`}>
         <span className="text-[9px] font-black uppercase tracking-widest text-white/60">
@@ -178,8 +182,7 @@ function PitchHalf({ teamKey, squad, formation, disciplinaryMap, goalsMap, onPla
       </div>
 
       {/* Player tokens */}
-      {(squad.starting || []).map((player, idx) => {
-        const posData = positions[idx] || { x: 50, y: side === 'home' ? 30 : 70 };
+      {positionedPlayers.map(({ player, posData }, idx) => {
         const dKey = `${player.name?.toLowerCase()}_${player.num}`;
         const disc = disciplinaryMap[dKey] || {};
         const goals = goalsMap[`${teamKey}_${player.num}`] || 0;
@@ -260,13 +263,13 @@ function PlayerEditModal({ teamKey, player, squad, lineupTactics, onClose, onSav
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn" onClick={onClose}>
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center px-2 pt-2 pb-[calc(4rem+env(safe-area-inset-bottom,0px))] sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn" onClick={onClose}>
       <div
-        className="w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl bg-slate-900 border border-slate-700 text-white shadow-2xl overflow-hidden"
+        className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md flex flex-col rounded-t-3xl sm:rounded-3xl bg-slate-900 border border-slate-700 text-white shadow-2xl overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center gap-3 p-4 pb-3 border-b border-slate-700/60"
+        <div className="flex items-center gap-3 p-4 pb-3 border-b border-slate-700/60 shrink-0"
           style={{ background: `linear-gradient(135deg, ${meta.shirtColor}22, transparent)` }}>
           <div className="w-10 h-10 rounded-xl overflow-hidden relative bg-slate-800 border border-slate-600 shrink-0">
             <JerseyShirtIcon number={player.num} color={meta.shirtColor} isGK={player.isGK} className="w-full h-full" />
@@ -285,7 +288,7 @@ function PlayerEditModal({ teamKey, player, squad, lineupTactics, onClose, onSav
         </div>
 
         {/* Body – scrollable */}
-        <div className="overflow-y-auto max-h-[75vh] p-4 space-y-4">
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-y-4">
 
           {/* Photo */}
           <div className="flex items-center gap-3">
@@ -458,7 +461,7 @@ function PlayerEditModal({ teamKey, player, squad, lineupTactics, onClose, onSav
         </div>
 
         {/* Footer buttons */}
-        <div className="p-4 pt-3 border-t border-slate-700/60 flex gap-2">
+        <div className="shrink-0 p-3 sm:p-4 pt-3 border-t border-slate-700/60 bg-slate-900 flex gap-2 shadow-[0_-8px_20px_rgba(2,6,23,0.35)]">
           <button onClick={onClose} className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition">
             Cancel
           </button>
@@ -664,7 +667,7 @@ export default function AdminLineupPitchEditor({ isDarkMode }) {
             </svg>
 
             {/* HOME HALF (KRSC) */}
-            <div className="absolute top-0 left-0 right-0" style={{ height: '50%' }}>
+            <div className="absolute inset-0">
               <PitchHalf
                 teamKey="krsc"
                 squad={krscSquad}
@@ -685,7 +688,7 @@ export default function AdminLineupPitchEditor({ isDarkMode }) {
             </div>
 
             {/* AWAY HALF (BASE) */}
-            <div className="absolute bottom-0 left-0 right-0" style={{ height: '50%' }}>
+            <div className="absolute inset-0">
               <PitchHalf
                 teamKey="base"
                 squad={baseSquad}

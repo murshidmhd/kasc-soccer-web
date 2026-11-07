@@ -26,7 +26,6 @@ import {
   submitFanCrowdGoal, 
   getUserRateLimitStatus,
   getCalculatedMatchTime,
-  getDaysToKickoff,
   SEVENS_HALF_MINUTES,
   SEVENS_TOTAL_MINUTES
 } from '../utils/matchStateManager';
@@ -104,7 +103,8 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
     }, 4000);
   };
 
-  const isLive = matchState.status !== 'UPCOMING';
+  const isLive = ['1ST_HALF', 'HALF_TIME', '2ND_HALF'].includes(matchState.status);
+  const hasMatchStarted = isLive || ['FULL_TIME', 'COMPLETED'].includes(matchState.status);
   const isUdayaMatch = Boolean(
     openingMatch.teamHome?.name?.toUpperCase().includes('UDAYA') || 
     openingMatch.teamAway?.name?.toUpperCase().includes('UDAYA')
@@ -265,7 +265,9 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           <p className="text-xs text-slate-600 dark:text-slate-300 font-medium leading-[1.5]">
             {isLive
               ? (lang === 'ml' ? 'ഔദ്യോഗിക തത്സമയ സ്കോറും പന്ത് തട്ടുന്ന നിമിഷങ്ങളും' : 'Official live score verified by Ground Referee Desk')
-              : (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം: 2026 നവംബർ 06, രാത്രി 8:45 മണിക്ക്' : 'Opening Match: Nov 06, 2026, 8:45 PM IST')}
+              : hasMatchStarted
+                ? (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരത്തിന്റെ അന്തിമ സ്കോർ' : 'Opening Match Final Score')
+                : (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം: 2026 നവംബർ 06, രാത്രി 8:45 മണിക്ക്' : 'Opening Match: Nov 06, 2026, 8:45 PM IST')}
           </p>
         </div>
       </div>
@@ -333,7 +335,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
 
           {/* Center Official Scores (if Live) OR Single Kickoff Date/Time (if Upcoming) */}
           <div className="col-span-4 flex flex-col items-center justify-center">
-            {isLive ? (
+            {hasMatchStarted ? (
               <div className="space-y-1">
                 <div className="flex items-center justify-center gap-2 sm:gap-3">
                   <span className="text-4xl sm:text-6xl font-black font-sports text-card-title">
@@ -418,7 +420,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
         </div>
 
         {/* Pre-Kickoff Notice: Clean single announcement, no countdown repetition */}
-        {!isLive && (
+        {!hasMatchStarted && (
           <div className="mt-5 p-3.5 rounded-2xl surface-card-subtle text-center space-y-1 border border-surface-border dark:border-navy-700">
             <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-card-title">
               <Clock className="w-4 h-4 text-royal dark:text-sky" />

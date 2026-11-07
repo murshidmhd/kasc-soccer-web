@@ -1,61 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, Ticket, Clock, Play, X, Film, Shield, Star, Sparkles } from 'lucide-react';
-import { tournamentInfo, openingMatch } from '../data/tournamentData';
+import React, { useState } from 'react';
+import { Calendar, Ticket, Play, X, Film } from 'lucide-react';
+import { nextMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
-import { getStoredMatchState } from '../utils/matchStateManager';
 import teaserPoster from '../assets/tournament_teaser_poster.webp';
 import { SHOW_HOME_TEASER, VIDEO_AUTOPLAY_ENABLED, OFFICIAL_TRAILER_URL } from '../config/siteConfig';
 
 export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketModal, onNavigate }) {
-  const [matchState, setMatchState] = useState(getStoredMatchState);
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  });
-
-  // Sync with global match state updates
-  useEffect(() => {
-    const handleUpdate = (e) => {
-      setMatchState(e.detail || getStoredMatchState());
-    };
-    window.addEventListener('kasc_match_state_updated', handleUpdate);
-    return () => window.removeEventListener('kasc_match_state_updated', handleUpdate);
-  }, []);
-
-  // Live countdown clock ticker
-  useEffect(() => {
-    const target = new Date(tournamentInfo.startDate).getTime();
-
-    const updateCountdown = () => {
-      const now = new Date().getTime();
-      const difference = target - now;
-
-      if (difference <= 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        return;
-      }
-
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((difference % (1000 * 60)) / (1000 * 60));
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-      setTimeLeft({ days, hours, minutes, seconds });
-    };
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const isLive = matchState && matchState.status !== 'UPCOMING';
   const isUdayaMatch = Boolean(
-    openingMatch.teamHome?.name?.toUpperCase().includes('UDAYA') || 
-    openingMatch.teamAway?.name?.toUpperCase().includes('UDAYA')
+    nextMatch.teamHome?.name?.toUpperCase().includes('UDAYA') ||
+    nextMatch.teamAway?.name?.toUpperCase().includes('UDAYA')
   );
+  const nextMatchDate = nextMatch.date.replace(/^[^,]+,\s*/, '').replace(/\s+2026$/, '');
 
   return (
     <section className="pt-6 pb-6 px-3 sm:px-6 border-b border-navy-700 surface-navy text-white transition-colors">
@@ -74,16 +30,13 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
           </p>
         </div>
 
-        {/* Next / Live Match Card */}
-        <div className={`w-full max-w-2xl mx-auto rounded-3xl p-5 sm:p-7 border-2 border-gold ${isUdayaMatch ? 'border-l-4 border-l-purple-500' : ''} ring-1 ring-gold/40 surface-navy-card text-white shadow-card relative overflow-hidden transition-all ${
-          isLive ? 'ring-2 ring-gold' : ''
-        }`}>
-          {/* Card Header: Gold highlight for next match / LIVE */}
+        {/* Next Match Card */}
+        <div className={`w-full max-w-2xl mx-auto rounded-3xl p-5 sm:p-7 border-2 border-gold ${isUdayaMatch ? 'border-l-4 border-l-purple-500' : ''} ring-1 ring-gold/40 surface-navy-card text-white shadow-card relative overflow-hidden transition-all`}>
+          {/* Upcoming match header */}
           <div className="flex items-center justify-between gap-2 flex-wrap pb-3.5 border-b border-navy-700">
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wider btn-gold shadow-xs">
-                {isLive && <span className="w-2 h-2 rounded-full bg-navy-900 animate-ping"></span>}
-                <span>{isLive ? 'LIVE' : (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം' : 'Opening match')}</span>
+                <span>{lang === 'ml' ? 'അടുത്ത മത്സരം' : 'NEXT MATCH'}</span>
               </span>
               {isUdayaMatch && (
                 <span className="px-2 py-0.5 rounded-md bg-purple-700 text-white text-[10px] font-black uppercase tracking-wider">
@@ -93,7 +46,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
             </div>
 
             <div className="text-[11px] sm:text-xs font-bold font-mono text-navy-muted shrink-0">
-              <span>06 Nov • 8:45 PM IST</span>
+              <span>{nextMatchDate} • {nextMatch.time}</span>
             </div>
           </div>
 
@@ -103,94 +56,41 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
             <div className="col-span-5 flex flex-col items-center space-y-2">
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white p-1 border border-navy-700 flex items-center justify-center shadow-xs">
                 <TeamLogo 
-                  teamName={openingMatch.teamHome.name} 
+                  teamName={nextMatch.teamHome.name}
                   className="w-full h-full rounded-full object-contain" 
                 />
               </div>
               <span className="font-sports font-black text-sm sm:text-base leading-snug line-clamp-2 px-1 text-white">
-                {openingMatch.teamHome.name}
+                {nextMatch.teamHome.name}
               </span>
               <span className="text-[11px] font-bold text-navy-muted">
-                {openingMatch.teamHome.city}
+                {nextMatch.teamHome.city}
               </span>
             </div>
 
-            {/* Center Score (Live) or VS (Upcoming) */}
+            {/* Upcoming fixture */}
             <div className="col-span-2 flex flex-col items-center justify-center">
-              {isLive ? (
-                <div className="flex items-center justify-center gap-1.5 font-sports font-black text-3xl sm:text-4xl text-white">
-                  <span>{matchState.officialScoreHome}</span>
-                  <span className="text-gold">-</span>
-                  <span>{matchState.officialScoreAway}</span>
-                </div>
-              ) : (
-                <div className="w-10 h-10 rounded-full surface-navy-box border border-navy-700 text-white flex items-center justify-center font-black font-sports text-sm shadow-xs">
-                  VS
-                </div>
-              )}
+              <div className="w-10 h-10 rounded-full surface-navy-box border border-navy-700 text-white flex items-center justify-center font-black font-sports text-sm shadow-xs">
+                VS
+              </div>
             </div>
 
             {/* Team Away */}
             <div className="col-span-5 flex flex-col items-center space-y-2">
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white p-1 border border-navy-700 flex items-center justify-center shadow-xs">
                 <TeamLogo 
-                  teamName={openingMatch.teamAway.name} 
+                  teamName={nextMatch.teamAway.name}
                   className="w-full h-full rounded-full object-contain" 
                 />
               </div>
               <span className="font-sports font-black text-sm sm:text-base leading-snug line-clamp-2 px-1 text-white">
-                {openingMatch.teamAway.name}
+                {nextMatch.teamAway.name}
               </span>
               <span className="text-[11px] font-bold text-navy-muted">
-                {openingMatch.teamAway.city}
+                {nextMatch.teamAway.city}
               </span>
             </div>
           </div>
-
-          {/* Integrated Live Countdown Timer */}
-          {!isLive && (
-            <div className="pt-3 pb-1 border-t border-navy-700">
-              <div className="text-center mb-2.5">
-                <span className="text-[11px] font-black uppercase tracking-wider text-navy-muted">
-                  COUNTDOWN TO KICKOFF
-                </span>
-              </div>
-              <div className="grid grid-cols-4 gap-2 sm:gap-3 max-w-sm mx-auto">
-                <div className="p-2 sm:p-2.5 rounded-2xl text-center border border-navy-700 surface-navy-box">
-                  <div className="text-[28px] sm:text-3xl font-black font-sports text-white leading-none">
-                    {String(timeLeft.days).padStart(2, '0')}
-                  </div>
-                  <div className="text-[11px] sm:text-[12px] font-black tracking-wider uppercase text-navy-muted mt-1">
-                    DAYS
-                  </div>
-                </div>
-                <div className="p-2 sm:p-2.5 rounded-2xl text-center border border-navy-700 surface-navy-box">
-                  <div className="text-[28px] sm:text-3xl font-black font-sports text-white leading-none">
-                    {String(timeLeft.hours).padStart(2, '0')}
-                  </div>
-                  <div className="text-[11px] sm:text-[12px] font-black tracking-wider uppercase text-navy-muted mt-1">
-                    HOURS
-                  </div>
-                </div>
-                <div className="p-2 sm:p-2.5 rounded-2xl text-center border border-navy-700 surface-navy-box">
-                  <div className="text-[28px] sm:text-3xl font-black font-sports text-white leading-none">
-                    {String(timeLeft.minutes).padStart(2, '0')}
-                  </div>
-                  <div className="text-[11px] sm:text-[12px] font-black tracking-wider uppercase text-navy-muted mt-1">
-                    MINS
-                  </div>
-                </div>
-                <div className="p-2 sm:p-2.5 rounded-2xl text-center border border-navy-700 surface-navy-box">
-                  <div className="text-[28px] sm:text-3xl font-black font-sports text-gold leading-none">
-                    {String(timeLeft.seconds).padStart(2, '0')}
-                  </div>
-                  <div className="text-[11px] sm:text-[12px] font-black tracking-wider uppercase text-navy-muted mt-1">
-                    SECS
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Quick Action Navigation Buttons */}
           <div className="grid grid-cols-2 gap-2.5 pt-4">

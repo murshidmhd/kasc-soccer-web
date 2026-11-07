@@ -400,7 +400,7 @@ export default function App() {
                       }
                       return confirmed.slice(0, 3).map((match) => {
                         const isUdayaMatch = match.team1?.toUpperCase().includes('UDAYA') || match.team2?.toUpperCase().includes('UDAYA');
-                        const isNextMatch = match.id === 'm1' && match.status === 'Upcoming';
+                        const isNextMatch = match.id === 'm2' && match.status === 'Upcoming';
                         const isMatchLive = match.status === 'LIVE';
                         const shortTag = match.id === 'm1' 
                           ? (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം' : 'Opening match')

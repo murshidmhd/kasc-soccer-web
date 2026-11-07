@@ -19,20 +19,20 @@ export const MAX_REPORTS_PER_USER = 3; // Strict 3 reports max per device
 export const SEVENS_HALF_MINUTES = HALF_LENGTH_MINUTES;
 export const SEVENS_TOTAL_MINUTES = MAX_MATCH_MINUTES;
 
-// Real Official Match State (Pre-Kickoff, authentic state before Nov 6, 2026, 8:45 PM IST)
+// Official Match 1 final state for visitors without a saved scorer update.
 export const realOfficialMatchState = {
-  officialScoreHome: 0,
+  officialScoreHome: 1,
   officialScoreAway: 0,
-  matchSeconds: 0,
-  matchMinute: 0,
+  matchSeconds: 60 * 60,
+  matchMinute: 60,
   isTimerRunning: false,
   timerStartedAt: null,
-  status: 'UPCOMING',
+  status: 'FULL_TIME',
   extraTimeMinutes: 0,
-  isVerified: false,
-  scoreEnteredByDesk: false,
-  lastUpdated: new Date().toISOString(),
-  updatedBy: '',
+  isVerified: true,
+  scoreEnteredByDesk: true,
+  lastUpdated: null,
+  updatedBy: 'Ground Referee Desk',
   isCrowdLocked: true,
   crowdReports: {
     home: 0,
@@ -249,6 +249,15 @@ export function getStoredMatchState() {
       localStorage.removeItem(MATCH_STORAGE_KEY);
       return realOfficialMatchState;
     }
+    const openingMatchKickoff = new Date('2026-11-06T20:45:00+05:30').getTime();
+    if (parsed.status === 'UPCOMING' && Date.now() >= openingMatchKickoff) {
+      const completedState = {
+        ...realOfficialMatchState,
+        crowdReports: parsed.crowdReports || realOfficialMatchState.crowdReports
+      };
+      localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(completedState));
+      return completedState;
+    }
     return parsed;
   } catch (err) {
     console.error('Failed to read match state from localStorage', err);
@@ -431,6 +440,7 @@ export function applyRemoteMatchState(remoteState) {
   if (!remoteState || typeof remoteState !== 'object') return;
   try {
     const current = getStoredMatchState();
+    if (current.status === 'FULL_TIME' && remoteState.status === 'UPCOMING') return;
     const remoteTs = remoteState.lastUpdated ? new Date(remoteState.lastUpdated).getTime() : 0;
     const currentTs = current.lastUpdated ? new Date(current.lastUpdated).getTime() : 0;
 
