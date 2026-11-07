@@ -56,8 +56,8 @@ export default function Header({
     const text = encodeURIComponent(
       `⚽ *അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ — സീസൺ 7*\n` +
       `${homeTeam.nameMl || 'ആദ്യ ടീം'} 🆚 ${awayTeam.nameMl || 'രണ്ടാം ടീം'}\n` +
-      `🔴 തത്സമയ സംപ്രേഷണം: ${LIVE_YOUTUBE_CHANNEL_URL}\n` +
-      `🌐 വെബ്സൈറ്റ്: ${SITE_URL}`
+      `🌐 വെബ്സൈറ്റ്: ${SITE_URL}\n` +
+      `🔴 തത്സമയ സംപ്രേഷണം: ${LIVE_YOUTUBE_CHANNEL_URL}`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank', 'noopener,noreferrer');
   };
