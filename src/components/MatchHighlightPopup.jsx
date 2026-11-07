@@ -30,12 +30,14 @@ export default function MatchHighlightPopup({ isDarkMode }) {
     {
       url: lastMatchResult.winnerPosterUrl,
       label: '🏆  Player of the Match',
-      sublabel: `${lastMatchResult.homeTeam} ${lastMatchResult.homeScore} – ${lastMatchResult.awayScore} ${lastMatchResult.awayTeam}`
+      sublabel: `${lastMatchResult.motmName} · #${lastMatchResult.motmNumber} · ${lastMatchResult.motmTeam}`,
+      footer: `${lastMatchResult.stage} · ${lastMatchResult.date}`
     },
     {
       url: lastMatchResult.motmPosterUrl,
-      label: '⭐ Match Result ',
-      sublabel: lastMatchResult.motmName
+      label: '⭐ Match Result',
+      sublabel: `${lastMatchResult.homeTeam} ${lastMatchResult.homeScore} – ${lastMatchResult.awayScore} ${lastMatchResult.awayTeam}`,
+      footer: `${lastMatchResult.stage} · ${lastMatchResult.date}`
     }
   ];
 
