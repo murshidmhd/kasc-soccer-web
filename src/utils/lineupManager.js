@@ -89,18 +89,34 @@ function mergeSquadsWithDefaults(storedSquads) {
     const defaultByNum = new Map(allDefaults.map((p) => [p.num, p]));
     const defaultByName = new Map(allDefaults.map((p) => [p.name?.toLowerCase().trim(), p]));
 
+    const mergePlayerWithDefault = (player, match) => {
+      const isLegacyKrscNumberSeven = teamKey === 'krsc' && player.num === 7 && player.name === 'Favas';
+      const name = isLegacyKrscNumberSeven ? 'None' : (player.name || match.name);
+      const wasNameEdited = Boolean(player.adminModifiedName);
+
+      return {
+        ...player,
+        name,
+        displayName: wasNameEdited
+          ? (player.displayName || name)
+          : isLegacyKrscNumberSeven
+            ? 'None'
+            : (player.displayName || match.displayName),
+        fullName: wasNameEdited
+          ? (player.fullName || name)
+          : isLegacyKrscNumberSeven
+            ? 'None'
+            : (player.fullName || match.fullName),
+        pos: player.pos || match.pos,
+        photoUrl: player.photoUrl || match.photoUrl
+      };
+    };
+
     // Enrich starting players with photoUrl, name, displayName, fullName, and pos
     team.starting = (team.starting || defaultTeam.starting).map((p) => {
       const match = defaultByNum.get(p.num) || defaultByName.get(p.name?.toLowerCase().trim());
       if (match) {
-        return {
-          ...p,
-          name: match.name || p.name,
-          displayName: match.displayName || p.displayName,
-          fullName: match.fullName || p.fullName,
-          pos: match.pos || p.pos,
-          photoUrl: match.photoUrl || p.photoUrl
-        };
+        return mergePlayerWithDefault(p, match);
       }
       return p;
     });
@@ -122,13 +138,7 @@ function mergeSquadsWithDefaults(storedSquads) {
     const subs = [...(team.subs || [])].map((s) => {
       const match = defaultByNum.get(s.num) || defaultByName.get(s.name?.toLowerCase().trim());
       if (match) {
-        return {
-          ...s,
-          name: match.name || s.name,
-          displayName: match.displayName || s.displayName,
-          fullName: match.fullName || s.fullName,
-          photoUrl: match.photoUrl || s.photoUrl
-        };
+        return mergePlayerWithDefault(s, match);
       }
       return s;
     });
@@ -402,6 +412,11 @@ export function updatePlayerInfo(teamKey, playerNum, updates) {
     return {
       ...p,
       ...updates,
+      ...(updates.name !== undefined ? {
+        displayName: updates.name,
+        fullName: updates.name,
+        adminModifiedName: true
+      } : {}),
       // If jersey number changed, update num field too
       num: updates.num !== undefined ? Number(updates.num) : p.num,
       adminModifiedRating: updates.baseRating !== undefined ? true : p.adminModifiedRating
