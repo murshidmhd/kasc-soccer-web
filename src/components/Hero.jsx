@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Youtube, Play, X, Film } from 'lucide-react';
+import { Calendar, Play, X, Film } from 'lucide-react';
 import { nextMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
 import teaserPoster from '../assets/tournament_teaser_poster.webp';
@@ -109,7 +109,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onNavigate }) 
               rel="noopener noreferrer"
               className="min-h-touch w-full py-3 px-2 sm:px-4 rounded-xl font-black text-xs sm:text-sm btn-gold shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"
             >
-              <Youtube className="w-4 h-4 text-navy-900 shrink-0" />
+              <Play className="w-4 h-4 text-navy-900 shrink-0" />
               <span className="truncate">{lang === 'ml' ? 'തത്സമയ മത്സരം' : 'Watch Live'}</span>
             </a>
           </div>
