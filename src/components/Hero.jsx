@@ -3,7 +3,7 @@ import { Calendar, Play, X, Film } from 'lucide-react';
 import { nextMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
 import teaserPoster from '../assets/tournament_teaser_poster.webp';
-import { SHOW_HOME_TEASER, VIDEO_AUTOPLAY_ENABLED, OFFICIAL_TRAILER_URL } from '../config/siteConfig';
+import { SHOW_HOME_TEASER, VIDEO_AUTOPLAY_ENABLED, OFFICIAL_TRAILER_URL, LIVE_YOUTUBE_CHANNEL_URL } from '../config/siteConfig';
 
 export default function Hero({ lang, scrollToSection, isDarkMode, onNavigate }) {
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
@@ -104,7 +104,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onNavigate }) 
             </button>
             <a
               id="hero-live-channel-btn"
-              href="https://www.youtube.com/@sabithsmgvlog"
+              href={LIVE_YOUTUBE_CHANNEL_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="min-h-touch w-full py-3 px-2 sm:px-4 rounded-xl font-black text-xs sm:text-sm btn-gold shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"

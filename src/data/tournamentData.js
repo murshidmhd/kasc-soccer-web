@@ -26,6 +26,7 @@ export const openingMatch = {
   date: "Friday, 06 Nov 2026",
   time: "8:45 PM IST",
   venue: "Peruvallur Panjayath Stadium",
+  venueMl: "പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം, പറമ്പിൽ പീടിക",
   teamHome: {
     id: "krsc-kozhikkode",
     name: "KRSC KOZHIKKODE",

@@ -21,6 +21,10 @@ export function normalizePlayerName(name) {
     .trim();
 }
 
+const isPlaceholderPlayerName = (name) => (
+  !name || ['none', 'null', 'undefined', 'unknown', 'player', '—', '-', ''].includes(name)
+);
+
 /**
  * Check if two player identities match across different input variations
  */
@@ -28,6 +32,17 @@ export function isPlayerMatch(nameA, nameB, numA, numB, teamA, teamB) {
   if (!nameA || !nameB) return false;
   const normA = normalizePlayerName(nameA);
   const normB = normalizePlayerName(nameB);
+  // Placeholder names such as "None" are common in unfinished lineups. They
+  // must never make every placeholder player inherit the same card.
+  const validNames = !isPlaceholderPlayerName(normA) && !isPlaceholderPlayerName(normB);
+  const teamsMatch = Boolean(teamA && teamB && (
+    teamA.toLowerCase().includes(teamB.toLowerCase()) ||
+    teamB.toLowerCase().includes(teamA.toLowerCase())
+  ));
+
+  if (!validNames) {
+    return Boolean(numA && numB && String(numA) === String(numB) && teamsMatch);
+  }
 
   // Exact or substring match
   if (normA === normB || normA.includes(normB) || normB.includes(normA)) {
@@ -43,22 +58,12 @@ export function isPlayerMatch(nameA, nameB, numA, numB, teamA, teamB) {
     if (numA && numB && String(numA) === String(numB)) {
       return true;
     }
-    if (teamA && teamB) {
-      const tA = teamA.toLowerCase();
-      const tB = teamB.toLowerCase();
-      if (tA.includes(tB) || tB.includes(tA)) {
-        return true;
-      }
-    }
+    if (teamsMatch) return true;
     // High-confidence single significant token (e.g. Usman, Vahid, Soumahoro)
     // Only match if teams are not opposing
     if (tokensA.length === 1 || tokensB.length === 1) {
       if (teamA && teamB) {
-        const tA = teamA.toLowerCase();
-        const tB = teamB.toLowerCase();
-        if (tA.includes(tB) || tB.includes(tA)) {
-          return true;
-        }
+        if (teamsMatch) return true;
         return false;
       }
       return true;
@@ -66,13 +71,7 @@ export function isPlayerMatch(nameA, nameB, numA, numB, teamA, teamB) {
   }
 
   // Jersey number + team match if names are partially related
-  if (numA && numB && String(numA) === String(numB) && teamA && teamB) {
-    const tA = teamA.toLowerCase();
-    const tB = teamB.toLowerCase();
-    if (tA.includes(tB) || tB.includes(tA)) {
-      return true;
-    }
-  }
+  if (numA && numB && String(numA) === String(numB) && teamsMatch) return true;
 
   return false;
 }

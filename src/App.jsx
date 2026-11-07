@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import StadiumAnnouncementBanner from './components/StadiumAnnouncementBanner';
 import LiveMatchCard from './components/LiveMatchCard';
+import LiveViewingSection from './components/LiveViewingSection';
 import MatchPredictionCard from './components/MatchPredictionCard';
 import NextMatchCard from './components/NextMatchCard';
 import MatchHighlightPopup from './components/MatchHighlightPopup';
@@ -301,6 +302,8 @@ export default function App() {
                   onOpenTicketModal={() => setIsTicketModalOpen(true)}
                   onNavigateTab={handleTabChange}
                 />
+
+                <LiveViewingSection lang={lang} />
 
                 {/* Udaya's Next Match Card (Task 3, Rule 11: shown only when an Udaya match is announced) */}
                 {(() => {

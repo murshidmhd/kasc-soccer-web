@@ -32,6 +32,8 @@ export const SITE_URL = typeof window !== 'undefined' && window.location.origin 
   ? window.location.origin
   : 'https://udaya-football.vercel.app';
 
+export const LIVE_YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@sabithsmgvlog';
+
 // Feature Flags
 export const SHOW_BRACKET = true;
 export const SHOW_LOCAL_ONLY_FEATURES = false;

@@ -156,18 +156,18 @@ export function getSevensFormationPositions(formationStr = '2-2-2', side = 'home
 function matchesPlayer(evt, player, teamKey) {
   if (!evt || !player) return false;
 
-  // 1. Team check (prevent cross-team pollution)
-  if (evt.team) {
-    const isHome = teamKey === 'krsc';
-    const isEvtHome = evt.team === 'home' || evt.team === 'krsc' || (evt.teamName && evt.teamName.toLowerCase().includes('krsc'));
-    const isEvtAway = evt.team === 'away' || evt.team === 'base' || (evt.teamName && evt.teamName.toLowerCase().includes('base'));
-    if (isHome && isEvtAway) return false;
-    if (!isHome && isEvtHome) return false;
-  }
+  // Resolve team from either event field so duplicate jersey numbers across
+  // opposing squads cannot inherit the same card.
+  const eventTeam = `${evt.team || ''} ${evt.teamName || ''}`.toLowerCase();
+  const isEvtHome = eventTeam.includes('home') || eventTeam.includes('krsc');
+  const isEvtAway = eventTeam.includes('away') || eventTeam.includes('base');
+  const isPlayerHome = teamKey === 'krsc';
+  if ((isPlayerHome && isEvtAway) || (!isPlayerHome && isEvtHome)) return false;
+  const eventTeamKnown = isEvtHome || isEvtAway;
 
   // 2. Check by Jersey Number (if both have number)
   const evtNum = evt.playerNumber || evt.num;
-  if (evtNum && player.num && String(evtNum) === String(player.num)) {
+  if (eventTeamKnown && evtNum && player.num && String(evtNum) === String(player.num)) {
     return true;
   }
 
@@ -175,6 +175,8 @@ function matchesPlayer(evt, player, teamKey) {
   const evtName = normalizePlayerName(evt.player || evt.playerName || evt.scorerName || '');
   const targetName = normalizePlayerName(player.name || '');
   if (!evtName || !targetName) return false;
+  const placeholders = ['none', 'null', 'undefined', 'unknown', 'player', '—', '-'];
+  if (placeholders.includes(evtName) || placeholders.includes(targetName)) return false;
 
   // Exact or Substring
   if (evtName === targetName || evtName.includes(targetName) || targetName.includes(evtName)) {

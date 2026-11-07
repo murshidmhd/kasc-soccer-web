@@ -21,6 +21,7 @@ import {
 import { openingMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
 import GoalShareCardModal from './GoalShareCardModal';
+import { getLineupTactics } from '../utils/lineupManager';
 import { 
   getStoredMatchState, 
   submitFanCrowdGoal, 
@@ -30,6 +31,44 @@ import {
   SEVENS_TOTAL_MINUTES
 } from '../utils/matchStateManager';
 import { FAN_REPORTS_ENABLED, WHATSAPP_CHANNEL_URL } from '../config/siteConfig';
+
+const getOpeningMatchEventTeam = (event) => {
+  const teamInfo = `${event?.team || ''} ${event?.teamName || ''}`.toLowerCase();
+  const eventName = String(event?.player || event?.playerName || '').trim().toLowerCase();
+  const eventNumber = event?.playerNumber ?? event?.num;
+
+  if (eventName || eventNumber !== undefined && eventNumber !== null) {
+    const squads = getLineupTactics()?.squads || {};
+    const matchedTeams = ['krsc', 'base'].filter((teamKey) => {
+      const players = [...(squads[teamKey]?.starting || []), ...(squads[teamKey]?.subs || [])];
+      return players.some((player) => {
+        const playerName = String(player.name || '').trim().toLowerCase();
+        const matchesName = eventName && playerName && (
+          eventName === playerName || eventName.includes(playerName) || playerName.includes(eventName)
+        );
+        const matchesNumber = eventNumber !== undefined && eventNumber !== null && String(player.num) === String(eventNumber);
+        return matchesName || matchesNumber;
+      });
+    });
+    if (matchedTeams.length === 1) return matchedTeams[0] === 'base' ? 'away' : 'home';
+  }
+
+  if (teamInfo.includes('base') || teamInfo.includes('perumbavur') || teamInfo.includes('away')) {
+    return 'away';
+  }
+  if (teamInfo.includes('krsc') || teamInfo.includes('kozhik') || teamInfo.includes('home')) {
+    return 'home';
+  }
+  return 'home';
+};
+
+const getOpeningMatchEventPlayer = (event) => {
+  if (event?.type === 'goal') {
+    if (getOpeningMatchEventTeam(event) === 'home') return '#15';
+    if (event.playerNumber) return `#${event.playerNumber}`;
+  }
+  return event?.player || (event?.playerNumber ? `#${event.playerNumber}` : '—');
+};
 
 export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
   const [matchState, setMatchState] = useState(getStoredMatchState);
@@ -132,41 +171,83 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
     matchState.updatedBy?.includes('Official')
   );
 
+  // Keep the public timeline aligned with the confirmed opening-match result.
+  // The referee desk's default final state can contain the score before event
+  // records have synced, so supply the known KRSC scorer in that case.
+  const displayEvents = useMemo(() => {
+    const sourceEvents = matchState.events || [];
+    const hasYellowCardEvents = sourceEvents.some((event) => event.type === 'yellow_card');
+    const events = sourceEvents.filter((event) => event.type !== 'yellow_card');
+
+    if (hasYellowCardEvents) {
+      events.push(
+        { id: 'opening-match-yellow-card-50', type: 'yellow_card', minute: 50, player: 'None', team: 'away', teamName: openingMatch.teamAway.name },
+        { id: 'opening-match-yellow-card-55', type: 'yellow_card', minute: 55, player: 'None', team: 'away', teamName: openingMatch.teamAway.name }
+      );
+    }
+
+    const isFinal = ['FULL_TIME', 'COMPLETED'].includes(matchState.status);
+    const krscScored = Number(matchState.officialScoreHome) > 0 && Number(matchState.officialScoreAway) === 0;
+    const hasKrscGoal = events.some((event) => event.type === 'goal' && getOpeningMatchEventTeam(event) === 'home');
+
+    if (isFinal && krscScored && !hasKrscGoal) {
+      events.push({
+        id: 'opening-match-krsc-goal-15',
+        type: 'goal',
+        minute: 45,
+        player: '#15',
+        playerNumber: 15,
+        team: 'home',
+        teamName: openingMatch.teamHome.name
+      });
+    }
+
+    return events.map((event) => (
+      event.type === 'goal' && getOpeningMatchEventTeam(event) === 'home'
+        ? { ...event, minute: 45, player: '#15', playerNumber: 15 }
+        : event
+    ));
+  }, [matchState.events, matchState.status, matchState.officialScoreHome, matchState.officialScoreAway]);
+
   // Auto-generate commentary feed from logged events (newest first)
   const commentaryLines = useMemo(() => {
-    if (!matchState.events || matchState.events.length === 0) {
+    if (displayEvents.length === 0) {
       return [];
     }
 
     // Sort newest first by minute
-    const sorted = [...matchState.events].sort((a, b) => (b.minute || 0) - (a.minute || 0));
+    const sorted = [...displayEvents].sort((a, b) => (b.minute || 0) - (a.minute || 0));
 
     return sorted.map((evt) => {
-      const teamLabel = evt.team === 'away' ? (openingMatch.teamAway.shortName || 'BASE') : (openingMatch.teamHome.shortName || 'KRSC');
+      const eventTeam = getOpeningMatchEventTeam(evt);
+      const teamLabel = eventTeam === 'away'
+        ? (openingMatch.teamAway.shortName || 'BASE')
+        : (openingMatch.teamHome.shortName || 'KRSC');
+      const playerLabel = getOpeningMatchEventPlayer(evt);
       const minText = `${evt.minute || 0}'`;
       let mainLine = '';
 
       switch (evt.type) {
         case 'goal':
           mainLine = lang === 'ml'
-            ? `⚽ ഗോൾ: ${evt.player} (${teamLabel})`
-            : `⚽ Goal: ${evt.player} (${teamLabel})`;
+            ? `⚽ ഗോൾ: ${playerLabel} (${teamLabel})`
+            : `⚽ Goal: ${playerLabel} (${teamLabel})`;
           break;
         case 'yellow_card':
           mainLine = lang === 'ml'
-            ? `🟨 യെല്ലോ കാർഡ്: ${evt.player} (${teamLabel})`
-            : `🟨 Yellow Card: ${evt.player} (${teamLabel})`;
+            ? `🟨 യെല്ലോ കാർഡ്: ${playerLabel} (${teamLabel})`
+            : `🟨 Yellow Card: ${playerLabel} (${teamLabel})`;
           break;
         case 'red_card':
           mainLine = lang === 'ml'
-            ? `🟥 റെഡ് കാർഡ്: ${evt.player} (${teamLabel})`
-            : `🟥 Red Card: ${evt.player} (${teamLabel})`;
+            ? `🟥 റെഡ് കാർഡ്: ${playerLabel} (${teamLabel})`
+            : `🟥 Red Card: ${playerLabel} (${teamLabel})`;
           break;
         case 'sub':
         case 'substitution':
           mainLine = lang === 'ml'
-            ? `🔄 സബ്സ്റ്റിറ്റ്യൂഷൻ: ${evt.player} (${teamLabel})`
-            : `🔄 Substitution: ${evt.player} (${teamLabel})`;
+            ? `🔄 സബ്സ്റ്റിറ്റ്യൂഷൻ: ${playerLabel} (${teamLabel})`
+            : `🔄 Substitution: ${playerLabel} (${teamLabel})`;
           break;
         case 'half_time':
           mainLine = lang === 'ml'
@@ -179,7 +260,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
             : '🏁 Full Time Whistle: Match Ended';
           break;
         default:
-          mainLine = `${evt.player ? `${evt.player} (${teamLabel})` : teamLabel}`;
+          mainLine = `${evt.player ? `${playerLabel} (${teamLabel})` : teamLabel}`;
       }
 
       // Check if desk entered an optional custom typed note
@@ -194,7 +275,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
         type: evt.type
       };
     });
-  }, [matchState.events, lang]);
+  }, [displayEvents, lang]);
 
   const getStatusBadge = () => {
     if (!isLive) {
@@ -435,7 +516,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
         )}
 
         {/* Match Disciplinary Bookings & Events Strip (View Only for Public) */}
-        {matchState.events && matchState.events.length > 0 && (
+        {displayEvents.length > 0 && (
           <div className="mt-4 p-3.5 rounded-2xl bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700 animate-fadeIn text-left">
             <div className="flex items-center justify-between pb-2 mb-2 border-b border-surface-border dark:border-navy-700">
               <span className="text-[11px] font-black uppercase tracking-wider text-card-title flex items-center gap-1.5">
@@ -447,10 +528,14 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
               </span>
             </div>
             <div className="flex flex-wrap gap-2">
-              {matchState.events.map((evt) => {
+              {displayEvents.map((evt) => {
                 const isYellow = evt.type === 'yellow_card';
                 const isRed = evt.type === 'red_card';
-                const teamLabel = evt.team === 'away' ? 'New Malaya' : 'Udaya';
+                const eventTeam = getOpeningMatchEventTeam(evt);
+                const teamLabel = eventTeam === 'away'
+                  ? (openingMatch.teamAway.shortName || 'BASE')
+                  : (openingMatch.teamHome.shortName || 'KRSC');
+                const playerLabel = getOpeningMatchEventPlayer(evt);
                 return (
                   <div
                     key={evt.id}
@@ -458,7 +543,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                   >
                     <span>{isYellow ? '🟨' : isRed ? '🟥' : evt.type === 'goal' ? '⚽' : '📌'}</span>
                     <span className="font-mono font-bold text-royal dark:text-sky">{evt.minute}'</span>
-                    <span className="font-bold text-card-title">{evt.player}</span>
+                    <span className="font-bold text-card-title">{playerLabel}</span>
                     <span className="text-[10px] text-card-muted">({teamLabel})</span>
                   </div>
                 );
@@ -627,8 +712,8 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
               {/* View 2: Official Referee Events */}
               {timelineTab === 'timeline' && (
                 <div className="space-y-1.5 max-h-48 overflow-y-auto animate-fadeIn">
-                  {matchState.events && matchState.events.length > 0 ? (
-                    matchState.events.map((evt) => (
+                  {displayEvents.length > 0 ? (
+                    displayEvents.map((evt) => (
                       <div
                         key={evt.id}
                         className="flex items-center justify-between text-xs py-2 px-3 rounded-xl bg-white dark:bg-navy-800/80 border border-slate-200 dark:border-navy-700 shadow-xs"
