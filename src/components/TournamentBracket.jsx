@@ -29,7 +29,9 @@ export const BRACKET_DATA = {
     team1: f.team1,
     team2: f.team2,
     status: f.id === 'm1' ? 'Opening Match' : 'Upcoming',
-    winner: null,
+    winner: f.confirmed && Number.isFinite(f.score1) && Number.isFinite(f.score2)
+      ? f.score1 === f.score2 ? null : f.score1 > f.score2 ? f.team1 : f.team2
+      : null,
     qfSlot: `qf${Math.floor(i / 2) + 1}`,
     confirmed: f.confirmed
   })),
@@ -125,6 +127,17 @@ export default function TournamentBracket({ lang, isDarkMode }) {
     // Show team names ONLY for Nov 6 opening match (m1 / confirmed)
     if (match?.confirmed || match?.id === 'm1') {
       return { name: match[teamKey], isDecided: true };
+    }
+
+    // Resolve a knockout slot when its source round match has a confirmed winner.
+    const matchWinnerSlot = match?.[slotKey]?.match(/^Winner Match (\d+)$/);
+    if (matchWinnerSlot) {
+      const sourceMatch = bracketData.round1.find(
+        (roundMatch) => roundMatch.matchNum === Number(matchWinnerSlot[1])
+      );
+      if (sourceMatch?.winner) {
+        return { name: sourceMatch.winner, isDecided: true };
+      }
     }
 
     // For all other slots, show "?" per user specification
@@ -352,10 +365,14 @@ export default function TournamentBracket({ lang, isDarkMode }) {
 
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-10 h-10 rounded-full border-2 border-dashed border-card-muted text-card-muted flex items-center justify-center font-bold text-sm shrink-0">
-                        ?
-                      </div>
-                      <span className="text-xs sm:text-sm font-sports line-clamp-2 leading-tight text-card-muted font-medium">
+                      {team1.isDecided ? (
+                        <div className="w-10 h-10 rounded-full bg-white p-1 border border-surface-border dark:border-navy-700 shadow-2xs flex items-center justify-center shrink-0">
+                          <TeamLogo teamName={team1.name} className="w-full h-full rounded-full object-contain" />
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 rounded-full border-2 border-dashed border-card-muted text-card-muted flex items-center justify-center font-bold text-sm shrink-0">?</div>
+                      )}
+                      <span className={`text-xs sm:text-sm font-sports line-clamp-2 leading-tight ${team1.isDecided ? 'text-card-title font-bold' : 'text-card-muted font-medium'}`}>
                         {team1.name}
                       </span>
                     </div>
@@ -363,10 +380,14 @@ export default function TournamentBracket({ lang, isDarkMode }) {
 
                   <div className="flex items-center justify-between gap-3 pt-1 border-t border-surface-border/50 dark:border-navy-800">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-10 h-10 rounded-full border-2 border-dashed border-card-muted text-card-muted flex items-center justify-center font-bold text-sm shrink-0">
-                        ?
-                      </div>
-                      <span className="text-xs sm:text-sm font-sports line-clamp-2 leading-tight text-card-muted font-medium">
+                      {team2.isDecided ? (
+                        <div className="w-10 h-10 rounded-full bg-white p-1 border border-surface-border dark:border-navy-700 shadow-2xs flex items-center justify-center shrink-0">
+                          <TeamLogo teamName={team2.name} className="w-full h-full rounded-full object-contain" />
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 rounded-full border-2 border-dashed border-card-muted text-card-muted flex items-center justify-center font-bold text-sm shrink-0">?</div>
+                      )}
+                      <span className={`text-xs sm:text-sm font-sports line-clamp-2 leading-tight ${team2.isDecided ? 'text-card-title font-bold' : 'text-card-muted font-medium'}`}>
                         {team2.name}
                       </span>
                     </div>
@@ -561,13 +582,17 @@ export default function TournamentBracket({ lang, isDarkMode }) {
                 <span className="text-xs font-bold text-sky uppercase tracking-wider block text-center pb-1 border-b border-navy-800">
                   Quarter Finals
                 </span>
-                {bracketData.quarterFinals.map((qf) => (
-                  <div key={qf.id} className="p-3 rounded-xl bg-navy-900 border border-navy-700 text-xs space-y-1">
-                    <div className="text-[10px] text-sky font-bold">{qf.matchNum} • {qf.date}</div>
-                    <div className="text-navy-muted truncate">{qf.team1Slot}</div>
-                    <div className="text-navy-muted truncate">{qf.team2Slot}</div>
-                  </div>
-                ))}
+                {bracketData.quarterFinals.map((qf) => {
+                  const team1 = getMatchTeamDisplay(qf, 'team1', 'team1Slot');
+                  const team2 = getMatchTeamDisplay(qf, 'team2', 'team2Slot');
+                  return (
+                    <div key={qf.id} className="p-3 rounded-xl bg-navy-900 border border-navy-700 text-xs space-y-1">
+                      <div className="text-[10px] text-sky font-bold">{qf.matchNum} • {qf.date}</div>
+                      <div className={`${team1.isDecided ? 'text-white' : 'text-navy-muted'} truncate`}>{team1.name}</div>
+                      <div className={`${team2.isDecided ? 'text-white' : 'text-navy-muted'} truncate`}>{team2.name}</div>
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Col 3: Semis */}

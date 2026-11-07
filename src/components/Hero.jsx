@@ -51,7 +51,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
           </div>
 
           {/* Both Team Logos (Large in white circles) & Names */}
-          <div className="grid grid-cols-12 gap-2 sm:gap-4 items-center text-center py-4 sm:py-6">
+          <div className="grid grid-cols-12 gap-2 sm:gap-4 items-start text-center py-4 sm:py-6">
             {/* Team Home */}
             <div className="col-span-5 flex flex-col items-center space-y-2">
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white p-1 border border-navy-700 flex items-center justify-center shadow-xs">
@@ -69,7 +69,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
             </div>
 
             {/* Upcoming fixture */}
-            <div className="col-span-2 flex flex-col items-center justify-center">
+            <div className="col-span-2 flex flex-col items-center justify-center pt-3 sm:pt-5">
               <div className="w-10 h-10 rounded-full surface-navy-box border border-navy-700 text-white flex items-center justify-center font-black font-sports text-sm shadow-xs">
                 VS
               </div>
