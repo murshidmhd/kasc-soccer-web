@@ -105,6 +105,7 @@ export const lastMatchResult = {
   stage: "Round 1 (Opening Match)",
   date: "06 Nov 2026",
   motmName: "Matti",
+  motmNumber: 15,
   motmTeam: "KRSC KOZHIKKODE",
   winnerPosterUrl: "/match1_winner_poster.jpg",
   motmPosterUrl: "/match1_motm_matti.jpg",

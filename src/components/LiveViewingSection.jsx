@@ -19,7 +19,7 @@ export default function LiveViewingSection({ lang }) {
           </div>
           <div>
             <h2 className="text-sm font-black font-sports uppercase tracking-wide text-card-title">
-              {isMalayalam ? 'ലൈവ് മത്സരവും റീപ്ലേയും' : 'Live Match & Replay'}
+              {isMalayalam ? 'Live Match & Replay' : 'Live Match & Replay'}
             </h2>
             <p className="text-[11px] text-card-muted">
               {isMalayalam ? 'തത്സമയ മത്സരവും കഴിഞ്ഞ മത്സരങ്ങളുടെ റീപ്ലേയും' : 'Watch live matches and previous match replays'}

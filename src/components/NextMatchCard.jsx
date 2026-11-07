@@ -79,7 +79,7 @@ export default function NextMatchCard({ lang, isDarkMode, onFixtures }) {
           className="flex-1 py-3 rounded-2xl bg-indigo-700/30 hover:bg-indigo-700/50 border border-indigo-600/40 text-indigo-300 text-xs font-bold flex items-center justify-center gap-1.5 transition"
         >
           <Calendar className="w-3.5 h-3.5" />
-          <span>{lang === 'ml' ? 'ഫിക്സ്ചർ (Fixtures)' : 'Fixtures'}</span>
+          <span>Fixtures</span>
         </button>
       </div>
     </div>

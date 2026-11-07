@@ -224,21 +224,21 @@ export default function SevensPenaltyGame({ lang, isDarkMode }) {
       isDarkMode ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
     }`}>
       {/* Header */}
-      <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 flex-wrap gap-2">
+      <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-slate-800 flex-wrap gap-2">
         <div className="flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-700 text-white flex items-center justify-center font-black shadow-xs shrink-0">
             ⚽
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-slate-950">
+              <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-slate-950 dark:text-white">
                 {lang === 'ml' ? 'സെവൻസ് പെനാൽറ്റി ഷൂട്ടൗട്ട്' : 'SEVENS PENALTY SHOOTOUT'}
               </h3>
               <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-black uppercase tracking-wider">
                 Mini Game
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 font-medium">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
               {lang === 'ml' 
                 ? '5 പെനാൽറ്റി ഷോട്ടുകൾ • ദിശ തിരഞ്ഞെടുത്ത് ഗോളടിക്കൂ!' 
                 : '5 Penalty kicks • Choose target zone & beat the goalkeeper!'}

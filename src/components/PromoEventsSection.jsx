@@ -119,7 +119,7 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
             }`}>
               {lang === 'ml' ? 'പ്രചാരണ പരിപാടികൾ' : 'PROMOTIONS & CELEBRATIONS'}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl font-malayalam leading-[1.5]">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl font-malayalam leading-[1.5]">
               {lang === 'ml' 
                 ? 'ഉദയ ഗോൾ വണ്ടി ഷൂട്ട് ഔട്ട് മത്സരം, 8 കി.മീ മിനി മാരത്തോൺ & ഒഫീഷ്യൽ കൗണ്ട്ഡൗൺ പരമ്പര' 
                 : 'Udaya Goal Vandi Shootout Challenge, 8 KM Mini Marathon & Official Countdown Series.'}
@@ -191,26 +191,26 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                   </span>
                 </div>
 
-                <h3 className={`font-black uppercase tracking-tight text-slate-950 leading-[1.3] ${
+                <h3 className={`font-black uppercase tracking-tight text-slate-950 dark:text-white leading-[1.3] ${
                   lang === 'ml' ? 'font-malayalam text-xl sm:text-2xl' : 'font-sports text-2xl sm:text-3xl'
                 }`}>
                   {lang === 'ml' ? goalVandi.titleMl : goalVandi.title}
                 </h3>
 
-                <p className="text-xs sm:text-sm text-slate-700 font-malayalam leading-[1.5]">
+                <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-malayalam leading-[1.5]">
                   {lang === 'ml' ? goalVandi.descMl : goalVandi.desc}
                 </p>
 
                 {/* Tour Locations Badges */}
                 <div className="pt-1">
-                  <span className="text-[11px] font-black uppercase text-slate-500 block mb-1.5 tracking-wider">
+                  <span className="text-[11px] font-black uppercase text-slate-500 dark:text-slate-400 block mb-1.5 tracking-wider">
                     {lang === 'ml' ? 'മത്സരം നടന്ന പ്രധാന കേന്ദ്രങ്ങൾ:' : 'Tour Contest Locations:'}
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {goalVandi.locations.map((loc, idx) => (
                       <span 
                         key={idx} 
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-800 shadow-2xs"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-800 dark:text-slate-200 shadow-2xs"
                       >
                         <MapPin className="w-3.5 h-3.5 text-red-600 shrink-0" />
                         <span>{lang === 'ml' ? loc.nameMl : loc.name}</span>
@@ -220,8 +220,8 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                 </div>
 
                 {/* Reward Callout */}
-                <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs font-bold flex items-center gap-2">
-                  <Ticket className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-400/10 border border-emerald-200 dark:border-emerald-400/20 text-emerald-950 dark:text-emerald-200 text-xs font-bold flex items-center gap-2">
+                  <Ticket className="w-4 h-4 text-emerald-600 dark:text-emerald-300 shrink-0" />
                   <span>
                     {lang === 'ml' ? goalVandi.rewardMl : goalVandi.reward}
                   </span>
@@ -345,13 +345,13 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                   </span>
                 </div>
 
-                <h3 className={`font-black uppercase tracking-tight text-slate-950 ${
+                <h3 className={`font-black uppercase tracking-tight text-slate-950 dark:text-white ${
                   lang === 'ml' ? 'font-malayalam text-xl sm:text-2xl' : 'font-sports text-2xl sm:text-3xl'
                 }`}>
                   {lang === 'ml' ? marathon.titleMl : marathon.title}
                 </h3>
 
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-malayalam">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-malayalam">
                   {lang === 'ml'
                     ? '2026 ഒക്ടോബർ 25 ഞായറാഴ്ച രാവിലെ പറമ്പിൽ പീടിക പഞ്ചായത്ത് സ്റ്റേഡിയത്തിൽ നിന്ന് ആരംഭിച്ച 8 കിലോമീറ്റർ മിനി മാരത്തോൺ പെരുവള്ളൂർ ഗ്രാമ പഞ്ചായത്ത് പ്രസിഡന്റ് പി. പി. സുനീൽ ഫ്ലാഗ് ഓഫ് ചെയ്തു. അബാക്കസ് അക്കാദമി പറമ്പിൽ പീടിക & പുത്തൂർ പള്ളിക്കൽ നൽകിയ ക്യാഷ് പ്രൈസുകൾ വിജയികൾക്ക് വിതരണം ചെയ്തു.'
                     : 'The grand promotional 8 km mini marathon was officially flagged off on Sunday, 25 October 2026 from Peruvallur Panjayath Stadium by Grama Panchayath President P. P. Suneel. Elite athletes from Malappuram, Kozhikode, and Palakkad competed.'}
@@ -359,17 +359,17 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
 
                 {/* Key metadata pills */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-1 text-xs">
-                  <div className="p-2.5 rounded-xl bg-white/80 border border-slate-200">
-                    <span className="text-[10px] text-slate-500 block uppercase font-bold">Flag-Off By</span>
-                    <span className="font-bold text-slate-900">{lang === 'ml' ? marathon.flagOffBy.nameMl : marathon.flagOffBy.name}</span>
+                  <div className="p-2.5 rounded-xl bg-white/80 dark:bg-white/5 border border-slate-200 dark:border-white/10">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 block uppercase font-bold">Flag-Off By</span>
+                    <span className="font-bold text-slate-900 dark:text-white">{lang === 'ml' ? marathon.flagOffBy.nameMl : marathon.flagOffBy.name}</span>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-white/80 border border-slate-200">
-                    <span className="text-[10px] text-slate-500 block uppercase font-bold">Event Type</span>
-                    <span className="font-bold text-slate-900">8 KM Mini Marathon</span>
+                  <div className="p-2.5 rounded-xl bg-white/80 dark:bg-white/5 border border-slate-200 dark:border-white/10">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 block uppercase font-bold">Event Type</span>
+                    <span className="font-bold text-slate-900 dark:text-white">8 KM Mini Marathon</span>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-white/80 border border-slate-200 col-span-2 sm:col-span-1">
-                    <span className="text-[10px] text-slate-500 block uppercase font-bold">Event Partner</span>
-                    <span className="font-bold text-blue-800">{marathon.prizeSponsor.name}</span>
+                  <div className="p-2.5 rounded-xl bg-white/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 col-span-2 sm:col-span-1">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 block uppercase font-bold">Event Partner</span>
+                    <span className="font-bold text-blue-800 dark:text-blue-300">{marathon.prizeSponsor.name}</span>
                   </div>
                 </div>
               </div>
@@ -404,11 +404,11 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
           {/* Winners Podium Showcase (3 Cards) */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-black font-sports uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <h3 className="text-lg font-black font-sports uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
                 <Trophy className="w-5 h-5 text-amber-500" />
                 <span>{lang === 'ml' ? 'മാരത്തോൺ വിജയികൾ (Winners Podium)' : 'Mini Marathon 8KM Champions'}</span>
               </h3>
-              <span className="text-xs text-slate-500 font-medium">Top 3 Finishers</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Top 3 Finishers</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -444,19 +444,19 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
 
                     <div className="p-3.5 space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-black uppercase text-blue-700 tracking-wider">
+                        <span className="text-[10px] font-black uppercase text-blue-700 dark:text-blue-300 tracking-wider">
                           {lang === 'ml' ? p.titleMl : p.title}
                         </span>
                         <span className="text-[11px] font-bold text-slate-400">8 KM Run</span>
                       </div>
-                      <h4 className="font-sports font-black text-base text-slate-900">
+                      <h4 className="font-sports font-black text-base text-slate-900 dark:text-white">
                         {lang === 'ml' ? p.winnerMl : p.winner}
                       </h4>
                     </div>
 
                     {/* Card Footer details */}
-                    <div className="p-3 text-center bg-slate-50 border-t border-slate-100">
-                      <p className="text-[11px] text-slate-600 font-medium">
+                    <div className="p-3 text-center bg-slate-50 dark:bg-white/[0.04] border-t border-slate-100 dark:border-white/10">
+                      <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                         {lang === 'ml' 
                           ? `${p.titleMl} ട്രോഫിയും മെഡലും നൽകി ആദരിച്ചു.` 
                           : `Honored with ${p.title} trophy and medal.`}
@@ -471,11 +471,11 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
           {/* Marathon Photo Gallery: Flag-off & Crowd Moments */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-black font-sports uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <h3 className="text-lg font-black font-sports uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
                 <ImageIcon className="w-5 h-5 text-blue-600" />
                 <span>{lang === 'ml' ? 'മാരത്തോൺ നിമിഷങ്ങൾ (Event Moments)' : 'Ceremony & Action Photos'}</span>
               </h3>
-              <span className="text-xs text-slate-500 font-medium">Tap photo to enlarge</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Tap photo to enlarge</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -512,10 +512,10 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                       </div>
                     </div>
                     <div className="p-3.5 space-y-1">
-                      <h4 className="font-bold text-sm text-slate-900 leading-snug">
+                      <h4 className="font-bold text-sm text-slate-900 dark:text-white leading-snug">
                         {lang === 'ml' ? item.titleMl : item.title}
                       </h4>
-                      <p className="text-xs text-slate-500 line-clamp-2">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
                         {lang === 'ml' ? item.descMl : item.desc}
                       </p>
                     </div>
@@ -536,13 +536,13 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                 AA
               </div>
               <div>
-                <span className="text-[10px] font-mono text-blue-700 font-bold uppercase tracking-wider">
+                <span className="text-[10px] font-mono text-blue-700 dark:text-blue-300 font-bold uppercase tracking-wider">
                   Official Marathon Partner
                 </span>
-                <h4 className="font-sports font-black text-base text-slate-950">
+                <h4 className="font-sports font-black text-base text-slate-950 dark:text-white">
                   {marathon.prizeSponsor.name} ({marathon.prizeSponsor.nameMl})
                 </h4>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   {lang === 'ml' 
                     ? 'പറമ്പിൽ പീടിക & പുത്തൂർ പള്ളിക്കൽ • സെവൻസ് മിനി മാരത്തോൺ സ്പോൺസർമാർ' 
                     : `${marathon.prizeSponsor.branches} • Official Partner for SFA Sevens 8KM Marathon`}
@@ -564,17 +564,17 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
         <div className="space-y-6 animate-fadeIn">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-black font-sports uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <h3 className="text-lg font-black font-sports uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-red-600" />
                 <span>{lang === 'ml' ? 'കൗണ്ട്ഡൗൺ പോസ്റ്റർ പരമ്പര' : 'Official Countdown Series'}</span>
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {lang === 'ml' 
                   ? 'കിക്ക്ഓഫിലേക്ക് ദിനങ്ങൾ എണ്ണുന്ന ഔദ്യോഗിക ഡിജിറ്റൽ പോസ്റ്ററുകൾ' 
                   : 'Official countdown creatives released in the build-up to kickoff.'}
               </p>
             </div>
-            <span className="text-xs text-blue-700 font-bold font-mono">
+            <span className="text-xs text-blue-700 dark:text-blue-300 font-bold font-mono">
               {countdownPosters.length} Posters
             </span>
           </div>
@@ -616,7 +616,7 @@ export default function PromoEventsSection({ lang, isDarkMode }) {
                     <span className="text-[10px] text-amber-700 font-bold uppercase block tracking-wider">
                       {poster.highlight}
                     </span>
-                    <h4 className="font-sports font-black text-sm text-slate-900 leading-snug">
+                    <h4 className="font-sports font-black text-sm text-slate-900 dark:text-white leading-snug">
                       {lang === 'ml' ? poster.titleMl : poster.title}
                     </h4>
                   </div>

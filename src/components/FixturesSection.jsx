@@ -15,7 +15,7 @@ export default function FixturesSection({ lang, isDarkMode }) {
   const fixtureGroups = useMemo(() => {
     const groups = new Map();
     displayedFixtures.forEach((match) => {
-      const key = match.date || (lang === 'ml' ? 'തീയതി ഉടൻ' : 'Date to be announced');
+      const key = match.date || 'Date TBA';
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(match);
     });
@@ -24,18 +24,18 @@ export default function FixturesSection({ lang, isDarkMode }) {
 
   const getShortTag = (match) => {
     if (match.id === 'm1') {
-      return lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം' : 'Opening match';
+      return 'Opening Match';
     }
     if (match.stage?.includes('Final') && !match.stage?.includes('Semi') && !match.stage?.includes('Quarter')) {
-      return lang === 'ml' ? 'ഫൈനൽ' : 'Final';
+      return 'Final';
     }
     if (match.stage?.includes('Semi')) {
-      return lang === 'ml' ? 'സെമി ഫൈനൽ' : 'Semi Final';
+      return 'Semi Final';
     }
     if (match.stage?.includes('Quarter')) {
-      return lang === 'ml' ? 'ക്വാർട്ടർ' : 'Quarter Final';
+      return 'Quarter Final';
     }
-    return lang === 'ml' ? 'റൗണ്ട് 1' : 'Round 1';
+    return 'Round 1';
   };
 
   return (
@@ -53,7 +53,7 @@ export default function FixturesSection({ lang, isDarkMode }) {
           <h2 className={`text-2xl sm:text-4xl font-black font-sports tracking-wide uppercase leading-[1.3] ${
             isDarkMode ? 'text-white' : 'text-navy-900'
           }`}>
-            {lang === 'ml' ? 'ടൂർണ്ണമെന്റ് ഫിക്സ്ചറുകളും ട്രീയും' : 'OFFICIAL SFA FIXTURES & BRACKET'}
+            {lang === 'ml' ? 'Tournament Fixtures & Bracket' : 'OFFICIAL SFA FIXTURES & BRACKET'}
           </h2>
 
           {/* Venue shown once at the top of the page */}
@@ -80,7 +80,7 @@ export default function FixturesSection({ lang, isDarkMode }) {
             }`}
           >
             <ListFilter className="w-4 h-4" />
-            <span>{lang === 'ml' ? 'ലിസ്റ്റ് വ്യൂ' : 'Match List'}</span>
+            <span>Match List</span>
           </button>
           <button
             onClick={() => setViewMode('bracket')}
@@ -91,7 +91,7 @@ export default function FixturesSection({ lang, isDarkMode }) {
             }`}
           >
             <Trophy className="w-4 h-4" />
-            <span>{lang === 'ml' ? 'ടൂർണ്ണമെന്റ് ട്രീ' : 'Knockout Tree'}</span>
+            <span>Knockout Bracket</span>
           </button>
         </div>
       </div>
@@ -116,7 +116,7 @@ export default function FixturesSection({ lang, isDarkMode }) {
                   : 'surface-card text-card-title border border-surface-border dark:border-navy-700'
               }`}
             >
-              <span>{lang === 'ml' ? `എല്ലാ മത്സരങ്ങളും (${fixtures.length})` : `All Fixtures (${fixtures.length})`}</span>
+              <span>{lang === 'ml' ? `All Matches (${fixtures.length})` : `All Fixtures (${fixtures.length})`}</span>
             </button>
             <button
               onClick={() => setFilterMode('confirmed')}
@@ -126,7 +126,7 @@ export default function FixturesSection({ lang, isDarkMode }) {
                   : 'surface-card text-card-title border border-surface-border dark:border-navy-700'
               }`}
             >
-              <span>{lang === 'ml' ? `സ്ഥിരീകരിച്ച മത്സരം (${confirmedFixtures.length})` : `Confirmed Match (${confirmedFixtures.length})`}</span>
+              <span>{lang === 'ml' ? `Confirmed Matches (${confirmedFixtures.length})` : `Confirmed Matches (${confirmedFixtures.length})`}</span>
             </button>
           </div>
 
@@ -139,8 +139,8 @@ export default function FixturesSection({ lang, isDarkMode }) {
                 <div className="space-y-2.5">
             {matches.map((match) => {
               const isConfirmed = Boolean(match.confirmed);
-              const team1Name = isConfirmed ? match.team1 : (lang === 'ml' ? 'പിന്നീട് അറിയിക്കും' : 'To be announced');
-              const team2Name = isConfirmed ? match.team2 : (lang === 'ml' ? 'പിന്നീട് അറിയിക്കും' : 'To be announced');
+              const team1Name = isConfirmed ? match.team1 : 'TBD';
+              const team2Name = isConfirmed ? match.team2 : 'TBD';
 
               const isUdayaMatch = isConfirmed && (match.team1?.toUpperCase().includes('UDAYA') || match.team2?.toUpperCase().includes('UDAYA'));
               const isNextMatch = match.status === 'Upcoming' && isConfirmed;
@@ -181,7 +181,7 @@ export default function FixturesSection({ lang, isDarkMode }) {
                               ? 'bg-navy-700 text-navy-muted'
                               : 'bg-surface-light text-navy-900 border border-surface-border'
                       }`}>
-                        {isConfirmed ? getShortTag(match) : (lang === 'ml' ? 'ഉടൻ പ്രഖ്യാപിക്കും' : 'TBD')}
+                        {isConfirmed ? getShortTag(match) : 'TBD'}
                       </span>
                       {isUdayaMatch && (
                         <span className="px-1.5 py-0.5 rounded-md bg-purple-700 text-white text-[10px] font-black uppercase tracking-wider">
@@ -211,7 +211,7 @@ export default function FixturesSection({ lang, isDarkMode }) {
                       <span className={`w-full line-clamp-2 text-[11px] sm:text-xs leading-tight font-sports ${team1Won ? 'font-black text-card-title' : isCompleted ? 'font-medium text-card-muted' : 'font-bold text-card-title'}`}>{team1Name}</span>
                     </div>
                     <div className="min-w-[62px] text-center">
-                      {isCompleted || isMatchLive ? <span className={`text-xl font-black font-sports ${isMatchLive ? 'text-gold' : 'text-card-title'}`}>{score1 ?? 0} <span className="text-card-muted">–</span> {score2 ?? 0}</span> : <span className="text-[10px] font-black uppercase tracking-widest text-card-muted">{lang === 'ml' ? 'എതിരെ' : 'VS'}</span>}
+                      {isCompleted || isMatchLive ? <span className={`text-xl font-black font-sports ${isMatchLive ? 'text-gold' : 'text-card-title'}`}>{score1 ?? 0} <span className="text-card-muted">–</span> {score2 ?? 0}</span> : <span className="text-[10px] font-black uppercase tracking-widest text-card-muted">VS</span>}
                     </div>
                     <div className="flex min-w-0 flex-col items-center gap-1 text-center">
                       <span className="w-10 h-10 rounded-full bg-white p-0.5 border border-surface-border dark:border-navy-700 flex items-center justify-center"><TeamLogo teamName={isConfirmed ? match.team2 : '?'} className="w-full h-full rounded-full object-contain" /></span>

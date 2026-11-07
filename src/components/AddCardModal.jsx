@@ -233,7 +233,7 @@ export default function AddCardModal({ isOpen, onClose, isDarkMode, lang }) {
                 }`}
               >
                 <span className="w-3.5 h-4.5 rounded-xs bg-red-600 border border-white inline-block shadow-2xs" />
-                <span>{lang === 'ml' ? '🟥 റെഡ് കാർഡ് (പുറത്താക്കൽ)' : '🟥 Red Card (Expulsion)'}</span>
+                <span>🟥 Red Card (Expulsion)</span>
               </button>
 
               <button
@@ -246,7 +246,7 @@ export default function AddCardModal({ isOpen, onClose, isDarkMode, lang }) {
                 }`}
               >
                 <span className="w-3.5 h-4.5 rounded-xs bg-amber-400 border border-amber-600 inline-block shadow-2xs" />
-                <span>{lang === 'ml' ? '🟨 യെല്ലോ കാർഡ് (മുന്നറിയിപ്പ്)' : '🟨 Yellow Card (Caution)'}</span>
+                <span>🟨 Yellow Card (Caution)</span>
               </button>
             </div>
           </div>

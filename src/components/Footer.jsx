@@ -84,8 +84,8 @@ export default function Footer({ lang, isDarkMode, setActiveTab }) {
   };
 
   const quickLinks = [
-    { id: 'live', label: lang === 'ml' ? 'ലൈവ് മാച്ച്' : 'Live Match', icon: Flame },
-    { id: 'fixtures', label: lang === 'ml' ? 'ഫിക്സ്ചർ' : 'Fixtures', icon: Calendar },
+    { id: 'live', label: 'Live Match', icon: Flame },
+    { id: 'fixtures', label: 'Fixtures', icon: Calendar },
     { id: 'teams', label: lang === 'ml' ? '24 ക്ലബ്ബുകൾ' : 'Clubs', icon: Shield },
     { id: 'stats', label: lang === 'ml' ? 'ടോപ്പ് സ്കോറർ' : 'Stats', icon: Trophy }
   ];

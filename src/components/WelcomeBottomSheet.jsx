@@ -177,7 +177,7 @@ export default function WelcomeBottomSheet({
     : `${ORGANISERS.primary.name} & ${ORGANISERS.coOrganiser.name}`;
 
   const shareMessage = lang === 'ml'
-    ? `⚽ അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ ടൂർണ്ണമെന്റ് Season 7 • ${orgLine} • പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം\nലൈവ് സ്കോറുകളും ഫിക്സ്ചറുകളും കാണാൻ സന്ദർശിക്കുക:`
+    ? `⚽ അഖിലേന്ത്യാ സെവൻസ് Tournament Season 7 • ${orgLine} • പെരുവള്ളൂർ പഞ്ചായത്ത് Stadium\nLive Scores, Fixtures എന്നിവ കാണാൻ സന്ദർശിക്കുക:`
     : `⚽ Akhilenthya Sevens Football Tournament Season 7 • ${orgLine} • Peruvallur Panjayath Stadium\nFollow live scores & fixtures:`;
 
   const shareTargetUrl = `${SITE_URL}?v=udaya_white_s7`;
@@ -306,7 +306,7 @@ export default function WelcomeBottomSheet({
                 <Calendar className="w-4 h-4" />
               </div>
               <span className="text-[11px] font-black text-white leading-tight">
-                {lang === 'ml' ? 'ഫിക്സ്ചർ' : 'Fixtures'}
+                Fixtures
               </span>
               <span className="text-[9px] text-navy-muted mt-0.5">
                 {lang === 'ml' ? 'ടൈംടേബിൾ' : 'Schedule'}
@@ -327,7 +327,7 @@ export default function WelcomeBottomSheet({
                 {lang === 'ml' ? 'താരങ്ങൾ' : 'Top Players'}
               </span>
               <span className="text-[9px] text-navy-muted mt-0.5">
-                {lang === 'ml' ? 'സ്റ്റാറ്റ്സ് & ഗോൾ' : 'Stats Race'}
+                {lang === 'ml' ? 'Stats & Goals' : 'Stats Race'}
               </span>
             </button>
           </div>

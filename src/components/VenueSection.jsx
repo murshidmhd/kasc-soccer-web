@@ -106,20 +106,20 @@ export default function VenueSection({ lang, isDarkMode }) {
                 isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-300' : 'bg-white border-slate-200 text-slate-700'
               }`}>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Kickoff Time:</span>
-                  <span className="font-bold text-amber-700">8:45 PM Sharp</span>
+                  <span className="text-slate-500 dark:text-slate-400">Kickoff Time:</span>
+                  <span className={`font-bold ${isDarkMode ? 'text-amber-300' : 'text-amber-700'}`}>8:45 PM Sharp</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Halves:</span>
-                  <span className="font-bold text-slate-900">30 + 30 Minutes</span>
+                  <span className="text-slate-500 dark:text-slate-400">Halves:</span>
+                  <span className={`font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>30 + 30 Minutes</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Tie Breaker:</span>
-                  <span className="font-bold text-blue-700">Penalty Shootout</span>
+                  <span className="text-slate-500 dark:text-slate-400">Tie Breaker:</span>
+                  <span className={`font-bold ${isDarkMode ? 'text-purple-300' : 'text-blue-700'}`}>Penalty Shootout</span>
                 </div>
               </div>
 
-              <div className="text-[11px] text-emerald-800 font-bold bg-emerald-50 py-1.5 px-3 rounded-lg border border-emerald-200">
+              <div className={`text-[11px] font-bold py-1.5 px-3 rounded-lg border ${isDarkMode ? 'text-emerald-200 bg-emerald-400/10 border-emerald-400/20' : 'text-emerald-800 bg-emerald-50 border-emerald-200'}`}>
                 ✓ Sevens Football Association (SFA) Approved Ground
               </div>
             </div>
