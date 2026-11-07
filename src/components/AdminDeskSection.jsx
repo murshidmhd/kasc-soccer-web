@@ -28,7 +28,9 @@ import {
   Camera,
   Star,
   Award,
-  ArrowUpDown
+  ArrowUpDown,
+  Video,
+  Tv
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { 
@@ -150,6 +152,33 @@ export default function AdminDeskSection({
     shots: 5,
     dribbles: 4
   });
+
+  // Live Stream & YouTube Broadcast URL State
+  const [streamUrlInput, setStreamUrlInput] = useState(() => matchState.liveStreamUrl || '');
+  const [isStreamLiveInput, setIsStreamLiveInput] = useState(() => Boolean(matchState.isStreamLive));
+
+  useEffect(() => {
+    if (matchState.liveStreamUrl !== undefined) {
+      setStreamUrlInput(matchState.liveStreamUrl || '');
+    }
+    if (matchState.isStreamLive !== undefined) {
+      setIsStreamLiveInput(Boolean(matchState.isStreamLive));
+    }
+  }, [matchState.liveStreamUrl, matchState.isStreamLive]);
+
+  const handleSaveStreamUrl = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const cleanUrl = streamUrlInput.trim();
+    const next = {
+      ...matchState,
+      liveStreamUrl: cleanUrl,
+      isStreamLive: isStreamLiveInput
+    };
+    setMatchState(next);
+    saveOfficialMatchState(next);
+    setNotification('Live stream URL broadcasted globally to all users in real time!');
+    setTimeout(() => setNotification(''), 4500);
+  };
 
   // Keep lineup tactics synced across tabs and local events
   useEffect(() => {
@@ -978,6 +1007,7 @@ export default function AdminDeskSection({
                 <div className="flex gap-1.5 overflow-x-auto">
                   {[
                     ['admin-operations', 'Operations'],
+                    ['admin-stream', 'Live Stream'],
                     ['admin-score', 'Score'],
                     ['admin-clock', 'Clock'],
                     ['admin-events', 'Events'],
@@ -1259,6 +1289,132 @@ export default function AdminDeskSection({
                     )}
                   </div>
                 </div>
+              </div>
+
+              {/* LIVE STREAM & BROADCAST URL CONTROLLER */}
+              <div id="admin-stream" className={`scroll-mt-28 p-4 sm:p-5 rounded-3xl border space-y-4 shadow-sm ${
+                isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'
+              }`}>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-3 border-slate-200 dark:border-slate-800">
+                  <div className="flex items-center gap-2.5">
+                    <span className={`p-2 rounded-xl text-white font-black ${
+                      isStreamLiveInput ? 'bg-red-600 animate-pulse' : 'bg-red-500/20 text-red-500'
+                    }`}>
+                      <Video className="w-5 h-5" />
+                    </span>
+                    <div>
+                      <h4 className="text-sm font-black font-sports uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+                        <span>Live Stream & YouTube Broadcast URL</span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300">
+                          Real-Time Sync
+                        </span>
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Paste YouTube Live stream URL or previous match replay — changes appear instantly on all user devices
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {matchState.liveStreamUrl && (
+                      <a
+                        href={matchState.liveStreamUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 text-xs font-bold transition active:scale-95"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        <span>Test Active URL</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                <form onSubmit={handleSaveStreamUrl} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+                      Stream / Video URL (YouTube Live or Replay)
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="url"
+                        value={streamUrlInput}
+                        onChange={(e) => setStreamUrlInput(e.target.value)}
+                        placeholder="https://www.youtube.com/watch?v=... or https://youtube.com/live/..."
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-red-500 transition"
+                      />
+                      {streamUrlInput && (
+                        <button
+                          type="button"
+                          onClick={() => setStreamUrlInput('')}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                      Supports: YouTube video links, YouTube Live links (youtube.com/live/...), youtu.be short links.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+                    <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={isStreamLiveInput}
+                        onChange={(e) => setIsStreamLiveInput(e.target.checked)}
+                        className="w-4 h-4 rounded text-red-600 focus:ring-red-500"
+                      />
+                      <div>
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
+                          🔴 Broadcast as LIVE STREAM (Showing "LIVE NOW" badge to fans)
+                        </span>
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 block">
+                          Uncheck if this is a recorded replay of a past match
+                        </span>
+                      </div>
+                    </label>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStreamUrlInput('https://www.youtube.com/watch?v=3Fr8ctztT7k');
+                          setIsStreamLiveInput(false);
+                        }}
+                        className="px-2.5 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                      >
+                        Reset Default
+                      </button>
+
+                      <button
+                        type="submit"
+                        className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black text-xs uppercase tracking-wider shadow-md transition active:scale-95 flex items-center gap-1.5"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        <span>Update & Sync URL</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Active URL status pill */}
+                  <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-2">
+                    <span className="font-sans font-bold uppercase text-[10px] text-slate-400">Current Fan View:</span>
+                    <span className="truncate max-w-md text-slate-700 dark:text-slate-300">
+                      {matchState.liveStreamUrl || 'https://www.youtube.com/watch?v=3Fr8ctztT7k'}
+                    </span>
+                    {matchState.isStreamLive ? (
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-100 text-red-700 dark:bg-red-900/60 dark:text-red-300">
+                        LIVE BADGE ON
+                      </span>
+                    ) : (
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-400">
+                        REPLAY BADGE
+                      </span>
+                    )}
+                  </div>
+                </form>
               </div>
 
               {/* SECTION A: OFFICIAL MATCH SCORE OVERWRITE */}

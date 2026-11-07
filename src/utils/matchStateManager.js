@@ -35,6 +35,8 @@ export const realOfficialMatchState = {
   lastUpdated: null,
   updatedBy: 'Ground Referee Desk',
   isCrowdLocked: true,
+  liveStreamUrl: 'https://www.youtube.com/watch?v=3Fr8ctztT7k',
+  isStreamLive: false,
   crowdReports: {
     home: 0,
     away: 0,
@@ -513,11 +515,13 @@ export function applyRemoteMatchState(remoteState) {
     const remoteTs = remoteState.lastUpdated ? new Date(remoteState.lastUpdated).getTime() : 0;
     const currentTs = current.lastUpdated ? new Date(current.lastUpdated).getTime() : 0;
 
-    // Apply if remote state is newer or has differing core score/status
+    // Apply if remote state is newer or has differing core score/status/stream
     const isNewer = remoteTs >= currentTs;
     const isDiff = remoteState.status !== current.status ||
       remoteState.officialScoreHome !== current.officialScoreHome ||
-      remoteState.officialScoreAway !== current.officialScoreAway;
+      remoteState.officialScoreAway !== current.officialScoreAway ||
+      remoteState.liveStreamUrl !== current.liveStreamUrl ||
+      remoteState.isStreamLive !== current.isStreamLive;
 
     if (isNewer || isDiff) {
       localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(remoteState));
