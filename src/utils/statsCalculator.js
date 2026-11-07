@@ -14,12 +14,12 @@
  * - Fair Play: sorted by fewest red cards, then fewest yellow cards.
  */
 
-import { openingMatch } from '../data/tournamentData';
+import { openingMatch, participatingTeams } from '../data/tournamentData';
 
 // Starting Goalkeepers map for clean sheet tracking
 export const STARTING_GOALKEEPERS = {
-  'KRSC KOZHIKKODE': 'Ramees',
-  'BASE PERUMBAVUR': 'Ameen',
+  'KRSC KOZHIKKODE': 'Jithin',
+  'BASE PERUMBAVUR': 'Aneesh',
   'UDAYA PARAMBIL PEEDIKA': 'Shamseer',
   'NEW MALAYA MALABAR FC': 'Aneesh',
   'SUPER STUDIO MALAPPURAM': 'Mujeeb',
@@ -42,18 +42,25 @@ export function calculateTournamentStats(events = [], fixtures = [], activeMatch
 
   // Finished matches list
   const finishedMatches = fixtures.filter(
-    (m) => m.status === 'Finished' || m.status === 'FULL_TIME'
-  );
+    (m) => ['Finished', 'Completed', 'FULL_TIME', 'FINISHED'].includes(m.status)
+  ).map((match) => ({ ...match }));
 
   // If live match state is Full Time and not yet represented in fixtures, include it
   if (
     activeMatchState &&
     (activeMatchState.status === 'FULL_TIME' || activeMatchState.status === 'FINISHED')
   ) {
-    const isAlreadyIn = finishedMatches.some(
+    const existingMatchIndex = finishedMatches.findIndex(
       (m) => m.id === 'm1' || m.id === activeMatchState.id
     );
-    if (!isAlreadyIn) {
+    if (existingMatchIndex >= 0) {
+      finishedMatches[existingMatchIndex] = {
+        ...finishedMatches[existingMatchIndex],
+        score1: activeMatchState.officialScoreHome,
+        score2: activeMatchState.officialScoreAway,
+        status: 'Completed'
+      };
+    } else {
       finishedMatches.push({
         id: activeMatchState.id || 'm1',
         team1: openingMatch.teamHome.name,
@@ -94,13 +101,24 @@ export function calculateTournamentStats(events = [], fixtures = [], activeMatch
   );
 
   const playerGoalMap = {};
-  validGoalEvents.forEach((evt) => {
-    const playerName = (evt.player || 'Unknown Player').trim();
-    if (!playerGoalMap[playerName]) {
-      const fallbackTeam = evt.team === 'away' ? openingMatch.teamAway.name : openingMatch.teamHome.name;
-      const teamName = evt.teamName || fallbackTeam;
-      playerGoalMap[playerName] = {
+  validGoalEvents.forEach((evt, eventIndex) => {
+    const rawName = (evt.player || '').trim();
+    const playerNumber = evt.playerNumber == null ? null : String(evt.playerNumber).trim();
+    const isUnknownName = !rawName || ['none', 'unknown', 'unknown player', 'null', 'undefined'].includes(rawName.toLowerCase());
+    const fallbackTeam = evt.team === 'away' ? openingMatch.teamAway.name : openingMatch.teamHome.name;
+    const teamName = evt.teamName || fallbackTeam;
+    const playerName = isUnknownName
+      ? `${playerNumber ? `#${playerNumber} ` : ''}None`
+      : rawName;
+    // Unknown names are identified by club and jersey so different players named
+    // "None" never get merged into one scorer entry.
+    const playerKey = isUnknownName
+      ? `unknown:${teamName}:${playerNumber || evt.id || evt.timestamp || eventIndex}`
+      : `${teamName}:${rawName.toLowerCase()}`;
+    if (!playerGoalMap[playerKey]) {
+      playerGoalMap[playerKey] = {
         name: playerName,
+        number: playerNumber,
         team: teamName,
         goals: 0,
         matchesPlayed: clubMatchesPlayed[teamName] || 1,
@@ -108,9 +126,9 @@ export function calculateTournamentStats(events = [], fixtures = [], activeMatch
         firstGoalTimestamp: evt.timestamp || 0
       };
     }
-    playerGoalMap[playerName].goals += 1;
-    if (typeof evt.minute === 'number' && evt.minute < playerGoalMap[playerName].firstGoalMinute) {
-      playerGoalMap[playerName].firstGoalMinute = evt.minute;
+    playerGoalMap[playerKey].goals += 1;
+    if (typeof evt.minute === 'number' && evt.minute < playerGoalMap[playerKey].firstGoalMinute) {
+      playerGoalMap[playerKey].firstGoalMinute = evt.minute;
     }
   });
 
@@ -196,8 +214,60 @@ export function calculateTournamentStats(events = [], fixtures = [], activeMatch
     })
     .sort((a, b) => b.cleanSheets - a.cleanSheets);
 
+  // Tournament table from completed confirmed results only.
+  const standingsByTeam = new Map();
+  const ensureStanding = (name) => {
+    if (!name) return null;
+    if (!standingsByTeam.has(name)) {
+      standingsByTeam.set(name, {
+        team: name, played: 0, wins: 0, draws: 0, losses: 0,
+        goalsFor: 0, goalsAgainst: 0, goalDifference: 0, lastResult: null
+      });
+    }
+    return standingsByTeam.get(name);
+  };
+  participatingTeams.forEach((team) => ensureStanding(team.name));
+  finishedMatches.forEach((match) => {
+    if (!Number.isFinite(Number(match.score1)) || !Number.isFinite(Number(match.score2))) return;
+    const home = ensureStanding(match.team1);
+    const away = ensureStanding(match.team2);
+    if (!home || !away) return;
+    const homeScore = Number(match.score1);
+    const awayScore = Number(match.score2);
+    home.played += 1;
+    away.played += 1;
+    home.goalsFor += homeScore;
+    home.goalsAgainst += awayScore;
+    away.goalsFor += awayScore;
+    away.goalsAgainst += homeScore;
+    if (homeScore > awayScore) {
+      home.wins += 1;
+      away.losses += 1;
+      home.lastResult = 'W';
+      away.lastResult = 'L';
+    } else if (awayScore > homeScore) {
+      away.wins += 1;
+      home.losses += 1;
+      away.lastResult = 'W';
+      home.lastResult = 'L';
+    } else {
+      home.draws += 1;
+      away.draws += 1;
+      home.lastResult = 'D';
+      away.lastResult = 'D';
+    }
+  });
+  const teamRecords = [...standingsByTeam.values()]
+    .map((team) => ({ ...team, goalDifference: team.goalsFor - team.goalsAgainst }))
+    .sort((a, b) => b.played - a.played || b.wins - a.wins || b.goalDifference - a.goalDifference || b.goalsFor - a.goalsFor || a.team.localeCompare(b.team));
+
   // 4. Tournament Numbers
-  const totalGoals = validGoalEvents.length;
+  const goalsFromFinishedScores = finishedMatches.reduce((total, match) => {
+    const score1 = Number(match.score1);
+    const score2 = Number(match.score2);
+    return Number.isFinite(score1) && Number.isFinite(score2) ? total + score1 + score2 : total;
+  }, 0);
+  const totalGoals = Math.max(validGoalEvents.length, goalsFromFinishedScores);
   const matchesCount = finishedMatches.length;
   const avgGoals = matchesCount > 0 ? (totalGoals / matchesCount).toFixed(2) : '0.00';
   const totalCleanSheets = Object.values(keeperCleanSheets).reduce((sum, v) => sum + v, 0);
@@ -229,6 +299,7 @@ export function calculateTournamentStats(events = [], fixtures = [], activeMatch
     rankedScorers,
     rankedGoalkeepers,
     fairPlayClubs,
+    teamRecords,
     finishedMatches
   };
 }

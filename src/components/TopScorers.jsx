@@ -19,11 +19,12 @@ import {
   X
 } from 'lucide-react';
 import TeamLogo from './TeamLogo';
-import { fixtures, tournamentInfo, participatingTeams } from '../data/tournamentData';
+import { fixtures, tournamentInfo } from '../data/tournamentData';
 import { squadPlayers, squadClubs, clubSquadStatus, squadClubLabelsMl } from '../data/squad';
 import { getStoredMatchState } from '../utils/matchStateManager';
 import { calculateTournamentStats } from '../utils/statsCalculator';
 import { getPlayerDisciplinaryStatus } from '../utils/disciplinaryManager';
+import { getLineupTactics } from '../utils/lineupManager';
 import { 
   SHOW_NATIONALITY, 
   AWARDS_NOTE 
@@ -36,6 +37,8 @@ export default function TopScorers({ lang, isDarkMode }) {
   const [playerSearchQuery, setPlayerSearchQuery] = useState('');
   const [selectedClubFilter, setSelectedClubFilter] = useState('All');
   const [selectedCardPlayer, setSelectedCardPlayer] = useState(null);
+  const [lineupTactics, setLineupTactics] = useState(getLineupTactics);
+  const [showAllPerformance, setShowAllPerformance] = useState(false);
 
   // Sync matchState when referee desk updates goals or events
   useEffect(() => {
@@ -46,10 +49,48 @@ export default function TopScorers({ lang, isDarkMode }) {
     return () => window.removeEventListener('kasc_match_state_updated', handleUpdate);
   }, []);
 
+  useEffect(() => {
+    const syncLineup = (e) => setLineupTactics(e.detail || getLineupTactics());
+    window.addEventListener('kasc_lineup_tactics_updated', syncLineup);
+    return () => window.removeEventListener('kasc_lineup_tactics_updated', syncLineup);
+  }, []);
+
   // Compute all tournament stats once and memoize (Confirmed matches only)
   const stats = useMemo(() => {
     return calculateTournamentStats([], fixtures.filter((m) => m.confirmed), matchState);
   }, [matchState]);
+
+  const matchdayPlayerStats = useMemo(() => {
+    const squadMap = lineupTactics?.squads || {};
+    const events = matchState?.events || [];
+    return ['krsc', 'base'].flatMap((teamKey) => {
+      const squad = squadMap[teamKey];
+      if (!squad) return [];
+      const teamName = squad.name;
+      const teamSide = teamKey === 'krsc' ? 'home' : 'away';
+      return [...(squad.starting || []), ...(squad.subs || [])].map((player) => {
+        const playerEvents = events.filter((event) => {
+          const sameTeam = event.teamName === teamName || event.team === teamSide;
+          const samePlayer = (event.playerNumber != null && Number(event.playerNumber) === Number(player.num)) ||
+            (event.player && event.player.toLowerCase() === (player.name || '').toLowerCase());
+          return sameTeam && samePlayer;
+        });
+        return {
+          key: `${teamKey}-${player.num}`,
+          name: player.displayName || player.name || 'None',
+          number: player.num,
+          position: player.pos || '—',
+          team: teamName,
+          photoUrl: player.photoUrl,
+          rating: Number(player.baseRating) || 0,
+          goals: playerEvents.filter((event) => event.type === 'goal' && !event.isOwnGoal && !event.isShootout).length,
+          yellowCards: playerEvents.filter((event) => event.type === 'yellow_card').length,
+          redCards: playerEvents.filter((event) => event.type === 'red_card').length,
+          isStarter: (squad.starting || []).some((starter) => Number(starter.num) === Number(player.num))
+        };
+      });
+    }).sort((a, b) => b.goals - a.goals || b.rating - a.rating || Number(b.isStarter) - Number(a.isStarter) || a.name.localeCompare(b.name));
+  }, [lineupTactics, matchState]);
 
   // Check if a final match is finished to display the tournament champion
   const finalMatch = useMemo(() => {
@@ -179,7 +220,7 @@ export default function TopScorers({ lang, isDarkMode }) {
           }`}
         >
           <Users className="w-4 h-4" />
-          <span>{lang === 'ml' ? 'കളിക്കാരുടെ പട്ടിക' : 'All Players Directory'}</span>
+          <span>{lang === 'ml' ? 'കളിക്കാരും സ്റ്റാറ്റ്സും' : 'Players & Stats'}</span>
         </button>
 
         <button
@@ -191,9 +232,50 @@ export default function TopScorers({ lang, isDarkMode }) {
           }`}
         >
           <Trophy className="w-4 h-4" />
-          <span>{lang === 'ml' ? 'ലീഡർബോർഡുകൾ & അവാർഡുകൾ' : 'Leaderboards & Awards'}</span>
+          <span>{lang === 'ml' ? 'പോയിന്റ് പട്ടിക & ലീഡർബോർഡുകൾ' : 'Standings & Leaders'}</span>
         </button>
       </div>
+
+      {activeStatsTab === 'players' && (
+        <section className="rounded-3xl p-4 sm:p-5 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-3">
+          <div className="flex items-center justify-between gap-2 border-b border-surface-border dark:border-navy-700 pb-3">
+            <div className="min-w-0">
+              <h3 className="text-sm font-black font-sports uppercase tracking-wider text-card-title">
+                {lang === 'ml' ? 'മാച്ച് പ്ലെയർ സ്റ്റാറ്റ്സ്' : 'MATCH PLAYER STATS'}
+              </h3>
+              <p className="text-[10px] text-card-muted">KRSC & BASE · Goals, cards and lineup rating</p>
+            </div>
+            <span className="shrink-0 px-2 py-1 rounded-lg bg-surface-light dark:bg-navy-800 text-[10px] font-bold text-card-muted">
+              {matchdayPlayerStats.length} players
+            </span>
+          </div>
+
+          <div className="space-y-1.5">
+            {(showAllPerformance ? matchdayPlayerStats : matchdayPlayerStats.slice(0, 6)).map((player) => (
+              <div key={player.key} className="flex items-center gap-2.5 p-2 rounded-xl surface-light border border-surface-border dark:border-navy-700 min-w-0">
+                <div className="relative w-9 h-9 rounded-full bg-white border border-surface-border dark:border-navy-700 overflow-hidden shrink-0 flex items-center justify-center">
+                  {player.photoUrl ? <img src={player.photoUrl} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <TeamLogo teamName={player.team} className="w-6 h-6 object-contain" />}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-card-title truncate">#{player.number} {player.name}</p>
+                  <p className="text-[9px] text-card-muted truncate">{player.team} · {player.position}{player.isStarter ? ' · XI' : ' · SUB'}</p>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0 text-[10px] font-black">
+                  <span className="px-1.5 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-300">⚽ {player.goals}</span>
+                  <span className="px-1.5 py-1 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-300">🟨 {player.yellowCards}</span>
+                  <span className="px-1.5 py-1 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-300">🟥 {player.redCards}</span>
+                  <span title="Lineup rating" className="w-10 text-center px-1 py-1 rounded-md bg-sky-500/10 text-sky-700 dark:text-sky-300">⭐ {player.rating.toFixed(1)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          {matchdayPlayerStats.length > 6 && (
+            <button type="button" onClick={() => setShowAllPerformance((value) => !value)} className="w-full min-h-10 rounded-xl bg-surface-light dark:bg-navy-800 text-xs font-bold text-royal dark:text-sky">
+              {showAllPerformance ? (lang === 'ml' ? 'കുറച്ച് കാണിക്കുക' : 'Show less') : (lang === 'ml' ? 'എല്ലാ താരങ്ങളെയും കാണുക' : 'Show all match players')}
+            </button>
+          )}
+        </section>
+      )}
 
       {/* ============================================================== */}
       {/* VIEW A: ALL PLAYERS DIRECTORY (Default, Highly Requested & Active) */}
@@ -330,6 +412,36 @@ export default function TopScorers({ lang, isDarkMode }) {
       {/* ============================================================== */}
       {activeStatsTab === 'leaders' && (
         <div className="space-y-5 animate-fadeIn">
+          <section className="rounded-3xl p-4 sm:p-5 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-3">
+            <div className="border-b border-surface-border dark:border-navy-700 pb-3">
+              <h3 className="text-sm font-black font-sports uppercase tracking-wider text-card-title">
+                {lang === 'ml' ? 'ടീം റെക്കോർഡുകൾ' : 'TEAM RECORDS'}
+              </h3>
+              <p className="text-[10px] text-card-muted">Knockout record · W-D-L, goals and latest result</p>
+            </div>
+
+            <div className="grid grid-cols-[minmax(0,1fr)_28px_52px_34px_38px] gap-1.5 px-2 text-[8px] font-black uppercase tracking-wide text-card-muted text-center">
+              <span className="text-left">Club</span><span>P</span><span>W-D-L</span><span>GD</span><span>GF</span>
+            </div>
+            <div className="space-y-1.5">
+              {stats.teamRecords.map((team) => (
+                <div key={team.team} className="grid grid-cols-[minmax(0,1fr)_28px_52px_34px_38px] items-center gap-1.5 px-2 py-2 rounded-xl surface-light border border-surface-border dark:border-navy-700 text-center">
+                  <div className="flex min-w-0 items-center gap-2 text-left">
+                    <div className="w-7 h-7 rounded-full bg-white p-0.5 border border-surface-border shrink-0"><TeamLogo teamName={team.team} className="w-full h-full object-contain" /></div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] sm:text-xs font-bold text-card-title truncate">{team.team}</p>
+                      <p className="text-[9px] text-card-muted">GF {team.goalsFor} · GA {team.goalsAgainst} {team.lastResult ? `· ${team.lastResult === 'W' ? 'Advanced' : team.lastResult === 'L' ? 'Eliminated' : 'Draw'}` : '· Not played'}</p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-mono text-card-muted">{team.played}</span>
+                  <span className="text-[10px] font-mono text-card-muted">{team.wins}-{team.draws}-{team.losses}</span>
+                  <span className={`text-[10px] font-mono font-bold ${team.goalDifference > 0 ? 'text-emerald-600 dark:text-emerald-300' : team.goalDifference < 0 ? 'text-rose-600 dark:text-rose-300' : 'text-card-muted'}`}>{team.goalDifference > 0 ? `+${team.goalDifference}` : team.goalDifference}</span>
+                  <span className="text-xs font-black text-card-title">{team.goalsFor}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
           {/* If No Matches Played Yet: Show 1 Clean Modern Kickoff Preview instead of 4 giant empty boxes */}
           {!hasLiveMatchesPlayed ? (
             <div className="p-6 rounded-3xl surface-card border border-surface-border dark:border-navy-700 text-center space-y-4 shadow-card">
@@ -425,7 +537,7 @@ export default function TopScorers({ lang, isDarkMode }) {
                   <div className="space-y-1.5 pt-1">
                     {subsequentScorers.map((scorer, idx) => (
                       <div
-                        key={scorer.name}
+                        key={`${scorer.team}-${scorer.number || scorer.name}`}
                         className="p-3 rounded-xl surface-light border border-surface-border dark:border-navy-700 flex items-center justify-between gap-3 text-xs"
                       >
                         <div className="flex items-center gap-2.5">
