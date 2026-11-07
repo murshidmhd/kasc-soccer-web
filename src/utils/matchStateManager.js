@@ -35,7 +35,7 @@ export const realOfficialMatchState = {
   lastUpdated: null,
   updatedBy: 'Ground Referee Desk',
   isCrowdLocked: true,
-  liveStreamUrl: 'https://www.youtube.com/watch?v=3Fr8ctztT7k',
+  liveStreamUrl: 'https://www.youtube.com/@sabithsmgvlog',
   isStreamLive: false,
   crowdReports: {
     home: 0,
@@ -328,6 +328,9 @@ export function getStoredMatchState() {
       };
       localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(completedState));
       return completedState;
+    }
+    if (!parsed.liveStreamUrl || parsed.liveStreamUrl.includes('3Fr8ctztT7k')) {
+      parsed.liveStreamUrl = 'https://www.youtube.com/@sabithsmgvlog';
     }
     return parsed;
   } catch (err) {

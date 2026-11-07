@@ -1380,7 +1380,7 @@ export default function AdminDeskSection({
                       <button
                         type="button"
                         onClick={() => {
-                          setStreamUrlInput('https://www.youtube.com/watch?v=3Fr8ctztT7k');
+                          setStreamUrlInput('https://www.youtube.com/@sabithsmgvlog');
                           setIsStreamLiveInput(false);
                         }}
                         className="px-2.5 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition"
@@ -1402,7 +1402,7 @@ export default function AdminDeskSection({
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-2">
                     <span className="font-sans font-bold uppercase text-[10px] text-slate-400">Current Fan View:</span>
                     <span className="truncate max-w-md text-slate-700 dark:text-slate-300">
-                      {matchState.liveStreamUrl || 'https://www.youtube.com/watch?v=3Fr8ctztT7k'}
+                      {matchState.liveStreamUrl || 'https://www.youtube.com/@sabithsmgvlog'}
                     </span>
                     {matchState.isStreamLive ? (
                       <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-100 text-red-700 dark:bg-red-900/60 dark:text-red-300">

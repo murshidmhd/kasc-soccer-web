@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Radio } from 'lucide-react';
 import { getStoredMatchState } from '../utils/matchStateManager';
+import tournamentPoster from '../assets/tournament_teaser_poster.webp';
 
-const FALLBACK_VIDEO_ID = '3Fr8ctztT7k';
-const FALLBACK_VIDEO_URL = `https://www.youtube.com/watch?v=${FALLBACK_VIDEO_ID}`;
+const DEFAULT_STREAM_URL = 'https://www.youtube.com/@sabithsmgvlog';
 
 function extractYouTubeId(url) {
   if (!url || typeof url !== 'string') return null;
@@ -25,12 +25,14 @@ export default function LiveViewingSection({ lang }) {
     return () => window.removeEventListener('kasc_match_state_updated', handleUpdate);
   }, []);
 
-  const streamUrl = (matchState?.liveStreamUrl || '').trim() || FALLBACK_VIDEO_URL;
+  const streamUrl = (matchState?.liveStreamUrl || '').trim() || DEFAULT_STREAM_URL;
   const isMatchLive = matchState?.status === '1ST_HALF' || matchState?.status === '2ND_HALF' || matchState?.status === 'HALF_TIME';
   const isLive = Boolean(matchState?.isStreamLive || isMatchLive);
 
-  const videoId = extractYouTubeId(streamUrl) || FALLBACK_VIDEO_ID;
-  const thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+  const videoId = extractYouTubeId(streamUrl);
+  const thumbnailUrl = videoId 
+    ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
+    : tournamentPoster;
 
   return (
     <section
