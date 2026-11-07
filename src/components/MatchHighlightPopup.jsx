@@ -1,7 +1,7 @@
 /**
  * MatchHighlightPopup.jsx
  * Shows on page load: today's match poster, last match result, and Player of the Match
- * Swipeable / tabbed carousel of 3 posters.
+ * Swipeable / tabbed carousel of match and result posters.
  * Dismissed on tap outside, swipe, or close button. Stored in sessionStorage
  * so it only shows once per browser session (not per visit like welcomeSheet).
  */
@@ -10,6 +10,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { lastMatchResult, fixtures } from '../data/tournamentData';
 import todayMatchPoster from '../assets/poster-nov-7.png';
+import alternateMatchPoster from '../assets/nov-7-match-poster-2.png';
 
 const SESSION_KEY = 'matchHighlightSeenV2';
 
@@ -17,7 +18,7 @@ export default function MatchHighlightPopup({ isDarkMode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [slide, setSlide] = useState(0);
   const [touchStartX, setTouchStartX] = useState(null);
-  const [imgLoaded, setImgLoaded] = useState([false, false, false]);
+  const [imgLoaded, setImgLoaded] = useState([false, false, false, false]);
   const overlayRef = useRef(null);
 
   const slides = [
@@ -26,6 +27,12 @@ export default function MatchHighlightPopup({ isDarkMode }) {
       label: '📅 Today’s Match Poster',
       sublabel: 'KMG MAVOOR vs SHOOTERS PADANNA',
       footer: `07 NOV 2026 · ${(fixtures[1]?.time || '08:45 PM').replace(':','.')} · PERUVALLUR PANCHAYATH STADIUM`
+    },
+    {
+      url: alternateMatchPoster,
+      label: '📅 Match Poster · Alternate Design',
+      sublabel: 'KMG MAVOOR vs SHOOTERS PADANNA',
+      footer: 'ALTERNATE MATCH POSTER DESIGN'
     },
     {
       url: lastMatchResult.winnerPosterUrl,
