@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Calendar, Ticket, Play, X, Film } from 'lucide-react';
+import { Calendar, Youtube, Play, X, Film } from 'lucide-react';
 import { nextMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
 import teaserPoster from '../assets/tournament_teaser_poster.webp';
 import { SHOW_HOME_TEASER, VIDEO_AUTOPLAY_ENABLED, OFFICIAL_TRAILER_URL } from '../config/siteConfig';
 
-export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketModal, onNavigate }) {
+export default function Hero({ lang, scrollToSection, isDarkMode, onNavigate }) {
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
   const isUdayaMatch = Boolean(
     nextMatch.teamHome?.name?.toUpperCase().includes('UDAYA') ||
@@ -102,14 +102,16 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onOpenTicketMo
               <Calendar className="w-4 h-4" />
               <span>{lang === 'ml' ? 'ഫിക്സ്ചർ (Fixtures)' : 'View Fixtures'}</span>
             </button>
-            <button
-              id="hero-ticket-btn"
-              onClick={onOpenTicketModal}
+            <a
+              id="hero-live-channel-btn"
+              href="https://www.youtube.com/@sabithsmgvlog"
+              target="_blank"
+              rel="noopener noreferrer"
               className="min-h-touch w-full py-3 px-2 sm:px-4 rounded-xl font-black text-xs sm:text-sm btn-gold shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"
             >
-              <Ticket className="w-4 h-4 text-navy-900 shrink-0" />
-              <span className="truncate">{lang === 'ml' ? 'ടിക്കറ്റ് (Tickets)' : 'Ticket Info'}</span>
-            </button>
+              <Youtube className="w-4 h-4 text-navy-900 shrink-0" />
+              <span className="truncate">{lang === 'ml' ? 'തത്സമയ മത്സരം' : 'Watch Live'}</span>
+            </a>
           </div>
 
           {/* Official Trailer Video Card with Poster & Play Button (Hidden behind SHOW_HOME_TEASER) */}

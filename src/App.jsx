@@ -265,7 +265,6 @@ export default function App() {
                 isDarkMode={isDarkMode} 
                 scrollToSection={handleTabChange}
                 onNavigate={handleTabChange}
-                onOpenTicketModal={() => setIsTicketModalOpen(true)}
               />
               
               <div className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-6">
