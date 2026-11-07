@@ -11,15 +11,16 @@ import { initializeApp, getApps } from 'firebase/app';
 import { getDatabase, ref, set, onValue, off, serverTimestamp } from 'firebase/database';
 
 // ─── Firebase Config (Direct + Vite env var fallback) ───────────────────────
+const viteEnv = import.meta.env || {};
 const firebaseConfig = {
-  apiKey:            import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyB49JnjdYjXOSqdogZ7bgwCwjI39yFcA4M",
-  authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "udaya-79877.firebaseapp.com",
-  databaseURL:       import.meta.env.VITE_FIREBASE_DATABASE_URL || "https://udaya-79877-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId:         import.meta.env.VITE_FIREBASE_PROJECT_ID || "udaya-79877",
-  storageBucket:     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "udaya-79877.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "449334363982",
-  appId:             import.meta.env.VITE_FIREBASE_APP_ID || "1:449334363982:web:0e3541838132b07364c01f",
-  measurementId:     import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-ZM59962VJJ"
+  apiKey:            viteEnv.VITE_FIREBASE_API_KEY || "AIzaSyB49JnjdYjXOSqdogZ7bgwCwjI39yFcA4M",
+  authDomain:        viteEnv.VITE_FIREBASE_AUTH_DOMAIN || "udaya-79877.firebaseapp.com",
+  databaseURL:       viteEnv.VITE_FIREBASE_DATABASE_URL || "https://udaya-79877-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         viteEnv.VITE_FIREBASE_PROJECT_ID || "udaya-79877",
+  storageBucket:     viteEnv.VITE_FIREBASE_STORAGE_BUCKET || "udaya-79877.firebasestorage.app",
+  messagingSenderId: viteEnv.VITE_FIREBASE_MESSAGING_SENDER_ID || "449334363982",
+  appId:             viteEnv.VITE_FIREBASE_APP_ID || "1:449334363982:web:0e3541838132b07364c01f",
+  measurementId:     viteEnv.VITE_FIREBASE_MEASUREMENT_ID || "G-ZM59962VJJ"
 };
 
 // ─── Singleton App & DB ───────────────────────────────────────────────────────

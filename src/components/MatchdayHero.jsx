@@ -13,7 +13,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Share2, Clock, Zap, Trophy, Calendar, AlertCircle } from 'lucide-react';
 import TeamLogo from './TeamLogo';
 import { fixtures } from '../data/tournamentData';
-import { getStoredMatchState } from '../utils/matchStateManager';
+import { getCalculatedMatchTime, getStoredMatchState } from '../utils/matchStateManager';
 import { SITE_URL, ORGANISERS } from '../config/siteConfig';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -29,11 +29,13 @@ function selectFeaturedFixture(matchState) {
     matchState.status === 'HALF_TIME' ||
     matchState.status === '2ND_HALF'
   ) {
-    return confirmed[0]; // current match
+    return confirmed.find((fixture) => fixture.id === matchState.activeFixtureId) || confirmed[0];
   }
 
   // After full time, leave the result in Match Center and feature the next fixture.
-  return confirmed.find((f) => f.status === 'Upcoming' || !f.score1) || confirmed[0];
+  return confirmed.find((f) => f.status === 'Upcoming' || !f.score1) ||
+    confirmed.find((f) => f.id === matchState.activeFixtureId) ||
+    confirmed[0];
 }
 
 /** Format countdown from now to target ISO string */
@@ -126,11 +128,16 @@ function CountdownBlock({ diff, lang }) {
 
 export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
   const [matchState, setMatchState] = useState(() => getStoredMatchState());
+  const [liveClock, setLiveClock] = useState(() => getCalculatedMatchTime(getStoredMatchState()));
   const [shareStatus, setShareStatus] = useState('idle'); // idle | sharing | done | error
 
   // Poll for state changes (syncs with admin changes via storage events)
   useEffect(() => {
-    const sync = () => setMatchState(getStoredMatchState());
+    const sync = (event) => {
+      const nextState = event?.detail || getStoredMatchState();
+      setMatchState(nextState);
+      setLiveClock(getCalculatedMatchTime(nextState));
+    };
     sync();
     window.addEventListener('kasc_match_state_updated', sync);
     window.addEventListener('storage', sync);
@@ -140,8 +147,16 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
     };
   }, []);
 
+  useEffect(() => {
+    const tick = () => setLiveClock(getCalculatedMatchTime(matchState));
+    tick();
+    if (!matchState.isTimerRunning) return undefined;
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [matchState]);
+
   const featured = selectFeaturedFixture(matchState);
-  const isOpeningMatch = featured?.id === 'm1';
+  const isCurrentFixture = featured?.id === (matchState.activeFixtureId || 'm1');
   const secondsSinceUpdate = useTimeSince(matchState?.lastUpdated);
 
   // Build a kickoff ISO from fixtures data (single source of truth)
@@ -159,11 +174,11 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
 
   const countdown = useCountdown(kickoffIso);
 
-  const isLive = isOpeningMatch && (
+  const isLive = isCurrentFixture && (
     matchState.status === '1ST_HALF' ||
     matchState.status === 'HALF_TIME' ||
     matchState.status === '2ND_HALF');
-  const isFinished = isOpeningMatch && matchState.status === 'FULL_TIME';
+  const isFinished = isCurrentFixture && matchState.status === 'FULL_TIME';
   const isPreMatch = !isLive && !isFinished;
 
   // ── SHARE RESULT ──
@@ -214,9 +229,9 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
     );
   }
 
-  const scoreHome = isOpeningMatch ? (matchState.officialScoreHome ?? 0) : (featured.score1 ?? 0);
-  const scoreAway = isOpeningMatch ? (matchState.officialScoreAway ?? 0) : (featured.score2 ?? 0);
-  const featuredEvents = isOpeningMatch ? (matchState.events || []) : [];
+  const scoreHome = isCurrentFixture ? (matchState.officialScoreHome ?? 0) : (featured.score1 ?? 0);
+  const scoreAway = isCurrentFixture ? (matchState.officialScoreAway ?? 0) : (featured.score2 ?? 0);
+  const featuredEvents = isCurrentFixture ? (matchState.events || []) : [];
   const goalEvents = featuredEvents.filter((e) => e.type === 'goal');
   const latestEvent = [...featuredEvents].reverse().find(Boolean);
   const isStale = secondsSinceUpdate > 60 && isLive;
@@ -281,7 +296,7 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
         </span>
         <span className="text-[11px] font-mono text-white/70 flex items-center gap-1">
           <Clock className="w-3 h-3" />
-          {matchState.matchMinute ?? 0}'
+          {liveClock.display}
           {matchState.status === 'HALF_TIME' && (
             <span className="text-gold font-bold ml-1">HT</span>
           )}

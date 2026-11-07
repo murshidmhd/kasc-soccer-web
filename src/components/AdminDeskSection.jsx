@@ -35,6 +35,9 @@ import {
   isAdminAuthenticated, 
   setAdminAuthenticated, 
   getStoredMatchState, 
+  getMatchFixtureInfo,
+  getInitialAdminFixtureId,
+  createStartedFixtureState,
   saveOfficialMatchState,
   getCalculatedMatchTime,
   canUndoOfficialMatchAction,
@@ -53,7 +56,7 @@ import {
   addExtraTimeMinutes
 } from '../utils/matchStateManager';
 import { HALF_LENGTH_MINUTES, MAX_MATCH_MINUTES } from '../config/siteConfig';
-import { tournamentInfo, openingMatch } from '../data/tournamentData';
+import { tournamentInfo, fixtures } from '../data/tournamentData';
 import logoUdaya from '../assets/logo_udaya_transparent.webp';
 import logoKasc from '../assets/logo_kasc.webp';
 import todayMatchPoster from '../assets/poster-nov-7.png';
@@ -87,6 +90,11 @@ export default function AdminDeskSection({
 
   // Match State copy for Admin editing
   const [matchState, setMatchState] = useState(getStoredMatchState);
+  const [selectedFixtureId, setSelectedFixtureId] = useState(() => getInitialAdminFixtureId());
+  const currentMatch = getMatchFixtureInfo(selectedFixtureId);
+  const scoresMatchSelected = (matchState.activeFixtureId || 'm1') === selectedFixtureId;
+  const displayedHomeScore = scoresMatchSelected ? matchState.officialScoreHome : 0;
+  const displayedAwayScore = scoresMatchSelected ? matchState.officialScoreAway : 0;
   const [clock, setClock] = useState(() => getCalculatedMatchTime(getStoredMatchState()));
   const [notification, setNotification] = useState('');
 
@@ -258,6 +266,7 @@ export default function AdminDeskSection({
     const stored = getStoredMatchState();
     setIsAuthenticated(isAdminAuthenticated());
     setMatchState(stored);
+    setSelectedFixtureId(getInitialAdminFixtureId(stored));
     setClock(getCalculatedMatchTime(stored));
     setHistoryCount(getMatchHistory().length);
     setActiveScorer(getActiveScorerInfo());
@@ -347,19 +356,8 @@ export default function AdminDeskSection({
 
   // Sevens Football: 30 minutes 1st Half + 30 minutes 2nd Half = 60 minutes
   const handleStartMatch = (half) => {
-    const totalSec = half === '1ST_HALF' ? 0 : half === 'HALF_TIME' ? 30 * 60 : 30 * 60;
-    const isRunning = half === '1ST_HALF' || half === '2ND_HALF';
-
     setMatchState((prev) => {
-      const next = {
-        ...prev,
-        status: half,
-        matchSeconds: totalSec,
-        matchMinute: Math.floor(totalSec / 60),
-        isTimerRunning: isRunning,
-        timerStartedAt: isRunning ? Date.now() : null,
-        isCrowdLocked: false
-      };
+      const next = createStartedFixtureState(prev, selectedFixtureId, half);
       saveOfficialMatchState(next);
       setClock(getCalculatedMatchTime(next));
       setHistoryCount(getMatchHistory().length);
@@ -576,12 +574,17 @@ export default function AdminDeskSection({
 
   const handleScoreChange = (team, delta) => {
     setMatchState((prev) => {
-      const nextHome = team === 'home' ? Math.max(0, prev.officialScoreHome + delta) : prev.officialScoreHome;
-      const nextAway = team === 'away' ? Math.max(0, prev.officialScoreAway + delta) : prev.officialScoreAway;
+      const belongsToSelected = (prev.activeFixtureId || 'm1') === selectedFixtureId;
+      const baseHome = belongsToSelected ? prev.officialScoreHome : 0;
+      const baseAway = belongsToSelected ? prev.officialScoreAway : 0;
+      const nextHome = team === 'home' ? Math.max(0, baseHome + delta) : baseHome;
+      const nextAway = team === 'away' ? Math.max(0, baseAway + delta) : baseAway;
       const next = {
         ...prev,
+        activeFixtureId: selectedFixtureId,
         officialScoreHome: nextHome,
-        officialScoreAway: nextAway
+        officialScoreAway: nextAway,
+        ...(belongsToSelected ? {} : { events: [] })
       };
       saveOfficialMatchState(next);
       setHistoryCount(getMatchHistory().length);
@@ -634,7 +637,7 @@ export default function AdminDeskSection({
       (p) => p.name.toLowerCase() === rawPlayer.toLowerCase() || p.num === newEvent.playerNumber
     );
     const finalPlayerNumber = newEvent.playerNumber || matchedSquadPlayer?.num || null;
-    const finalTeamName = newEvent.team === 'away' ? openingMatch.teamAway.name : openingMatch.teamHome.name;
+    const finalTeamName = newEvent.team === 'away' ? currentMatch.teamAway.name : currentMatch.teamHome.name;
 
     const eventObj = {
       id: `evt-${Date.now()}`,
@@ -681,8 +684,8 @@ export default function AdminDeskSection({
         teamName: finalTeamName,
         minute: newEvent.minute,
         reason: newEvent.text.trim() || (newEvent.type === 'red_card' ? 'Red Card Dismissal' : 'Caution / Tactical challenge'),
-        matchId: openingMatch.id,
-        matchTitle: `${openingMatch.teamHome.name} vs ${openingMatch.teamAway.name}`,
+        matchId: currentMatch.id,
+        matchTitle: `${currentMatch.teamHome.name} vs ${currentMatch.teamAway.name}`,
         timestamp: eventObj.timestamp
       });
     }
@@ -697,8 +700,8 @@ export default function AdminDeskSection({
           goalTeam: newEvent.team,
           scoreHome: newEvent.team === 'home' ? matchState.officialScoreHome + 1 : matchState.officialScoreHome,
           scoreAway: newEvent.team === 'away' ? matchState.officialScoreAway + 1 : matchState.officialScoreAway,
-          homeTeamName: openingMatch.teamHome.name,
-          awayTeamName: openingMatch.teamAway.name,
+          homeTeamName: currentMatch.teamHome.name,
+          awayTeamName: currentMatch.teamAway.name,
           matchStatus: matchState.status === 'UPCOMING' ? 'MATCH HIGHLIGHT' : matchState.status,
           goalText: newEvent.text.trim()
         }
@@ -1033,6 +1036,25 @@ export default function AdminDeskSection({
                   </div>
                 </div>
 
+                <label className="block max-w-xl space-y-1.5">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-blue-200">Match being managed</span>
+                  <select
+                    value={selectedFixtureId}
+                    onChange={(event) => setSelectedFixtureId(event.target.value)}
+                    disabled={['1ST_HALF', 'HALF_TIME', '2ND_HALF'].includes(matchState.status)}
+                    className="w-full rounded-xl border border-blue-700 bg-slate-950/70 px-3 py-2.5 text-sm font-bold text-white disabled:opacity-60"
+                  >
+                    {fixtures.filter((fixture) => fixture.confirmed).map((fixture) => (
+                      <option key={fixture.id} value={fixture.id}>
+                        {fixture.team1} vs {fixture.team2} · {fixture.date} {fixture.time}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="block text-[10px] text-blue-200/80">
+                    Starting this fixture resets its scoreboard and event timeline.
+                  </span>
+                </label>
+
                 {/* Big Action Buttons (Kerala Sevens: 30 + 30 Mins = 60 Mins) */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
                   {/* Button 1: Start 1st Half */}
@@ -1260,10 +1282,10 @@ export default function AdminDeskSection({
                     isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200 shadow-sm'
                   }`}>
                     <span className="text-xs sm:text-sm font-bold text-sky-700 block truncate">
-                      {openingMatch.teamHome.name}
+                      {currentMatch.teamHome.name}
                     </span>
                     <div className="text-5xl sm:text-6xl font-black font-sports text-slate-950">
-                      {matchState.officialScoreHome}
+                      {displayedHomeScore}
                     </div>
                     <div className="flex items-center justify-center gap-2 pt-1">
                       <button
@@ -1286,10 +1308,10 @@ export default function AdminDeskSection({
                     isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200 shadow-sm'
                   }`}>
                     <span className="text-xs sm:text-sm font-bold text-zinc-900 block truncate">
-                      {openingMatch.teamAway.name}
+                      {currentMatch.teamAway.name}
                     </span>
                     <div className="text-5xl sm:text-6xl font-black font-sports text-slate-950">
-                      {matchState.officialScoreAway}
+                      {displayedAwayScore}
                     </div>
                     <div className="flex items-center justify-center gap-2 pt-1">
                       <button
@@ -1416,8 +1438,8 @@ export default function AdminDeskSection({
                           goalTeam: newEvent.team,
                           scoreHome: matchState.officialScoreHome,
                           scoreAway: matchState.officialScoreAway,
-                          homeTeamName: openingMatch.teamHome.name,
-                          awayTeamName: openingMatch.teamAway.name,
+                          homeTeamName: currentMatch.teamHome.name,
+                          awayTeamName: currentMatch.teamAway.name,
                           matchStatus: matchState.status === 'UPCOMING' ? 'MATCH HIGHLIGHT' : matchState.status,
                           goalText: newEvent.text || 'Official Goal Highlight'
                         }
@@ -1452,8 +1474,8 @@ export default function AdminDeskSection({
                       onChange={(e) => setNewEvent({ ...newEvent, team: e.target.value, player: '', playerNumber: null })}
                       className="w-full p-2.5 text-xs font-bold rounded-xl border bg-white border-slate-300 shadow-2xs"
                     >
-                      <option value="home">{openingMatch.teamHome.name} (KRSC)</option>
-                      <option value="away">{openingMatch.teamAway.name} (BASE)</option>
+                      <option value="home">{currentMatch.teamHome.name} ({currentMatch.teamHome.shortName})</option>
+                      <option value="away">{currentMatch.teamAway.name} ({currentMatch.teamAway.shortName})</option>
                     </select>
                   </div>
 
@@ -1559,8 +1581,8 @@ export default function AdminDeskSection({
                                     goalTeam: ev.team,
                                     scoreHome: matchState.officialScoreHome,
                                     scoreAway: matchState.officialScoreAway,
-                                    homeTeamName: openingMatch.teamHome.name,
-                                    awayTeamName: openingMatch.teamAway.name,
+                                    homeTeamName: currentMatch.teamHome.name,
+                                    awayTeamName: currentMatch.teamAway.name,
                                     matchStatus: matchState.status,
                                     goalText: ev.text
                                   }
@@ -2122,8 +2144,8 @@ export default function AdminDeskSection({
           scoreHome: matchState.officialScoreHome,
           scoreAway: matchState.officialScoreAway,
           minute: matchState.matchMinute || 30,
-          homeTeamName: openingMatch.teamHome.name,
-          awayTeamName: openingMatch.teamAway.name,
+          homeTeamName: currentMatch.teamHome.name,
+          awayTeamName: currentMatch.teamAway.name,
           matchStatus: matchState.status
         }}
         isDarkMode={isDarkMode}

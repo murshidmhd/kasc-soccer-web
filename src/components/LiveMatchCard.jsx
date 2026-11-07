@@ -18,12 +18,12 @@ import {
   Info,
   WifiOff
 } from 'lucide-react';
-import { openingMatch } from '../data/tournamentData';
 import TeamLogo from './TeamLogo';
 import GoalShareCardModal from './GoalShareCardModal';
 import { getLineupTactics } from '../utils/lineupManager';
 import { 
   getStoredMatchState, 
+  getMatchFixtureInfo,
   submitFanCrowdGoal, 
   getUserRateLimitStatus,
   getCalculatedMatchTime,
@@ -62,9 +62,9 @@ const getOpeningMatchEventTeam = (event) => {
   return 'home';
 };
 
-const getOpeningMatchEventPlayer = (event) => {
+const getOpeningMatchEventPlayer = (event, isOpeningFixture) => {
   if (event?.type === 'goal') {
-    if (getOpeningMatchEventTeam(event) === 'home') return '#15';
+    if (isOpeningFixture && getOpeningMatchEventTeam(event) === 'home') return '#15';
     if (event.playerNumber) return `#${event.playerNumber}`;
   }
   return event?.player || (event?.playerNumber ? `#${event.playerNumber}` : '—');
@@ -79,6 +79,15 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
   const [goalShareModal, setGoalShareModal] = useState({ isOpen: false, goalData: null });
   const [isOnline, setIsOnline] = useState(() => (typeof navigator !== 'undefined' ? navigator.onLine : true));
   const [nowTs, setNowTs] = useState(Date.now());
+  const activeMatch = getMatchFixtureInfo(matchState.activeFixtureId);
+  const isOpeningFixture = activeMatch.id === 'm1';
+  const kickoffDate = activeMatch.date.split(', ').pop().replace(/\s+\d{4}$/, '');
+  const kickoffLabel = `${kickoffDate} · ${activeMatch.time.replace(' IST', '')}`;
+  const getEventTeam = (event) => {
+    if (isOpeningFixture) return getOpeningMatchEventTeam(event);
+    if (event?.team === 'away' || String(event?.teamName || '').toLowerCase().includes(activeMatch.teamAway.name.toLowerCase())) return 'away';
+    return 'home';
+  };
 
   // Online / Offline monitor
   useEffect(() => {
@@ -145,8 +154,8 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
   const isLive = ['1ST_HALF', 'HALF_TIME', '2ND_HALF'].includes(matchState.status);
   const hasMatchStarted = isLive || ['FULL_TIME', 'COMPLETED'].includes(matchState.status);
   const isUdayaMatch = Boolean(
-    openingMatch.teamHome?.name?.toUpperCase().includes('UDAYA') || 
-    openingMatch.teamAway?.name?.toUpperCase().includes('UDAYA')
+    activeMatch.teamHome?.name?.toUpperCase().includes('UDAYA') ||
+    activeMatch.teamAway?.name?.toUpperCase().includes('UDAYA')
   );
 
   // Relative timestamp calculation for trust details ("Updated Xs ago")
@@ -179,18 +188,18 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
     const hasYellowCardEvents = sourceEvents.some((event) => event.type === 'yellow_card');
     const events = sourceEvents.filter((event) => event.type !== 'yellow_card');
 
-    if (hasYellowCardEvents) {
+    if (isOpeningFixture && hasYellowCardEvents) {
       events.push(
-        { id: 'opening-match-yellow-card-50', type: 'yellow_card', minute: 50, player: 'None', team: 'away', teamName: openingMatch.teamAway.name },
-        { id: 'opening-match-yellow-card-55', type: 'yellow_card', minute: 55, player: 'None', team: 'away', teamName: openingMatch.teamAway.name }
+        { id: 'opening-match-yellow-card-50', type: 'yellow_card', minute: 50, player: 'None', team: 'away', teamName: activeMatch.teamAway.name },
+        { id: 'opening-match-yellow-card-55', type: 'yellow_card', minute: 55, player: 'None', team: 'away', teamName: activeMatch.teamAway.name }
       );
     }
 
     const isFinal = ['FULL_TIME', 'COMPLETED'].includes(matchState.status);
     const krscScored = Number(matchState.officialScoreHome) > 0 && Number(matchState.officialScoreAway) === 0;
-    const hasKrscGoal = events.some((event) => event.type === 'goal' && getOpeningMatchEventTeam(event) === 'home');
+    const hasKrscGoal = events.some((event) => event.type === 'goal' && getEventTeam(event) === 'home');
 
-    if (isFinal && krscScored && !hasKrscGoal) {
+    if (isOpeningFixture && isFinal && krscScored && !hasKrscGoal) {
       events.push({
         id: 'opening-match-krsc-goal-15',
         type: 'goal',
@@ -198,16 +207,16 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
         player: '#15',
         playerNumber: 15,
         team: 'home',
-        teamName: openingMatch.teamHome.name
+        teamName: activeMatch.teamHome.name
       });
     }
 
     return events.map((event) => (
-      event.type === 'goal' && getOpeningMatchEventTeam(event) === 'home'
+      isOpeningFixture && event.type === 'goal' && getEventTeam(event) === 'home'
         ? { ...event, minute: 45, player: '#15', playerNumber: 15 }
         : event
     ));
-  }, [matchState.events, matchState.status, matchState.officialScoreHome, matchState.officialScoreAway]);
+  }, [matchState.activeFixtureId, matchState.events, matchState.status, matchState.officialScoreHome, matchState.officialScoreAway]);
 
   // Auto-generate commentary feed from logged events (newest first)
   const commentaryLines = useMemo(() => {
@@ -219,11 +228,11 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
     const sorted = [...displayEvents].sort((a, b) => (b.minute || 0) - (a.minute || 0));
 
     return sorted.map((evt) => {
-      const eventTeam = getOpeningMatchEventTeam(evt);
+      const eventTeam = getEventTeam(evt);
       const teamLabel = eventTeam === 'away'
-        ? (openingMatch.teamAway.shortName || 'BASE')
-        : (openingMatch.teamHome.shortName || 'KRSC');
-      const playerLabel = getOpeningMatchEventPlayer(evt);
+        ? activeMatch.teamAway.shortName
+        : activeMatch.teamHome.shortName;
+      const playerLabel = getOpeningMatchEventPlayer(evt, isOpeningFixture);
       const minText = `${evt.minute || 0}'`;
       let mainLine = '';
 
@@ -282,7 +291,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
       return (
         <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950/70 text-blue-900 dark:text-blue-200 font-bold text-xs border border-blue-200 dark:border-blue-800 flex items-center gap-1.5">
           <Calendar className="w-3.5 h-3.5 text-blue-700 dark:text-blue-400" />
-          <span>{lang === 'ml' ? '06 നവം • 8:45 PM' : '06 Nov • 8:45 PM'}</span>
+          <span>{kickoffLabel}</span>
         </span>
       );
     }
@@ -405,12 +414,12 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
         <div className="grid grid-cols-12 gap-2 sm:gap-4 items-center text-center py-2">
           {/* Team Home (KRSC KOZHIKKODE) */}
           <div className="col-span-4 flex flex-col items-center space-y-1.5">
-            <TeamLogo teamName={openingMatch.teamHome.name} className="w-16 h-16 sm:w-20 sm:h-20 shadow-xs" />
+            <TeamLogo teamName={activeMatch.teamHome.name} className="w-16 h-16 sm:w-20 sm:h-20 shadow-xs" />
             <h3 className="text-sm sm:text-lg font-black font-sports text-card-title leading-tight">
-              {openingMatch.teamHome.name}
+              {activeMatch.teamHome.name}
             </h3>
             <span className="text-[10px] sm:text-xs text-royal dark:text-sky font-bold">
-              {openingMatch.teamHome.city}
+              {activeMatch.teamHome.city || activeMatch.teamHome.shortName}
             </span>
           </div>
 
@@ -461,8 +470,8 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                         goalTeam: 'home',
                         scoreHome: matchState.officialScoreHome,
                         scoreAway: matchState.officialScoreAway,
-                        homeTeamName: openingMatch.teamHome.name,
-                        awayTeamName: openingMatch.teamAway.name,
+                        homeTeamName: activeMatch.teamHome.name,
+                        awayTeamName: activeMatch.teamAway.name,
                         matchStatus: matchState.status,
                         goalText: 'Official Live Match Score'
                       }
@@ -482,7 +491,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                 </div>
                 {/* One short line for kickoff date and time, no repeated days text */}
                 <div className="text-[10px] sm:text-xs font-black text-card-title bg-surface-light dark:bg-navy-900 px-2.5 py-1 rounded-lg border border-surface-border dark:border-navy-700 shadow-2xs">
-                  06 Nov • 8:45 PM
+                  {kickoffLabel}
                 </div>
               </div>
             )}
@@ -490,12 +499,12 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
 
           {/* Team Away (BASE PERUMBAVUR) */}
           <div className="col-span-4 flex flex-col items-center space-y-1.5">
-            <TeamLogo teamName={openingMatch.teamAway.name} className="w-16 h-16 sm:w-20 sm:h-20 shadow-xs" />
+            <TeamLogo teamName={activeMatch.teamAway.name} className="w-16 h-16 sm:w-20 sm:h-20 shadow-xs" />
             <h3 className="text-sm sm:text-lg font-black font-sports text-card-title leading-tight">
-              {openingMatch.teamAway.name}
+              {activeMatch.teamAway.name}
             </h3>
             <span className="text-[10px] sm:text-xs text-card-muted font-bold">
-              {openingMatch.teamAway.city}
+              {activeMatch.teamAway.city || activeMatch.teamAway.shortName}
             </span>
           </div>
         </div>
@@ -531,11 +540,11 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
               {displayEvents.map((evt) => {
                 const isYellow = evt.type === 'yellow_card';
                 const isRed = evt.type === 'red_card';
-                const eventTeam = getOpeningMatchEventTeam(evt);
+                const eventTeam = getEventTeam(evt);
                 const teamLabel = eventTeam === 'away'
-                  ? (openingMatch.teamAway.shortName || 'BASE')
-                  : (openingMatch.teamHome.shortName || 'KRSC');
-                const playerLabel = getOpeningMatchEventPlayer(evt);
+                  ? activeMatch.teamAway.shortName
+                  : activeMatch.teamHome.shortName;
+                const playerLabel = getOpeningMatchEventPlayer(evt, isOpeningFixture);
                 return (
                   <div
                     key={evt.id}
@@ -616,7 +625,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                         : 'bg-sky-700 hover:bg-sky-800 text-white shadow-sm'
                     }`}
                   >
-                    <span>⚽ Report Goal: {openingMatch.teamHome.shortName || 'KRSC'}</span>
+                    <span>⚽ Report Goal: {activeMatch.teamHome.shortName}</span>
                     {rateLimit.isCooldownActive && <span className="text-[10px]">({rateLimit.remainingSeconds}s)</span>}
                   </button>
 
@@ -629,7 +638,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                         : 'bg-zinc-800 hover:bg-zinc-900 text-white shadow-sm'
                     }`}
                   >
-                    <span>⚽ Report Goal: {openingMatch.teamAway.shortName || 'BASE'}</span>
+                    <span>⚽ Report Goal: {activeMatch.teamAway.shortName}</span>
                     {rateLimit.isCooldownActive && <span className="text-[10px]">({rateLimit.remainingSeconds}s)</span>}
                   </button>
                 </div>
@@ -637,7 +646,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                 {/* Crowd Stats Counter Bar */}
                 <div className="flex items-center justify-between text-xs text-slate-700 dark:text-slate-200 bg-white dark:bg-navy-800 p-3 rounded-xl border border-slate-200 dark:border-navy-700 shadow-card">
                   <span>
-                    Community Reports: <strong>{matchState.crowdReports?.home || 0} {openingMatch.teamHome.shortName || 'KRSC'}</strong> vs <strong>{matchState.crowdReports?.away || 0} {openingMatch.teamAway.shortName || 'BASE'}</strong>
+                    Community Reports: <strong>{matchState.crowdReports?.home || 0} {activeMatch.teamHome.shortName}</strong> vs <strong>{matchState.crowdReports?.away || 0} {activeMatch.teamAway.shortName}</strong>
                   </span>
                   <span className="font-bold text-royal dark:text-sky">
                     🛡️ Ground Desk Authority
@@ -745,8 +754,8 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                                   goalTeam: evt.team || 'home',
                                   scoreHome: matchState.officialScoreHome,
                                   scoreAway: matchState.officialScoreAway,
-                                  homeTeamName: openingMatch.teamHome.name,
-                                  awayTeamName: openingMatch.teamAway.name,
+                                  homeTeamName: activeMatch.teamHome.name,
+                                  awayTeamName: activeMatch.teamAway.name,
                                   matchStatus: matchState.status,
                                   goalText: evt.text
                                 }
@@ -784,8 +793,8 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           scoreHome: matchState.officialScoreHome,
           scoreAway: matchState.officialScoreAway,
           minute: matchState.matchMinute || 30,
-          homeTeamName: openingMatch.teamHome.name,
-          awayTeamName: openingMatch.teamAway.name,
+          homeTeamName: activeMatch.teamHome.name,
+          awayTeamName: activeMatch.teamAway.name,
           matchStatus: matchState.status
         }}
         isDarkMode={isDarkMode}

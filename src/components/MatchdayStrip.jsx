@@ -13,25 +13,27 @@ import { getStoredMatchState } from '../utils/matchStateManager';
 const MAX_CHIPS = 14;
 
 function statusChip(match, matchState) {
-  const isLive =
-    matchState.status !== 'UPCOMING' &&
-    matchState.status !== 'FULL_TIME' &&
-    matchState.status !== null;
-  if (isLive && match.id === 'm1') return 'LIVE';
-  if (matchState.status === 'FULL_TIME' && match.id === 'm1') return 'FT';
-  return 'Upcoming';
+  const activeFixtureId = matchState.activeFixtureId || 'm1';
+  const isLive = ['1ST_HALF', 'HALF_TIME', '2ND_HALF'].includes(matchState.status);
+  if (match.id === activeFixtureId && isLive) return 'LIVE';
+  if (match.id === activeFixtureId && ['FULL_TIME', 'COMPLETED'].includes(matchState.status)) return 'FT';
+  return match.status === 'Completed' ? 'FT' : 'Upcoming';
 }
 
 export default function MatchdayStrip({ lang, isDarkMode, onNavigate }) {
   const scrollRef = useRef(null);
-  const matchState = React.useMemo(() => getStoredMatchState(), []);
+  const [matchState, setMatchState] = React.useState(getStoredMatchState);
+  React.useEffect(() => {
+    const sync = (event) => setMatchState(event.detail || getStoredMatchState());
+    window.addEventListener('kasc_match_state_updated', sync);
+    return () => window.removeEventListener('kasc_match_state_updated', sync);
+  }, []);
   const confirmed = fixtures.filter((f) => f.confirmed).slice(0, MAX_CHIPS);
-  const isOpeningMatchLive = ['1ST_HALF', 'HALF_TIME', '2ND_HALF'].includes(matchState.status);
-  const featuredMatch = isOpeningMatchLive
-    ? confirmed[0]
-    : confirmed.find((match) => match.status === 'Upcoming' || match.score1 == null) || confirmed[0];
-  const scoreHome = matchState.officialScoreHome ?? 0;
-  const scoreAway = matchState.officialScoreAway ?? 0;
+  const isAnyMatchLive = ['1ST_HALF', 'HALF_TIME', '2ND_HALF'].includes(matchState.status);
+  const activeFixture = confirmed.find((match) => match.id === matchState.activeFixtureId);
+  const featuredMatch = isAnyMatchLive
+    ? activeFixture || confirmed[0]
+    : confirmed.find((match) => match.status === 'Upcoming' || match.score1 == null) || activeFixture || confirmed[0];
 
   // Scroll to featured match chip on mount
   useEffect(() => {
@@ -67,6 +69,9 @@ export default function MatchdayStrip({ lang, isDarkMode, onNavigate }) {
           const isLive = status === 'LIVE';
           const isFT = status === 'FT';
           const isFeatured = match.id === featuredMatch?.id;
+          const isCurrentMatch = match.id === (matchState.activeFixtureId || 'm1');
+          const scoreHome = isCurrentMatch ? (matchState.officialScoreHome ?? 0) : (match.score1 ?? 0);
+          const scoreAway = isCurrentMatch ? (matchState.officialScoreAway ?? 0) : (match.score2 ?? 0);
 
           return (
             <button

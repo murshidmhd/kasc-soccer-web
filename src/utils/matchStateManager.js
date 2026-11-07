@@ -1,4 +1,5 @@
 import { HALF_LENGTH_MINUTES, MAX_MATCH_MINUTES } from '../config/siteConfig.js';
+import { fixtures, openingMatch } from '../data/tournamentData.js';
 import { pushMatchStateToFirebase } from './firebaseSync.js';
 
 // Match State, Offline Queue, Scorer Redundancy, and Anti-Spam Rate Limiter for KASC Sevens
@@ -90,6 +91,74 @@ export function getDaysToKickoff() {
 }
 
 export const initialOfficialMatchState = realOfficialMatchState;
+
+export function getMatchFixtureInfo(fixtureId) {
+  const fixture = fixtures.find((item) => item.id === fixtureId);
+  if (!fixture || fixture.id === 'm1') {
+    return {
+      id: 'm1',
+      stage: openingMatch.stage,
+      date: openingMatch.date,
+      time: openingMatch.time,
+      teamHome: openingMatch.teamHome,
+      teamAway: openingMatch.teamAway
+    };
+  }
+
+  const teamInfo = (name, id) => ({
+    id,
+    name,
+    shortName: String(name).split(/\s+/)[0],
+    city: ''
+  });
+  return {
+    id: fixture.id,
+    stage: fixture.stage,
+    date: fixture.date,
+    time: fixture.time,
+    teamHome: teamInfo(fixture.team1, `${fixture.id}-home`),
+    teamAway: teamInfo(fixture.team2, `${fixture.id}-away`)
+  };
+}
+
+export function getNextUpcomingFixtureId(currentFixtureId) {
+  return fixtures.find((fixture) => fixture.confirmed && fixture.status === 'Upcoming' && fixture.id !== currentFixtureId)?.id || null;
+}
+
+export function getInitialAdminFixtureId(state = getStoredMatchState()) {
+  const finished = ['FULL_TIME', 'COMPLETED'].includes(state?.status);
+  const active = ['1ST_HALF', 'HALF_TIME', '2ND_HALF'].includes(state?.status);
+  const hasLegacyExpired = !state?.activeFixtureId && active && Date.now() > new Date('2026-11-06T23:45:00+05:30').getTime();
+  if (finished || hasLegacyExpired) {
+    return getNextUpcomingFixtureId(state?.activeFixtureId || 'm1') || state?.activeFixtureId || 'm1';
+  }
+  return state?.activeFixtureId || 'm1';
+}
+
+export function createStartedFixtureState(previousState, fixtureId, half, startedAt = Date.now()) {
+  const totalSeconds = half === '1ST_HALF' ? 0 : 30 * 60;
+  const isRunning = half === '1ST_HALF' || half === '2ND_HALF';
+  const isNewFixture = previousState.activeFixtureId !== fixtureId ||
+    ['FULL_TIME', 'COMPLETED'].includes(previousState.status);
+
+  return {
+    ...previousState,
+    activeFixtureId: fixtureId,
+    ...(isNewFixture ? {
+      officialScoreHome: 0,
+      officialScoreAway: 0,
+      events: [],
+      extraTimeMinutes: 0,
+      crowdReports: { home: 0, away: 0, total: 0 }
+    } : {}),
+    status: half,
+    matchSeconds: totalSeconds,
+    matchMinute: Math.floor(totalSeconds / 60),
+    isTimerRunning: isRunning,
+    timerStartedAt: isRunning ? startedAt : null,
+    isCrowdLocked: false
+  };
+}
 
 // Calculate real-time ticking match time (MM:SS) with caps per Sevens rules
 export function getCalculatedMatchTime(matchState) {
