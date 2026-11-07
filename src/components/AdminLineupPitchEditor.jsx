@@ -41,7 +41,7 @@ import {
   TACTICAL_POSITIONS,
   DEFAULT_TOURNAMENT_SQUADS
 } from '../utils/lineupManager';
-import { saveDisciplinaryRecord, removeDisciplinaryRecord } from '../utils/disciplinaryManager';
+import { saveDisciplinaryRecord, removeDisciplinaryRecord, getPlayerDisciplinaryStatus } from '../utils/disciplinaryManager';
 import { getSevensFormationPositions, mapSquadToPositions, JerseyShirtIcon } from './StartingSevenPitch';
 
 // ─── Pitch colours per team ───────────────────────────────────────────────────
@@ -207,6 +207,7 @@ function PitchHalf({ teamKey, squad, formation, disciplinaryMap, goalsMap, onPla
 function PlayerEditModal({ teamKey, player, squad, lineupTactics, playerIndex, isSub, onClose, onSave }) {
   const meta = TEAM_META[teamKey];
   const fileRef = useRef(null);
+  const playerDiscipline = getPlayerDisciplinaryStatus(player.name, player.num, meta.label);
 
   const [form, setForm] = useState({
     name: player.name || '',
@@ -217,8 +218,8 @@ function PlayerEditModal({ teamKey, player, squad, lineupTactics, playerIndex, i
     captain: player.captain || false,
     isGK: player.isGK || false,
     goals: player.goals || 0,
-    yellowCard: player.yellowCard || false,
-    redCard: player.redCard || false,
+    yellowCard: playerDiscipline.hasYellowCard,
+    redCard: playerDiscipline.hasRedCard,
   });
 
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState(player.photoUrl || '');
@@ -485,12 +486,19 @@ export default function AdminLineupPitchEditor({ isDarkMode }) {
   const [editingPlayer, setEditingPlayer] = useState(null); // { teamKey, player }
   const [notification, setNotification] = useState('');
   const [selectedTeamTab, setSelectedTeamTab] = useState('krsc'); // For subs panel
+  const [disciplineRevision, setDisciplineRevision] = useState(0);
 
   // Sync when other admin tabs update lineup
   useEffect(() => {
     const sync = () => setLineupTactics(getLineupTactics());
     window.addEventListener('kasc_lineup_tactics_updated', sync);
     return () => window.removeEventListener('kasc_lineup_tactics_updated', sync);
+  }, []);
+
+  useEffect(() => {
+    const refreshDiscipline = () => setDisciplineRevision((revision) => revision + 1);
+    window.addEventListener('kasc_disciplinary_updated', refreshDiscipline);
+    return () => window.removeEventListener('kasc_disciplinary_updated', refreshDiscipline);
   }, []);
 
   const krscSquad = lineupTactics?.squads?.krsc || DEFAULT_TOURNAMENT_SQUADS.krsc;
@@ -511,18 +519,23 @@ export default function AdminLineupPitchEditor({ isDarkMode }) {
     return map;
   }, [lineupTactics]);
 
-  // Simple disciplinary map from player.yellowCard / .redCard fields
+  // Use the official card records so stale player flags cannot spread cards
+  // across unnamed players in the same lineup.
   const disciplinaryMap = useMemo(() => {
     const map = {};
     ['krsc', 'base'].forEach(tk => {
       const sq = lineupTactics?.squads?.[tk] || DEFAULT_TOURNAMENT_SQUADS[tk];
       [...(sq.starting || []), ...(sq.subs || [])].forEach(p => {
         const key = `${(p.name || '').toLowerCase()}_${p.num}`;
-        map[key] = { hasYellowCard: p.yellowCard, hasRedCard: p.redCard };
+        const status = getPlayerDisciplinaryStatus(p.name, p.num, sq.name);
+        map[key] = {
+          hasYellowCard: status.hasYellowCard && status.yellowCardsCount < 2,
+          hasRedCard: status.hasRedCard || status.yellowCardsCount >= 2
+        };
       });
     });
     return map;
-  }, [lineupTactics]);
+  }, [lineupTactics, disciplineRevision]);
 
   const notify = (msg) => {
     setNotification(msg);
@@ -541,13 +554,14 @@ export default function AdminLineupPitchEditor({ isDarkMode }) {
     const player = [...(squadData.starting || []), ...(squadData.subs || [])].find(p => p.num === (updates.num ?? oldNum));
     if (player) {
       const teamName = squadData.name || '';
-      if (redCard) {
+      const priorDiscipline = getPlayerDisciplinaryStatus(player.name, oldNum, teamName);
+      if (redCard && !priorDiscipline.hasRedCard) {
         saveDisciplinaryRecord({
           playerName: player.name, playerNumber: player.num, teamName,
           cardType: 'red_card', minute: 90, matchId: 'opening_match'
         });
       }
-      if (yellowCard) {
+      if (yellowCard && !priorDiscipline.hasYellowCard) {
         saveDisciplinaryRecord({
           playerName: player.name, playerNumber: player.num, teamName,
           cardType: 'yellow_card', minute: 90, matchId: 'opening_match'

@@ -70,9 +70,16 @@ export default function TopScorers({ lang, isDarkMode }) {
       const teamSide = teamKey === 'krsc' ? 'home' : 'away';
       return [...(squad.starting || []), ...(squad.subs || [])].map((player) => {
         const playerEvents = events.filter((event) => {
-          const sameTeam = event.teamName === teamName || event.team === teamSide;
-          const samePlayer = (event.playerNumber != null && Number(event.playerNumber) === Number(player.num)) ||
-            (event.player && event.player.toLowerCase() === (player.name || '').toLowerCase());
+          const sameTeam = event.teamName
+            ? event.teamName.trim().toLowerCase() === teamName.trim().toLowerCase()
+            : event.team === teamSide;
+          const eventHasNumber = event.playerNumber != null && String(event.playerNumber).trim() !== '';
+          const eventPlayerName = (event.player || '').trim().toLowerCase();
+          const squadPlayerName = (player.name || '').trim().toLowerCase();
+          const isPlaceholderName = (name) => ['none', 'null', 'undefined', 'unknown', 'unknown player', 'player', ''].includes(name);
+          const samePlayer = eventHasNumber
+            ? String(event.playerNumber).trim() === String(player.num).trim()
+            : !isPlaceholderName(eventPlayerName) && !isPlaceholderName(squadPlayerName) && eventPlayerName === squadPlayerName;
           return sameTeam && samePlayer;
         });
         return {
