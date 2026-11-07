@@ -362,6 +362,11 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
     const hasYellowCard = yellowCardsCount > 0 && !hasRedCard;
     const isSuspended = hasRedCard;
 
+    // Admin-set player totals are saved with the lineup, while live events are
+    // stored separately. Use the larger total so either source is visible
+    // without counting the same goal twice when both have been recorded.
+    goals = Math.max(goals, Number(playerObj.goals) || 0);
+
     return {
       goals,
       hasRedCard,
