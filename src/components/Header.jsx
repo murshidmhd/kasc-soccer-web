@@ -21,47 +21,6 @@ import {
 import { tournamentInfo, nextMatch } from '../data/tournamentData';
 import { SITE_URL, LIVE_YOUTUBE_CHANNEL_URL, SHOW_UNFINISHED, SHOW_LOCAL_ONLY_FEATURES, ORGANISERS } from '../config/siteConfig';
 
-const MALAYALAM_MONTHS = {
-  jan: 'ജനുവരി', january: 'ജനുവരി',
-  feb: 'ഫെബ്രുവരി', february: 'ഫെബ്രുവരി',
-  mar: 'മാർച്ച്', march: 'മാർച്ച്',
-  apr: 'ഏപ്രിൽ', april: 'ഏപ്രിൽ',
-  may: 'മേയ്',
-  jun: 'ജൂൺ', june: 'ജൂൺ',
-  jul: 'ജൂലൈ', july: 'ജൂലൈ',
-  aug: 'ഓഗസ്റ്റ്', august: 'ഓഗസ്റ്റ്',
-  sep: 'സെപ്റ്റംബർ', september: 'സെപ്റ്റംബർ',
-  oct: 'ഒക്ടോബർ', october: 'ഒക്ടോബർ',
-  nov: 'നവംബർ', november: 'നവംബർ',
-  dec: 'ഡിസംബർ', december: 'ഡിസംബർ'
-};
-
-function formatMalayalamDate(dateValue) {
-  const match = String(dateValue || '').match(/\b(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})\b/);
-  if (!match) return 'തീയതി ഉടൻ അറിയിക്കും';
-  const month = MALAYALAM_MONTHS[match[2].toLowerCase()];
-  if (!month) return 'തീയതി ഉടൻ അറിയിക്കും';
-  return `${match[3]} ${month} ${Number(match[1])}`;
-}
-
-function formatMalayalamTime(timeValue) {
-  const match = String(timeValue || '').match(/\b(\d{1,2})(?::(\d{2}))?\s*(AM|PM)\b(?:\s*(IST))?/i);
-  if (!match) return 'സമയം ഉടൻ അറിയിക്കും';
-
-  const hour = Number(match[1]);
-  const minute = match[2] || '00';
-  const meridiem = match[3].toUpperCase();
-  const period = meridiem === 'AM'
-    ? (hour < 5 || hour === 12 ? 'പുലർച്ചെ' : 'രാവിലെ')
-    : hour === 12
-      ? 'ഉച്ചയ്ക്ക്'
-      : hour >= 7
-        ? 'രാത്രി'
-        : 'വൈകിട്ട്';
-
-  return `${period} ${hour}:${minute}${match[4] ? ' ഇന്ത്യൻ സമയം' : ''}`;
-}
-
 export default function Header({ 
   activeTab, 
   setActiveTab, 
@@ -92,20 +51,13 @@ export default function Header({
   }, [isDesktopMenuOpen]);
 
   const shareOnWhatsApp = () => {
-    const shareUrl = new URL(SITE_URL);
-    shareUrl.searchParams.set('v', 'udaya_white_s7');
-    const englishDate = String(nextMatch.date || '').match(/\d{1,2}\s+[A-Za-z]+\s+\d{4}/)?.[0] || 'To be announced';
     const homeTeam = nextMatch.teamHome || {};
     const awayTeam = nextMatch.teamAway || {};
     const text = encodeURIComponent(
-      `⚽ *അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ Tournament — Season 7*\n` +
-      `🏆 Organisers / സംഘാടകർ: ${ORGANISERS.primary.nameMl} (${ORGANISERS.primary.name}), ${ORGANISERS.coOrganiser.shortNameMl} (${ORGANISERS.coOrganiser.shortName}) പെരുവള്ളൂർ (Peruvallur)\n` +
-      `📅 Date / തീയതി: ${englishDate} / ${formatMalayalamDate(nextMatch.date)}\n` +
-      `🕒 Time / സമയം: ${nextMatch.time || 'To be announced'} / ${formatMalayalamTime(nextMatch.time)}\n` +
-      `📍 Venue / വേദി: ${nextMatch.venueMl || 'വേദി ഉടൻ അറിയിക്കും'} (${nextMatch.venue || 'To be announced'})\n` +
-      `🔥 Next Match / അടുത്ത മത്സരം: ${homeTeam.nameMl || 'ആദ്യ ടീം'} (${homeTeam.name || 'Team 1'}) vs ${awayTeam.nameMl || 'രണ്ടാം ടീം'} (${awayTeam.name || 'Team 2'})\n` +
-      `📺 Live stream & match details / തത്സമയ സംപ്രേഷണവും മത്സരം വിവരങ്ങളും:\n${shareUrl.toString()}\n` +
-      `▶️ Live Stream / തത്സമയ സംപ്രേഷണം: ${LIVE_YOUTUBE_CHANNEL_URL}`
+      `⚽ *അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ — സീസൺ 7*\n` +
+      `${homeTeam.nameMl || 'ആദ്യ ടീം'} 🆚 ${awayTeam.nameMl || 'രണ്ടാം ടീം'}\n` +
+      `🔴 തത്സമയ സംപ്രേഷണം: ${LIVE_YOUTUBE_CHANNEL_URL}\n` +
+      `🌐 വെബ്സൈറ്റ്: ${SITE_URL}`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank', 'noopener,noreferrer');
   };
