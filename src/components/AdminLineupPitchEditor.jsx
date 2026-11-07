@@ -195,7 +195,7 @@ function PitchHalf({ teamKey, squad, formation, disciplinaryMap, goalsMap, onPla
             goals={goals}
             hasYellow={disc.hasYellowCard}
             hasRed={disc.hasRedCard}
-            onEdit={() => onPlayerEdit(teamKey, player)}
+            onEdit={() => onPlayerEdit(teamKey, player, squad.starting.indexOf(player), false)}
           />
         );
       })}
@@ -204,7 +204,7 @@ function PitchHalf({ teamKey, squad, formation, disciplinaryMap, goalsMap, onPla
 }
 
 // ─── Player Edit Modal ────────────────────────────────────────────────────────
-function PlayerEditModal({ teamKey, player, squad, lineupTactics, onClose, onSave }) {
+function PlayerEditModal({ teamKey, player, squad, lineupTactics, playerIndex, isSub, onClose, onSave }) {
   const meta = TEAM_META[teamKey];
   const fileRef = useRef(null);
 
@@ -257,7 +257,7 @@ function PlayerEditModal({ teamKey, player, squad, lineupTactics, onClose, onSav
       captain: form.captain,
       isGK: form.isGK,
       goals: Number(form.goals) || 0,
-    }, form.yellowCard, form.redCard, swapWith ? Number(swapWith) : null);
+    }, form.yellowCard, form.redCard, swapWith ? Number(swapWith) : null, playerIndex, isSub);
     setSaved(true);
     setTimeout(() => onClose(), 700);
   };
@@ -530,10 +530,10 @@ export default function AdminLineupPitchEditor({ isDarkMode }) {
   };
 
   // Save all edits for one player
-  const handlePlayerSave = (teamKey, oldNum, updates, yellowCard, redCard, swapSubNum) => {
+  const handlePlayerSave = (teamKey, oldNum, updates, yellowCard, redCard, swapSubNum, playerIndex, isSub) => {
     // Apply yellow/red card flags on the player object itself (admin-side state)
     const fullUpdates = { ...updates, yellowCard, redCard };
-    const updated = updatePlayerInfo(teamKey, oldNum, fullUpdates);
+    const updated = updatePlayerInfo(teamKey, oldNum, fullUpdates, playerIndex, isSub);
     setLineupTactics(updated);
 
     // Also persist card to disciplinaryManager for the pitch viewer
@@ -674,7 +674,7 @@ export default function AdminLineupPitchEditor({ isDarkMode }) {
                 formation={krscFormation}
                 disciplinaryMap={disciplinaryMap}
                 goalsMap={goalsMap}
-                onPlayerEdit={(tk, pl) => setEditingPlayer({ teamKey: tk, player: pl })}
+                onPlayerEdit={(tk, pl, playerIndex, isSub) => setEditingPlayer({ teamKey: tk, player: pl, playerIndex, isSub })}
               />
             </div>
 
@@ -695,7 +695,7 @@ export default function AdminLineupPitchEditor({ isDarkMode }) {
                 formation={baseFormation}
                 disciplinaryMap={disciplinaryMap}
                 goalsMap={goalsMap}
-                onPlayerEdit={(tk, pl) => setEditingPlayer({ teamKey: tk, player: pl })}
+                onPlayerEdit={(tk, pl, playerIndex, isSub) => setEditingPlayer({ teamKey: tk, player: pl, playerIndex, isSub })}
               />
             </div>
           </div>
@@ -728,7 +728,7 @@ export default function AdminLineupPitchEditor({ isDarkMode }) {
           {(selectedSquad.subs || []).map((sub, idx) => (
             <button
               key={`${sub.num}_${idx}`}
-              onClick={() => setEditingPlayer({ teamKey: selectedTeamTab, player: sub })}
+              onClick={() => setEditingPlayer({ teamKey: selectedTeamTab, player: sub, playerIndex: idx, isSub: true })}
               className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 hover:border-slate-500 transition text-left group"
             >
               <div className="w-9 h-9 rounded-lg overflow-hidden relative bg-slate-800 border border-slate-600 shrink-0">
@@ -759,6 +759,8 @@ export default function AdminLineupPitchEditor({ isDarkMode }) {
           player={editingPlayer.player}
           squad={editingPlayer.teamKey === 'krsc' ? krscSquad : baseSquad}
           lineupTactics={lineupTactics}
+          playerIndex={editingPlayer.playerIndex}
+          isSub={editingPlayer.isSub}
           onClose={() => setEditingPlayer(null)}
           onSave={handlePlayerSave}
         />

@@ -268,22 +268,22 @@ export function updateTeamFormation(teamKey, newFormation) {
   return updated;
 }
 
-export function updatePlayerPosition(teamKey, playerNum, newPosition) {
+export function updatePlayerPosition(teamKey, playerNum, newPosition, startingIndex = -1) {
   const current = getLineupTactics();
   const squad = current.squads[teamKey];
   if (!squad) return current;
 
   const isGK = newPosition === 'GK';
 
-  const updatedStarting = squad.starting.map((p) => {
-    if (p.num === playerNum) {
-      return { ...p, pos: newPosition, isGK };
-    }
-    return p;
-  });
-
-  const updatedSubs = (squad.subs || []).map((p) => {
-    if (p.num === playerNum) {
+  let updatedTarget = false;
+  const updatedStarting = squad.starting.map((p, index) => {
+    // Admin's starting-player list supplies the row index, so duplicate jersey
+    // numbers cannot cause one player's role change to affect another player.
+    const isTarget = startingIndex >= 0
+      ? index === startingIndex
+      : !updatedTarget && p.num === Number(playerNum);
+    if (isTarget) {
+      updatedTarget = true;
       return { ...p, pos: newPosition, isGK };
     }
     return p;
@@ -296,7 +296,7 @@ export function updatePlayerPosition(teamKey, playerNum, newPosition) {
       [teamKey]: {
         ...squad,
         starting: updatedStarting,
-        subs: updatedSubs
+        subs: squad.subs || []
       }
     }
   };
@@ -363,7 +363,7 @@ export function setManOfTheMatchAward(motmData) {
   return updated;
 }
 
-export function updatePlayerRating(teamKey, playerNum, rating) {
+export function updatePlayerRating(teamKey, playerNum, rating, startingIndex = -1) {
   const current = getLineupTactics();
   const squad = current.squads[teamKey];
   if (!squad) return current;
@@ -371,12 +371,16 @@ export function updatePlayerRating(teamKey, playerNum, rating) {
   const numVal = Number(playerNum);
   const ratingVal = Math.min(10.0, Math.max(0.0, Number(rating) || 0.0));
 
-  const updatedStarting = (squad.starting || []).map((p) => 
-    p.num === numVal ? { ...p, baseRating: ratingVal, adminModifiedRating: true } : p
-  );
-  const updatedSubs = (squad.subs || []).map((s) => 
-    s.num === numVal ? { ...s, baseRating: ratingVal, adminModifiedRating: true } : s
-  );
+  let updatedTarget = false;
+  const updatedStarting = (squad.starting || []).map((p, index) => {
+    const isTarget = startingIndex >= 0
+      ? index === startingIndex
+      : !updatedTarget && p.num === numVal;
+    if (!isTarget) return p;
+    updatedTarget = true;
+    return { ...p, baseRating: ratingVal, adminModifiedRating: true };
+  });
+  const updatedSubs = squad.subs || [];
 
   const updated = {
     ...current,
@@ -400,15 +404,20 @@ export function updatePlayerRating(teamKey, playerNum, rating) {
  * playerNum: jersey number (old number to find the player)
  * updates: partial player object fields to merge in
  */
-export function updatePlayerInfo(teamKey, playerNum, updates) {
+export function updatePlayerInfo(teamKey, playerNum, updates, playerIndex = -1, isSub = false) {
   const current = getLineupTactics();
   const squad = current.squads[teamKey];
   if (!squad) return current;
 
   const numVal = Number(playerNum);
 
-  const applyUpdates = (p) => {
-    if (p.num !== numVal) return p;
+  let updatedTarget = false;
+  const applyUpdates = (p, index, listIsSub) => {
+    const isTarget = playerIndex >= 0
+      ? listIsSub === isSub && index === playerIndex
+      : !updatedTarget && p.num === numVal;
+    if (!isTarget) return p;
+    updatedTarget = true;
     return {
       ...p,
       ...updates,
@@ -423,8 +432,8 @@ export function updatePlayerInfo(teamKey, playerNum, updates) {
     };
   };
 
-  const updatedStarting = (squad.starting || []).map(applyUpdates);
-  const updatedSubs = (squad.subs || []).map(applyUpdates);
+  const updatedStarting = (squad.starting || []).map((p, index) => applyUpdates(p, index, false));
+  const updatedSubs = (squad.subs || []).map((p, index) => applyUpdates(p, index, true));
 
   const updated = {
     ...current,

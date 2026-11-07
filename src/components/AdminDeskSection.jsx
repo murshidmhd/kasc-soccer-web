@@ -178,16 +178,16 @@ export default function AdminDeskSection({
     setTimeout(() => setNotification(''), 3000);
   };
 
-  const handleAdminPositionChange = (teamKey, playerNum, newPosition) => {
-    const updated = updatePlayerPosition(teamKey, playerNum, newPosition);
+  const handleAdminPositionChange = (teamKey, playerNum, newPosition, startingIndex) => {
+    const updated = updatePlayerPosition(teamKey, playerNum, newPosition, startingIndex);
     setLineupTactics(updated);
     setNotification(`🔄 Player #${playerNum} repositioned to ${newPosition}! Pitch updated.`);
     setTimeout(() => setNotification(''), 2500);
   };
 
-  const handleAdminRatingChange = (teamKey, playerNum, newRating) => {
+  const handleAdminRatingChange = (teamKey, playerNum, newRating, startingIndex) => {
     const parsed = parseFloat(newRating);
-    const updated = updatePlayerRating(teamKey, playerNum, isNaN(parsed) ? 0.0 : parsed);
+    const updated = updatePlayerRating(teamKey, playerNum, isNaN(parsed) ? 0.0 : parsed, startingIndex);
     setLineupTactics(updated);
   };
 
@@ -1714,9 +1714,9 @@ export default function AdminDeskSection({
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {starters.map((player) => (
+                        {starters.map((player, playerIndex) => (
                           <div
-                            key={`starter-${player.num}-${player.name}`}
+                            key={`starter-${player.num}-${player.name}-${playerIndex}`}
                             className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shadow-2xs"
                           >
                             <div className="flex items-center gap-2 min-w-0">
@@ -1750,12 +1750,12 @@ export default function AdminDeskSection({
                               {/* Position Role Selector */}
                               <select
                                 value={player.pos}
-                                onChange={(e) => handleAdminPositionChange(selectedTacticsTeam, player.num, e.target.value)}
+                                onChange={(e) => handleAdminPositionChange(selectedTacticsTeam, player.num, e.target.value, playerIndex)}
                                 className="px-2 py-1 text-xs font-bold font-mono rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white cursor-pointer"
                                 title="Change Player Tactical Position (e.g. CB to CF)"
                               >
                                 {TACTICAL_POSITIONS.map((pos) => (
-                                  <option key={`pos-${player.num}-${pos.code}`} value={pos.code}>
+                                  <option key={`pos-${playerIndex}-${pos.code}`} value={pos.code}>
                                     {pos.code} - {pos.category}
                                   </option>
                                 ))}
@@ -1770,7 +1770,7 @@ export default function AdminDeskSection({
                                   max="10"
                                   step="0.1"
                                   value={player.baseRating || 0}
-                                  onChange={(e) => handleAdminRatingChange(selectedTacticsTeam, player.num, e.target.value)}
+                                  onChange={(e) => handleAdminRatingChange(selectedTacticsTeam, player.num, e.target.value, playerIndex)}
                                   className="w-10 bg-transparent text-xs font-mono font-bold text-slate-900 dark:text-white focus:outline-hidden"
                                 />
                               </div>
