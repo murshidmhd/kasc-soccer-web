@@ -140,8 +140,9 @@ export default function TournamentBracket({ lang, isDarkMode }) {
       }
     }
 
-    // For all other slots, show "?" per user specification
-    return { name: '?', isDecided: false };
+    // Keep unplayed knockout paths understandable on small screens.
+    const slot = match?.[slotKey];
+    return { name: slot || (lang === 'ml' ? 'ടീം പിന്നീട്' : 'Team TBD'), isDecided: false };
   };
 
   return (

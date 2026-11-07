@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
-  Trophy, 
   X, 
   Info,
   Calendar,
@@ -388,30 +387,6 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
   // Positioned player nodes
   const homePositionedPlayers = useMemo(() => mapSquadToPositions(krscSquad, homePositions, 'home'), [krscSquad, homePositions]);
   const awayPositionedPlayers = useMemo(() => mapSquadToPositions(baseSquad, awayPositions, 'away'), [baseSquad, awayPositions]);
-
-  // Winning team / Leader computation
-  const leadingTeam = useMemo(() => {
-    const homeScore = matchState?.officialScoreHome ?? 0;
-    const awayScore = matchState?.officialScoreAway ?? 0;
-    if (homeScore > awayScore) {
-      return {
-        ...krscSquad,
-        scoreHome: homeScore,
-        scoreAway: awayScore,
-        side: 'home'
-      };
-    } else if (awayScore > homeScore) {
-      return {
-        ...baseSquad,
-        scoreHome: homeScore,
-        scoreAway: awayScore,
-        side: 'away'
-      };
-    }
-    return null;
-  }, [matchState, krscSquad, baseSquad]);
-
-  const isMatchFinished = matchState?.status === 'FULL_TIME' || matchState?.status === 'COMPLETED';
 
   return (
     <section id="pitch-lineup" className="rounded-3xl border border-surface-border dark:border-navy-700 surface-card p-3 sm:p-6 shadow-card space-y-6">
@@ -837,87 +812,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
         </div>
       )}
 
-      {/* 6. Today's Winner Showcase Section */}
-      <div className={`rounded-3xl border p-4 sm:p-5 transition shadow-card ${
-        isMatchFinished || leadingTeam
-          ? 'border-gold/40 bg-gradient-to-br from-gold/15 via-surface-card to-amber-950/20'
-          : 'border-surface-border dark:border-navy-700 surface-card'
-      }`}>
-        <div className="flex items-center justify-between pb-3 border-b border-surface-border dark:border-navy-700">
-          <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black shadow-sm ${
-              isMatchFinished || leadingTeam ? 'bg-gold text-navy-950' : 'bg-surface-light dark:bg-navy-800 text-card-muted'
-            }`}>
-              <Trophy className="w-4 h-4 fill-current" />
-            </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-black font-sports uppercase tracking-wider text-card-title flex items-center gap-1.5">
-                <span>{lang === 'ml' ? 'ഇന്നത്തെ വിജയികൾ (MATCH WINNER)' : "TODAY'S WINNING TEAM"}</span>
-                <span className={`px-1.5 py-0.2 rounded-md text-[9px] font-black uppercase ${
-                  isMatchFinished 
-                    ? 'bg-emerald-600 text-white' 
-                    : leadingTeam 
-                      ? 'bg-amber-500 text-navy-950' 
-                      : 'bg-surface-border dark:bg-navy-700 text-card-muted'
-                }`}>
-                  {isMatchFinished ? 'FINAL RESULT' : leadingTeam ? 'LIVE LEADER' : 'MATCHDAY 1'}
-                </span>
-              </h4>
-              <p className="text-[11px] text-card-muted">
-                {lang === 'ml' 
-                  ? 'വിജയിക്കുന്ന ടീം ക്വാർട്ടർ ഫൈനലിലേക്ക് യോഗ്യത നേടുന്നു' 
-                  : 'Winner advances directly to the All India Sevens Quarter-Finals'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Winner Presentation */}
-        {leadingTeam ? (
-          <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-14 h-14 rounded-2xl bg-white p-1.5 border border-gold shadow-md flex items-center justify-center shrink-0">
-                <TeamLogo teamName={leadingTeam.name} className="w-full h-full object-contain" />
-              </div>
-              <div>
-                <span className="text-[10px] font-black uppercase tracking-wider text-gold block">
-                  {isMatchFinished ? '🏆 MATCH 1 CHAMPION' : '⚡ CURRENTLY IN THE LEAD'}
-                </span>
-                <h5 className="text-base sm:text-lg font-black font-sports text-card-title uppercase leading-tight">
-                  {leadingTeam.name}
-                </h5>
-                <p className="text-xs text-card-muted font-medium mt-0.5 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                  <span>{isMatchFinished ? 'Qualified for Quarter-Final' : 'On Track to Advance'}</span>
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-surface-light dark:bg-navy-800 border border-surface-border dark:border-navy-700 text-card-title">
-              <span className="text-xs font-bold font-sports">{openingMatch.teamHome.shortName}</span>
-              <span className="text-lg font-black font-sports font-mono px-2 py-0.5 rounded-lg bg-surface-card border border-surface-border dark:border-navy-700">
-                {matchState.officialScoreHome} - {matchState.officialScoreAway}
-              </span>
-              <span className="text-xs font-bold font-sports">{openingMatch.teamAway.shortName}</span>
-            </div>
-          </div>
-        ) : (
-          <div className="pt-3 text-center py-4 bg-surface-light/40 dark:bg-navy-800/40 rounded-2xl border border-surface-border/50 dark:border-navy-700/50 space-y-1">
-            <p className="text-xs font-bold text-card-title">
-              {lang === 'ml' 
-                ? 'മത്സരം ആരംഭിക്കാൻ കാത്തിരിക്കുന്നു (Kickoff: 8:45 PM IST)' 
-                : 'Waiting for Match Kickoff (8:45 PM IST)'}
-            </p>
-            <p className="text-[11px] text-card-muted">
-              {lang === 'ml'
-                ? 'റഫറി ഡെസ്കിൽ സ്കോർ രേഖപ്പെടുത്തുമ്പോൾ ഇന്നത്തെ വിജയികൾ ഇവിടെ തത്സമയം കാണാം.'
-                : 'The leading/winning club will update here dynamically as goals are recorded.'}
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* 7. Player Details Bottom Sheet Modal (Triggered on Click) */}
+      {/* 6. Player Details Bottom Sheet Modal (Triggered on Click) */}
       {activePlayer && (
         <div 
           onClick={() => setActivePlayer(null)}

@@ -1,25 +1,32 @@
 /**
  * MatchHighlightPopup.jsx
- * Shows on page load: Last match result poster + Player of the Match
- * Swipeable / tabbed carousel of 2 slides: Winner Poster → MOTM Poster
+ * Shows on page load: today's match poster, last match result, and Player of the Match
+ * Swipeable / tabbed carousel of 3 posters.
  * Dismissed on tap outside, swipe, or close button. Stored in sessionStorage
  * so it only shows once per browser session (not per visit like welcomeSheet).
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { X, ChevronLeft, ChevronRight, Trophy, Star } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { lastMatchResult } from '../data/tournamentData';
+import todayMatchPoster from '../assets/poster-nov-7.png';
 
-const SESSION_KEY = 'matchHighlightSeenV1';
+const SESSION_KEY = 'matchHighlightSeenV2';
 
 export default function MatchHighlightPopup({ isDarkMode }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [slide, setSlide] = useState(0); // 0 = winner poster, 1 = MOTM poster
+  const [slide, setSlide] = useState(0);
   const [touchStartX, setTouchStartX] = useState(null);
-  const [imgLoaded, setImgLoaded] = useState([false, false]);
+  const [imgLoaded, setImgLoaded] = useState([false, false, false]);
   const overlayRef = useRef(null);
 
   const slides = [
+    {
+      url: todayMatchPoster,
+      label: '📅 Today’s Match Poster',
+      sublabel: 'KMG MAVOOR vs SHOOTERS PADANNA',
+      footer: '07 NOV 2026 · 8:00 PM · PERUVALLUR PANCHAYATH STADIUM'
+    },
     {
       url: lastMatchResult.winnerPosterUrl,
       label: '🏆  Player of the Match',
@@ -116,7 +123,7 @@ export default function MatchHighlightPopup({ isDarkMode }) {
         <div className="bg-gradient-to-t from-black via-black/90 to-transparent px-4 pt-6 pb-4 -mt-16 relative z-10">
           <p className="text-white text-sm font-black text-center leading-tight">{slides[slide].sublabel}</p>
           <p className="text-slate-400 text-[10px] text-center mt-0.5 uppercase tracking-widest">
-            {lastMatchResult.stage} · {lastMatchResult.date}
+            {slides[slide].footer || `${lastMatchResult.stage} · ${lastMatchResult.date}`}
           </p>
 
           {/* Slide dots */}

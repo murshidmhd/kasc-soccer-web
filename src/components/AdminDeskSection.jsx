@@ -56,6 +56,7 @@ import { HALF_LENGTH_MINUTES, MAX_MATCH_MINUTES } from '../config/siteConfig';
 import { tournamentInfo, openingMatch } from '../data/tournamentData';
 import logoUdaya from '../assets/logo_udaya_transparent.webp';
 import logoKasc from '../assets/logo_kasc.webp';
+import todayMatchPoster from '../assets/poster-nov-7.png';
 import GoalShareCardModal from './GoalShareCardModal';
 import AddCardModal from './AddCardModal';
 import { saveDisciplinaryRecord, removeDisciplinaryRecord } from '../utils/disciplinaryManager';
@@ -784,7 +785,7 @@ export default function AdminDeskSection({
         isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
       }`}>
         <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 p-4 sm:p-6 text-white flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-3">
             <div className="flex items-center -space-x-2 shrink-0">
               <img 
                 src={logoUdaya} 
@@ -797,12 +798,26 @@ export default function AdminDeskSection({
                 className="w-9 h-9 rounded-full border border-sky/80 bg-white p-0.5 object-contain opacity-90" 
               />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
+            <a
+              href={todayMatchPoster}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Open today's match poster"
+              title="Today's match poster"
+              className="shrink-0 rounded-lg border border-gold/70 bg-white p-0.5 shadow-md transition hover:scale-105 active:scale-95"
+            >
+              <img
+                src={todayMatchPoster}
+                alt="Today's match poster: KMG Mavoor vs Shooters Padanna"
+                className="h-12 w-9 rounded-md object-cover sm:h-14 sm:w-10"
+              />
+            </a>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                 <span className="p-1 rounded bg-amber-500 text-slate-950 font-black">
                   <ShieldCheck className="w-4 h-4" />
                 </span>
-                <h2 className="text-base sm:text-xl font-black font-sports uppercase tracking-wider">
+                <h2 className="text-sm sm:text-xl font-black font-sports uppercase tracking-wider leading-tight">
                   Official Match Scorer & Admin Desk
                 </h2>
                 <span className="px-2 py-0.5 rounded-full bg-red-600 text-[10px] font-black uppercase shrink-0">
@@ -955,8 +970,28 @@ export default function AdminDeskSection({
                 </div>
               </div>
 
+              <nav aria-label="Admin sections" className={`sticky top-0 z-30 -mx-2 px-2 py-2 rounded-2xl border backdrop-blur-xl shadow-sm ${isDarkMode ? 'bg-slate-950/95 border-slate-700' : 'bg-white/95 border-slate-200'}`}>
+                <p className="px-1 pb-1.5 text-[9px] font-black uppercase tracking-widest text-slate-500">Jump to section</p>
+                <div className="flex gap-1.5 overflow-x-auto">
+                  {[
+                    ['admin-operations', 'Operations'],
+                    ['admin-score', 'Score'],
+                    ['admin-clock', 'Clock'],
+                    ['admin-events', 'Events'],
+                    ['admin-crowd', 'Crowd'],
+                    ['admin-lineup', 'Lineup'],
+                    ['admin-tactics', 'Tactics'],
+                    ['admin-awards', 'Awards']
+                  ].map(([id, label]) => (
+                    <button key={id} type="button" onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="min-h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200 text-[11px] font-bold whitespace-nowrap flex items-center justify-center active:scale-95 hover:border-blue-400 hover:text-blue-700 dark:hover:text-sky-300 transition">
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </nav>
+
               {/* MASTER MATCH CONTROLLER: START / PAUSE / STOP LIVE OPERATIONS */}
-              <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white space-y-4 shadow-lg border border-blue-800">
+              <div id="admin-operations" className="scroll-mt-28 p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white space-y-4 shadow-lg border border-blue-800">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5">
                     <span className="p-2 rounded-xl bg-amber-500 text-slate-950 font-black">
@@ -1205,7 +1240,7 @@ export default function AdminDeskSection({
               </div>
 
               {/* SECTION A: OFFICIAL MATCH SCORE OVERWRITE */}
-              <div className={`p-4 sm:p-5 rounded-3xl border space-y-4 ${
+              <div id="admin-score" className={`scroll-mt-28 p-4 sm:p-5 rounded-3xl border space-y-4 ${
                 isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <div className="flex items-center justify-between">
@@ -1299,7 +1334,7 @@ export default function AdminDeskSection({
               </div>
 
               {/* SECTION B: MATCH STATUS & CLOCK SLIDER */}
-              <div className={`p-4 sm:p-5 rounded-3xl border space-y-3.5 ${
+              <div id="admin-clock" className={`scroll-mt-28 p-4 sm:p-5 rounded-3xl border space-y-3.5 ${
                 isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <div className="flex items-center justify-between">
@@ -1351,7 +1386,7 @@ export default function AdminDeskSection({
               </div>
 
               {/* SECTION C: PUBLISH MATCH EVENT (GOAL / CARD / PENALTY) */}
-              <div className={`p-4 sm:p-5 rounded-3xl border space-y-3.5 ${
+              <div id="admin-events" className={`scroll-mt-28 p-4 sm:p-5 rounded-3xl border space-y-3.5 ${
                 isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <div className="flex items-center justify-between flex-wrap gap-2">
@@ -1553,7 +1588,7 @@ export default function AdminDeskSection({
               </div>
 
               {/* SECTION D: ANTI-SPAM & CROWD REPORTING GOVERNANCE */}
-              <div className={`p-4 sm:p-5 rounded-3xl border space-y-3.5 ${
+              <div id="admin-crowd" className={`scroll-mt-28 p-4 sm:p-5 rounded-3xl border space-y-3.5 ${
                 isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <div className="flex items-center justify-between">
@@ -1594,14 +1629,14 @@ export default function AdminDeskSection({
               </div>
 
               {/* SECTION E0: VISUAL LINEUP PITCH EDITOR (New - Tap to Edit Players) */}
-              <div className={`p-4 sm:p-5 rounded-3xl border space-y-4 ${
+              <div id="admin-lineup" className={`scroll-mt-28 p-4 sm:p-5 rounded-3xl border space-y-4 ${
                 isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <AdminLineupPitchEditor isDarkMode={isDarkMode} />
               </div>
 
               {/* SECTION E: 7-A-SIDE FORMATIONS & SQUAD TACTICAL GOVERNANCE */}
-              <div className={`p-4 sm:p-5 rounded-3xl border space-y-4 ${
+              <div id="admin-tactics" className={`scroll-mt-28 p-4 sm:p-5 rounded-3xl border space-y-4 ${
                 isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <div className="flex items-center justify-between flex-wrap gap-2">
@@ -1837,7 +1872,7 @@ export default function AdminDeskSection({
 
               {/* SECTION F: MAN OF THE MATCH (MVP) AWARD CONTROL - Only available after FULL_TIME */}
               {matchState.status !== 'FULL_TIME' ? (
-                <div className={`p-4 sm:p-5 rounded-3xl border space-y-2 ${isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                <div id="admin-awards" className={`scroll-mt-28 p-4 sm:p-5 rounded-3xl border space-y-2 ${isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
                   <div className="flex items-center gap-2">
                     <span className="p-1.5 rounded-xl bg-slate-500/20 text-slate-400 font-black">
                       <Star className="w-4 h-4" />
@@ -1849,7 +1884,7 @@ export default function AdminDeskSection({
                   </div>
                 </div>
               ) : (
-              <div className={`p-4 sm:p-5 rounded-3xl border space-y-4 ${
+              <div id="admin-awards" className={`scroll-mt-28 p-4 sm:p-5 rounded-3xl border space-y-4 ${
                 isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <div className="flex items-center justify-between flex-wrap gap-2">

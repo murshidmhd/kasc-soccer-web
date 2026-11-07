@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Calendar, Clock, MapPin, Trophy, ListFilter } from 'lucide-react';
 import { fixtures } from '../data/tournamentData';
-import { SHOW_BRACKET } from '../config/siteConfig';
 import TeamLogo from './TeamLogo';
 import TournamentBracket from './TournamentBracket';
 
@@ -9,9 +8,19 @@ export default function FixturesSection({ lang, isDarkMode }) {
   // In-memory toggle between list and tree view
   const [viewMode, setViewMode] = useState('list');
   const [filterMode, setFilterMode] = useState('all'); // 'all' | 'confirmed'
+  const [expandedMatch, setExpandedMatch] = useState(null);
 
   const confirmedFixtures = fixtures.filter(m => m.confirmed);
   const displayedFixtures = filterMode === 'confirmed' ? confirmedFixtures : fixtures;
+  const fixtureGroups = useMemo(() => {
+    const groups = new Map();
+    displayedFixtures.forEach((match) => {
+      const key = match.date || (lang === 'ml' ? 'തീയതി ഉടൻ' : 'Date to be announced');
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(match);
+    });
+    return [...groups.entries()];
+  }, [displayedFixtures, lang]);
 
   const getShortTag = (match) => {
     if (match.id === 'm1') {
@@ -98,7 +107,7 @@ export default function FixturesSection({ lang, isDarkMode }) {
       {viewMode === 'list' && (
         <div className="space-y-4">
           {/* Filter Bar: All Fixtures vs Confirmed Opening Match */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+          <div className={`sticky top-0 z-20 -mx-3 px-3 py-2 sm:static sm:mx-0 sm:px-0 sm:py-0 flex items-center gap-2 overflow-x-auto pb-1 backdrop-blur-md ${isDarkMode ? 'bg-navy-950/90' : 'bg-surface-light/95'}`}>
             <button
               onClick={() => setFilterMode('all')}
               className={`min-h-[40px] px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 shrink-0 ${
@@ -121,11 +130,17 @@ export default function FixturesSection({ lang, isDarkMode }) {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 animate-fadeIn">
-            {displayedFixtures.map((match) => {
+          <div className="space-y-5 animate-fadeIn">
+            {fixtureGroups.map(([date, matches]) => (
+              <section key={date} aria-label={date}>
+                <h3 className={`sticky top-[52px] z-10 mb-2 flex items-center gap-2 px-1 py-1 text-xs font-black uppercase tracking-wide backdrop-blur-md ${isDarkMode ? 'text-sky bg-navy-950/90' : 'text-royal bg-surface-light/95'}`}>
+                  <Calendar className="w-3.5 h-3.5" />{date}
+                </h3>
+                <div className="space-y-2.5">
+            {matches.map((match) => {
               const isConfirmed = Boolean(match.confirmed);
-              const team1Name = isConfirmed ? match.team1 : '?';
-              const team2Name = isConfirmed ? match.team2 : '?';
+              const team1Name = isConfirmed ? match.team1 : (lang === 'ml' ? 'പിന്നീട് അറിയിക്കും' : 'To be announced');
+              const team2Name = isConfirmed ? match.team2 : (lang === 'ml' ? 'പിന്നീട് അറിയിക്കും' : 'To be announced');
 
               const isUdayaMatch = isConfirmed && (match.team1?.toUpperCase().includes('UDAYA') || match.team2?.toUpperCase().includes('UDAYA'));
               const isNextMatch = match.status === 'Upcoming' && isConfirmed;
@@ -138,9 +153,12 @@ export default function FixturesSection({ lang, isDarkMode }) {
               const team2Won = isCompleted && score1 !== null && score2 !== null && score2 > score1;
 
               return (
-                <div
+                <button
                   key={match.id}
-                  className={`rounded-2xl p-4 sm:p-5 transition-all duration-200 relative shadow-card ${
+                  type="button"
+                  aria-expanded={expandedMatch === match.id}
+                  onClick={() => setExpandedMatch(expandedMatch === match.id ? null : match.id)}
+                  className={`w-full text-left rounded-2xl p-3.5 sm:p-4 transition-all duration-200 relative shadow-card ${
                     isUdayaMatch ? 'border-l-4 border-l-purple-600' : ''
                   } ${
                     isNextMatch
@@ -150,11 +168,10 @@ export default function FixturesSection({ lang, isDarkMode }) {
                         : 'bg-white border border-surface-border text-navy-900 hover:border-navy-700/30'
                   }`}
                 >
-                  {/* Top Match Info: Shortened tag & kickoff/date */}
-                  <div className={`flex items-center justify-between text-xs pb-3 mb-3 border-b ${
+                  <div className={`flex items-center justify-between gap-2 text-xs pb-2.5 mb-2.5 border-b ${
                     isDarkMode ? 'border-navy-700 text-navy-muted' : 'border-surface-border text-card-muted'
                   }`}>
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
                         isNextMatch
                           ? 'btn-gold'
@@ -171,8 +188,6 @@ export default function FixturesSection({ lang, isDarkMode }) {
                           UDAYA
                         </span>
                       )}
-                      <span className="text-card-muted font-mono text-[11px]">{match.day}</span>
-                      <span className="text-card-muted text-[11px] hidden sm:inline">• {match.stage}</span>
                     </div>
 
                     <div className="flex items-center gap-1.5 font-bold">
@@ -182,109 +197,34 @@ export default function FixturesSection({ lang, isDarkMode }) {
                           <span>LIVE</span>
                         </span>
                       ) : (
-                        <div className="flex items-center gap-1 text-card-muted text-xs">
+                        <div className="flex items-center gap-1 text-card-muted text-[11px] sm:text-xs whitespace-nowrap">
                           <Clock className="w-3.5 h-3.5 text-royal dark:text-sky" />
-                          <span>{match.date} • {match.time}</span>
+                          <span>{match.time}</span>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Team Rows: 40px circular logos, 2-line wrapped names, clean scores/time */}
-                  <div className="space-y-2">
-                    {/* Team 1 */}
-                    <div className={`flex items-center justify-between p-2.5 rounded-xl border transition ${
-                      isDarkMode ? 'bg-navy-900/60 border-navy-700' : 'bg-surface-light border-surface-border'
-                    }`}>
-                      <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
-                        <div className="w-10 h-10 rounded-full bg-white p-0.5 border border-surface-border dark:border-navy-700 shrink-0 flex items-center justify-center">
-                          <TeamLogo 
-                            teamName={isConfirmed ? match.team1 : '?'} 
-                            className="w-full h-full rounded-full object-contain" 
-                          />
-                        </div>
-                        <span className={`text-xs sm:text-sm line-clamp-2 leading-snug font-sports ${
-                          team1Won 
-                            ? 'font-black text-card-title' 
-                            : isCompleted 
-                              ? 'font-medium text-card-muted' 
-                              : isConfirmed
-                                ? 'font-bold text-card-title'
-                                : 'font-black text-gold text-base'
-                        }`}>
-                          {team1Name}
-                        </span>
-                      </div>
-
-                      <div className="shrink-0 text-right pl-2">
-                        {isCompleted ? (
-                          <span className={`text-base sm:text-lg font-sports ${
-                            team1Won 
-                              ? 'font-black text-card-title' 
-                              : 'font-medium text-card-muted'
-                          }`}>
-                            {score1}
-                          </span>
-                        ) : isMatchLive ? (
-                          <span className="text-base sm:text-lg font-black font-sports text-gold">
-                            {score1 ?? 0}
-                          </span>
-                        ) : (
-                          <span className="text-xs font-mono font-bold text-royal dark:text-sky">
-                            {match.time}
-                          </span>
-                        )}
-                      </div>
+                  <div className={`grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-xl px-2 py-2.5 ${isDarkMode ? 'bg-navy-900/60' : 'bg-surface-light'}`}>
+                    <div className="flex min-w-0 flex-col items-center gap-1 text-center">
+                      <span className="w-10 h-10 rounded-full bg-white p-0.5 border border-surface-border dark:border-navy-700 flex items-center justify-center"><TeamLogo teamName={isConfirmed ? match.team1 : '?'} className="w-full h-full rounded-full object-contain" /></span>
+                      <span className={`w-full line-clamp-2 text-[11px] sm:text-xs leading-tight font-sports ${team1Won ? 'font-black text-card-title' : isCompleted ? 'font-medium text-card-muted' : 'font-bold text-card-title'}`}>{team1Name}</span>
                     </div>
-
-                    {/* Team 2 */}
-                    <div className={`flex items-center justify-between p-2.5 rounded-xl border transition ${
-                      isDarkMode ? 'bg-navy-900/60 border-navy-700' : 'bg-surface-light border-surface-border'
-                    }`}>
-                      <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
-                        <div className="w-10 h-10 rounded-full bg-white p-0.5 border border-surface-border dark:border-navy-700 shrink-0 flex items-center justify-center">
-                          <TeamLogo 
-                            teamName={isConfirmed ? match.team2 : '?'} 
-                            className="w-full h-full rounded-full object-contain" 
-                          />
-                        </div>
-                        <span className={`text-xs sm:text-sm line-clamp-2 leading-snug font-sports ${
-                          team2Won 
-                            ? 'font-black text-card-title' 
-                            : isCompleted 
-                              ? 'font-medium text-card-muted' 
-                              : isConfirmed
-                                ? 'font-bold text-card-title'
-                                : 'font-black text-gold text-base'
-                        }`}>
-                          {team2Name}
-                        </span>
-                      </div>
-
-                      <div className="shrink-0 text-right pl-2">
-                        {isCompleted ? (
-                          <span className={`text-base sm:text-lg font-sports ${
-                            team2Won 
-                              ? 'font-black text-card-title' 
-                              : 'font-medium text-card-muted'
-                          }`}>
-                            {score2}
-                          </span>
-                        ) : isMatchLive ? (
-                          <span className="text-base sm:text-lg font-black font-sports text-gold">
-                            {score2 ?? 0}
-                          </span>
-                        ) : (
-                          <span className="text-xs font-mono font-bold text-royal dark:text-sky">
-                            {match.time}
-                          </span>
-                        )}
-                      </div>
+                    <div className="min-w-[62px] text-center">
+                      {isCompleted || isMatchLive ? <span className={`text-xl font-black font-sports ${isMatchLive ? 'text-gold' : 'text-card-title'}`}>{score1 ?? 0} <span className="text-card-muted">–</span> {score2 ?? 0}</span> : <span className="text-[10px] font-black uppercase tracking-widest text-card-muted">{lang === 'ml' ? 'എതിരെ' : 'VS'}</span>}
+                    </div>
+                    <div className="flex min-w-0 flex-col items-center gap-1 text-center">
+                      <span className="w-10 h-10 rounded-full bg-white p-0.5 border border-surface-border dark:border-navy-700 flex items-center justify-center"><TeamLogo teamName={isConfirmed ? match.team2 : '?'} className="w-full h-full rounded-full object-contain" /></span>
+                      <span className={`w-full line-clamp-2 text-[11px] sm:text-xs leading-tight font-sports ${team2Won ? 'font-black text-card-title' : isCompleted ? 'font-medium text-card-muted' : 'font-bold text-card-title'}`}>{team2Name}</span>
                     </div>
                   </div>
-                </div>
+                  {expandedMatch === match.id && <div className="mt-2 flex flex-wrap items-center justify-between gap-1 text-[11px] text-card-muted"><span>{match.stage}</span><span className="inline-flex items-center gap-1"><MapPin className="w-3 h-3" />{match.stadium || 'Peruvallur Panjayath Stadium'}</span></div>}
+                </button>
               );
             })}
+                </div>
+              </section>
+            ))}
           </div>
         </div>
       )}
