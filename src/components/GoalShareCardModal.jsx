@@ -86,8 +86,8 @@ export default function GoalShareCardModal({
     if (!cardImage) return;
     setStatusMessage({ type: 'info', text: 'Opening Share Menu...' });
 
-    const shareTitle = `⚽ GOAL! ${formData.scorerName} (${formData.minute}')`;
-    const shareText = `⚽ GOAL ALERT!\n${formData.scorerName} scores at ${formData.minute}'!\n${formData.homeTeamName} ${formData.scoreHome} - ${formData.scoreAway} ${formData.awayTeamName}\n\n🏆 Udaya & KASC All India Sevens Season 7\nLive Scores: ${SITE_URL}?v=udaya_white_s7`;
+    const shareTitle = `⚽ Goal · ${formData.scorerName}`;
+    const shareText = `⚽ ${formData.scorerName} ${formData.minute}'\n${formData.homeTeamName} ${formData.scoreHome}–${formData.scoreAway} ${formData.awayTeamName}\n${SITE_URL}`;
 
     const result = await shareGoalCard({
       blob: cardImage.blob,
@@ -133,7 +133,7 @@ export default function GoalShareCardModal({
   };
 
   const handleCopyText = () => {
-    const text = `⚽ GOAL ALERT! (${formData.minute}')\nScorer: ${formData.scorerName}\n${formData.homeTeamName} [ ${formData.scoreHome} - ${formData.scoreAway} ] ${formData.awayTeamName}\n\n🏆 All India Sevens Football Season 7 (Peruvallur)\nLive Scores: ${SITE_URL}`;
+    const text = `⚽ ${formData.scorerName} ${formData.minute}'\n${formData.homeTeamName} ${formData.scoreHome}–${formData.scoreAway} ${formData.awayTeamName}\n${SITE_URL}`;
     navigator.clipboard.writeText(text);
     setCopiedText(true);
     setTimeout(() => setCopiedText(false), 2500);
