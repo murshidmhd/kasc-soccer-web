@@ -8,7 +8,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight, Star } from 'lucide-react';
-import { lastMatchResult } from '../data/tournamentData';
+import { lastMatchResult, fixtures } from '../data/tournamentData';
 import todayMatchPoster from '../assets/poster-nov-7.png';
 
 const SESSION_KEY = 'matchHighlightSeenV2';
@@ -25,7 +25,7 @@ export default function MatchHighlightPopup({ isDarkMode }) {
       url: todayMatchPoster,
       label: '📅 Today’s Match Poster',
       sublabel: 'KMG MAVOOR vs SHOOTERS PADANNA',
-      footer: '07 NOV 2026 · 8:00 PM · PERUVALLUR PANCHAYATH STADIUM'
+      footer: `07 NOV 2026 · ${(fixtures[1]?.time || '08:45 PM').replace(':','.')} · PERUVALLUR PANCHAYATH STADIUM`
     },
     {
       url: lastMatchResult.winnerPosterUrl,

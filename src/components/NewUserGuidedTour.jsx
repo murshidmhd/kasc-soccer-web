@@ -25,16 +25,16 @@ export default function NewUserGuidedTour({
 
   const steps = [
     {
-      id: 'trailer',
+      id: 'live',
       icon: Play,
       iconColor: 'text-amber-400 bg-amber-400/20',
-      badgeMl: '1/5 • ട്രെയിലർ',
-      badgeEn: '1/5 • Trailer',
-      titleMl: '🎬 ഒഫീഷ്യൽ ടൂർണ്ണമെന്റ് ട്രെയിലർ',
-      titleEn: '🎬 Official Tournament Trailer',
-      descMl: 'ഹോം പേജിലെ ഈ ബട്ടൺ ക്ലിക്ക് ചെയ്ത് സീസൺ 7 ഒഫീഷ്യൽ ഹൈ-ഡെഫനിഷൻ വീഡിയോ ദൃശ്യങ്ങൾ കാണാം!',
-      descEn: 'Tap the trailer card on Home to watch the official Season 7 cinematic teaser video!',
-      targetId: 'hero-trailer-btn',
+      badgeMl: '1/5 • ലൈവ്',
+      badgeEn: '1/5 • Live',
+      titleMl: '⚽ ലൈവ് മാച്ച് സ്കോർ',
+      titleEn: '⚽ Live Match Score',
+      descMl: 'ഹോം പേജിൽ ലൈവ് സ്കോർ, ടീം ലൈൻ-അപ്പ്, ഗോൾ ഫ്ലാഷ് നോട്ടിഫിക്കേഷനുകൾ കാണാം!',
+      descEn: 'See live scores, team line-ups and goal flash notifications right on the Home tab!',
+      targetId: 'live-match-card',
       tab: 'live'
     },
     {

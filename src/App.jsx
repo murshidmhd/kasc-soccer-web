@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Trophy } from 'lucide-react';
 import Header from './components/Header';
+import MatchdayHero from './components/MatchdayHero';
+import MatchdayStrip from './components/MatchdayStrip';
 import Hero from './components/Hero';
 import StadiumAnnouncementBanner from './components/StadiumAnnouncementBanner';
 import LiveMatchCard from './components/LiveMatchCard';
@@ -261,10 +263,14 @@ export default function App() {
           {/* Page 1: LIVE MATCH CENTER (Home) */}
           {activeTab === 'live' && (
             <div className="animate-fadeIn">
-              <Hero 
-                lang={lang} 
-                isDarkMode={isDarkMode} 
-                scrollToSection={handleTabChange}
+              <MatchdayHero
+                lang={lang}
+                isDarkMode={isDarkMode}
+                onNavigate={handleTabChange}
+              />
+              <MatchdayStrip
+                lang={lang}
+                isDarkMode={isDarkMode}
                 onNavigate={handleTabChange}
               />
               
