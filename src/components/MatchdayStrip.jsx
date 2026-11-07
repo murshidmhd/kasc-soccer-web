@@ -26,6 +26,10 @@ export default function MatchdayStrip({ lang, isDarkMode, onNavigate }) {
   const scrollRef = useRef(null);
   const matchState = React.useMemo(() => getStoredMatchState(), []);
   const confirmed = fixtures.filter((f) => f.confirmed).slice(0, MAX_CHIPS);
+  const isOpeningMatchLive = ['1ST_HALF', 'HALF_TIME', '2ND_HALF'].includes(matchState.status);
+  const featuredMatch = isOpeningMatchLive
+    ? confirmed[0]
+    : confirmed.find((match) => match.status === 'Upcoming' || match.score1 == null) || confirmed[0];
   const scoreHome = matchState.officialScoreHome ?? 0;
   const scoreAway = matchState.officialScoreAway ?? 0;
 
@@ -46,9 +50,7 @@ export default function MatchdayStrip({ lang, isDarkMode, onNavigate }) {
       <div
         className="pointer-events-none absolute right-0 top-0 h-full w-10 z-10"
         style={{
-          background: isDarkMode
-            ? 'linear-gradient(to right, transparent, #0f1729)'
-            : 'linear-gradient(to right, transparent, #f8f9ff)',
+          background: 'linear-gradient(to right, transparent, #1a1030)',
         }}
         aria-hidden="true"
       />
@@ -64,19 +66,21 @@ export default function MatchdayStrip({ lang, isDarkMode, onNavigate }) {
           const status = statusChip(match, matchState);
           const isLive = status === 'LIVE';
           const isFT = status === 'FT';
-          const isFeatured = match.id === 'm1'; // first confirmed
+          const isFeatured = match.id === featuredMatch?.id;
 
           return (
             <button
               key={match.id}
               data-featured={isFeatured ? 'true' : undefined}
               onClick={() => onNavigate('live')}
-              className={`shrink-0 scroll-snap-align-start flex flex-col items-center gap-1 p-2.5 rounded-xl border transition active:scale-95 min-w-[88px] max-w-[104px] text-left ${
+              className={`shrink-0 scroll-snap-align-start flex flex-col items-center gap-1.5 p-2.5 rounded-xl border transition active:scale-95 min-w-[96px] max-w-[112px] text-left ${
                 isLive
-                  ? 'border-red-500/60 bg-red-500/10 dark:bg-red-900/20'
+                  ? 'border-red-400/40 bg-red-500/10'
+                  : isFeatured
+                  ? 'border-purple-300/30 bg-purple-500/15 shadow-[0_8px_24px_rgba(112,43,224,0.15)]'
                   : isFT
-                  ? 'border-surface-border dark:border-navy-700 bg-surface-light dark:bg-navy-800/60'
-                  : 'border-surface-border dark:border-navy-700 bg-white dark:bg-navy-800'
+                  ? 'border-white/[0.08] bg-white/[0.04]'
+                  : 'border-white/[0.08] bg-white/[0.06]'
               }`}
               role="listitem"
               aria-label={`${match.team1} vs ${match.team2}, ${status}`}
@@ -86,13 +90,13 @@ export default function MatchdayStrip({ lang, isDarkMode, onNavigate }) {
                 <div className="w-6 h-6 rounded-full bg-white border border-slate-200 dark:border-navy-700 flex items-center justify-center overflow-hidden shrink-0">
                   <TeamLogo teamName={match.team1} className="w-full h-full object-contain" />
                 </div>
-                <span className="text-[9px] font-bold text-card-title truncate flex-1">
+                <span className="text-[10px] font-bold text-white/85 truncate flex-1">
                   {match.team1.split(' ')[0]}
                 </span>
               </div>
 
               {/* Score or time */}
-              <div className="text-[11px] font-black font-mono text-card-title">
+              <div className="text-xs font-black font-mono text-white">
                 {isFT
                   ? `${scoreHome} – ${scoreAway}`
                   : isLive
@@ -104,19 +108,19 @@ export default function MatchdayStrip({ lang, isDarkMode, onNavigate }) {
                 <div className="w-6 h-6 rounded-full bg-white border border-slate-200 dark:border-navy-700 flex items-center justify-center overflow-hidden shrink-0">
                   <TeamLogo teamName={match.team2} className="w-full h-full object-contain" />
                 </div>
-                <span className="text-[9px] font-bold text-card-title truncate flex-1">
+                <span className="text-[10px] font-bold text-white/85 truncate flex-1">
                   {match.team2.split(' ')[0]}
                 </span>
               </div>
 
               {/* Status chip */}
               <span
-                className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full ${
+                className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full ${
                   isLive
-                    ? 'bg-red-600 text-white'
+                  ? 'bg-red-600 text-white'
                     : isFT
-                    ? 'bg-slate-200 dark:bg-navy-700 text-card-muted'
-                    : 'bg-blue-100 dark:bg-navy-700 text-blue-700 dark:text-sky-400'
+                    ? 'bg-white/10 text-white/60'
+                    : 'bg-purple-500/20 text-purple-200'
                 }`}
               >
                 {isLive ? '● LIVE' : isFT ? 'FT' : lang === 'ml' ? 'വരുന്നു' : 'Soon'}
@@ -128,11 +132,11 @@ export default function MatchdayStrip({ lang, isDarkMode, onNavigate }) {
         {/* See all chip */}
         <button
           onClick={() => onNavigate('fixtures')}
-          className="shrink-0 scroll-snap-align-start flex flex-col items-center justify-center gap-1 p-2.5 rounded-xl border border-dashed border-gold/50 bg-gold/5 min-w-[72px] text-center active:scale-95 transition"
+          className="shrink-0 scroll-snap-align-start flex flex-col items-center justify-center gap-1 p-2.5 rounded-xl border border-dashed border-purple-300/30 bg-purple-500/10 min-w-[72px] text-center active:scale-95 transition"
           aria-label={lang === 'ml' ? 'എല്ലാ ഫിക്സ്ചറുകളും' : 'See all fixtures'}
         >
-          <span className="text-gold font-black text-lg">→</span>
-          <span className="text-[9px] font-bold text-gold uppercase leading-tight">
+          <span className="text-purple-200 font-black text-lg">→</span>
+          <span className="text-[9px] font-bold text-purple-200 uppercase leading-tight">
             {lang === 'ml' ? 'എല്ലാം' : 'All'}
           </span>
         </button>

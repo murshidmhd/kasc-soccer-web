@@ -3,11 +3,11 @@ import { Flame, Calendar, Shield, Trophy, MapPin, Award, ShieldCheck } from 'luc
 
 export default function BottomNav({ activeTab, setActiveTab, isDarkMode, lang }) {
   const navItems = [
-    { id: 'live', label: lang === 'ml' ? 'ലൈവ്' : 'Live', icon: Flame, color: 'text-red-600' },
-    { id: 'fixtures', label: lang === 'ml' ? 'ഫിക്സ്ചർ' : 'Fixtures', icon: Calendar, color: 'text-blue-600' },
-    { id: 'teams', label: lang === 'ml' ? 'ക്ലബ്ബുകൾ' : 'Clubs', icon: Shield, color: 'text-blue-600' },
-    { id: 'stats', label: lang === 'ml' ? 'സ്റ്റാറ്റ്സ്' : 'Stats', icon: Trophy, color: 'text-indigo-600' },
-    { id: 'promo', label: lang === 'ml' ? 'മാരത്തോൺ' : 'Marathon', icon: Award, color: 'text-amber-600' }
+    { id: 'live', label: 'Live', icon: Flame, color: 'text-red-600' },
+    { id: 'fixtures', label: 'Fixtures', icon: Calendar, color: 'text-blue-600' },
+    { id: 'teams', label: 'Clubs', icon: Shield, color: 'text-blue-600' },
+    { id: 'stats', label: 'Stats', icon: Trophy, color: 'text-indigo-600' },
+    { id: 'promo', label: 'Marathon', icon: Award, color: 'text-amber-600' }
   ];
 
   const handleTabClick = (tabId) => {
@@ -18,7 +18,7 @@ export default function BottomNav({ activeTab, setActiveTab, isDarkMode, lang })
 
   return (
     <nav 
-      className="fixed bottom-0 inset-x-0 z-50 sm:hidden border-t border-white/10 rounded-t-2xl bg-gradient-to-r from-violet-950/75 via-slate-950/80 to-indigo-950/75 backdrop-blur-2xl shadow-[0_-10px_32px_rgba(8,6,30,0.45)] px-1 transition-colors before:absolute before:inset-x-10 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/35 before:to-transparent"
+      className="footer-glass-nav fixed bottom-0 inset-x-0 z-50 sm:hidden rounded-t-[24px] px-1 transition-colors"
       style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom, 0px))' }}
     >
       <div className="grid grid-cols-5 items-stretch w-full max-w-md mx-auto">
@@ -29,23 +29,23 @@ export default function BottomNav({ activeTab, setActiveTab, isDarkMode, lang })
             <button
               key={item.id}
               onClick={() => handleTabClick(item.id)}
-              className={`min-h-[56px] flex flex-col items-center justify-center gap-0.5 py-1 px-0 rounded-xl border transition active:scale-95 w-full min-w-0 relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70 ${
+              className={`min-h-[56px] flex flex-col items-center justify-center gap-0.5 py-1 px-0 rounded-2xl border transition duration-200 active:scale-[0.96] w-full min-w-0 relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300/70 ${
                 isActive
-                  ? 'bg-white/[0.09] border-white/15 shadow-inner shadow-white/5 backdrop-blur-md'
-                  : 'bg-transparent border-transparent hover:bg-white/[0.05]'
+                  ? 'footer-glass-active border-purple-300/20'
+                  : 'bg-white/[0.025] border-white/[0.055] hover:bg-purple-500/[0.09] hover:border-purple-300/10'
               }`}
               aria-label={item.label}
             >
               <Icon className={`w-5 h-5 shrink-0 transition-colors ${
-                isActive ? 'text-gold' : 'text-navy-muted'
+                isActive ? 'text-purple-100' : 'text-white/65'
               }`} />
-              <span className={`text-[9px] mt-0 tracking-tight w-full min-w-0 text-center leading-[1.1] transition-colors ${
-                isActive ? 'text-gold font-black' : 'text-navy-muted font-medium'
+              <span className={`text-[10px] mt-0 tracking-tight w-full min-w-0 text-center leading-[1.1] transition-colors ${
+                isActive ? 'text-white font-bold' : 'text-white/60 font-medium'
               }`}>
                 {item.label}
               </span>
               {isActive && (
-                <span className="absolute top-0 inset-x-5 h-0.5 rounded-full bg-gradient-to-r from-transparent via-gold to-transparent shadow-[0_0_10px_rgba(245,179,1,0.75)] animate-fadeIn"></span>
+                <span className="absolute top-0 inset-x-5 h-0.5 rounded-full bg-gradient-to-r from-transparent via-purple-300 to-transparent shadow-[0_0_12px_rgba(145,84,240,0.8)] animate-fadeIn"></span>
               )}
             </button>
           );

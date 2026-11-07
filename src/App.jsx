@@ -92,7 +92,7 @@ class GlobalErrorBoundary extends React.Component {
 
 export default function App() {
   const [lang, setLang] = useState('ml'); // Default Malayalam
-  const [isDarkMode, setIsDarkMode] = useState(false); // Default Clean White Theme
+  const [isDarkMode, setIsDarkMode] = useState(true); // Default premium dark theme
   const [activeTab, setActiveTab] = useState('live'); // 'live' | 'fixtures' | 'teams' | 'stats' | 'promo' | 'venue'
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
@@ -240,7 +240,7 @@ export default function App() {
       {!isOnline && (
         <div className="sticky top-0 z-50 bg-gold text-navy-900 px-4 py-2 text-xs font-bold text-center flex items-center justify-center gap-2 shadow-xs">
           <span>📡</span>
-          <span>നിങ്ങൾ ഇപ്പോൾ ഓഫ്‌ലൈനിലാണ് (Offline Mode) • പേജ് ലഭ്യമാണ്. കണക്ഷൻ തിരിച്ചുവരുമ്പോൾ ലൈവ് സ്കോർ തത്സമയം അപ്‌ഡേറ്റ് ആകും.</span>
+          <span>നിങ്ങൾ ഇപ്പോൾ Offline ആണ് • പേജ് ലഭ്യമാണ്. കണക്ഷൻ തിരിച്ചുവരുമ്പോൾ Live Score തത്സമയം അപ്‌ഡേറ്റ് ആകും.</span>
         </div>
       )}
 
@@ -259,20 +259,26 @@ export default function App() {
 
       {/* Main Content Rendered by Page/Tab Wrapped in Error Boundary */}
       <GlobalErrorBoundary>
-        <main className="flex-1 pb-28 sm:pb-12">
+        <main className="flex-1 pb-36 sm:pb-12">
           {/* Page 1: LIVE MATCH CENTER (Home) */}
           {activeTab === 'live' && (
             <div className="animate-fadeIn">
-              <MatchdayHero
-                lang={lang}
-                isDarkMode={isDarkMode}
-                onNavigate={handleTabChange}
-              />
-              <MatchdayStrip
-                lang={lang}
-                isDarkMode={isDarkMode}
-                onNavigate={handleTabChange}
-              />
+              <div className="home-feature-section">
+                <div className="max-w-6xl mx-auto px-3 sm:px-6 pt-4 sm:pt-6">
+                  <MatchdayHero
+                    lang={lang}
+                    isDarkMode={isDarkMode}
+                    onNavigate={handleTabChange}
+                  />
+                </div>
+                <div className="max-w-6xl mx-auto px-3 sm:px-6 pt-3 pb-4">
+                  <MatchdayStrip
+                    lang={lang}
+                    isDarkMode={true}
+                    onNavigate={handleTabChange}
+                  />
+                </div>
+              </div>
               
               <div className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-6">
                 {/* Calm Live Scores Honesty Banner (Rule 4) */}
@@ -411,8 +417,8 @@ export default function App() {
                         const isNextMatch = match.id === 'm2' && match.status === 'Upcoming';
                         const isMatchLive = match.status === 'LIVE';
                         const shortTag = match.id === 'm1' 
-                          ? (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം' : 'Opening match')
-                          : (lang === 'ml' ? 'റൗണ്ട് 1' : 'Round 1');
+                          ? 'Opening Match'
+                          : 'Round 1';
 
                         return (
                           <div
@@ -683,7 +689,7 @@ export default function App() {
                     onClick={() => handleTabChange('live')}
                     className="px-4 py-2 rounded-xl btn-royal text-white text-xs font-bold"
                   >
-                    {lang === 'ml' ? 'ലൈവ് പേജിലേക്ക് മടങ്ങുക' : 'Return to Live'}
+                    {lang === 'ml' ? 'Live പേജിലേക്ക് മടങ്ങുക' : 'Return to Live'}
                   </button>
                 </div>
               )}
@@ -748,7 +754,7 @@ export default function App() {
                   onClick={() => handleTabChange('live')}
                   className="px-3.5 py-2 rounded-xl bg-navy-800 hover:bg-navy-750 border border-navy-700 text-gold text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-xs"
                 >
-                  ← {lang === 'ml' ? 'ലൈവ് മാച്ച് സെന്ററിലേക്ക് മടങ്ങുക' : 'Back to Live Center'}
+                  ← {lang === 'ml' ? 'Live Match Center-ലേക്ക് മടങ്ങുക' : 'Back to Live Center'}
                 </button>
               </div>
               <React.Suspense fallback={

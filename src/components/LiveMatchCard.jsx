@@ -230,23 +230,23 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
       switch (evt.type) {
         case 'goal':
           mainLine = lang === 'ml'
-            ? `⚽ ഗോൾ: ${playerLabel} (${teamLabel})`
+            ? `⚽ Goal: ${playerLabel} (${teamLabel})`
             : `⚽ Goal: ${playerLabel} (${teamLabel})`;
           break;
         case 'yellow_card':
           mainLine = lang === 'ml'
-            ? `🟨 യെല്ലോ കാർഡ്: ${playerLabel} (${teamLabel})`
+            ? `🟨 Yellow Card: ${playerLabel} (${teamLabel})`
             : `🟨 Yellow Card: ${playerLabel} (${teamLabel})`;
           break;
         case 'red_card':
           mainLine = lang === 'ml'
-            ? `🟥 റെഡ് കാർഡ്: ${playerLabel} (${teamLabel})`
+            ? `🟥 Red Card: ${playerLabel} (${teamLabel})`
             : `🟥 Red Card: ${playerLabel} (${teamLabel})`;
           break;
         case 'sub':
         case 'substitution':
           mainLine = lang === 'ml'
-            ? `🔄 സബ്സ്റ്റിറ്റ്യൂഷൻ: ${playerLabel} (${teamLabel})`
+            ? `🔄 Substitution: ${playerLabel} (${teamLabel})`
             : `🔄 Substitution: ${playerLabel} (${teamLabel})`;
           break;
         case 'half_time':
@@ -339,7 +339,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
               <Flame className="w-3.5 h-3.5" />
             </span>
             <h2 className="text-xl sm:text-2xl font-black font-sports uppercase tracking-wider text-navy-900 dark:text-white leading-[1.3]">
-              {lang === 'ml' ? 'മാച്ച് സെന്റർ' : 'MATCH CENTER'}
+              {lang === 'ml' ? 'Match Center' : 'MATCH CENTER'}
             </h2>
           </div>
           {/* Subtitle: Single line kickoff date and time, no repeated days countdown */}
@@ -347,7 +347,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
             {isLive
               ? (lang === 'ml' ? 'ഔദ്യോഗിക തത്സമയ സ്കോറും പന്ത് തട്ടുന്ന നിമിഷങ്ങളും' : 'Official live score verified by Ground Referee Desk')
               : hasMatchStarted
-                ? (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരത്തിന്റെ അന്തിമ സ്കോർ' : 'Opening Match Final Score')
+                ? (lang === 'ml' ? 'Opening Match Final Score' : 'Opening Match Final Score')
                 : (lang === 'ml' ? 'ഉദ്ഘാടന മത്സരം: 2026 നവംബർ 06, രാത്രി 8:45 മണിക്ക്' : 'Opening Match: Nov 06, 2026, 8:45 PM IST')}
           </p>
         </div>
@@ -505,11 +505,11 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
           <div className="mt-5 p-3.5 rounded-2xl surface-card-subtle text-center space-y-1 border border-surface-border dark:border-navy-700">
             <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-card-title">
               <Clock className="w-4 h-4 text-royal dark:text-sky" />
-              <span>{lang === 'ml' ? 'കിക്ക്ഓഫോടെ മാച്ച് സെന്റർ ലൈവാകും' : 'Match Center activates at kickoff'}</span>
+              <span>{lang === 'ml' ? 'Kick-off സമയത്ത് Match Center സജീവമാകും' : 'Match Center activates at kickoff'}</span>
             </div>
             <p className="text-[11px] text-card-muted leading-relaxed">
               {lang === 'ml'
-                ? 'നവംബർ 6 ന് രാത്രി 8:45 ന് ഗ്രൗണ്ട് റഫറി വിസിൽ മുഴങ്ങുന്നതോടെ ഔദ്യോഗിക ലൈവ് സ്കോർബോർഡും ടൈംലൈനും സജീവമാകും.'
+                ? 'നവംബർ 6 രാത്രി 8:45-ന് ഗ്രൗണ്ട് റഫറിയുടെ വിസിലോടെ Official Live Scoreboard, Timeline എന്നിവ സജീവമാകും.'
                 : 'Official live scoreboard, goal alerts and referee timeline will activate at match kickoff.'}
             </p>
           </div>
@@ -659,7 +659,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                     }`}
                   >
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>{lang === 'ml' ? 'ലൈവ് കമന്ററി' : 'Live Commentary'}</span>
+                    <span>{lang === 'ml' ? 'Live Commentary' : 'Live Commentary'}</span>
                   </button>
                   <button
                     onClick={() => setTimelineTab('timeline')}
@@ -702,7 +702,7 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
                     <div className="text-center py-6 px-4 rounded-xl bg-white dark:bg-navy-800/60 border border-dashed border-slate-300 dark:border-navy-700 text-xs text-slate-600 dark:text-slate-300">
                       <Radio className="w-5 h-5 mx-auto mb-1.5 text-royal dark:text-sky opacity-80 animate-pulse" />
                       <span className="font-bold">
-                        {lang === 'ml' ? 'കിക്ക്ഓഫോടെ ലൈവ് കമന്ററി ആരംഭിക്കും' : 'Commentary starts at kickoff'}
+                        {lang === 'ml' ? 'Kick-off സമയത്ത് Live Commentary ആരംഭിക്കും' : 'Commentary starts at kickoff'}
                       </span>
                     </div>
                   )}

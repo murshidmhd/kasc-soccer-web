@@ -18,9 +18,8 @@ import { SITE_URL, ORGANISERS } from '../config/siteConfig';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-/** Returns the fixture that should be featured (live > recently finished within 12h > next upcoming). */
+/** Returns the fixture that should be featured (live > next upcoming). */
 function selectFeaturedFixture(matchState) {
-  const now = Date.now();
   const confirmed = fixtures.filter((f) => f.confirmed);
   if (!confirmed.length) return null;
 
@@ -33,18 +32,7 @@ function selectFeaturedFixture(matchState) {
     return confirmed[0]; // current match
   }
 
-  // 2. Recently FINISHED (within 12 h)
-  if (matchState.status === 'FULL_TIME') {
-    const lastUpdated = matchState.lastUpdated
-      ? new Date(matchState.lastUpdated).getTime()
-      : 0;
-    const twelveHours = 12 * 60 * 60 * 1000;
-    if (!lastUpdated || now - lastUpdated < twelveHours) {
-      return confirmed[0];
-    }
-  }
-
-  // 3. Next upcoming confirmed fixture
+  // After full time, leave the result in Match Center and feature the next fixture.
   return confirmed.find((f) => f.status === 'Upcoming' || !f.score1) || confirmed[0];
 }
 
@@ -118,9 +106,9 @@ function CountdownBlock({ diff, lang }) {
   return (
     <div className="flex items-center justify-center gap-1.5 mt-3" aria-live="polite" aria-label={`Kickoff in ${h}h ${m}m ${s}s`}>
       {[
-        { v: pad(h), l: lang === 'ml' ? 'മണിക്കൂർ' : 'h' },
-        { v: pad(m), l: lang === 'ml' ? 'മിനിറ്റ്' : 'm' },
-        { v: pad(s), l: lang === 'ml' ? 'സെക്കൻഡ്' : 's' },
+        { v: pad(h), l: 'hr' },
+        { v: pad(m), l: 'min' },
+        { v: pad(s), l: 'sec' },
       ].map(({ v, l }, i) => (
         <React.Fragment key={i}>
           {i > 0 && <span className="text-gold font-black text-sm pb-3">:</span>}
@@ -153,6 +141,7 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
   }, []);
 
   const featured = selectFeaturedFixture(matchState);
+  const isOpeningMatch = featured?.id === 'm1';
   const secondsSinceUpdate = useTimeSince(matchState?.lastUpdated);
 
   // Build a kickoff ISO from fixtures data (single source of truth)
@@ -170,11 +159,11 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
 
   const countdown = useCountdown(kickoffIso);
 
-  const isLive =
+  const isLive = isOpeningMatch && (
     matchState.status === '1ST_HALF' ||
     matchState.status === 'HALF_TIME' ||
-    matchState.status === '2ND_HALF';
-  const isFinished = matchState.status === 'FULL_TIME';
+    matchState.status === '2ND_HALF');
+  const isFinished = isOpeningMatch && matchState.status === 'FULL_TIME';
   const isPreMatch = !isLive && !isFinished;
 
   // ── SHARE RESULT ──
@@ -218,17 +207,18 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
         <AlertCircle className="w-8 h-8 text-white/50 mx-auto" />
         <p className="text-sm font-semibold text-white/80 leading-snug">
           {lang === 'ml'
-            ? 'മത്സരങ്ങൾ ദിവസേന പ്രഖ്യാപിക്കുന്നതാണ്. ഓരോ മത്സര ദിവസത്തിനും ശേഷം വീണ്ടും പരിശോധിക്കുക.'
+            ? 'Matches ദിവസേന പ്രഖ്യാപിക്കുന്നതാണ്. ഓരോ match day-ക്കും ശേഷം വീണ്ടും പരിശോധിക്കുക.'
             : 'Fixtures are announced daily. Check back after each match day.'}
         </p>
       </div>
     );
   }
 
-  const scoreHome = matchState.officialScoreHome ?? 0;
-  const scoreAway = matchState.officialScoreAway ?? 0;
-  const goalEvents = (matchState.events || []).filter((e) => e.type === 'goal');
-  const latestEvent = [...(matchState.events || [])].reverse().find(Boolean);
+  const scoreHome = isOpeningMatch ? (matchState.officialScoreHome ?? 0) : (featured.score1 ?? 0);
+  const scoreAway = isOpeningMatch ? (matchState.officialScoreAway ?? 0) : (featured.score2 ?? 0);
+  const featuredEvents = isOpeningMatch ? (matchState.events || []) : [];
+  const goalEvents = featuredEvents.filter((e) => e.type === 'goal');
+  const latestEvent = [...featuredEvents].reverse().find(Boolean);
   const isStale = secondsSinceUpdate > 60 && isLive;
 
   // ── PRE MATCH ──
@@ -236,9 +226,9 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
     <div className="space-y-3">
       {/* Badge row */}
       <div className="flex items-center justify-between">
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gold text-navy-900 text-[10px] font-black uppercase tracking-wider">
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-500/20 border border-purple-300/20 text-purple-100 text-[10px] font-black uppercase tracking-wider">
           <Calendar className="w-3 h-3" />
-          {lang === 'ml' ? 'അടുത്ത മത്സരം' : 'NEXT MATCH'}
+          NEXT MATCH
         </span>
         <span className="text-[11px] font-mono text-white/70">
           {featured.date} · {featured.time}
@@ -253,7 +243,7 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
           {countdown && <CountdownBlock diff={countdown} lang={lang} />}
           {!countdown && (
             <span className="text-xs text-white/60 mt-1">
-              {lang === 'ml' ? 'ഉടൻ ആരംഭിക്കും' : 'Starting soon'}
+              Starting Soon
             </span>
           )}
         </div>
@@ -264,17 +254,17 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
       <div className="flex gap-2 pt-1">
         <button
           onClick={() => onNavigate('fixtures')}
-          className="flex-1 min-h-[44px] rounded-xl bg-gold hover:bg-amber-400 text-navy-900 font-black text-xs uppercase tracking-wide transition active:scale-95 shadow-sm"
-          aria-label={lang === 'ml' ? 'ഫിക്സ്ചറുകൾ കാണുക' : 'View Fixtures'}
+          className="btn-royal flex-1 min-h-[44px] rounded-xl text-white font-black text-xs uppercase tracking-wide transition active:scale-95"
+          aria-label="View Fixtures"
         >
-          {lang === 'ml' ? 'ഫിക്സ്ചർ' : 'Fixtures'}
+          Fixtures
         </button>
         <button
           onClick={() => onNavigate('teams')}
           className="flex-1 min-h-[44px] rounded-xl border border-white/30 text-white font-bold text-xs uppercase transition active:scale-95 hover:bg-white/10"
-          aria-label={lang === 'ml' ? 'ക്ലബ്ബുകൾ കാണുക' : 'View Clubs'}
+          aria-label="View Clubs"
         >
-          {lang === 'ml' ? 'ക്ലബ്ബുകൾ' : 'Clubs'}
+          Clubs
         </button>
       </div>
     </div>
@@ -307,12 +297,12 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
           </span>
           {isStale && (
             <span className="text-[10px] text-amber-400 font-bold mt-1 animate-pulse">
-              {lang === 'ml' ? 'പുനഃബന്ധിക്കുന്നു...' : 'Reconnecting...'}
+              Reconnecting...
             </span>
           )}
           {!isStale && matchState.lastUpdated && (
             <span className="text-[10px] text-white/50 mt-1">
-              {lang === 'ml' ? 'അപ്ഡേറ്റ്:' : 'Updated'} {formatTimeSince(secondsSinceUpdate)}
+              Updated {formatTimeSince(secondsSinceUpdate)}
             </span>
           )}
         </div>
@@ -335,16 +325,16 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
       <div className="flex gap-2 pt-1">
         <button
           onClick={() => onNavigate('live')}
-          className="flex-1 min-h-[44px] rounded-xl bg-gold hover:bg-amber-400 text-navy-900 font-black text-xs uppercase tracking-wide transition active:scale-95 shadow-sm flex items-center justify-center gap-1.5"
+          className="btn-royal flex-1 min-h-[44px] rounded-xl text-white font-black text-xs uppercase tracking-wide transition active:scale-95 flex items-center justify-center gap-1.5"
         >
           <Zap className="w-3.5 h-3.5" />
-          {lang === 'ml' ? 'ലൈവ് സ്കോർ' : 'Live Score'}
+          Live Score
         </button>
         <button
           onClick={() => onNavigate('fixtures')}
           className="flex-1 min-h-[44px] rounded-xl border border-white/30 text-white font-bold text-xs uppercase transition active:scale-95 hover:bg-white/10"
         >
-          {lang === 'ml' ? 'ഫിക്സ്ചർ' : 'Fixtures'}
+          Fixtures
         </button>
       </div>
     </div>
@@ -364,7 +354,7 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
       <div className="flex items-center justify-between">
         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-black uppercase">
           <Trophy className="w-3 h-3 text-gold" />
-          {lang === 'ml' ? 'ഫൈനൽ സ്കോർ' : 'FULL TIME'}
+          Full Time
         </span>
         <span className="text-[11px] font-mono text-white/60">{featured.date}</span>
       </div>
@@ -378,12 +368,12 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
           </span>
           {winner && (
             <span className="text-[10px] text-gold font-black uppercase tracking-wider">
-              {winner} {lang === 'ml' ? 'ജയിച്ചു' : 'wins'}
+              {winner} wins
             </span>
           )}
           {!winner && (
             <span className="text-[10px] text-white/60 font-bold uppercase">
-              {lang === 'ml' ? 'സമനില' : 'Draw'}
+            Draw
             </span>
           )}
         </div>
@@ -406,7 +396,7 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
         </div>
       ) : (
         <p className="text-[11px] text-white/50 text-center italic">
-          {lang === 'ml' ? 'മാച്ച് വിവരങ്ങൾ ഉടൻ ലഭ്യമാകും' : 'Match details coming'}
+          {lang === 'ml' ? 'Match details ഉടൻ ലഭ്യമാകും' : 'Match details coming'}
         </p>
       )}
 
@@ -415,21 +405,19 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
         <button
           onClick={handleShareResult}
           disabled={shareStatus === 'sharing'}
-          className="flex-1 min-h-[44px] rounded-xl bg-gold hover:bg-amber-400 text-navy-900 font-black text-xs uppercase tracking-wide transition active:scale-95 shadow-sm flex items-center justify-center gap-1.5 disabled:opacity-70"
+          className="btn-royal flex-1 min-h-[44px] rounded-xl text-white font-black text-xs uppercase tracking-wide transition active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-70"
           aria-label={lang === 'ml' ? 'ഫലം ഷെയർ ചെയ്യുക' : 'Share result'}
         >
           <Share2 className="w-3.5 h-3.5" />
           {shareStatus === 'sharing'
             ? '...'
-            : lang === 'ml'
-            ? 'ഫലം ഷെയർ ചെയ്യുക'
             : 'Share Result'}
         </button>
         <button
           onClick={() => onNavigate('fixtures')}
           className="flex-1 min-h-[44px] rounded-xl border border-white/30 text-white font-bold text-xs uppercase transition active:scale-95 hover:bg-white/10"
         >
-          {lang === 'ml' ? 'ഫിക്സ്ചർ' : 'Fixtures'}
+          Fixtures
         </button>
       </div>
     </div>
@@ -437,9 +425,9 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
 
   return (
     <div
-      className="rounded-2xl p-4 sm:p-5 border border-white/20 bg-white/5"
+      className="rounded-[24px] p-4 sm:p-5 border border-white/[0.09] bg-gradient-to-br from-[#30204E] to-[#24143F] shadow-[0_16px_40px_rgba(8,3,20,0.24)]"
       role="region"
-      aria-label={lang === 'ml' ? 'മാച്ച് ഹൈലൈറ്റ്' : 'Match highlight'}
+      aria-label={lang === 'ml' ? 'Match Highlight' : 'Match highlight'}
     >
       {isLive ? Live : isFinished ? Finished : PreMatch}
     </div>

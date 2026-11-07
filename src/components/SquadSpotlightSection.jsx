@@ -621,7 +621,7 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
                 {lang === 'ml' ? 'വീണ്ടും കാണാൻ ടാപ്പ് ചെയ്യുക' : 'Tap to Keep Watching'}
               </h4>
               <p className="text-[11px] text-navy-muted">
-                {lang === 'ml' ? '3 റൗണ്ട് പൂർത്തിയായി' : 'Paused after 3 cycles'}
+                {lang === 'ml' ? '3 Rounds പൂർത്തിയായി' : 'Paused after 3 cycles'}
               </p>
             </div>
           )}
@@ -641,7 +641,7 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
                     className="pointer-events-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-red-600 text-white font-black text-xs uppercase tracking-wider border border-white/50 shadow-lg cursor-pointer animate-pulse hover:bg-red-700 active:scale-95 mb-2"
                   >
                     <span className="text-sm">🟥</span>
-                    <span>{lang === 'ml' ? 'റെഡ് കാർഡ് ലഭിച്ചു (പുറത്തായി)' : 'RED CARD • SUSPENDED'}</span>
+                    <span>{lang === 'ml' ? 'Red Card ലഭിച്ചു (പുറത്തായി)' : 'RED CARD • SUSPENDED'}</span>
                     <span className="font-mono bg-black/30 px-1.5 py-0.5 rounded-md text-[10px]">
                       {disc.latestCard?.minute || 25}'
                     </span>
@@ -658,7 +658,7 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
                     className="pointer-events-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-500 text-navy-950 font-black text-xs uppercase tracking-wider border border-white/40 shadow-md cursor-pointer hover:bg-amber-400 active:scale-95 mb-2"
                   >
                     <span>🟨</span>
-                    <span>{lang === 'ml' ? 'യെല്ലോ കാർഡ് (മുന്നറിയിപ്പ്)' : 'YELLOW CARD'}</span>
+                    <span>Yellow Card (Caution)</span>
                     <span className="font-mono bg-black/20 px-1.5 py-0.5 rounded-md text-[10px]">
                       {disc.latestCard?.minute || 25}'
                     </span>
@@ -758,7 +758,7 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
                     <span className="text-2xl animate-pulse">🟥</span>
                     <div>
                       <span className="text-[10px] font-black uppercase text-red-400 block tracking-wider">
-                        {lang === 'ml' ? 'റഫറി ചുവപ്പ് കാർഡ് നൽകി' : 'OFFICIAL RED CARD'}
+                        {lang === 'ml' ? 'Referee Red Card നൽകി' : 'OFFICIAL RED CARD'}
                       </span>
                       <h5 className="text-sm font-black text-white">
                         {lang === 'ml' ? 'കളത്തിൽ നിന്ന് പുറത്തായി' : 'Suspended from Match'}
@@ -782,7 +782,7 @@ export default function SquadSpotlightSection({ lang, isDarkMode }) {
                     <span className="text-2xl">🟨</span>
                     <div>
                       <span className="text-[10px] font-black uppercase text-amber-400 block">
-                        {lang === 'ml' ? 'മഞ്ഞ കാർഡ് മുന്നറിയിപ്പ്' : 'OFFICIAL YELLOW CARD'}
+                        {lang === 'ml' ? 'Yellow Card മുന്നറിയിപ്പ്' : 'OFFICIAL YELLOW CARD'}
                       </span>
                       <h5 className="text-sm font-black text-white">Caution Recorded</h5>
                     </div>

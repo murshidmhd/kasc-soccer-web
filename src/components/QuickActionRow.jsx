@@ -6,28 +6,28 @@ export default function QuickActionRow({ lang, isDarkMode, onNavigate }) {
   const actions = [
     {
       id: 'fixtures',
-      label: lang === 'ml' ? 'ഫിക്സ്ചറുകൾ' : 'Fixtures',
+      label: 'Fixtures',
       icon: Calendar,
       color: 'text-sky dark:text-sky',
       onClick: () => onNavigate('fixtures')
     },
     {
       id: 'teams',
-      label: lang === 'ml' ? 'ക്ലബ്ബുകൾ' : 'Clubs',
+      label: 'Clubs',
       icon: Shield,
       color: 'text-royal dark:text-sky',
       onClick: () => onNavigate('teams')
     },
     {
       id: 'stats',
-      label: lang === 'ml' ? 'സ്റ്റാറ്റ്സ്' : 'Stats',
+      label: 'Stats',
       icon: Trophy,
       color: 'text-gold',
       onClick: () => onNavigate('stats')
     },
     {
       id: 'directions',
-      label: lang === 'ml' ? 'റൂട്ട്' : 'Directions',
+      label: 'Directions',
       icon: Navigation,
       color: 'text-emerald-500 dark:text-emerald-400',
       onClick: () => window.open(STADIUM_MAPS_URL, '_blank', 'noopener,noreferrer')

@@ -100,7 +100,7 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onNavigate }) 
               className="min-h-touch w-full py-3 px-3 sm:px-4 rounded-xl font-bold text-xs sm:text-sm btn-royal text-white shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5"
             >
               <Calendar className="w-4 h-4" />
-              <span>{lang === 'ml' ? 'ഫിക്സ്ചർ (Fixtures)' : 'View Fixtures'}</span>
+              <span>{lang === 'ml' ? 'Fixtures കാണുക' : 'View Fixtures'}</span>
             </button>
             <a
               id="hero-live-channel-btn"

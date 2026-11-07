@@ -727,7 +727,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
               </div>
               <div>
                 <h4 className="text-xs sm:text-sm font-black font-sports uppercase tracking-wider text-card-title flex items-center gap-1.5">
-                  <span>{lang === 'ml' ? 'മാൻ ഓഫ് ദ മാച്ച് (MVP)' : 'MAN OF THE MATCH'}</span>
+                  <span>Man of the Match (MVP)</span>
                   <span className="px-1.5 py-0.2 rounded-md bg-gold text-navy-950 text-[9px] font-black uppercase">
                     {manOfTheMatch.awardTitle || 'Official MVP'}
                   </span>
@@ -887,7 +887,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                           <span className="text-2xl animate-pulse">🟥</span>
                           <div>
                             <span className="text-[11px] font-black uppercase text-rose-400 block tracking-wider">
-                              {lang === 'ml' ? 'റഫറി ചുവപ്പ് കാർഡ് നൽകി' : 'OFFICIAL RED CARD BOOKING'}
+                              {lang === 'ml' ? 'Referee Red Card നൽകി' : 'OFFICIAL RED CARD BOOKING'}
                             </span>
                             <h5 className="text-sm font-black text-white">
                               {lang === 'ml' ? 'കളത്തിൽ നിന്ന് പുറത്തായി (Suspension)' : 'Expelled & Match Suspended'}
@@ -919,7 +919,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                         <div className="flex items-center gap-2">
                           <span className="text-lg">🟨</span>
                           <span className="text-xs font-black uppercase text-amber-400">
-                            {lang === 'ml' ? 'മഞ്ഞ കാർഡ് (മുന്നറിയിപ്പ്)' : 'Yellow Card Caution'}
+                            Yellow Card (Caution)
                           </span>
                         </div>
                         <span className="px-2 py-0.5 rounded-md bg-amber-500 text-navy-950 font-mono font-black text-xs">
@@ -938,7 +938,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                       <div className="flex items-center gap-2">
                         <span className="text-lg">⚽</span>
                         <span className="text-xs font-bold text-white">
-                          {lang === 'ml' ? 'സ്കോർ ചെയ്ത ഗോളുകൾ' : 'Goals Scored'}
+                      Goals Scored
                         </span>
                       </div>
                       <span className="text-lg font-black font-mono text-emerald-400">
@@ -950,7 +950,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
                   {/* Match Performance Rating */}
                   <div className="p-3 rounded-2xl bg-navy-800/60 border border-navy-700 flex items-center justify-between">
                     <span className="text-xs font-bold text-navy-muted">
-                      {lang === 'ml' ? 'മാച്ച് റേറ്റിംഗ്' : 'Official Match Rating'}
+                      {lang === 'ml' ? 'Match Rating' : 'Official Match Rating'}
                     </span>
                     {(() => {
                       const base = Number(activePlayer.baseRating || 0.0);

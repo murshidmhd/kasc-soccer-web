@@ -71,7 +71,7 @@ export default function TournamentBracket({ lang, isDarkMode }) {
         <Calendar className="w-8 h-8 text-royal dark:text-sky mx-auto mb-2" />
         <p className="text-xs sm:text-sm font-bold">
           {lang === 'ml' 
-            ? 'മത്സരങ്ങൾ ദിവസേന പ്രഖ്യാപിക്കുന്നതാണ്. ഓരോ മത്സര ദിവസത്തിനും ശേഷം വീണ്ടും പരിശോധിക്കുക.' 
+            ? 'Matches ദിവസേന പ്രഖ്യാപിക്കുന്നതാണ്. ഓരോ match day-ക്കും ശേഷം വീണ്ടും പരിശോധിക്കുക.'
             : 'Fixtures are announced daily. Check back after each match day.'}
         </p>
       </div>
@@ -142,7 +142,7 @@ export default function TournamentBracket({ lang, isDarkMode }) {
 
     // Keep unplayed knockout paths understandable on small screens.
     const slot = match?.[slotKey];
-    return { name: slot || (lang === 'ml' ? 'ടീം പിന്നീട്' : 'Team TBD'), isDecided: false };
+    return { name: slot || 'Team TBD', isDecided: false };
   };
 
   return (
@@ -157,7 +157,7 @@ export default function TournamentBracket({ lang, isDarkMode }) {
           <div className="flex items-center gap-1.5">
             <Trophy className="w-4 h-4 text-gold shrink-0" />
             <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title leading-[1.3]">
-              {lang === 'ml' ? 'ഫിക്സ്ചർ ട്രീ (Fixture Tree)' : 'TOURNAMENT BRACKET'}
+              {lang === 'ml' ? 'Tournament Bracket' : 'TOURNAMENT BRACKET'}
             </h3>
           </div>
           {/* Venue shown once at the top of the page (Rule 12) */}
@@ -184,7 +184,7 @@ export default function TournamentBracket({ lang, isDarkMode }) {
           <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
           <span className="font-semibold">
             {lang === 'ml' 
-              ? 'ഫിക്സ്ചർ ഉടൻ സ്ഥിരീകരിക്കും • ഉദ്ഘാടന മത്സരം മാത്രം നിശ്ചയിച്ചിരിക്കുന്നു' 
+              ? 'Fixtures ഉടൻ സ്ഥിരീകരിക്കും • Opening Match മാത്രം നിശ്ചയിച്ചിരിക്കുന്നു'
               : 'Draw to be confirmed • Nov 6 opening match confirmed'}
           </span>
         </div>
@@ -238,10 +238,10 @@ export default function TournamentBracket({ lang, isDarkMode }) {
       <div className="sticky top-14 sm:top-16 z-20 py-1.5 bg-surface-light dark:bg-navy-900 border-b border-surface-border dark:border-navy-800 -mx-3 px-3 sm:mx-0 sm:px-0">
         <div className="grid grid-cols-4 gap-1.5 max-w-md mx-auto">
           {[
-            { id: 'r1', label: lang === 'ml' ? 'റൗണ്ട് 1' : 'Round 1' },
-            { id: 'qf', label: lang === 'ml' ? 'ക്വാർട്ടേഴ്സ്' : 'Quarters' },
-            { id: 'sf', label: lang === 'ml' ? 'സെമി' : 'Semis' },
-            { id: 'final', label: lang === 'ml' ? 'ഫൈനൽ' : 'Final' }
+            { id: 'r1', label: 'Round 1' },
+            { id: 'qf', label: 'Quarters' },
+            { id: 'sf', label: 'Semis' },
+            { id: 'final', label: 'Final' }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -331,11 +331,11 @@ export default function TournamentBracket({ lang, isDarkMode }) {
             {bracketData.round1.length < 8 && (
               <div className="p-4 rounded-2xl bg-surface-light dark:bg-navy-900 border border-dashed border-surface-border dark:border-navy-700 text-center space-y-1">
                 <p className="text-xs font-bold text-card-title">
-                  {lang === 'ml' ? 'ബാക്കി റൗണ്ട് 1 മത്സരങ്ങൾ ഉടൻ പ്രഖ്യാപിക്കും' : 'Remaining Round 1 Fixtures TBA'}
+                  {lang === 'ml' ? 'ബാക്കി Round 1 Fixtures ഉടൻ പ്രഖ്യാപിക്കും' : 'Remaining Round 1 Fixtures TBA'}
                 </p>
                 <p className="text-[11px] text-card-muted">
                   {lang === 'ml' 
-                    ? 'കമ്മിറ്റി ഫിക്സ്ചർ പൂർണ്ണമാക്കിയാലുടൻ ബാക്കി ടീമുകളുടെ മത്സരങ്ങൾ ഇവിടെ അപ്ഡേറ്റ് ചെയ്യുന്നതാണ്.' 
+                    ? 'കമ്മിറ്റി Fixtures പൂർണ്ണമാക്കിയാലുടൻ ബാക്കി Teams-ന്റെ Matches ഇവിടെ അപ്ഡേറ്റ് ചെയ്യുന്നതാണ്.'
                     : 'The remaining matchups will be published here as soon as released by the tournament committee.'}
                 </p>
               </div>
@@ -519,7 +519,7 @@ export default function TournamentBracket({ lang, isDarkMode }) {
               <Trophy className="w-5 h-5 text-gold" />
               <div>
                 <h4 className="font-sports font-black text-sm uppercase tracking-wider text-white">
-                  {lang === 'ml' ? 'പൂർണ്ണ നോക്കൗട്ട് ട്രീ' : 'FULL TOURNAMENT TREE'}
+                  {lang === 'ml' ? 'Full Knockout Bracket' : 'FULL TOURNAMENT BRACKET'}
                 </h4>
                 <p className="text-[10px] text-navy-muted">
                   Round 1 → Quarters → Semis → Final
@@ -559,7 +559,7 @@ export default function TournamentBracket({ lang, isDarkMode }) {
               <div className="space-y-4">
                 <span className="text-xs font-bold text-gold uppercase tracking-wider block text-center pb-1 border-b border-navy-800">
                   {lang === 'ml' 
-                    ? `റൗണ്ട് 1 (സ്ഥിരീകരിച്ച ${bracketData.round1.length} മത്സരങ്ങൾ)` 
+                    ? `Round 1 (Confirmed ${bracketData.round1.length} Matches)`
                     : `Round 1 (Confirmed ${bracketData.round1.length} Matches)`}
                 </span>
                 {bracketData.round1.map((m) => (
@@ -572,7 +572,7 @@ export default function TournamentBracket({ lang, isDarkMode }) {
                 {bracketData.round1.length < 8 && (
                   <div className="p-2.5 rounded-xl bg-navy-900/60 border border-dashed border-navy-700 text-center">
                     <span className="text-[10px] text-navy-muted font-bold block">
-                      {lang === 'ml' ? 'ബാക്കി മത്സരങ്ങൾ ഉടൻ പ്രഖ്യാപിക്കും' : 'Remaining Matches TBA'}
+                      {lang === 'ml' ? 'ബാക്കി Matches ഉടൻ പ്രഖ്യാപിക്കും' : 'Remaining Matches TBA'}
                     </span>
                   </div>
                 )}

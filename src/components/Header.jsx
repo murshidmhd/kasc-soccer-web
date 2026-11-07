@@ -73,7 +73,7 @@ export default function Header({
     const awayTeam = nextMatch.teamAway || {};
     const text = encodeURIComponent(
       `⚽ *അഖിലേന്ത്യാ സെവൻസ് ഫുട്ബോൾ — സീസൺ 7*\n` +
-        `${homeTeam.nameMl || 'ആദ്യ ടീം'} 🆚 ${awayTeam.nameMl || 'രണ്ടാം ടീം'}\n` +
+        `${homeTeam.nameMl || 'Team 1'} VS ${awayTeam.nameMl || 'Team 2'}\n` +
         `🌐 ${SITE_URL}\n` +
         `🔴 ${LIVE_YOUTUBE_CHANNEL_URL}`
     );
@@ -82,10 +82,10 @@ export default function Header({
 
   // Desktop-only nav links (BottomNav handles mobile navigation)
   const mainNavLinks = [
-    { id: 'live', label: lang === 'ml' ? 'ലൈവ്' : 'Live' },
-    { id: 'fixtures', label: lang === 'ml' ? 'ഫിക്സ്ചർ' : 'Fixtures' },
-    { id: 'teams', label: lang === 'ml' ? 'ക്ലബ്ബുകൾ' : 'Clubs' },
-    { id: 'stats', label: lang === 'ml' ? 'സ്റ്റാറ്റ്സ്' : 'Stats' },
+    { id: 'live', label: 'Live' },
+    { id: 'fixtures', label: 'Fixtures' },
+    { id: 'teams', label: 'Clubs' },
+    { id: 'stats', label: 'Stats' },
   ];
 
   // All items that move into the More dropdown
@@ -118,19 +118,19 @@ export default function Header({
     },
     {
       id: 'promo',
-      label: lang === 'ml' ? 'മാരത്തോൺ & ഗാലറി' : 'Marathon & Media Gallery',
+      label: lang === 'ml' ? 'Marathon & Gallery' : 'Marathon & Media Gallery',
       icon: Award,
       action: () => navigate('promo'),
     },
     {
       id: 'venue',
-      label: lang === 'ml' ? 'സ്റ്റേഡിയം & GPS' : 'Stadium Venue & GPS',
+      label: lang === 'ml' ? 'Stadium & GPS' : 'Stadium Venue & GPS',
       icon: MapPin,
       action: () => navigate('venue'),
     },
     {
       id: 'game',
-      label: lang === 'ml' ? 'പെനാൽറ്റി ഗെയിം' : 'Penalty Shootout Game',
+      label: lang === 'ml' ? 'Penalty Shootout Game' : 'Penalty Shootout Game',
       icon: Gamepad2,
       action: () => navigate('game'),
     },

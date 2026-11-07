@@ -248,7 +248,7 @@ export default function TopScorers({ lang, isDarkMode }) {
           <div className="flex items-center justify-between gap-2 border-b border-surface-border dark:border-navy-700 pb-3">
             <div className="min-w-0">
               <h3 className="text-sm font-black font-sports uppercase tracking-wider text-card-title">
-                {lang === 'ml' ? 'മാച്ച് പ്ലെയർ സ്റ്റാറ്റ്സ്' : 'MATCH PLAYER STATS'}
+                {lang === 'ml' ? 'Match Player Stats' : 'MATCH PLAYER STATS'}
               </h3>
               <p className="text-[10px] text-card-muted">KRSC & BASE · Goals, cards and lineup rating</p>
             </div>
@@ -395,14 +395,14 @@ export default function TopScorers({ lang, isDarkMode }) {
                     {disc.hasRedCard && (
                       <span className="px-2 py-1 rounded-lg bg-red-600 text-white font-black text-[10px] flex items-center gap-1 shrink-0 shadow-xs animate-pulse">
                         <span>🟥</span>
-                        <span>{lang === 'ml' ? 'റെഡ് കാർഡ്' : 'Red Card'}</span>
+                        <span>Red Card</span>
                         <span className="font-mono bg-black/20 px-1 rounded-xs">{disc.latestCard?.minute}'</span>
                       </span>
                     )}
                     {disc.hasYellowCard && !disc.hasRedCard && (
                       <span className="px-2 py-1 rounded-lg bg-amber-500 text-navy-950 font-black text-[10px] flex items-center gap-1 shrink-0 shadow-xs">
                         <span>🟨</span>
-                        <span>{lang === 'ml' ? 'യെല്ലോ' : 'Yellow'}</span>
+                        <span>Yellow Card</span>
                         <span className="font-mono bg-black/20 px-1 rounded-xs">{disc.latestCard?.minute}'</span>
                       </span>
                     )}
@@ -422,7 +422,7 @@ export default function TopScorers({ lang, isDarkMode }) {
           <section className="rounded-3xl p-4 sm:p-5 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-3">
             <div className="border-b border-surface-border dark:border-navy-700 pb-3">
               <h3 className="text-sm font-black font-sports uppercase tracking-wider text-card-title">
-                {lang === 'ml' ? 'ടീം റെക്കോർഡുകൾ' : 'TEAM RECORDS'}
+                {lang === 'ml' ? 'Team Records' : 'TEAM RECORDS'}
               </h3>
               <p className="text-[10px] text-card-muted">Knockout record · W-D-L, goals and latest result</p>
             </div>
@@ -462,7 +462,7 @@ export default function TopScorers({ lang, isDarkMode }) {
                 </h3>
                 <p className="text-xs text-card-muted leading-relaxed">
                   {lang === 'ml'
-                    ? 'നവംബർ 06 വെള്ളിയാഴ്ച രാത്രി 8:45 മണിക്ക് ഉദ്ഘാടന മത്സരം ആരംഭിക്കുന്നതോടെ ഗോൾഡൻ ബൂട്ട്, ക്ലീൻ ഷീറ്റ്, ഫെയർ പ്ലേ പട്ടികകൾ റഫറി സ്കോർ കാർഡുകളിൽ നിന്ന് തത്സമയം അപ്ഡേറ്റ് ചെയ്യപ്പെടും.'
+                    ? 'നവംബർ 06 വെള്ളിയാഴ്ച രാത്രി 8:45 മണിക്ക് Opening Match ആരംഭിക്കുന്നതോടെ Golden Boot, Clean Sheet, Fair Play പട്ടികകൾ Referee Score Cards-ൽ നിന്ന് Live ആയി അപ്ഡേറ്റ് ചെയ്യും.'
                     : 'The Golden Boot, Golden Glove, and Fair Play standings will activate live from the referee scorer desk once Match 1 kicks off on Friday, Nov 06.'}
                 </p>
               </div>
@@ -505,10 +505,10 @@ export default function TopScorers({ lang, isDarkMode }) {
                   </span>
                   <div>
                     <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title">
-                      {lang === 'ml' ? 'ഗോൾഡൻ ബൂട്ട് ലീഡർബോർഡ്' : 'GOLDEN BOOT RACE'}
+                      {lang === 'ml' ? 'Golden Boot Leaderboard' : 'GOLDEN BOOT RACE'}
                     </h3>
                     <p className="text-[11px] text-card-muted font-bold">
-                      {lang === 'ml' ? 'ടൂർണ്ണമെന്റിലെ മുൻനിര ഗോൾവേട്ടക്കാർ' : 'Top goal scorers of Season 7'}
+                      {lang === 'ml' ? 'Tournament-ലെ Top Goal Scorers' : 'Top goal scorers of Season 7'}
                     </p>
                   </div>
                 </div>
@@ -573,10 +573,10 @@ export default function TopScorers({ lang, isDarkMode }) {
                   </span>
                   <div>
                     <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title">
-                      {lang === 'ml' ? 'ഗോൾഡൻ ഗ്ലോവ് (ക്ലീൻ ഷീറ്റ്)' : 'GOLDEN GLOVE RACE'}
+                      {lang === 'ml' ? 'Golden Glove (Clean Sheets)' : 'GOLDEN GLOVE RACE'}
                     </h3>
                     <p className="text-[11px] text-card-muted font-bold">
-                      {lang === 'ml' ? 'സ്റ്റാർട്ടിംഗ് ഗോൾകീപ്പർമാരുടെ ക്ലീൻ ഷീറ്റ്' : 'Clean sheets recorded by starting goalkeepers'}
+                      {lang === 'ml' ? 'Starting Goalkeepers-ന്റെ Clean Sheets' : 'Clean sheets recorded by starting goalkeepers'}
                     </p>
                   </div>
                 </div>
@@ -683,7 +683,7 @@ export default function TopScorers({ lang, isDarkMode }) {
                     <span className="text-2xl animate-pulse">🟥</span>
                     <div>
                       <span className="text-[10px] font-black uppercase text-red-400 block">
-                        {lang === 'ml' ? 'റഫറി ചുവപ്പ് കാർഡ് നൽകി' : 'OFFICIAL RED CARD'}
+                        {lang === 'ml' ? 'Referee Red Card നൽകി' : 'OFFICIAL RED CARD'}
                       </span>
                       <h5 className="text-sm font-black text-white">
                         {lang === 'ml' ? 'കളത്തിൽ നിന്ന് പുറത്തായി' : 'Match Expulsion'}
