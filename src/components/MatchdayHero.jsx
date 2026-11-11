@@ -238,14 +238,14 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
 
   // ── PRE MATCH ──
   const PreMatch = (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {/* Badge row */}
       <div className="flex items-center justify-between">
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-500/20 border border-purple-300/20 text-purple-100 text-[10px] font-black uppercase tracking-wider">
-          <Calendar className="w-3 h-3" />
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-pill bg-[#5A3B8C]/35 border-frost/25 text-frost text-[10px] font-black uppercase tracking-wider shadow-xs">
+          <Calendar className="w-3 h-3 text-frost" />
           NEXT MATCH
         </span>
-        <span className="text-[11px] font-mono text-white/70">
+        <span className="text-[11px] font-mono text-frost/80">
           {featured.date} · {featured.time}
         </span>
       </div>
@@ -254,10 +254,10 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
       <div className="flex items-center justify-between gap-2 py-2">
         <TeamBlock name={featured.team1} size={64} lang={lang} />
         <div className="flex flex-col items-center px-2">
-          <span className="font-black text-lg text-white/90 font-sports tracking-widest">VS</span>
+          <span className="font-black text-xl text-frost/90 font-sports tracking-widest drop-shadow-xs">VS</span>
           {countdown && <CountdownBlock diff={countdown} lang={lang} />}
           {!countdown && (
-            <span className="text-xs text-white/60 mt-1">
+            <span className="text-xs text-frost/70 mt-1">
               Starting Soon
             </span>
           )}
@@ -266,17 +266,17 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 pt-1">
+      <div className="flex gap-2.5 pt-1">
         <button
           onClick={() => onNavigate('fixtures')}
-          className="btn-royal flex-1 min-h-[44px] rounded-xl text-white font-black text-xs uppercase tracking-wide transition active:scale-95"
+          className="btn-royal flex-1 min-h-[44px] rounded-full text-white font-black text-xs uppercase tracking-wider transition active:scale-95"
           aria-label="View Fixtures"
         >
           Fixtures
         </button>
         <button
           onClick={() => onNavigate('teams')}
-          className="flex-1 min-h-[44px] rounded-xl border border-white/30 text-white font-bold text-xs uppercase transition active:scale-95 hover:bg-white/10"
+          className="btn-navy-outline flex-1 min-h-[44px] rounded-full text-frost font-bold text-xs uppercase tracking-wider transition active:scale-95"
           aria-label="View Clubs"
         >
           Clubs
@@ -287,15 +287,15 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
 
   // ── LIVE ──
   const Live = (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {/* Badge row */}
       <div className="flex items-center justify-between">
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-black uppercase">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/90 text-white text-[10px] font-black uppercase tracking-wider shadow-xs">
           <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
           LIVE
         </span>
-        <span className="text-[11px] font-mono text-white/70 flex items-center gap-1">
-          <Clock className="w-3 h-3" />
+        <span className="text-[11px] font-mono text-frost/80 flex items-center gap-1">
+          <Clock className="w-3 h-3 text-frost" />
           {liveClock.display}
           {matchState.status === 'HALF_TIME' && (
             <span className="text-gold font-bold ml-1">HT</span>
@@ -307,7 +307,7 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
       <div className="flex items-center justify-between gap-2">
         <TeamBlock name={featured.team1} size={56} lang={lang} />
         <div className="flex flex-col items-center">
-          <span className="font-black text-5xl sm:text-6xl text-white tabular-nums font-sports">
+          <span className="font-black text-5xl sm:text-6xl text-white tabular-nums font-sports drop-shadow-md">
             {scoreHome}–{scoreAway}
           </span>
           {isStale && (
@@ -316,7 +316,7 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
             </span>
           )}
           {!isStale && matchState.lastUpdated && (
-            <span className="text-[10px] text-white/50 mt-1">
+            <span className="text-[10px] text-frost/60 mt-1">
               Updated {formatTimeSince(secondsSinceUpdate)}
             </span>
           )}
@@ -326,7 +326,7 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
 
       {/* Latest event */}
       {latestEvent && (
-        <div className="rounded-xl bg-white/10 px-3 py-2 text-xs text-white/80 font-medium truncate">
+        <div className="rounded-2xl bg-white/[0.08] backdrop-blur-md border border-white/10 px-3.5 py-2 text-xs text-frost font-medium truncate">
           <span className="text-gold font-black">{latestEvent.minute}'</span>{' '}
           {latestEvent.type === 'goal' ? '⚽' : latestEvent.type === 'yellowcard' ? '🟨' : latestEvent.type === 'redcard' ? '🟥' : '📋'}{' '}
           {latestEvent.player}
@@ -337,17 +337,17 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
       )}
 
       {/* Actions */}
-      <div className="flex gap-2 pt-1">
+      <div className="flex gap-2.5 pt-1">
         <button
           onClick={() => onNavigate('live')}
-          className="btn-royal flex-1 min-h-[44px] rounded-xl text-white font-black text-xs uppercase tracking-wide transition active:scale-95 flex items-center justify-center gap-1.5"
+          className="btn-royal flex-1 min-h-[44px] rounded-full text-white font-black text-xs uppercase tracking-wider transition active:scale-95 flex items-center justify-center gap-1.5"
         >
           <Zap className="w-3.5 h-3.5" />
           Live Score
         </button>
         <button
           onClick={() => onNavigate('fixtures')}
-          className="flex-1 min-h-[44px] rounded-xl border border-white/30 text-white font-bold text-xs uppercase transition active:scale-95 hover:bg-white/10"
+          className="btn-navy-outline flex-1 min-h-[44px] rounded-full text-frost font-bold text-xs uppercase tracking-wider transition active:scale-95"
         >
           Fixtures
         </button>
@@ -364,21 +364,21 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
       : null;
 
   const Finished = (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {/* Badge */}
       <div className="flex items-center justify-between">
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-black uppercase">
+        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/15 border border-white/10 text-white text-[10px] font-black uppercase">
           <Trophy className="w-3 h-3 text-gold" />
           Full Time
         </span>
-        <span className="text-[11px] font-mono text-white/60">{featured.date}</span>
+        <span className="text-[11px] font-mono text-frost/70">{featured.date}</span>
       </div>
 
       {/* Score */}
       <div className="flex items-center justify-between gap-2">
         <TeamBlock name={featured.team1} size={56} lang={lang} />
         <div className="flex flex-col items-center gap-1">
-          <span className="font-black text-5xl sm:text-6xl text-white tabular-nums font-sports">
+          <span className="font-black text-5xl sm:text-6xl text-white tabular-nums font-sports drop-shadow-md">
             {scoreHome}–{scoreAway}
           </span>
           {winner && (
@@ -387,7 +387,7 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
             </span>
           )}
           {!winner && (
-            <span className="text-[10px] text-white/60 font-bold uppercase">
+            <span className="text-[10px] text-frost/70 font-bold uppercase">
             Draw
             </span>
           )}
@@ -397,30 +397,30 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
 
       {/* Scorers */}
       {goalEvents.length > 0 ? (
-        <div className="rounded-xl bg-white/10 px-3 py-2 space-y-0.5">
+        <div className="rounded-2xl bg-white/[0.08] backdrop-blur-md border border-white/10 px-3.5 py-2.5 space-y-1">
           {goalEvents.map((e, i) => (
-            <div key={i} className="text-xs text-white/80 flex items-center gap-1.5">
+            <div key={i} className="text-xs text-frost flex items-center gap-1.5">
               <span className="text-[10px] text-gold font-black w-8 shrink-0">{e.minute}'</span>
               <span>⚽</span>
               <span className="font-medium truncate">{e.player}</span>
-              <span className="text-white/50 shrink-0 text-[10px]">
+              <span className="text-frost/60 shrink-0 text-[10px]">
                 ({e.team === 'home' ? featured.team1 : featured.team2})
               </span>
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-[11px] text-white/50 text-center italic">
+        <p className="text-[11px] text-frost/60 text-center italic">
           {lang === 'ml' ? 'Match details ഉടൻ ലഭ്യമാകും' : 'Match details coming'}
         </p>
       )}
 
       {/* Actions */}
-      <div className="flex gap-2 pt-1">
+      <div className="flex gap-2.5 pt-1">
         <button
           onClick={handleShareResult}
           disabled={shareStatus === 'sharing'}
-          className="btn-royal flex-1 min-h-[44px] rounded-xl text-white font-black text-xs uppercase tracking-wide transition active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-70"
+          className="btn-royal flex-1 min-h-[44px] rounded-full text-white font-black text-xs uppercase tracking-wider transition active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-70"
           aria-label={lang === 'ml' ? 'ഫലം ഷെയർ ചെയ്യുക' : 'Share result'}
         >
           <Share2 className="w-3.5 h-3.5" />
@@ -430,7 +430,7 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
         </button>
         <button
           onClick={() => onNavigate('fixtures')}
-          className="flex-1 min-h-[44px] rounded-xl border border-white/30 text-white font-bold text-xs uppercase transition active:scale-95 hover:bg-white/10"
+          className="btn-navy-outline flex-1 min-h-[44px] rounded-full text-frost font-bold text-xs uppercase tracking-wider transition active:scale-95"
         >
           Fixtures
         </button>
@@ -440,7 +440,7 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
 
   return (
     <div
-      className="rounded-[24px] p-4 sm:p-5 border border-white/[0.09] bg-gradient-to-br from-[#30204E] to-[#24143F] shadow-[0_16px_40px_rgba(8,3,20,0.24)]"
+      className="liquid-glass p-4 sm:p-6 transition-all duration-300"
       role="region"
       aria-label={lang === 'ml' ? 'Match Highlight' : 'Match highlight'}
     >

@@ -185,7 +185,7 @@ export default function Header({
 
   return (
     <header
-      className="sticky top-0 z-40 w-full border-b border-navy-700 surface-navy text-white pt-safe"
+      className="sticky top-0 z-40 w-full header-glass text-white pt-safe transition-all duration-200"
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >
       {/* Slim header row — target ~48-56px total */}
@@ -223,11 +223,11 @@ export default function Header({
               <span className="text-[12px] sm:text-sm font-black font-sports tracking-tight text-white whitespace-nowrap">
                 {lang === 'ml' ? 'അഖിലേന്ത്യാ സെവൻസ്' : 'ALL INDIA SEVENS'}
               </span>
-              <span className="px-1 text-[8px] font-black rounded bg-gold text-purple-950 uppercase tracking-wider shrink-0">
+              <span className="px-1.5 py-0.2 rounded-full bg-gold text-[#0E0B1D] font-black text-[9px] uppercase tracking-wider shrink-0 shadow-xs">
                 S7
               </span>
             </div>
-            <p className="text-[9px] sm:text-[10px] text-white/60 font-medium leading-tight font-malayalam">
+            <p className="text-[9px] sm:text-[10px] text-frost/70 font-medium leading-tight font-malayalam">
               {lang === 'ml'
                 ? `${ORGANISERS.primary.nameMl} & ${ORGANISERS.coOrganiser.shortNameMl}`
                 : `${ORGANISERS.primary.name} & ${ORGANISERS.coOrganiser.shortName}`}
@@ -236,15 +236,15 @@ export default function Header({
         </button>
 
         {/* CENTER: Desktop nav (hidden on mobile — BottomNav handles that) */}
-        <nav className="hidden lg:flex items-center gap-0.5 shrink-0" aria-label="Main navigation">
+        <nav className="hidden lg:flex items-center gap-1 shrink-0" aria-label="Main navigation">
           {mainNavLinks.map((link) => (
             <button
               key={link.id}
               onClick={() => navigate(link.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition active:scale-95 ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition active:scale-95 ${
                 activeTab === link.id
                   ? 'btn-royal text-white shadow-xs'
-                  : 'text-white/60 hover:text-white hover:bg-navy-800'
+                  : 'text-frost/75 hover:text-white hover:bg-white/[0.08]'
               }`}
             >
               {link.label}
@@ -258,7 +258,7 @@ export default function Header({
           {/* Language toggle */}
           <button
             onClick={() => setLang(lang === 'ml' ? 'en' : 'ml')}
-            className="h-8 px-2.5 rounded-xl border border-navy-700 bg-navy-800 text-white font-bold text-[11px] transition active:scale-95"
+            className="h-8 px-2.5 rounded-full border border-frost/20 bg-white/[0.06] hover:bg-white/[0.12] text-frost font-bold text-[11px] backdrop-blur-md transition active:scale-95 shadow-2xs"
             aria-label={lang === 'ml' ? 'Switch to English' : 'Malayalam ഭാഷ'}
           >
             {lang === 'ml' ? 'EN' : 'മല'}
@@ -267,7 +267,7 @@ export default function Header({
           {/* Share button */}
           <button
             onClick={shareOnWhatsApp}
-            className="w-8 h-8 rounded-xl btn-royal text-white flex items-center justify-center active:scale-95 transition shadow-xs"
+            className="w-8 h-8 rounded-full btn-royal text-white flex items-center justify-center active:scale-95 transition shadow-xs"
             aria-label={lang === 'ml' ? 'ഷെയർ' : 'Share'}
             title="Share on WhatsApp"
           >
@@ -279,7 +279,7 @@ export default function Header({
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="w-8 h-8 rounded-xl border border-navy-700 bg-navy-800 text-gold flex items-center justify-center active:scale-95 transition"
+              className="w-8 h-8 rounded-full border border-frost/20 bg-white/[0.06] hover:bg-white/[0.12] text-gold flex items-center justify-center active:scale-95 backdrop-blur-md transition"
               aria-label="More options"
               aria-expanded={isMobileMenuOpen}
             >
@@ -290,15 +290,15 @@ export default function Header({
             {isMobileMenuOpen && (
               <>
                 <div
-                  className="fixed inset-0 z-40 bg-black/50"
+                  className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs"
                   onClick={() => setIsMobileMenuOpen(false)}
                   aria-hidden="true"
                 />
                 <div
-                  className="fixed top-14 left-3 right-3 sm:absolute sm:top-auto sm:left-auto sm:right-0 sm:mt-1.5 sm:w-60 max-h-[80vh] overflow-y-auto rounded-2xl border border-navy-700 bg-navy-900 text-white shadow-2xl py-1.5 z-50 animate-fadeIn"
+                  className="fixed top-14 left-3 right-3 sm:absolute sm:top-auto sm:left-auto sm:right-0 sm:mt-2 sm:w-64 max-h-[80vh] overflow-y-auto rounded-3xl border border-frost/20 bg-[#140F27]/95 backdrop-blur-2xl text-white shadow-2xl py-2 z-50 animate-fadeIn"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className="flex items-center justify-between px-3.5 py-1.5 border-b border-navy-800 mb-1">
+                  <div className="flex items-center justify-between px-4 py-2 border-b border-white/[0.08] mb-1">
                     <span className="text-[10px] font-black tracking-widest uppercase text-gold">
                       {lang === 'ml' ? 'കൂടുതൽ' : 'MORE'}
                     </span>
@@ -317,7 +317,7 @@ export default function Header({
                         key={item.id}
                         type="button"
                         onClick={() => { setIsMobileMenuOpen(false); item.action(); }}
-                        className="w-full px-3.5 py-2.5 text-left text-xs font-semibold flex items-center gap-2.5 hover:bg-navy-800 active:bg-navy-750 text-white transition cursor-pointer"
+                        className="w-full px-4 py-2.5 text-left text-xs font-semibold flex items-center gap-3 hover:bg-white/[0.08] active:bg-white/[0.12] text-white transition cursor-pointer"
                       >
                         <Icon className="w-4 h-4 text-sky shrink-0" />
                         <span>{item.label}</span>

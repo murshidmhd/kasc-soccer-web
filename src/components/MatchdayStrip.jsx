@@ -78,30 +78,30 @@ export default function MatchdayStrip({ lang, isDarkMode, onNavigate }) {
               key={match.id}
               data-featured={isFeatured ? 'true' : undefined}
               onClick={() => onNavigate('live')}
-              className={`shrink-0 scroll-snap-align-start flex flex-col items-center gap-1.5 p-2.5 rounded-xl border transition active:scale-95 min-w-[96px] max-w-[112px] text-left ${
+              className={`shrink-0 scroll-snap-align-start flex flex-col items-center gap-1.5 p-3 rounded-2xl border transition duration-200 active:scale-95 min-w-[100px] max-w-[116px] text-left backdrop-blur-md ${
                 isLive
-                  ? 'border-red-400/40 bg-red-500/10'
+                  ? 'border-red-400/50 bg-red-500/15 shadow-md'
                   : isFeatured
-                  ? 'border-purple-300/30 bg-purple-500/15 shadow-[0_8px_24px_rgba(112,43,224,0.15)]'
+                  ? 'border-frost/35 bg-gradient-to-b from-[#5A3B8C]/40 to-[#2A1E4D]/60 shadow-liquid-pill'
                   : isFT
-                  ? 'border-white/[0.08] bg-white/[0.04]'
-                  : 'border-white/[0.08] bg-white/[0.06]'
+                  ? 'border-frost/15 bg-gradient-to-b from-white/[0.06] to-white/[0.02]'
+                  : 'border-frost/15 bg-gradient-to-b from-[#2A1E4D]/50 to-[#0E0B1D]/60'
               }`}
               role="listitem"
               aria-label={`${match.team1} vs ${match.team2}, ${status}`}
             >
               {/* Teams row */}
               <div className="flex items-center gap-1 w-full">
-                <div className="w-6 h-6 rounded-full bg-white border border-slate-200 dark:border-navy-700 flex items-center justify-center overflow-hidden shrink-0">
+                <div className="w-6 h-6 rounded-full bg-white border border-frost/30 flex items-center justify-center overflow-hidden shrink-0 shadow-2xs">
                   <TeamLogo teamName={match.team1} className="w-full h-full object-contain" />
                 </div>
-                <span className="text-[10px] font-bold text-white/85 truncate flex-1">
+                <span className="text-[10px] font-bold text-frost/90 truncate flex-1">
                   {match.team1.split(' ')[0]}
                 </span>
               </div>
 
               {/* Score or time */}
-              <div className="text-xs font-black font-mono text-white">
+              <div className="text-xs font-black font-mono text-white tracking-wide">
                 {isFT
                   ? `${scoreHome} – ${scoreAway}`
                   : isLive
@@ -110,22 +110,22 @@ export default function MatchdayStrip({ lang, isDarkMode, onNavigate }) {
               </div>
 
               <div className="flex items-center gap-1 w-full">
-                <div className="w-6 h-6 rounded-full bg-white border border-slate-200 dark:border-navy-700 flex items-center justify-center overflow-hidden shrink-0">
+                <div className="w-6 h-6 rounded-full bg-white border border-frost/30 flex items-center justify-center overflow-hidden shrink-0 shadow-2xs">
                   <TeamLogo teamName={match.team2} className="w-full h-full object-contain" />
                 </div>
-                <span className="text-[10px] font-bold text-white/85 truncate flex-1">
+                <span className="text-[10px] font-bold text-frost/90 truncate flex-1">
                   {match.team2.split(' ')[0]}
                 </span>
               </div>
 
               {/* Status chip */}
               <span
-                className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full ${
+                className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full liquid-pill ${
                   isLive
                   ? 'bg-red-600 text-white'
                     : isFT
-                    ? 'bg-white/10 text-white/60'
-                    : 'bg-purple-500/20 text-purple-200'
+                    ? 'bg-white/10 text-frost/70 border-white/10'
+                    : 'bg-[#5A3B8C]/40 text-frost border-frost/25'
                 }`}
               >
                 {isLive ? '● LIVE' : isFT ? 'FT' : lang === 'ml' ? 'വരുന്നു' : 'Soon'}
@@ -137,11 +137,11 @@ export default function MatchdayStrip({ lang, isDarkMode, onNavigate }) {
         {/* See all chip */}
         <button
           onClick={() => onNavigate('fixtures')}
-          className="shrink-0 scroll-snap-align-start flex flex-col items-center justify-center gap-1 p-2.5 rounded-xl border border-dashed border-purple-300/30 bg-purple-500/10 min-w-[72px] text-center active:scale-95 transition"
+          className="shrink-0 scroll-snap-align-start flex flex-col items-center justify-center gap-1 p-3 rounded-2xl border border-dashed border-frost/30 bg-[#5A3B8C]/15 backdrop-blur-md min-w-[76px] text-center active:scale-95 transition hover:bg-[#5A3B8C]/25"
           aria-label={lang === 'ml' ? 'എല്ലാ ഫിക്സ്ചറുകളും' : 'See all fixtures'}
         >
-          <span className="text-purple-200 font-black text-lg">→</span>
-          <span className="text-[9px] font-bold text-purple-200 uppercase leading-tight">
+          <span className="text-frost font-black text-lg">→</span>
+          <span className="text-[9px] font-bold text-frost uppercase leading-tight">
             {lang === 'ml' ? 'എല്ലാം' : 'All'}
           </span>
         </button>

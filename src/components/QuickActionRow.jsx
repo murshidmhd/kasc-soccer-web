@@ -43,10 +43,10 @@ export default function QuickActionRow({ lang, isDarkMode, onNavigate }) {
             <button
               key={act.id}
               onClick={act.onClick}
-              className="min-h-[56px] min-w-[44px] py-2 px-1 rounded-2xl surface-card border border-surface-border dark:border-navy-700 shadow-2xs hover:shadow-xs flex flex-col items-center justify-center gap-1 transition active:scale-95 group focus:outline-hidden"
+              className="min-h-[58px] min-w-[44px] py-2 px-1 rounded-2xl surface-card border border-frost/20 hover:border-frost/40 shadow-xs hover:shadow-liquid-pill flex flex-col items-center justify-center gap-1 transition-all duration-200 active:scale-95 group focus:outline-hidden"
               aria-label={act.label}
             >
-              <Icon className={`w-5 h-5 shrink-0 transition-transform group-hover:scale-110 ${act.color}`} />
+              <Icon className={`w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-110 ${act.color}`} />
               <span className="text-[11px] sm:text-xs font-sports font-black tracking-wide text-card-title truncate max-w-full text-center leading-tight">
                 {act.label}
               </span>

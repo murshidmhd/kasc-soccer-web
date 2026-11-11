@@ -177,7 +177,7 @@ export default function Footer({ lang, isDarkMode, setActiveTab }) {
                     window.location.hash = link.id;
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="min-h-[44px] px-3 py-2 rounded-xl bg-navy-800 hover:bg-navy-700 border border-navy-700 text-white font-sports font-bold text-xs flex items-center justify-center gap-2 transition active:scale-95 shadow-2xs"
+                  className="min-h-[44px] px-3.5 py-2 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-frost/20 text-frost hover:text-white font-sports font-bold text-xs flex items-center justify-center gap-2 transition active:scale-95 shadow-2xs backdrop-blur-md"
                 >
                   <Icon className="w-3.5 h-3.5 text-sky shrink-0" />
                   <span>{link.label}</span>
@@ -187,19 +187,19 @@ export default function Footer({ lang, isDarkMode, setActiveTab }) {
           </div>
         </div>
 
-        {/* 4. Directions & Stadium Info (Rule 8) */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-navy-800/90 border border-navy-700">
-          <div className="flex items-center gap-2.5 text-xs text-navy-muted min-w-0">
+        {/* 4. Directions & Stadium Info (Liquid Glass Box) */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 rounded-3xl liquid-glass-subtle border border-frost/20">
+          <div className="flex items-center gap-2.5 text-xs text-frost min-w-0">
             <MapPin className="w-4 h-4 text-gold shrink-0" />
             <div className="truncate">
               <span className="text-white font-bold block truncate">Peruvallur Panjayath Stadium</span>
-              <span className="text-[11px] text-navy-muted">Parambil Peedika, Malappuram • 8:45 PM IST</span>
+              <span className="text-[11px] text-frost/70">Parambil Peedika, Malappuram • 8:45 PM IST</span>
             </div>
           </div>
 
           <button
             onClick={() => window.open(STADIUM_MAPS_URL, '_blank', 'noopener,noreferrer')}
-            className="min-h-[44px] px-4 py-2 rounded-xl btn-royal text-white font-bold text-xs uppercase flex items-center justify-center gap-1.5 transition active:scale-95 shrink-0 shadow-xs"
+            className="min-h-[44px] px-5 py-2 rounded-full btn-royal text-white font-bold text-xs uppercase flex items-center justify-center gap-2 transition active:scale-95 shrink-0 shadow-xs"
           >
             <Navigation className="w-3.5 h-3.5 shrink-0" />
             <span>{lang === 'ml' ? 'റൂട്ട് കാണുക (GPS)' : 'Get Directions'}</span>

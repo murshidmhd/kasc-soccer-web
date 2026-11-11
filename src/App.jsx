@@ -532,15 +532,15 @@ export default function App() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                   {/* Left 8 cols: Matchday Hub with Sub-tabs to reduce scroll & clutter */}
                   <div className="lg:col-span-8 space-y-6">
-                    {/* Matchday Sub-Tabs Controller (Rule 1 & Rule 4: Touch-friendly 44px tabs, horizontal scroll) */}
-                    <div id="match-subtabs" className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 horizontal-scroll-container">
-                      <div className="flex items-center gap-1.5 shrink-0 py-0.5">
+                    {/* Matchday Sub-Tabs Controller (Liquid Glass Pill Design) */}
+                    <div id="match-subtabs" className="flex items-center gap-1.5 p-1.5 rounded-full liquid-glass-subtle border border-frost/20 horizontal-scroll-container">
+                      <div className="flex items-center gap-1.5 shrink-0 py-0.5 px-0.5">
                         <button
                           onClick={() => setMatchSubTab('lineup')}
-                          className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
+                          className={`min-h-[44px] px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
                             matchSubTab === 'lineup' 
-                              ? 'bg-blue-700 text-white shadow-card font-black' 
-                              : 'text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+                              ? 'btn-royal text-white shadow-liquid-pill font-black' 
+                              : 'text-frost/70 hover:text-white hover:bg-white/[0.08]'
                           }`}
                         >
                           <span>⚽</span>
@@ -550,10 +550,10 @@ export default function App() {
                         {SHOW_LOCAL_ONLY_FEATURES && (
                           <button
                             onClick={() => setMatchSubTab('predict')}
-                            className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
+                            className={`min-h-[44px] px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
                               matchSubTab === 'predict' 
-                                ? 'bg-amber-500 text-slate-950 shadow-card font-black' 
-                                : 'text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+                                ? 'btn-gold text-navy-950 shadow-liquid-pill font-black' 
+                                : 'text-frost/70 hover:text-white hover:bg-white/[0.08]'
                             }`}
                           >
                             <span>🎯</span>
@@ -566,10 +566,10 @@ export default function App() {
 
                         <button
                           onClick={() => setMatchSubTab('h2h')}
-                          className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
+                          className={`min-h-[44px] px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
                             matchSubTab === 'h2h' 
-                              ? 'bg-indigo-600 text-white shadow-card font-black' 
-                              : 'text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800'
+                              ? 'btn-royal text-white shadow-liquid-pill font-black' 
+                              : 'text-frost/70 hover:text-white hover:bg-white/[0.08]'
                           }`}
                         >
                           <span>📊</span>
@@ -578,10 +578,10 @@ export default function App() {
 
                         <button
                           onClick={() => setMatchSubTab(matchSubTab === 'all' ? 'lineup' : 'all')}
-                          className={`min-h-[44px] px-3 py-2 rounded-xl text-xs font-bold transition shrink-0 ${
+                          className={`min-h-[44px] px-3.5 py-2 rounded-full text-xs font-bold transition shrink-0 ${
                             matchSubTab === 'all'
-                              ? 'bg-slate-950 text-white font-black'
-                              : 'text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800'
+                              ? 'bg-white/20 text-white font-black'
+                              : 'text-frost/60 hover:text-white hover:bg-white/[0.08]'
                           }`}
                           title="Toggle full continuous view of all components"
                         >
