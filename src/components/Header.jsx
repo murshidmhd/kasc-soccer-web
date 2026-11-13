@@ -26,6 +26,7 @@ import {
   Star,
   Target,
   Info,
+  Smartphone,
 } from 'lucide-react';
 import { tournamentInfo, nextMatch } from '../data/tournamentData';
 import {
@@ -90,6 +91,14 @@ export default function Header({
 
   // All items that move into the More dropdown
   const moreMenuItems = [
+    {
+      id: 'install',
+      label: lang === 'ml' ? 'ആപ്പ് ഇൻസ്റ്റാൾ ചെയ്യാം' : 'Install Mobile App',
+      icon: Smartphone,
+      action: () => {
+        window.dispatchEvent(new CustomEvent('trigger_pwa_install'));
+      },
+    },
     {
       id: 'theme',
       label: isDarkMode

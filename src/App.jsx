@@ -31,6 +31,7 @@ import StickyScoreWidget from './components/StickyScoreWidget';
 import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
 import NewUserGuidedTour from './components/NewUserGuidedTour';
+import InstallAppBanner from './components/InstallAppBanner';
 import { fixtures } from './data/tournamentData';
 import { getStoredMatchState, applyRemoteMatchState } from './utils/matchStateManager';
 import { applyRemoteLineupTactics } from './utils/lineupManager';
@@ -859,6 +860,9 @@ export default function App() {
 
       {/* Last Match Highlight Popup — shows once per session on page load */}
       <MatchHighlightPopup isDarkMode={isDarkMode} />
+
+      {/* PWA Mobile Install Banner (Liquid Glass) */}
+      <InstallAppBanner lang={lang} />
     </div>
   );
 }
