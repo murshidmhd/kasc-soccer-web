@@ -49,8 +49,9 @@ function getDb() {
 }
 
 // ─── RTDB Paths ───────────────────────────────────────────────────────────────
-const MATCH_PATH  = 'kasc_sevens_s7/match/state';
-const LINEUP_PATH = 'kasc_sevens_s7/lineup/tactics';
+const MATCH_PATH    = 'kasc_sevens_s7/match/state';
+const LINEUP_PATH   = 'kasc_sevens_s7/lineup/tactics';
+const FIXTURES_PATH = 'kasc_sevens_s7/tournament/fixtures';
 
 // ─── WRITE ────────────────────────────────────────────────────────────────────
 
@@ -90,6 +91,26 @@ export async function pushLineupToFirebase(lineupTactics) {
     return { success: true };
   } catch (err) {
     console.warn('[KASC Firebase] pushLineup failed:', err.message);
+    return { success: false, reason: err.message };
+  }
+}
+
+/**
+ * Push updated tournament fixtures to Firebase RTDB.
+ * Called when admin logs scores, marks match complete, or updates matchups.
+ */
+export async function pushFixturesToFirebase(fixturesData) {
+  const database = getDb();
+  if (!database) return { success: false, reason: 'not_configured' };
+  try {
+    const sanitized = sanitizeForFirebase(fixturesData);
+    await set(ref(database, FIXTURES_PATH), {
+      fixtures: sanitized,
+      _serverTs: serverTimestamp(),
+    });
+    return { success: true };
+  } catch (err) {
+    console.warn('[KASC Firebase] pushFixtures failed:', err.message);
     return { success: false, reason: err.message };
   }
 }
@@ -143,6 +164,30 @@ export function subscribeToLineup(callback) {
   });
 
   return () => off(lineupRef, 'value', handler);
+}
+
+/**
+ * Subscribe to real-time fixtures updates from Firebase.
+ * Returns an unsubscribe function.
+ */
+export function subscribeToFixtures(callback) {
+  const database = getDb();
+  if (!database) return () => {};
+
+  const fixturesRef = ref(database, FIXTURES_PATH);
+
+  const handler = onValue(fixturesRef, (snapshot) => {
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      if (data && data.fixtures) {
+        callback(data.fixtures);
+      }
+    }
+  }, (err) => {
+    console.warn('[KASC Firebase] subscribeToFixtures error:', err.message);
+  });
+
+  return () => off(fixturesRef, 'value', handler);
 }
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────

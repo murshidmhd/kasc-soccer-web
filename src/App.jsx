@@ -30,7 +30,8 @@ import InstallAppBanner from './components/InstallAppBanner';
 import { fixtures } from './data/tournamentData';
 import { getStoredMatchState, applyRemoteMatchState } from './utils/matchStateManager';
 import { applyRemoteLineupTactics } from './utils/lineupManager';
-import { subscribeToMatchState, subscribeToLineup } from './utils/firebaseSync';
+import { applyRemoteFixtures } from './utils/fixtureManager';
+import { subscribeToMatchState, subscribeToLineup, subscribeToFixtures } from './utils/firebaseSync';
 import { SHOW_LOCAL_ONLY_FEATURES, WHATSAPP_CHANNEL_URL, SHOW_BRACKET } from './config/siteConfig';
 
 // Lazy-load heavy interactive mini-game to optimize 4G mobile page load speeds
@@ -113,9 +114,13 @@ export default function App() {
     const unsubLineup = subscribeToLineup((remoteLineup) => {
       applyRemoteLineupTactics(remoteLineup);
     });
+    const unsubFixtures = subscribeToFixtures((remoteFixtures) => {
+      applyRemoteFixtures(remoteFixtures);
+    });
     return () => {
       if (typeof unsubMatch === 'function') unsubMatch();
       if (typeof unsubLineup === 'function') unsubLineup();
+      if (typeof unsubFixtures === 'function') unsubFixtures();
     };
   }, []);
 

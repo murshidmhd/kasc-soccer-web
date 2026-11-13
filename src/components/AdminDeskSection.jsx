@@ -59,6 +59,7 @@ import {
 } from '../utils/matchStateManager';
 import { HALF_LENGTH_MINUTES, MAX_MATCH_MINUTES } from '../config/siteConfig';
 import { tournamentInfo, fixtures } from '../data/tournamentData';
+import { updateFixtureScoreAndStatus } from '../utils/fixtureManager';
 import logoUdaya from '../assets/logo_udaya_transparent.webp';
 import logoKasc from '../assets/logo_kasc.webp';
 import todayMatchPoster from '../assets/poster-nov-7.png';
@@ -484,6 +485,8 @@ export default function AdminDeskSection({
             isCrowdLocked: true
           };
           saveOfficialMatchState(next);
+          const fixtureIdToComplete = next.activeFixtureId || selectedFixtureId || 'm1';
+          updateFixtureScoreAndStatus(fixtureIdToComplete, next.officialScoreHome, next.officialScoreAway, 'Completed');
           setClock(getCalculatedMatchTime(next));
           setHistoryCount(getMatchHistory().length);
           if (!isOnline) {
@@ -543,6 +546,8 @@ export default function AdminDeskSection({
             isCrowdLocked: false
           };
           saveOfficialMatchState(next);
+          const fixtureIdToReset = next.activeFixtureId || selectedFixtureId || 'm1';
+          updateFixtureScoreAndStatus(fixtureIdToReset, 0, 0, 'Upcoming');
           setClock(getCalculatedMatchTime(next));
           setHistoryCount(getMatchHistory().length);
           if (!isOnline) {
@@ -616,6 +621,8 @@ export default function AdminDeskSection({
         ...(belongsToSelected ? {} : { events: [] })
       };
       saveOfficialMatchState(next);
+      // Real-time persist to fixture database & quarter progression
+      updateFixtureScoreAndStatus(selectedFixtureId, nextHome, nextAway, prev.status === 'FULL_TIME' ? 'Completed' : 'LIVE');
       setHistoryCount(getMatchHistory().length);
       if (!isOnline) {
         queueOfflineAction(next);
@@ -632,6 +639,8 @@ export default function AdminDeskSection({
         status
       };
       saveOfficialMatchState(next);
+      // Real-time persist to fixture database & quarter progression
+      updateFixtureScoreAndStatus(selectedFixtureId, nextHome, nextAway, prev.status === 'FULL_TIME' ? 'Completed' : 'LIVE');
       setHistoryCount(getMatchHistory().length);
       return next;
     });
@@ -697,6 +706,8 @@ export default function AdminDeskSection({
         events: [eventObj, ...(prev.events || [])]
       };
       saveOfficialMatchState(next);
+      // Real-time persist to fixture database & quarter progression
+      updateFixtureScoreAndStatus(selectedFixtureId, nextHome, nextAway, prev.status === 'FULL_TIME' ? 'Completed' : 'LIVE');
       setHistoryCount(getMatchHistory().length);
       return next;
     });
@@ -769,6 +780,8 @@ export default function AdminDeskSection({
         events: (prev.events || []).filter((e) => e.id !== id)
       };
       saveOfficialMatchState(next);
+      // Real-time persist to fixture database & quarter progression
+      updateFixtureScoreAndStatus(selectedFixtureId, nextHome, nextAway, prev.status === 'FULL_TIME' ? 'Completed' : 'LIVE');
       setHistoryCount(getMatchHistory().length);
       return next;
     });

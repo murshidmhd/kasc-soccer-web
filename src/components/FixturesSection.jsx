@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, Trophy, ListFilter } from 'lucide-react';
-import { fixtures } from '../data/tournamentData';
+import { fixtures as initialFixtures } from '../data/tournamentData';
+import { getStoredFixtures } from '../utils/fixtureManager';
 import TeamLogo from './TeamLogo';
 import TournamentBracket from './TournamentBracket';
 
@@ -9,9 +10,22 @@ export default function FixturesSection({ lang, isDarkMode }) {
   const [viewMode, setViewMode] = useState('list');
   const [filterMode, setFilterMode] = useState('all'); // 'all' | 'confirmed'
   const [expandedMatch, setExpandedMatch] = useState(null);
+  const [activeFixtures, setActiveFixtures] = useState(() => getStoredFixtures());
 
-  const confirmedFixtures = fixtures.filter(m => m.confirmed);
-  const displayedFixtures = filterMode === 'confirmed' ? confirmedFixtures : fixtures;
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (Array.isArray(e.detail)) {
+        setActiveFixtures(e.detail);
+      } else {
+        setActiveFixtures(getStoredFixtures());
+      }
+    };
+    window.addEventListener('kasc_fixtures_updated', handleUpdate);
+    return () => window.removeEventListener('kasc_fixtures_updated', handleUpdate);
+  }, []);
+
+  const confirmedFixtures = activeFixtures.filter(m => m.confirmed);
+  const displayedFixtures = filterMode === 'confirmed' ? confirmedFixtures : activeFixtures;
   const fixtureGroups = useMemo(() => {
     const groups = new Map();
     displayedFixtures.forEach((match) => {
@@ -99,7 +113,7 @@ export default function FixturesSection({ lang, isDarkMode }) {
       {/* VIEW 1: TOURNAMENT BRACKET */}
       {viewMode === 'bracket' && (
         <div className="animate-fadeIn">
-          <TournamentBracket lang={lang} isDarkMode={isDarkMode} />
+          <TournamentBracket lang={lang} isDarkMode={isDarkMode} fixturesList={activeFixtures} />
         </div>
       )}
 

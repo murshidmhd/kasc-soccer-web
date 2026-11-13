@@ -19,50 +19,112 @@ import { SHOW_BRACKET } from '../config/siteConfig';
 // Single configuration constant (Data Rule 2, Task 4)
 export const BRACKET_CONFIRMED = SHOW_BRACKET;
 
-// Drive round 1 from shared tournamentData.js fixtures (Task 4, Rule 17)
-export const BRACKET_DATA = {
-  round1: fixtures.map((f, i) => ({
-    id: f.id,
-    matchNum: i + 1,
-    date: f.date,
-    time: f.time,
-    team1: f.team1,
-    team2: f.team2,
-    status: f.id === 'm1' ? 'Opening Match' : 'Upcoming',
-    winner: f.confirmed && Number.isFinite(f.score1) && Number.isFinite(f.score2)
+// Dynamically compute bracket data from current tournament fixtures
+export const getBracketData = (fixturesList = fixtures) => {
+  const round1Matches = fixturesList.filter((f) => f.id.startsWith('m'));
+  const round1 = round1Matches.map((f, i) => {
+    const winner = f.winner || (f.confirmed && Number.isFinite(f.score1) && Number.isFinite(f.score2)
       ? f.score1 === f.score2 ? null : f.score1 > f.score2 ? f.team1 : f.team2
-      : null,
-    qfSlot: `qf${Math.floor(i / 2) + 1}`,
-    confirmed: f.confirmed
-  })),
-  quarterFinals: [
-    { id: 'qf1', matchNum: 'QF 1', date: '20 Nov', time: '8:45 PM', team1Slot: 'Winner Match 1', team2Slot: 'Winner Match 2', status: 'Quarter Final', winner: null, sfSlot: 'sf1' },
-    { id: 'qf2', matchNum: 'QF 2', date: '22 Nov', time: '8:45 PM', team1Slot: 'Winner Match 3', team2Slot: 'Winner Match 4', status: 'Quarter Final', winner: null, sfSlot: 'sf1' },
-    { id: 'qf3', matchNum: 'QF 3', date: '24 Nov', time: '8:45 PM', team1Slot: 'Winner Match 5', team2Slot: 'Winner Match 6', status: 'Quarter Final', winner: null, sfSlot: 'sf2' },
-    { id: 'qf4', matchNum: 'QF 4', date: '26 Nov', time: '8:45 PM', team1Slot: 'Winner Match 7', team2Slot: 'Winner Match 8', status: 'Quarter Final', winner: null, sfSlot: 'sf2' }
-  ],
-  semiFinals: [
-    { id: 'sf1', matchNum: 'SF 1', date: '30 Nov', time: '8:45 PM', team1Slot: 'Winner QF 1', team2Slot: 'Winner QF 2', status: 'Semi Final', winner: null, finalSlot: 'final' },
-    { id: 'sf2', matchNum: 'SF 2', date: '02 Dec', time: '8:45 PM', team1Slot: 'Winner QF 3', team2Slot: 'Winner QF 4', status: 'Semi Final', winner: null, finalSlot: 'final' }
-  ],
-  grandFinal: {
-    id: 'final',
-    matchNum: 'FINAL',
-    date: '06 Dec 2026 • 8:45 PM',
-    venue: 'Peruvallur Panjayath Stadium',
-    team1Slot: 'Winner Semi Final 1',
-    team2Slot: 'Winner Semi Final 2',
-    trophy: 'Rolling Trophy',
-    trophyFull: 'Season 7 Champions Rolling Trophy'
-  }
+      : null);
+    return {
+      id: f.id,
+      matchNum: i + 1,
+      date: f.date,
+      time: f.time,
+      team1: f.team1,
+      team2: f.team2,
+      status: f.status === 'Completed' ? 'Completed' : (f.id === 'm1' ? 'Opening Match' : 'Upcoming'),
+      score1: f.score1,
+      score2: f.score2,
+      winner,
+      qfSlot: `qf${Math.floor(i / 2) + 1}`,
+      confirmed: f.confirmed
+    };
+  });
+
+  const getWinnerOfMatch = (matchNum) => {
+    const match = round1.find((m) => m.matchNum === matchNum);
+    return match?.winner || null;
+  };
+
+  const quarterFinals = [
+    { 
+      id: 'qf1', 
+      matchNum: 'QF 1', 
+      date: '20 Nov', 
+      time: '8:45 PM', 
+      team1Slot: 'Winner Match 1', 
+      team2Slot: 'Winner Match 2', 
+      team1: getWinnerOfMatch(1),
+      team2: getWinnerOfMatch(2),
+      status: 'Quarter Final', 
+      winner: null, 
+      sfSlot: 'sf1' 
+    },
+    { 
+      id: 'qf2', 
+      matchNum: 'QF 2', 
+      date: '22 Nov', 
+      time: '8:45 PM', 
+      team1Slot: 'Winner Match 3', 
+      team2Slot: 'Winner Match 4', 
+      team1: getWinnerOfMatch(3),
+      team2: getWinnerOfMatch(4),
+      status: 'Quarter Final', 
+      winner: null, 
+      sfSlot: 'sf1' 
+    },
+    { 
+      id: 'qf3', 
+      matchNum: 'QF 3', 
+      date: '24 Nov', 
+      time: '8:45 PM', 
+      team1Slot: 'Winner Match 5', 
+      team2Slot: 'Winner Match 6', 
+      team1: getWinnerOfMatch(5),
+      team2: getWinnerOfMatch(6),
+      status: 'Quarter Final', 
+      winner: null, 
+      sfSlot: 'sf2' 
+    },
+    { 
+      id: 'qf4', 
+      matchNum: 'QF 4', 
+      date: '26 Nov', 
+      time: '8:45 PM', 
+      team1Slot: 'Winner Match 7', 
+      team2Slot: 'Winner Match 8', 
+      team1: getWinnerOfMatch(7),
+      team2: getWinnerOfMatch(8),
+      status: 'Quarter Final', 
+      winner: null, 
+      sfSlot: 'sf2' 
+    }
+  ];
+
+  return {
+    round1,
+    quarterFinals,
+    semiFinals: [
+      { id: 'sf1', matchNum: 'SF 1', date: '30 Nov', time: '8:45 PM', team1Slot: 'Winner QF 1', team2Slot: 'Winner QF 2', status: 'Semi Final', winner: null, finalSlot: 'final' },
+      { id: 'sf2', matchNum: 'SF 2', date: '02 Dec', time: '8:45 PM', team1Slot: 'Winner QF 3', team2Slot: 'Winner QF 4', status: 'Semi Final', winner: null, finalSlot: 'final' }
+    ],
+    grandFinal: {
+      id: 'final',
+      matchNum: 'FINAL',
+      date: '06 Dec 2026 • 8:45 PM',
+      venue: 'Peruvallur Panjayath Stadium',
+      team1Slot: 'Winner Semi Final 1',
+      team2Slot: 'Winner Semi Final 2',
+      trophy: 'Rolling Trophy',
+      trophyFull: 'Season 7 Champions Rolling Trophy'
+    }
+  };
 };
 
-// Data Rule 1: Single helper function accessing bracket data
-export const getBracketData = () => {
-  return BRACKET_DATA;
-};
+export const BRACKET_DATA = getBracketData();
 
-export default function TournamentBracket({ lang, isDarkMode }) {
+export default function TournamentBracket({ lang, isDarkMode, fixturesList }) {
   if (!SHOW_BRACKET) {
     return (
       <div className={`p-6 rounded-2xl border text-center ${
@@ -84,7 +146,7 @@ export default function TournamentBracket({ lang, isDarkMode }) {
   const [isFullScreenOpen, setIsFullScreenOpen] = useState(false);
   const [touchStartX, setTouchStartX] = useState(null);
 
-  const bracketData = getBracketData();
+  const bracketData = React.useMemo(() => getBracketData(fixturesList || fixtures), [fixturesList]);
 
   // Browser back button support for full bracket view (Rule 10)
   useEffect(() => {
@@ -124,9 +186,15 @@ export default function TournamentBracket({ lang, isDarkMode }) {
 
   // Helper to determine team name and decided state
   const getMatchTeamDisplay = (match, teamKey, slotKey) => {
-    // Show team names ONLY for Nov 6 opening match (m1 / confirmed)
-    if (match?.confirmed || match?.id === 'm1') {
-      return { name: match[teamKey], isDecided: true };
+    // If team is already resolved (e.g. winner moved into quarter final)
+    const teamVal = match?.[teamKey];
+    if (teamVal && typeof teamVal === 'string' && !teamVal.startsWith('Winner Match') && !teamVal.includes('Slot')) {
+      return { name: teamVal, isDecided: true };
+    }
+
+    // Show team names for confirmed round 1 matches
+    if ((match?.confirmed || match?.id === 'm1') && teamVal) {
+      return { name: teamVal, isDecided: true };
     }
 
     // Resolve a knockout slot when its source round match has a confirmed winner.

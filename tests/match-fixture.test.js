@@ -6,10 +6,10 @@ import {
   getMatchFixtureInfo
 } from '../src/utils/matchStateManager.js';
 
-test('Admin selects the next fixture after the opening match ends', () => {
+test('Admin selects the next fixture after the previous match ends', () => {
   assert.equal(
-    getInitialAdminFixtureId({ status: 'FULL_TIME', activeFixtureId: 'm6' }),
-    'm7'
+    getInitialAdminFixtureId({ status: 'FULL_TIME', activeFixtureId: 'm7' }),
+    'm8'
   );
 });
 
