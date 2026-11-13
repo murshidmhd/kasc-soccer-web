@@ -8,18 +8,18 @@ import {
 
 test('Admin selects the next fixture after the opening match ends', () => {
   assert.equal(
-    getInitialAdminFixtureId({ status: 'FULL_TIME', activeFixtureId: 'm1' }),
-    'm2'
+    getInitialAdminFixtureId({ status: 'FULL_TIME', activeFixtureId: 'm6' }),
+    'm7'
   );
 });
 
-test('Starting KMG vs Shooters resets the completed KRSC vs BASE match state', () => {
+test('Starting KMG vs Shooters resets the completed match state', () => {
   const previous = {
-    activeFixtureId: 'm1',
+    activeFixtureId: 'm6',
     status: 'FULL_TIME',
     officialScoreHome: 1,
-    officialScoreAway: 0,
-    events: [{ id: 'old-goal', type: 'goal', playerNumber: 15 }],
+    officialScoreAway: 3,
+    events: [{ id: 'old-goal', type: 'goal', playerNumber: 10 }],
     extraTimeMinutes: 5,
     crowdReports: { home: 2, away: 1, total: 3 },
     matchSeconds: 3600,
@@ -28,9 +28,9 @@ test('Starting KMG vs Shooters resets the completed KRSC vs BASE match state', (
     timerStartedAt: null
   };
 
-  const started = createStartedFixtureState(previous, 'm2', '1ST_HALF', 123456);
+  const started = createStartedFixtureState(previous, 'm7', '1ST_HALF', 123456);
 
-  assert.equal(started.activeFixtureId, 'm2');
+  assert.equal(started.activeFixtureId, 'm7');
   assert.equal(started.status, '1ST_HALF');
   assert.equal(started.officialScoreHome, 0);
   assert.equal(started.officialScoreAway, 0);
@@ -44,7 +44,7 @@ test('Starting KMG vs Shooters resets the completed KRSC vs BASE match state', (
 
 test('Resuming halftime preserves the current fixture score and events', () => {
   const previous = {
-    activeFixtureId: 'm2',
+    activeFixtureId: 'm7',
     status: 'HALF_TIME',
     officialScoreHome: 1,
     officialScoreAway: 2,
@@ -53,7 +53,7 @@ test('Resuming halftime preserves the current fixture score and events', () => {
     matchMinute: 30
   };
 
-  const resumed = createStartedFixtureState(previous, 'm2', '2ND_HALF', 789);
+  const resumed = createStartedFixtureState(previous, 'm7', '2ND_HALF', 789);
 
   assert.equal(resumed.officialScoreHome, 1);
   assert.equal(resumed.officialScoreAway, 2);
