@@ -51,13 +51,13 @@ export default function LiveViewingSection({ lang }) {
           <div>
             <h2 className="text-sm font-black font-sports uppercase tracking-wide text-card-title">
               {isLive 
-                ? (isMalayalam ? 'തത്സമയ ലൈവ് സ്ട്രീം' : 'Live Match Broadcast')
-                : (isMalayalam ? 'Live Match & Replay' : 'Live Match & Replay')}
+                ? (isMalayalam ? 'തത്സമയ ലൈവ് സ്ട്രീം' : 'Live Match Stream')
+                : (isMalayalam ? 'മത്സര റീപ്ലേ & ഹൈലൈറ്റ്സ്' : 'Match Replay & Highlights')}
             </h2>
             <p className="text-[11px] text-card-muted">
               {isLive
-                ? (isMalayalam ? 'ഗ്രൗണ്ടിൽ നിന്നുള്ള തത്സമയ സംപ്രേക്ഷണം' : 'Official live stream directly from the stadium')
-                : (isMalayalam ? 'തത്സമയ മത്സരവും കഴിഞ്ഞ മത്സരങ്ങളുടെ റീപ്ലേയും' : 'Watch live matches and previous match replays')}
+                ? (isMalayalam ? 'ഗ്രൗണ്ടിൽ നിന്നുള്ള ഔദ്യോഗിക സംപ്രേക്ഷണം' : 'Official stadium stream')
+                : (isMalayalam ? 'YouTube സംപ്രേക്ഷണം' : 'Watch on YouTube')}
             </p>
           </div>
         </div>
@@ -101,13 +101,13 @@ export default function LiveViewingSection({ lang }) {
             <span className="min-w-0">
               <span className="block truncate text-sm font-black">
                 {isLive 
-                  ? (isMalayalam ? 'തത്സമയം കാണുക (Watch Live)' : 'Watch Live on YouTube') 
-                  : (isMalayalam ? 'YouTube-ൽ റീപ്ലേ കാണുക' : 'Watch replay on YouTube')}
+                  ? (isMalayalam ? 'തത്സമയം കാണുക' : 'Watch Live Stream') 
+                  : (isMalayalam ? 'വീഡിയോ കാണുക' : 'Watch on YouTube')}
               </span>
               <span className="block text-[11px] text-white/75 truncate">
                 {isLive 
-                  ? (isMalayalam ? 'തത്സമയ സംപ്രേക്ഷണം യൂട്യൂബിൽ' : 'Live HD Stream on YouTube')
-                  : (isMalayalam ? 'കഴിഞ്ഞ മത്സരത്തിന്റെ പൂർണ്ണ വീഡിയോ' : 'Full video of the previous match')}
+                  ? (isMalayalam ? 'ഔദ്യോഗിക HD സംപ്രേക്ഷണം' : 'Official HD Stream')
+                  : (isMalayalam ? 'പൂർണ്ണ മത്സര വീഡിയോ' : 'Full match video')}
               </span>
             </span>
           </div>

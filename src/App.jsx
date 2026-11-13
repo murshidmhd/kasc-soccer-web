@@ -4,12 +4,8 @@ import Header from './components/Header';
 import MatchdayHero from './components/MatchdayHero';
 import MatchdayStrip from './components/MatchdayStrip';
 import Hero from './components/Hero';
-import StadiumAnnouncementBanner from './components/StadiumAnnouncementBanner';
-import LiveMatchCard from './components/LiveMatchCard';
 import LiveViewingSection from './components/LiveViewingSection';
 import MatchPredictionCard from './components/MatchPredictionCard';
-import NextMatchCard from './components/NextMatchCard';
-import MatchHighlightPopup from './components/MatchHighlightPopup';
 import PlayerOfTheMatchVote from './components/PlayerOfTheMatchVote';
 import HeadToHeadCard from './components/HeadToHeadCard';
 import FixturesSection from './components/FixturesSection';
@@ -45,8 +41,6 @@ const SquadSpotlightSection = React.lazy(() => import('./components/SquadSpotlig
 // Lazy-load Dev-only Admin Desk component
 const AdminDeskSection = React.lazy(() => import('./components/AdminDeskSection'));
 const AdminScoreModal = React.lazy(() => import('./components/AdminScoreModal'));
-// Lazy-load First-Visit Welcome Bottom Sheet (Rule 9: performance optimized)
-const WelcomeBottomSheet = React.lazy(() => import('./components/WelcomeBottomSheet'));
 
 // Global React Error Boundary to prevent blank page on connection failures
 class GlobalErrorBoundary extends React.Component {
@@ -282,98 +276,17 @@ export default function App() {
               </div>
               
               <div className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-6">
-                {/* Calm Live Scores Honesty Banner (Rule 4) */}
-                {WHATSAPP_CHANNEL_URL && (
-                  <a
-                    href={WHATSAPP_CHANNEL_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block p-3 sm:p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-950 dark:text-emerald-200 text-xs font-semibold hover:bg-emerald-500/15 transition shadow-xs"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-base shrink-0">📢</span>
-                        <span className="truncate">
-                          {lang === 'ml' 
-                            ? 'തത്സമയ സ്കോറുകൾ ഞങ്ങളുടെ വാട്ട്‌സ്ആപ്പ് ചാനൽ വഴി അപ്‌ഡേറ്റ് ചെയ്യപ്പെടുന്നു' 
-                            : 'Live scores update on our WhatsApp channel'}
-                        </span>
-                      </div>
-                      <span className="text-[11px] font-black underline shrink-0 text-emerald-700 dark:text-emerald-400">
-                        {lang === 'ml' ? 'ചാനൽ കാണുക →' : 'Follow Channel →'}
-                      </span>
-                    </div>
-                  </a>
-                )}
-
-                {/* 1. Next / Live Match Center */}
-                <LiveMatchCard
-                  lang={lang}
-                  isDarkMode={isDarkMode}
-                  onOpenAdminModal={() => setIsAdminModalOpen(true)}
-                  onOpenPassModal={() => setIsVipPassModalOpen(true)}
-                  onOpenTicketModal={() => setIsTicketModalOpen(true)}
-                  onNavigateTab={handleTabChange}
-                />
-
-                <LiveViewingSection lang={lang} />
-
-                {/* Udaya's Next Match Card (Task 3, Rule 11: shown only when an Udaya match is announced) */}
-                {(() => {
-                  const udayaMatch = fixtures.find(
-                    (m) => m.confirmed && (m.team1?.toUpperCase().includes('UDAYA') || m.team2?.toUpperCase().includes('UDAYA'))
-                  );
-                  if (!udayaMatch) return null;
-                  return (
-                    <div className="rounded-2xl p-4 sm:p-5 border-l-4 border-l-purple-600 border border-purple-200 dark:border-purple-900/60 bg-purple-50/60 dark:bg-purple-950/40 shadow-card transition-all">
-                      <div className="flex items-center justify-between pb-2 mb-3 border-b border-purple-200/60 dark:border-purple-800/40">
-                        <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-700 text-white shadow-xs">
-                            UDAYA
-                          </span>
-                          <span className="text-xs sm:text-sm font-sports font-black uppercase tracking-wide text-purple-950 dark:text-purple-200">
-                            {lang === 'ml' ? 'ഉദയയുടെ അടുത്ത മത്സരം' : "UDAYA'S NEXT MATCH"}
-                          </span>
-                        </div>
-                        <span className="text-[11px] font-mono font-bold text-purple-800 dark:text-purple-300">
-                          {udayaMatch.date} • {udayaMatch.time}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-10 h-10 rounded-full bg-white p-0.5 border border-purple-300 dark:border-purple-700 shrink-0 flex items-center justify-center shadow-xs">
-                            <TeamLogo teamName={udayaMatch.team1} className="w-full h-full rounded-full object-contain" />
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-xs sm:text-sm font-sports font-black text-card-title truncate">
-                              {udayaMatch.team1} vs {udayaMatch.team2}
-                            </h4>
-                            <p className="text-[11px] text-card-muted font-medium truncate">
-                              {lang === 'ml' ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം' : 'Peruvallur Panjayath Stadium'}
-                            </p>
-                          </div>
-                        </div>
-
-                        <button
-                          onClick={() => handleTabChange('fixtures')}
-                          className="min-h-touch px-3 py-1.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs shrink-0 shadow-xs active:scale-95 transition"
-                        >
-                          {lang === 'ml' ? 'വിവരങ്ങൾ' : 'Details'}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-                {/* 2. Quick Action Row (Change 3: 4 equal buttons replacing feature hub) */}
+                {/* 1. Quick Action Navigation Row */}
                 <QuickActionRow
                   lang={lang}
                   isDarkMode={isDarkMode}
                   onNavigate={handleTabChange}
                 />
 
-                {/* 3. Today's & Upcoming Fixtures (Rule 1 & Rule 2: White cards, Gold next match accent) */}
+                {/* 2. Official YouTube Live Stream & Replay Hub */}
+                <LiveViewingSection lang={lang} />
+
+                {/* 3. Today's & Upcoming Fixtures */}
                 <section className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-surface-border dark:border-navy-700">
                     <div className="flex items-center gap-2.5">
@@ -522,13 +435,6 @@ export default function App() {
                   <SquadSpotlightSection lang={lang} isDarkMode={isDarkMode} />
                 </React.Suspense>
 
-                {/* 6. Then Everything Else (Matchday Hub, Stadium Announcement, Features & Promos) */}
-                {/* Official Malayalam Stadium Announcement Player */}
-                <StadiumAnnouncementBanner 
-                  lang={lang} 
-                  isDarkMode={isDarkMode} 
-                />
-
                 {/* 2-Column Responsive Layout: Left 8 cols Main Content, Right 4 cols Sponsor Ads */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                   {/* Left 8 cols: Matchday Hub with Sub-tabs to reduce scroll & clutter */}
@@ -631,23 +537,6 @@ export default function App() {
                         <HeadToHeadCard
                           lang={lang}
                           isDarkMode={isDarkMode}
-                        />
-                      </div>
-                    )}
-
-                    {/* Section 3: Next Match – KMG Mavoor vs Shooters Padanna (Day 2) */}
-                    {(matchSubTab === 'lineup' || matchSubTab === 'h2h' || matchSubTab === 'all') && (
-                      <div className="animate-fadeIn">
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">📅</span>
-                          <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">
-                            {lang === 'ml' ? 'അടുത്ത മത്സരം (Day 2)' : 'Next Match (Day 2)'}
-                          </span>
-                        </div>
-                        <NextMatchCard
-                          lang={lang}
-                          isDarkMode={isDarkMode}
-                          onFixtures={() => handleTabChange('fixtures')}
                         />
                       </div>
                     )}
@@ -836,30 +725,16 @@ export default function App() {
         lang={lang}
       />
 
-      {/* First-Visit Welcome Bottom Sheet (Lazy-Loaded) */}
-      <React.Suspense fallback={null}>
-        <WelcomeBottomSheet
+      {/* Interactive New User Guided Tour Coachmark Card (Manual Trigger Only) */}
+      {isTourOpenManually && (
+        <NewUserGuidedTour
           lang={lang}
-          setLang={setLang}
-          isDarkMode={isDarkMode}
-          setIsDarkMode={setIsDarkMode}
-          isLiveMatch={matchState.status === '1ST_HALF' || matchState.status === 'HALF_TIME' || matchState.status === '2ND_HALF'}
-          isOtherModalOpen={isAdminModalOpen || isTicketModalOpen || isVipPassModalOpen || isTourOpenManually}
+          activeTab={activeTab}
           onNavigate={handleTabChange}
+          isOpenManually={isTourOpenManually}
+          onCloseManual={() => setIsTourOpenManually(false)}
         />
-      </React.Suspense>
-
-      {/* Interactive New User Guided Tour Coachmark Card */}
-      <NewUserGuidedTour
-        lang={lang}
-        activeTab={activeTab}
-        onNavigate={handleTabChange}
-        isOpenManually={isTourOpenManually}
-        onCloseManual={() => setIsTourOpenManually(false)}
-      />
-
-      {/* Last Match Highlight Popup — shows once per session on page load */}
-      <MatchHighlightPopup isDarkMode={isDarkMode} />
+      )}
 
       {/* PWA Mobile Install Banner (Liquid Glass) */}
       <InstallAppBanner lang={lang} />

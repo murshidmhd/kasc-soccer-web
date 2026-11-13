@@ -152,22 +152,22 @@ export default function TopScorers({ lang, isDarkMode }) {
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold/20 border border-gold/40 text-gold text-[11px] font-black uppercase tracking-wider shadow-xs">
               <Trophy className="w-3.5 h-3.5 text-gold" />
-              <span>{tournamentInfo.season || 'SEASON 7'} • SFA AFFILIATED</span>
+              <span>{tournamentInfo.season || 'SEASON 7'}</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black font-sports uppercase tracking-wide text-white leading-tight">
               {lang === 'ml' ? 'ടൂർണ്ണമെന്റ് സ്ഥിതിവിവരക്കണക്കുകൾ' : 'OFFICIAL TOURNAMENT STATS'}
             </h2>
             <p className="text-xs text-navy-muted max-w-lg leading-relaxed">
               {lang === 'ml'
-                ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം • 24 പ്രമുഖ ക്ലബ്ബുകളുടെ ഔദ്യോഗിക ടൂർണ്ണമെന്റ് റെക്കോർഡുകൾ'
-                : 'Peruvallur Panchayath Stadium • Live referee scorecard records for 24 elite Sevens clubs.'}
+                ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം • 24 ക്ലബ്ബുകളുടെ ടൂർണ്ണമെന്റ് റെക്കോർഡുകൾ'
+                : 'Peruvallur Panchayath Stadium • Tournament records for 24 elite Sevens clubs.'}
             </p>
           </div>
 
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-navy-800/80 border border-navy-700 self-start sm:self-center">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-[11px] font-bold text-slate-200">
-              {lang === 'ml' ? 'ഉദ്ഘാടനം: നവംബർ 06, രാത്രി 8:45 PM' : 'Kickoff: Nov 06, 8:45 PM'}
+              {lang === 'ml' ? 'സീസൺ 7 • പെരുവള്ളൂർ' : 'Season 7 • Peruvallur'}
             </span>
           </div>
         </div>

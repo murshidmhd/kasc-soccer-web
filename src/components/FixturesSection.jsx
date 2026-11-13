@@ -47,13 +47,13 @@ export default function FixturesSection({ lang, isDarkMode }) {
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-navy-800 border border-navy-700 text-gold text-xs font-bold uppercase tracking-wider mb-2 shadow-xs">
             <Calendar className="w-3.5 h-3.5 text-gold" />
-            <span>{lang === 'ml' ? 'FIXTURES & SCHEDULE' : 'SCHEDULE & BRACKET'}</span>
+            <span>{lang === 'ml' ? 'മത്സരക്രമം' : 'FIXTURES & SCHEDULE'}</span>
           </div>
 
           <h2 className={`text-2xl sm:text-4xl font-black font-sports tracking-wide uppercase leading-[1.3] ${
             isDarkMode ? 'text-white' : 'text-navy-900'
           }`}>
-            {lang === 'ml' ? 'Tournament Fixtures & Bracket' : 'OFFICIAL SFA FIXTURES & BRACKET'}
+            {lang === 'ml' ? 'ടൂർണ്ണമെന്റ് മത്സരങ്ങൾ' : 'TOURNAMENT FIXTURES'}
           </h2>
 
           {/* Venue shown once at the top of the page */}
