@@ -25,7 +25,6 @@ import VipMatchPassModal from './components/VipMatchPassModal';
 import TicketCounterModal from './components/TicketCounterModal';
 import StickyScoreWidget from './components/StickyScoreWidget';
 import BottomNav from './components/BottomNav';
-import Footer from './components/Footer';
 import NewUserGuidedTour from './components/NewUserGuidedTour';
 import InstallAppBanner from './components/InstallAppBanner';
 import { fixtures } from './data/tournamentData';
@@ -675,13 +674,6 @@ export default function App() {
           )}
         </main>
       </GlobalErrorBoundary>
-
-      {/* Footer */}
-      <Footer 
-        lang={lang} 
-        isDarkMode={isDarkMode} 
-        setActiveTab={handleTabChange}
-      />
 
       {/* Mobile App Bottom Navigation Bar */}
       <BottomNav 
