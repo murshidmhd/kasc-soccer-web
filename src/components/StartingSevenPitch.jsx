@@ -407,7 +407,7 @@ export default function StartingSevenPitch({ lang, isDarkMode }) {
           <p className="text-xs text-card-muted font-medium mt-0.5 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
             <span>
-              {lang === 'ml' ? 'ഇരു ടീമുകളുടെയും ലൈനപ്പ് സ്ഥിരീകരിച്ചു (06 Nov 7:00 PM)' : 'Confirmed Official Lineups (06 Nov 7:00 PM)'}
+              {lang === 'ml' ? 'ഇരു ടീമുകളുടെയും ലൈനപ്പ് സ്ഥിരീകരിച്ചു (Matchday Official)' : 'Confirmed Official Matchday Lineups'}
             </span>
           </p>
         </div>

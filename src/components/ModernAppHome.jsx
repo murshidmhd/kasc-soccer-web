@@ -13,144 +13,115 @@ import {
   Clock, 
   Play,
   Eye,
-  Video,
-  Layers,
   Radio,
-  Tv
+  Tv,
+  Film
 } from 'lucide-react';
 import TeamLogo from './TeamLogo';
 import StartingSevenPitch from './StartingSevenPitch';
 import LiveViewingSection from './LiveViewingSection';
-import { fixtures, nextMatch, lastMatchResult } from '../data/tournamentData';
+import { fixtures, nextMatch } from '../data/tournamentData';
 
 const SquadSpotlightSection = React.lazy(() => import('./SquadSpotlightSection'));
 
 export default function ModernAppHome({ lang, isDarkMode, onNavigate }) {
   const [selectedPoster, setSelectedPoster] = useState(null);
-  const [activeMediaTab, setActiveMediaTab] = useState('formation'); // 'formation' | 'video' | 'spotlight' | 'all'
+  const [activeMediaTab, setActiveMediaTab] = useState('formation'); // 'formation' | 'video' | 'spotlight'
 
   // Completed matches in reverse chronological order (most recent first)
   const completedMatches = fixtures.filter(m => m.status === 'Completed').reverse();
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-3 sm:px-5 pt-3 pb-28 space-y-6 animate-fadeIn">
-      {/* 1. App Header Greeting */}
-      <div className="pt-2">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 p-0.5 shadow-md flex items-center justify-center">
-              <img 
-                src="/logo_udaya_transparent.png" 
-                alt="Udaya" 
-                className="w-full h-full object-contain filter drop-shadow"
-                onError={(e) => { e.currentTarget.src = '/logo_kasc.png'; }}
-              />
-            </div>
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-purple-600 dark:text-purple-400">
-                UDAYA KASC 2026
-              </span>
-              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 leading-none">
-                Season 7 • All India Sevens
-              </p>
-            </div>
-          </div>
+    <div className="w-full max-w-xl mx-auto px-4 pt-4 pb-36 space-y-6 animate-fadeIn">
+      {/* 1. App Greeting (Clean, no duplicate logos) */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            Day 8 • Pre-Quarter
+          </span>
 
-          <div className="flex items-center gap-1.5">
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              DAY 8 • PRE-QUARTER
-            </span>
-          </div>
+          <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">
+            8:45 PM IST
+          </span>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-black font-sports tracking-tight text-slate-900 dark:text-white leading-[1.15]">
-          {lang === 'ml' ? 'ഹലോ, ഫുട്ബോൾ പ്രേമി!' : 'Hello, Football Fan!'}
-        </h1>
-        <p className="text-sm font-medium text-slate-600 dark:text-slate-300 mt-1 leading-snug">
-          {lang === 'ml' 
-            ? 'പെരുവള്ളൂരിൽ പ്രീ-ക്വാർട്ടർ പോരാട്ടങ്ങൾ ആരംഭിച്ചു.' 
-            : 'Pre-Quarter knockout battles are underway at Peruvallur.'}
-        </p>
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-black font-sports tracking-tight text-slate-900 dark:text-white leading-tight">
+            {lang === 'ml' ? 'ഹലോ, ഫുട്ബോൾ പ്രേമി!' : 'Hello, Football Fan!'}
+          </h1>
+          <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 mt-1 leading-snug">
+            {lang === 'ml' 
+              ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയത്തിൽ പ്രീ-ക്വാർട്ടർ പോരാട്ടം.' 
+              : 'Pre-Quarter knockout battle tonight at Peruvallur Stadium.'}
+          </p>
+        </div>
 
-        {/* Primary Action Button (Matches Pill in Reference) */}
-        <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        {/* Primary Action Button */}
+        <div>
           <button
             onClick={() => onNavigate('fixtures')}
-            className="inline-flex items-center justify-between sm:justify-start gap-3 px-5 py-3 rounded-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-bold text-xs uppercase tracking-wider shadow-lg hover:shadow-xl active:scale-[0.98] transition-all"
+            className="w-full inline-flex items-center justify-between gap-3 px-5 py-3.5 rounded-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-bold text-xs uppercase tracking-wider shadow-lg hover:shadow-xl active:scale-[0.98] transition-all"
           >
-            <div className="flex items-center gap-2">
-              <span className="text-purple-400 dark:text-purple-600 text-sm font-black">+</span>
-              <span>{lang === 'ml' ? "ഇന്നത്തെ മത്സരം കാണുക" : "Tonight's Pre-Quarter"}</span>
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-purple-400 dark:text-purple-600 text-base font-black">+</span>
+              <span className="truncate">
+                {lang === 'ml' 
+                  ? 'ഇന്നത്തെ മത്സരം: X8 ടൂർസ് vs റിയൽ തെന്നല' 
+                  : "Tonight: X8 Tours vs Real Thennala"}
+              </span>
             </div>
-            <div className="w-5 h-5 rounded-full bg-white/20 dark:bg-slate-900/10 flex items-center justify-center">
-              <ArrowRight className="w-3 h-3 text-white dark:text-slate-950" />
+            <div className="w-6 h-6 rounded-full bg-white/20 dark:bg-slate-900/10 flex items-center justify-center shrink-0">
+              <ArrowRight className="w-3.5 h-3.5 text-white dark:text-slate-950" />
             </div>
           </button>
-
-          <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 pl-1 self-center">
-            {lang === 'ml' 
-              ? 'X8 ടൂർസ് കോഴിക്കോട് vs റിയൽ എഫ്.സി തെന്നല • 8:45 PM' 
-              : 'X8 Tours Calicut vs Real FC Thennala • 8:45 PM IST'}
-          </span>
         </div>
       </div>
 
-      {/* 2. Interactive Lineup, Formation & Video Hub (Pill Switcher) */}
-      <div className="space-y-3">
-        {/* Switcher Navigation Pills */}
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-            <span>{lang === 'ml' ? 'ലൈനപ്പ് & മീഡിയ' : 'Lineup & Media Hub'}</span>
-          </h2>
-          <div className="flex items-center gap-1 p-1 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10">
-            <button
-              onClick={() => setActiveMediaTab('formation')}
-              className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all active:scale-95 ${
-                activeMediaTab === 'formation'
-                  ? 'bg-purple-600 text-white shadow-sm'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-white'
-              }`}
-            >
-              ⚽ {lang === 'ml' ? 'ഫോർമേഷൻ' : 'Formation'}
-            </button>
-            <button
-              onClick={() => setActiveMediaTab('video')}
-              className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all active:scale-95 ${
-                activeMediaTab === 'video'
-                  ? 'bg-purple-600 text-white shadow-sm'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-white'
-              }`}
-            >
-              🔴 {lang === 'ml' ? 'വീഡിയോ' : 'Video'}
-            </button>
-            <button
-              onClick={() => setActiveMediaTab('spotlight')}
-              className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all active:scale-95 ${
-                activeMediaTab === 'spotlight'
-                  ? 'bg-purple-600 text-white shadow-sm'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-white'
-              }`}
-            >
-              🌟 {lang === 'ml' ? 'റീൽസ്' : 'Reels'}
-            </button>
-            <button
-              onClick={() => setActiveMediaTab(activeMediaTab === 'all' ? 'formation' : 'all')}
-              className={`px-2.5 py-1 rounded-full text-[10px] font-bold transition-all ${
-                activeMediaTab === 'all'
-                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
-                  : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
-              }`}
-              title="Show all sections"
-            >
-              {activeMediaTab === 'all' ? 'Show Less' : 'All'}
-            </button>
-          </div>
+      {/* 2. Full-Width Segment Switcher: Lineup & Formation vs Live Stream vs Reels */}
+      <div className="space-y-4">
+        {/* Modern Segmented Navigation Tabs */}
+        <div className="w-full grid grid-cols-3 gap-1 p-1 rounded-2xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200 dark:border-white/10 shadow-xs">
+          <button
+            onClick={() => setActiveMediaTab('formation')}
+            className={`py-2 px-1 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-1.5 active:scale-95 ${
+              activeMediaTab === 'formation'
+                ? 'bg-purple-600 text-white shadow-md'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <span>⚽</span>
+            <span className="truncate">{lang === 'ml' ? 'ഫോർമേഷൻ' : 'Formation'}</span>
+          </button>
+
+          <button
+            onClick={() => setActiveMediaTab('video')}
+            className={`py-2 px-1 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-1.5 active:scale-95 ${
+              activeMediaTab === 'video'
+                ? 'bg-purple-600 text-white shadow-md'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <span>🔴</span>
+            <span className="truncate">{lang === 'ml' ? 'ലൈവ് സ്ട്രീം' : 'Live Video'}</span>
+          </button>
+
+          <button
+            onClick={() => setActiveMediaTab('spotlight')}
+            className={`py-2 px-1 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-1.5 active:scale-95 ${
+              activeMediaTab === 'spotlight'
+                ? 'bg-purple-600 text-white shadow-md'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <span>🌟</span>
+            <span className="truncate">{lang === 'ml' ? 'റീൽസ്' : 'Reels'}</span>
+          </button>
         </div>
 
-        {/* Section A: Starting 7 Tactical Turf Pitch & Formation */}
-        {(activeMediaTab === 'formation' || activeMediaTab === 'all') && (
-          <div className="rounded-3xl overflow-hidden border border-slate-200/80 dark:border-white/10 bg-slate-900/60 shadow-lg animate-fadeIn">
+        {/* Tab 1: Starting 7 Tactical Turf Pitch & Formation */}
+        {activeMediaTab === 'formation' && (
+          <div className="rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-900/70 shadow-lg animate-fadeIn">
             <StartingSevenPitch
               lang={lang}
               isDarkMode={isDarkMode}
@@ -158,16 +129,16 @@ export default function ModernAppHome({ lang, isDarkMode, onNavigate }) {
           </div>
         )}
 
-        {/* Section B: Official YouTube Live Match Stream & Highlights Video */}
-        {(activeMediaTab === 'video' || activeMediaTab === 'all') && (
-          <div className="rounded-3xl overflow-hidden border border-slate-200/80 dark:border-white/10 shadow-lg animate-fadeIn">
+        {/* Tab 2: Official YouTube Live Stream & Match Highlights */}
+        {activeMediaTab === 'video' && (
+          <div className="rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-lg animate-fadeIn">
             <LiveViewingSection lang={lang} />
           </div>
         )}
 
-        {/* Section C: Squad Video Spotlight Reels */}
-        {(activeMediaTab === 'spotlight' || activeMediaTab === 'all') && (
-          <div className="rounded-3xl overflow-hidden border border-slate-200/80 dark:border-white/10 shadow-lg animate-fadeIn">
+        {/* Tab 3: Squad Video Spotlight Reels */}
+        {activeMediaTab === 'spotlight' && (
+          <div className="rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-lg animate-fadeIn">
             <React.Suspense fallback={<div className="h-48 skeleton-box rounded-3xl animate-pulse"></div>}>
               <SquadSpotlightSection lang={lang} isDarkMode={isDarkMode} />
             </React.Suspense>
@@ -175,17 +146,17 @@ export default function ModernAppHome({ lang, isDarkMode, onNavigate }) {
         )}
       </div>
 
-      {/* 3. Recent Updates / Recent Matches Carousel (Side-by-side cards with circular arrows) */}
-      <div className="space-y-3">
+      {/* 3. Recent Match Results Carousel (Horizontal Cards with Circle Arrows) */}
+      <div className="space-y-3 pt-2">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-            {lang === 'ml' ? 'സമീപകാല മത്സരങ്ങൾ' : 'Recent Matches & Results'}
+          <h2 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 font-sports">
+            {lang === 'ml' ? 'സമീപകാല മത്സരങ്ങൾ & റിസൾട്ടുകൾ' : 'Recent Match Results'}
           </h2>
           <button 
             onClick={() => onNavigate('fixtures')}
             className="text-[11px] font-bold text-purple-600 dark:text-purple-400 flex items-center gap-0.5 hover:underline"
           >
-            <span>{lang === 'ml' ? 'മുഴുവൻ ഫിക്സ്ചറുകളും' : 'View all'}</span>
+            <span>{lang === 'ml' ? 'എല്ലാം' : 'View all'}</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -195,7 +166,7 @@ export default function ModernAppHome({ lang, isDarkMode, onNavigate }) {
           {/* Card 1: Tonight's Match */}
           <div 
             onClick={() => onNavigate('fixtures')}
-            className="min-w-[260px] max-w-[280px] p-4 rounded-3xl bg-gradient-to-br from-purple-700 via-indigo-800 to-indigo-950 text-white shadow-md cursor-pointer hover:shadow-xl transition-all active:scale-[0.98] snap-start flex flex-col justify-between"
+            className="min-w-[250px] max-w-[270px] p-4 rounded-3xl bg-gradient-to-br from-purple-700 via-indigo-800 to-indigo-950 text-white shadow-md cursor-pointer hover:shadow-xl transition-all active:scale-[0.98] snap-start flex flex-col justify-between"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="w-7 h-7 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center">
@@ -216,7 +187,7 @@ export default function ModernAppHome({ lang, isDarkMode, onNavigate }) {
             </div>
           </div>
 
-          {/* Card 2: Match 7 Result (Usha vs I NOV) */}
+          {/* Card 2: Match 7 (Usha vs I-NOV) */}
           {completedMatches[0] && (
             <div 
               onClick={() => {
@@ -226,14 +197,14 @@ export default function ModernAppHome({ lang, isDarkMode, onNavigate }) {
                   onNavigate('fixtures');
                 }
               }}
-              className="min-w-[260px] max-w-[280px] p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-[0.98] snap-start flex flex-col justify-between"
+              className="min-w-[250px] max-w-[270px] p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-[0.98] snap-start flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                   <ArrowRight className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
                 </div>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                  FINISHED
+                  FULL TIME
                 </span>
               </div>
 
@@ -251,7 +222,7 @@ export default function ModernAppHome({ lang, isDarkMode, onNavigate }) {
             </div>
           )}
 
-          {/* Card 3: Match 6 Result (Linsha vs AFC) */}
+          {/* Card 3: Match 6 (Linsha vs Wayanad) */}
           {completedMatches[1] && (
             <div 
               onClick={() => {
@@ -261,14 +232,14 @@ export default function ModernAppHome({ lang, isDarkMode, onNavigate }) {
                   onNavigate('fixtures');
                 }
               }}
-              className="min-w-[260px] max-w-[280px] p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-[0.98] snap-start flex flex-col justify-between"
+              className="min-w-[250px] max-w-[270px] p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-[0.98] snap-start flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                   <ArrowRight className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
                 </div>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                  FINISHED
+                  FULL TIME
                 </span>
               </div>
 
@@ -288,36 +259,36 @@ export default function ModernAppHome({ lang, isDarkMode, onNavigate }) {
         </div>
       </div>
 
-      {/* 4. Hero Feature Card (Matches "Learn about our development process" in Reference) */}
+      {/* 4. Pre-Quarter Knockout Bracket Card */}
       <div 
         onClick={() => onNavigate('fixtures')}
-        className="w-full p-6 rounded-3xl bg-gradient-to-br from-purple-700 via-indigo-700 to-purple-900 text-white shadow-xl cursor-pointer hover:shadow-2xl transition-all active:scale-[0.99] relative overflow-hidden group"
+        className="w-full p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-purple-700 via-indigo-700 to-purple-900 text-white shadow-xl cursor-pointer hover:shadow-2xl transition-all active:scale-[0.99] relative overflow-hidden group"
       >
         <div className="absolute top-0 right-0 w-44 h-44 bg-white/10 rounded-full blur-2xl pointer-events-none group-hover:scale-110 transition-transform"></div>
 
-        <div className="relative z-10 space-y-4">
+        <div className="relative z-10 space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-[10px] font-black uppercase tracking-wider text-purple-200">
             <Trophy className="w-3 h-3 text-gold" />
             <span>PRE-QUARTER KNOCKOUT BRACKET</span>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-black font-sports tracking-wide leading-tight max-w-[340px]">
+          <h2 className="text-lg sm:text-xl font-black font-sports tracking-wide leading-tight">
             {lang === 'ml' 
               ? 'പ്രീ-ക്വാർട്ടർ ഘട്ടവും ടൂർണമെന്റ് ബ്രാക്കറ്റും' 
-              : 'Explore Tournament Pre-Quarter Bracket'}
+              : 'Explore Pre-Quarter Tournament Bracket'}
           </h2>
 
-          <p className="text-xs font-medium text-purple-100/90 leading-relaxed max-w-[380px]">
+          <p className="text-xs font-medium text-purple-100/90 leading-relaxed">
             {lang === 'ml' 
               ? 'സൂപ്പർ സ്റ്റുഡിയോ മലപ്പുറം, അൽ മദീന ചെറുപ്പുളശ്ശേരി, ഉദയ പറമ്പിൽ പീടിക എന്നിവർ നേരിട്ട് പ്രീ-ക്വാർട്ടറിലേക്ക് യോഗ്യത നേടി.' 
-              : 'Super Studio Malappuram, Al Madeena & Udaya qualified directly into Round of 16. Matchups scheduled daily by committee.'}
+              : 'Super Studio Malappuram, Al Madeena & Udaya qualified directly into Round of 16.'}
           </p>
 
           <div className="pt-2 flex items-center justify-between">
             <span className="text-[11px] font-bold text-white/80 group-hover:text-white transition-colors">
               {lang === 'ml' ? 'പൂർണ്ണ ബ്രാക്കറ്റ് പരിശോധിക്കുക' : 'View Full Bracket'}
             </span>
-            <div className="w-10 h-10 rounded-full bg-white text-slate-950 flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
+            <div className="w-9 h-9 rounded-full bg-white text-slate-950 flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
               <ArrowRight className="w-4 h-4 text-purple-900 font-bold" />
             </div>
           </div>
@@ -339,7 +310,7 @@ export default function ModernAppHome({ lang, isDarkMode, onNavigate }) {
               {lang === 'ml' ? '24 ക്ലബ്ബുകൾ' : '24 SFA Clubs'}
             </h3>
             <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-              {lang === 'ml' ? 'ഔദ്യോഗിക ലോഗോകൾ & ടീം വിവരങ്ങൾ' : 'Official logos & squads'}
+              {lang === 'ml' ? 'ഔദ്യോഗിക ലോഗോകൾ & ടീമുകൾ' : 'Official logos & squads'}
             </p>
           </div>
         </div>
@@ -357,7 +328,7 @@ export default function ModernAppHome({ lang, isDarkMode, onNavigate }) {
               {lang === 'ml' ? 'ഫാൻ വോട്ടിംഗ്' : 'Fan Zone & Vote'}
             </h3>
             <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-              {lang === 'ml' ? 'മത്സര പ്രവചനം & ലൈവ് പോൾ' : 'Predict winner & vote'}
+              {lang === 'ml' ? 'വിജയിയെ പ്രവചിക്കുക & വോട്ട്' : 'Predict winner & vote'}
             </p>
           </div>
         </div>
