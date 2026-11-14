@@ -3,6 +3,12 @@ import { pushFixturesToFirebase } from './firebaseSync.js';
 
 const FIXTURES_STORAGE_KEY = 'kasc_tournament_fixtures_v2';
 
+export const SEEDED_PRE_QUARTER_TEAMS = [
+  "SUPER STUDIO MALAPPURAM",
+  "AL MADEENA CHERPULASSERI",
+  "UDAYA PARAMBIL PEEDIKA"
+];
+
 export const INITIAL_QUARTERS = [
   {
     id: "qf1",

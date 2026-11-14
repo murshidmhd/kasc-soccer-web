@@ -18,14 +18,14 @@ test('Completed Round 1 matches automatically advance winners into Quarter Final
   assert.equal(qfs[1].team1Decided, true);
   assert.equal(qfs[1].team2Decided, true);
 
-  // QF 3: Winner Match 5 (United FC Nellikkuth) vs Winner Match 6 (Linsha Medicals)
+  // QF 3: Winner Match 5 (United FC Nellikkuth) vs Winner Match 6 (Linsha Medikkals)
   assert.equal(qfs[2].team1, 'UNITED FC NELLIKKUTH');
-  assert.equal(qfs[2].team2, 'LINSHA MEDICALS MANNARKKAD');
+  assert.equal(qfs[2].team2, 'LINSHA MEDIKKALS MANNARKADU');
   assert.equal(qfs[2].team1Decided, true);
   assert.equal(qfs[2].team2Decided, true);
 
-  // QF 4: Winner Match 7 (I nov FC Manjeri) vs Winner Match 8 (Upcoming)
-  assert.equal(qfs[3].team1, 'I nov FC MANJERI');
+  // QF 4: Winner Match 7 (I NOV FC Manjeri) vs Winner Match 8 (Upcoming)
+  assert.equal(qfs[3].team1, 'I NOV FC MANJERI');
   assert.equal(qfs[3].team1Decided, true);
   assert.equal(qfs[3].team2, 'Winner Match 8');
   assert.equal(qfs[3].team2Decided, false);

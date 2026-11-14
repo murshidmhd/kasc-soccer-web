@@ -59,7 +59,9 @@ export const teamNameToSlug = {
 
   // Linsha
   'LINSHA MEDICALS MANNARKKAD': 'linsha_medicals_mannarkkad',
+  'LINSHA MEDIKKALS MANNARKADU': 'linsha_medicals_mannarkkad',
   'Linsha Medicals Mannarkkad': 'linsha_medicals_mannarkkad',
+  'Linsha Medikals Mannarkadu': 'linsha_medicals_mannarkkad',
   'Linsha Tirur': 'linsha_medicals_mannarkkad',
   'Linsha Medicals Tirur': 'linsha_medicals_mannarkkad',
   'ലിൻഷാ മെഡിക്കൽസ് മണ്ണാർക്കാട്': 'linsha_medicals_mannarkkad',
@@ -107,6 +109,8 @@ export const teamNameToSlug = {
   // I nov FC Manjeri
   'I nov FC MANJERI': 'i_nov_fc_manjeri',
   'I NOV FC MANJERI': 'i_nov_fc_manjeri',
+  'I-NOV FC MANJERI': 'i_nov_fc_manjeri',
+  'I-Nov FC Manjeri': 'i_nov_fc_manjeri',
   'I nov FC Manjeri': 'i_nov_fc_manjeri',
   'Innov FC Manjeri': 'i_nov_fc_manjeri',
   'FIFA Manjeri': 'i_nov_fc_manjeri',
@@ -139,7 +143,9 @@ export const teamNameToSlug = {
 
   // AYC Ucharakadavu
   'AYC UCHARAKADAVU': 'ayc_ucharakadavu',
+  'AYC UCHARAKKADVU': 'ayc_ucharakadavu',
   'AYC Ucharakadavu': 'ayc_ucharakadavu',
+  'AYC Ucharakkadvu': 'ayc_ucharakadavu',
   'എ.വൈ.സി ഉച്ചാരക്കടവ്': 'ayc_ucharakadavu',
 
   // Soccer Sporting Shornur
