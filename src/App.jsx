@@ -37,8 +37,6 @@ import { SHOW_LOCAL_ONLY_FEATURES, WHATSAPP_CHANNEL_URL, SHOW_BRACKET } from './
 
 // Lazy-load heavy interactive mini-game to optimize 4G mobile page load speeds
 const SevensPenaltyGame = React.lazy(() => import('./components/SevensPenaltyGame'));
-// Lazy-load Squad Spotlight video showcase (Rule 12: does not delay live score or fixtures)
-const SquadSpotlightSection = React.lazy(() => import('./components/SquadSpotlightSection'));
 // Lazy-load Dev-only Admin Desk component
 const AdminDeskSection = React.lazy(() => import('./components/AdminDeskSection'));
 const AdminScoreModal = React.lazy(() => import('./components/AdminScoreModal'));
@@ -235,7 +233,7 @@ export default function App() {
         : 'bg-[#f4f0fc] sm:bg-gradient-to-b sm:from-[#ede5fd] sm:via-[#e6dcfa] sm:to-[#ddd2f8] text-slate-900'
     }`}>
       {/* Central Modern Mobile App Canvas */}
-      <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl mx-auto min-h-screen flex flex-col bg-slate-900/95 dark:bg-slate-950 sm:shadow-[0_0_50px_rgba(147,51,234,0.15)] sm:border-x sm:border-purple-500/20 relative">
+      <div className="w-full max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto min-h-screen flex flex-col bg-slate-900/95 dark:bg-slate-950 sm:shadow-[0_0_50px_rgba(147,51,234,0.15)] sm:border-x sm:border-purple-500/20 relative">
         {/* Offline Connectivity Notification Banner */}
       {!isOnline && (
         <div className="sticky top-0 z-50 bg-gold text-navy-900 px-4 py-2 text-xs font-bold text-center flex items-center justify-center gap-2 shadow-xs">
