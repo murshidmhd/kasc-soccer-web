@@ -3,40 +3,34 @@
 @tailwind utilities;
 
 :root {
-  /* Liquid Glass Purple Design Tokens (from user palette) */
-  /* #0E0B1D: Obsidian Night Base */
-  /* #2A1E4D: Deep Indigo Violet Surface */
-  /* #5A3B8C: Royal Purple / Electric Accent */
-  /* #8B7CC7: Soft Lavender Glow Accent */
-  /* #C9C2E3: Frost Lilac Mist / Specular Highlight */
-  /* #3A3A52: Slate Purple Neutral */
-  --liquid-obsidian: #0E0B1D;
-  --liquid-deep: #2A1E4D;
-  --liquid-royal: #5A3B8C;
-  --liquid-lavender: #8B7CC7;
-  --liquid-frost: #C9C2E3;
-  --liquid-slate: #3A3A52;
+  /* Vibrant Electric Violet & Lilac Design Tokens (from user reference image) */
+  --liquid-obsidian: #0f0728;
+  --liquid-deep: #241042;
+  --liquid-royal: #7c3aed;
+  --liquid-lavender: #a78bfa;
+  --liquid-frost: #ddd6fe;
+  --liquid-slate: #4c1d95;
 
-  --navy-950: #0E0B1D;
-  --navy-900: #140F27;
-  --navy-800: #2A1E4D;
-  --navy-700: #3A3A52;
-  --royal: #5A3B8C;
-  --sky: #8B7CC7;
-  --frost: #C9C2E3;
+  --navy-950: #0f0728;
+  --navy-900: #180b38;
+  --navy-800: #2e1065;
+  --navy-700: #4c1d95;
+  --royal: #7c3aed;
+  --sky: #a78bfa;
+  --frost: #ddd6fe;
   --gold: #F5B301;
   --text-on-navy: #FFFFFF;
-  --muted-on-navy: #C9C2E3;
+  --muted-on-navy: #ddd6fe;
 
-  /* Surface & Border Tokens (Soft Light-Purple Surface) */
-  --surface: #F4F2FA;
+  /* Surface & Border Tokens */
+  --surface: #F5F3FF;
   --surface-card: #FFFFFF;
-  --surface-border: #C9C2E3;
-  --text-main: #0E0B1D;
-  --text-muted: #5A3B8C;
+  --surface-border: #ddd6fe;
+  --text-main: #0f0728;
+  --text-muted: #7c3aed;
 
   /* 2-Stop Purple Gradient */
-  --navy-gradient: linear-gradient(180deg, #2A1E4D 0%, #0E0B1D 100%);
+  --navy-gradient: linear-gradient(180deg, #2e1065 0%, #0f0728 100%);
 
   /* Design Tokens: Consistent Spacing Scale (4, 8, 12, 16, 24 px) */
   --space-1: 0.25rem;  /* 4px */
@@ -51,8 +45,8 @@
   --radius-btn: 0.875rem;    /* 14px */
   --radius-pill: 9999px;
 
-  --shadow-card: 0 4px 20px -2px rgba(14, 11, 29, 0.08), 0 1px 3px 0 rgba(14, 11, 29, 0.05);
-  --shadow-card-hover: 0 12px 28px -4px rgba(14, 11, 29, 0.14), 0 2px 6px -2px rgba(14, 11, 29, 0.06);
+  --shadow-card: 0 4px 20px -2px rgba(15, 7, 40, 0.08), 0 1px 3px 0 rgba(15, 7, 40, 0.05);
+  --shadow-card-hover: 0 12px 28px -4px rgba(15, 7, 40, 0.14), 0 2px 6px -2px rgba(15, 7, 40, 0.06);
 
   /* Mobile Touch Target minimum */
   --touch-min: 44px;
@@ -66,64 +60,64 @@
 
 .dark {
   /* Liquid Glass Obsidian & Deep Purple Surfaces */
-  --surface: #0E0B1D;
-  --surface-card: rgba(42, 30, 77, 0.75);
-  --surface-border: rgba(201, 194, 227, 0.16);
+  --surface: #0f0728;
+  --surface-card: rgba(46, 16, 101, 0.75);
+  --surface-border: rgba(221, 214, 254, 0.2);
   --text-main: #FFFFFF;
-  --text-muted: #C9C2E3;
+  --text-muted: #ddd6fe;
 }
 
 /* Step 2: Surface & Liquid Glass Styling Utilities */
 .surface-navy {
-  background-color: #0E0B1D !important;
+  background-color: #0f0728 !important;
   background-image:
-    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(90, 59, 140, 0.32) 0%, transparent 65%),
-    radial-gradient(circle at 12% 35%, rgba(42, 30, 77, 0.45) 0%, transparent 50%),
-    radial-gradient(circle at 88% 65%, rgba(139, 124, 199, 0.18) 0%, transparent 55%),
-    linear-gradient(180deg, #140F27 0%, #0E0B1D 100%) !important;
+    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(124, 58, 237, 0.42) 0%, transparent 65%),
+    radial-gradient(circle at 12% 35%, rgba(109, 40, 217, 0.35) 0%, transparent 50%),
+    radial-gradient(circle at 88% 65%, rgba(167, 139, 250, 0.22) 0%, transparent 55%),
+    linear-gradient(180deg, #180b38 0%, #0f0728 100%) !important;
   color: #FFFFFF !important;
 }
 
 .surface-navy-card {
-  background: linear-gradient(135deg, rgba(42, 30, 77, 0.8) 0%, rgba(20, 15, 39, 0.85) 100%) !important;
+  background: linear-gradient(135deg, rgba(76, 29, 149, 0.75) 0%, rgba(24, 11, 56, 0.85) 100%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(160%);
   backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(201, 194, 227, 0.16) !important;
-  box-shadow: 0 16px 40px -12px rgba(14, 11, 29, 0.7), inset 0 1px 1px 0 rgba(201, 194, 227, 0.22) !important;
+  border: 1px solid rgba(221, 214, 254, 0.2) !important;
+  box-shadow: 0 16px 40px -12px rgba(15, 7, 40, 0.75), inset 0 1px 1px 0 rgba(221, 214, 254, 0.28) !important;
   color: #FFFFFF !important;
 }
 
 .surface-navy-box {
-  background: linear-gradient(135deg, rgba(58, 58, 82, 0.5) 0%, rgba(42, 30, 77, 0.45) 100%) !important;
+  background: linear-gradient(135deg, rgba(76, 29, 149, 0.5) 0%, rgba(46, 16, 101, 0.45) 100%) !important;
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   color: #FFFFFF !important;
-  border-color: rgba(201, 194, 227, 0.14) !important;
+  border-color: rgba(221, 214, 254, 0.18) !important;
 }
 
 .home-feature-section {
   position: relative;
   background:
-    radial-gradient(ellipse 80% 60% at 50% -5%, rgba(139, 124, 199, 0.25) 0%, transparent 65%),
-    radial-gradient(circle at 85% 15%, rgba(90, 59, 140, 0.35) 0%, transparent 55%),
-    linear-gradient(180deg, rgba(42, 30, 77, 0.75) 0%, #0E0B1D 100%);
-  border-bottom: 1px solid rgba(201, 194, 227, 0.12);
+    radial-gradient(ellipse 80% 60% at 50% -5%, rgba(167, 139, 250, 0.35) 0%, transparent 65%),
+    radial-gradient(circle at 85% 15%, rgba(124, 58, 237, 0.45) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(76, 29, 149, 0.65) 0%, #0f0728 100%);
+  border-bottom: 1px solid rgba(221, 214, 254, 0.18);
 }
 
 /* Liquid Glass Nav & Panels */
 .header-glass {
-  background: rgba(14, 11, 29, 0.82) !important;
+  background: rgba(15, 7, 40, 0.88) !important;
   -webkit-backdrop-filter: blur(24px) saturate(160%);
   backdrop-filter: blur(24px) saturate(160%);
-  border-bottom: 1px solid rgba(201, 194, 227, 0.14) !important;
-  box-shadow: 0 8px 32px -8px rgba(14, 11, 29, 0.7), inset 0 -1px 0 rgba(201, 194, 227, 0.08);
+  border-bottom: 1px solid rgba(221, 214, 254, 0.18) !important;
+  box-shadow: 0 8px 32px -8px rgba(15, 7, 40, 0.75), inset 0 -1px 0 rgba(221, 214, 254, 0.12);
 }
 
 .footer-glass-nav {
   isolation: isolate;
-  border-top: 1px solid rgba(201, 194, 227, 0.22);
-  background: linear-gradient(135deg, rgba(42, 30, 77, 0.88) 0%, rgba(14, 11, 29, 0.94) 100%);
-  box-shadow: 0 -14px 40px rgba(14, 11, 29, 0.75), inset 0 1px 1px 0 rgba(201, 194, 227, 0.28);
+  border-top: 1px solid rgba(221, 214, 254, 0.25);
+  background: linear-gradient(135deg, rgba(76, 29, 149, 0.88) 0%, rgba(15, 7, 40, 0.95) 100%);
+  box-shadow: 0 -14px 40px rgba(15, 7, 40, 0.8), inset 0 1px 1px 0 rgba(221, 214, 254, 0.35);
   -webkit-backdrop-filter: blur(24px) saturate(170%);
   backdrop-filter: blur(24px) saturate(170%);
 }
@@ -134,23 +128,23 @@
   z-index: -1;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(ellipse at 50% -35%, rgba(139, 124, 199, 0.28), transparent 70%);
+  background: radial-gradient(ellipse at 50% -35%, rgba(167, 139, 250, 0.35), transparent 70%);
   pointer-events: none;
 }
 
 .footer-glass-active {
-  background: linear-gradient(145deg, rgba(90, 59, 140, 0.55), rgba(42, 30, 77, 0.45));
-  box-shadow: inset 0 1px 0 rgba(201, 194, 227, 0.32), 0 4px 18px rgba(90, 59, 140, 0.38);
-  border-color: rgba(201, 194, 227, 0.28) !important;
+  background: linear-gradient(145deg, rgba(124, 58, 237, 0.65), rgba(76, 29, 149, 0.55));
+  box-shadow: inset 0 1px 0 rgba(221, 214, 254, 0.4), 0 4px 20px rgba(124, 58, 237, 0.5);
+  border-color: rgba(221, 214, 254, 0.38) !important;
 }
 
 /* Liquid Glass Cards */
 .liquid-glass {
-  background: linear-gradient(135deg, rgba(42, 30, 77, 0.72) 0%, rgba(20, 15, 39, 0.82) 100%);
+  background: linear-gradient(135deg, rgba(76, 29, 149, 0.6) 0%, rgba(24, 11, 56, 0.8) 100%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
   backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(201, 194, 227, 0.16);
-  box-shadow: 0 16px 40px -12px rgba(14, 11, 29, 0.7), inset 0 1px 1px 0 rgba(201, 194, 227, 0.22);
+  border: 1px solid rgba(221, 214, 254, 0.22);
+  box-shadow: 0 16px 40px -12px rgba(15, 7, 40, 0.8), inset 0 1px 1px 0 rgba(221, 214, 254, 0.3);
   border-radius: 24px;
 }
 
@@ -228,15 +222,15 @@
 }
 
 .btn-royal {
-  background: linear-gradient(135deg, #5A3B8C 0%, #3D2466 100%) !important;
+  background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%) !important;
   color: #FFFFFF !important;
-  border: 1px solid rgba(201, 194, 227, 0.3);
-  box-shadow: 0 8px 24px -4px rgba(90, 59, 140, 0.5), inset 0 1px 1px 0 rgba(201, 194, 227, 0.38);
+  border: 1px solid rgba(221, 214, 254, 0.35);
+  box-shadow: 0 8px 24px -4px rgba(124, 58, 237, 0.55), inset 0 1px 1px 0 rgba(221, 214, 254, 0.45);
   transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
 }
 .btn-royal:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 12px 28px -4px rgba(90, 59, 140, 0.65), inset 0 1px 1px 0 rgba(201, 194, 227, 0.48);
+  filter: brightness(1.15);
+  box-shadow: 0 12px 28px -4px rgba(124, 58, 237, 0.7), inset 0 1px 1px 0 rgba(221, 214, 254, 0.55);
 }
 .btn-royal:active,
 .btn-gold:active,
@@ -246,7 +240,7 @@
 
 .btn-gold {
   background: linear-gradient(135deg, #ffd34d, #efa900) !important;
-  color: #0E0B1D !important;
+  color: #0f0728 !important;
   border: 1px solid rgba(255, 255, 255, 0.28);
   box-shadow: 0 8px 18px rgba(209, 143, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
@@ -257,17 +251,17 @@
 }
 
 .btn-navy-outline {
-  background: linear-gradient(145deg, rgba(58, 58, 82, 0.45) 0%, rgba(42, 30, 77, 0.35) 100%) !important;
+  background: linear-gradient(145deg, rgba(76, 29, 149, 0.4) 0%, rgba(46, 16, 101, 0.35) 100%) !important;
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   color: #FFFFFF !important;
-  border: 1px solid rgba(201, 194, 227, 0.22) !important;
-  box-shadow: inset 0 1px 0 rgba(201, 194, 227, 0.16);
+  border: 1px solid rgba(221, 214, 254, 0.25) !important;
+  box-shadow: inset 0 1px 0 rgba(221, 214, 254, 0.2);
   transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
 }
 .btn-navy-outline:hover {
-  background: linear-gradient(145deg, rgba(90, 59, 140, 0.45) 0%, rgba(58, 58, 82, 0.5) 100%) !important;
-  border-color: rgba(201, 194, 227, 0.4) !important;
+  background: linear-gradient(145deg, rgba(124, 58, 237, 0.45) 0%, rgba(76, 29, 149, 0.5) 100%) !important;
+  border-color: rgba(221, 214, 254, 0.45) !important;
 }
 
 @layer base {
