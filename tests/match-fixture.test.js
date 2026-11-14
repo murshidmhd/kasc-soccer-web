@@ -28,9 +28,9 @@ test('Starting KMG vs Shooters resets the completed match state', () => {
     timerStartedAt: null
   };
 
-  const started = createStartedFixtureState(previous, 'm7', '1ST_HALF', 123456);
+  const started = createStartedFixtureState(previous, 'm2', '1ST_HALF', 123456);
 
-  assert.equal(started.activeFixtureId, 'm7');
+  assert.equal(started.activeFixtureId, 'm2');
   assert.equal(started.status, '1ST_HALF');
   assert.equal(started.officialScoreHome, 0);
   assert.equal(started.officialScoreAway, 0);
