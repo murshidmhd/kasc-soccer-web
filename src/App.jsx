@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Trophy } from 'lucide-react';
+import ModernAppHome from './components/ModernAppHome';
 import Header from './components/Header';
 import MatchdayHero from './components/MatchdayHero';
 import MatchdayStrip from './components/MatchdayStrip';
@@ -210,14 +211,10 @@ export default function App() {
       setIsVipPassModalOpen(true);
       return;
     }
-    if (tab === 'predict') {
-      setActiveTab('live');
-      setMatchSubTab('predict');
+    if (tab === 'predict' || tab === 'vote') {
+      setActiveTab('predict');
       window.location.hash = 'predict';
-      setTimeout(() => {
-        const el = document.getElementById('match-subtabs');
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 150);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
     if (tab === 'game') {
@@ -232,10 +229,14 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans transition-colors duration-200 overflow-x-hidden w-full max-w-full ${
-      isDarkMode ? 'surface-navy' : 'surface-light'
+    <div className={`min-h-screen font-sans transition-colors duration-200 overflow-x-hidden w-full ${
+      isDarkMode 
+        ? 'bg-[#0b0816] sm:bg-gradient-to-b sm:from-[#18112e] sm:via-[#0e091c] sm:to-[#07050e] text-white' 
+        : 'bg-[#f4f0fc] sm:bg-gradient-to-b sm:from-[#ede5fd] sm:via-[#e6dcfa] sm:to-[#ddd2f8] text-slate-900'
     }`}>
-      {/* Offline Connectivity Notification Banner */}
+      {/* Central Modern Mobile App Canvas */}
+      <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl mx-auto min-h-screen flex flex-col bg-slate-900/95 dark:bg-slate-950 sm:shadow-[0_0_50px_rgba(147,51,234,0.15)] sm:border-x sm:border-purple-500/20 relative">
+        {/* Offline Connectivity Notification Banner */}
       {!isOnline && (
         <div className="sticky top-0 z-50 bg-gold text-navy-900 px-4 py-2 text-xs font-bold text-center flex items-center justify-center gap-2 shadow-xs">
           <span>📡</span>
@@ -259,334 +260,27 @@ export default function App() {
       {/* Main Content Rendered by Page/Tab Wrapped in Error Boundary */}
       <GlobalErrorBoundary>
         <main className="flex-1 pb-36 sm:pb-12">
-          {/* Page 1: LIVE MATCH CENTER (Home) */}
+          {/* Page 1: LIVE MATCH CENTER (Modern App Home) */}
           {activeTab === 'live' && (
-            <div className="animate-fadeIn">
-              <div className="home-feature-section">
-                <div className="max-w-6xl mx-auto px-3 sm:px-6 pt-4 sm:pt-6">
-                  <MatchdayHero
-                    lang={lang}
-                    isDarkMode={isDarkMode}
-                    onNavigate={handleTabChange}
-                  />
-                </div>
-                <div className="max-w-6xl mx-auto px-3 sm:px-6 pt-3 pb-4">
-                  <MatchdayStrip
-                    lang={lang}
-                    isDarkMode={true}
-                    onNavigate={handleTabChange}
-                  />
-                </div>
-              </div>
-              
-              <div className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-6">
-                {/* 1. Quick Action Navigation Row */}
-                <QuickActionRow
-                  lang={lang}
-                  isDarkMode={isDarkMode}
-                  onNavigate={handleTabChange}
-                />
-
-                {/* 2. Official YouTube Live Stream & Replay Hub */}
-                <LiveViewingSection lang={lang} />
-
-                {/* 3. Today's & Upcoming Fixtures */}
-                <section className="space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-surface-border dark:border-navy-700">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-navy-800 text-gold flex items-center justify-center font-bold shadow-xs">
-                        <Calendar className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title leading-[1.3]">
-                          {lang === 'ml' ? 'ഇന്നത്തെ & വരാനിരിക്കുന്ന മത്സരങ്ങൾ' : "TODAY'S & UPCOMING FIXTURES"}
-                        </h3>
-                        <p className="text-xs text-card-muted font-medium leading-[1.5]">
-                          {lang === 'ml' ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം • രാത്രി 8:45 PM IST' : 'Peruvallur Panjayath Stadium • 8:45 PM IST'}
-                        </p>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => handleTabChange('fixtures')}
-                      className="self-start sm:self-auto min-h-touch px-3.5 py-2 rounded-xl bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700 text-royal dark:text-sky font-bold text-xs uppercase transition active:scale-95 flex items-center gap-1.5 shadow-xs"
-                    >
-                      <span>{lang === 'ml' ? 'മുഴുവൻ ഫിക്സ്ചറുകളും കാണുക' : 'View Full Schedule'}</span>
-                      <span>→</span>
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-                    {(() => {
-                      const confirmed = fixtures.filter((m) => m.confirmed);
-                      if (confirmed.length === 0) {
-                        return (
-                          <div className="col-span-full text-center py-8 px-4 rounded-2xl bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700">
-                            <p className="text-xs sm:text-sm font-semibold text-card-title">
-                              {lang === 'ml' 
-                                ? 'മത്സരങ്ങൾ ദിവസേന പ്രഖ്യാപിക്കുന്നതാണ്. ഓരോ മത്സര ദിവസത്തിനും ശേഷം വീണ്ടും പരിശോധിക്കുക.' 
-                                : 'Fixtures are announced daily. Check back after each match day.'}
-                            </p>
-                          </div>
-                        );
-                      }
-                      return confirmed.slice(0, 3).map((match) => {
-                        const isUdayaMatch = match.team1?.toUpperCase().includes('UDAYA') || match.team2?.toUpperCase().includes('UDAYA');
-                        const isNextMatch = match.id === 'm2' && match.status === 'Upcoming';
-                        const isMatchLive = match.status === 'LIVE';
-                        const shortTag = match.id === 'm1' 
-                          ? 'Opening Match'
-                          : 'Round 1';
-
-                        return (
-                          <div
-                            key={match.id}
-                            className={`rounded-2xl p-4 transition-all shadow-card ${
-                              isUdayaMatch ? 'border-l-4 border-l-purple-600' : ''
-                            } ${
-                              isNextMatch
-                                ? 'border-2 border-gold ring-1 ring-gold/40 bg-white dark:bg-navy-800'
-                                : 'bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700'
-                            }`}
-                          >
-                            {/* Header */}
-                            <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-surface-border dark:border-navy-700 text-xs font-semibold">
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
-                                  isNextMatch 
-                                    ? 'bg-gold text-navy-900' 
-                                    : 'bg-surface-light dark:bg-navy-700 text-card-title'
-                                }`}>
-                                  {shortTag}
-                                </span>
-                                {isUdayaMatch && (
-                                  <span className="px-1.5 py-0.5 rounded-md bg-purple-700 text-white text-[9px] font-black uppercase tracking-wider">
-                                    UDAYA
-                                  </span>
-                                )}
-                              </div>
-                              <span className="font-mono text-card-muted text-[11px]">
-                                {match.dateFormatted || match.date}
-                              </span>
-                            </div>
-
-                          {/* Teams */}
-                          <div className="space-y-2.5">
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <TeamLogo teamName={match.team1} size="sm" isDark={isDarkMode} />
-                                <span className="text-xs font-bold text-card-title line-clamp-2 leading-[1.3]">
-                                  {match.team1}
-                                </span>
-                              </div>
-                              <span className="text-xs font-black font-mono text-card-title shrink-0">
-                                {match.score1 !== null ? match.score1 : match.time}
-                              </span>
-                            </div>
-
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <TeamLogo teamName={match.team2} size="sm" isDark={isDarkMode} />
-                                <span className="text-xs font-bold text-card-title line-clamp-2 leading-[1.3]">
-                                  {match.team2}
-                                </span>
-                              </div>
-                              <span className="text-xs font-black font-mono text-card-title shrink-0">
-                                {match.score2 !== null ? match.score2 : match.time}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Footer Status */}
-                          <div className="mt-3 pt-2 border-t border-surface-border dark:border-navy-700 flex items-center justify-between text-[11px]">
-                            <span className={`inline-flex items-center gap-1 font-black uppercase ${
-                              isMatchLive 
-                                ? 'text-gold' 
-                                : isNextMatch 
-                                  ? 'text-gold' 
-                                  : 'text-card-muted'
-                            }`}>
-                              {isMatchLive && <span className="w-1.5 h-1.5 rounded-full bg-gold animate-ping"></span>}
-                              {isMatchLive ? 'LIVE' : (isNextMatch ? (lang === 'ml' ? 'അടുത്ത മത്സരം' : 'Next Match') : (lang === 'ml' ? 'വരാനിരിക്കുന്നു' : 'Upcoming'))}
-                            </span>
-                            <span className="text-card-muted font-mono">{match.time || '8:45 PM IST'}</span>
-                          </div>
-                        </div>
-                      );
-                    });
-                  })()}
-                  </div>
-                </section>
-
-                {/* 4. Clubs Strip (Home compact scroll-snap strip with View All 24) */}
-                <HomeClubsStrip 
-                  lang={lang} 
-                  isDarkMode={isDarkMode} 
-                  onNavigateToTeams={() => handleTabChange('teams')} 
-                />
-
-                {/* 5. Squad Spotlight Section (Rule 12 & 13: Lazy loaded after teams, does not delay live score) */}
-                <React.Suspense fallback={
-                  <div className="py-8 px-3 sm:px-6 max-w-6xl mx-auto space-y-4 animate-pulse">
-                    <div className="h-6 w-48 skeleton-box"></div>
-                    <div className="flex gap-3 overflow-hidden">
-                      {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="w-[170px] aspect-[3/4] skeleton-box rounded-2xl shrink-0"></div>
-                      ))}
-                    </div>
-                  </div>
-                }>
-                  <SquadSpotlightSection lang={lang} isDarkMode={isDarkMode} />
-                </React.Suspense>
-
-                {/* 2-Column Responsive Layout: Left 8 cols Main Content, Right 4 cols Sponsor Ads */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                  {/* Left 8 cols: Matchday Hub with Sub-tabs to reduce scroll & clutter */}
-                  <div className="lg:col-span-8 space-y-6">
-                    {/* Matchday Sub-Tabs Controller (Liquid Glass Pill Design) */}
-                    <div id="match-subtabs" className="flex items-center gap-1.5 p-1.5 rounded-full liquid-glass-subtle border border-frost/20 horizontal-scroll-container">
-                      <div className="flex items-center gap-1.5 shrink-0 py-0.5 px-0.5">
-                        <button
-                          onClick={() => setMatchSubTab('lineup')}
-                          className={`min-h-[44px] px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
-                            matchSubTab === 'lineup' 
-                              ? 'btn-royal text-white shadow-liquid-pill font-black' 
-                              : 'text-frost/70 hover:text-white hover:bg-white/[0.08]'
-                          }`}
-                        >
-                          <span>⚽</span>
-                          <span>{lang === 'ml' ? 'സ്റ്റാർട്ടിംഗ് 7 ലൈനപ്പ്' : 'Starting 7 Lineup'}</span>
-                        </button>
-
-                        {SHOW_LOCAL_ONLY_FEATURES && (
-                          <button
-                            onClick={() => setMatchSubTab('predict')}
-                            className={`min-h-[44px] px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
-                              matchSubTab === 'predict' 
-                                ? 'btn-gold text-navy-950 shadow-liquid-pill font-black' 
-                                : 'text-frost/70 hover:text-white hover:bg-white/[0.08]'
-                            }`}
-                          >
-                            <span>🎯</span>
-                            <span>{lang === 'ml' ? 'പ്രവചന മത്സരങ്ങൾ' : 'Predict & Win'}</span>
-                            <span className="px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[9px] font-black uppercase">
-                              Live
-                            </span>
-                          </button>
-                        )}
-
-                        <button
-                          onClick={() => setMatchSubTab('h2h')}
-                          className={`min-h-[44px] px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
-                            matchSubTab === 'h2h' 
-                              ? 'btn-royal text-white shadow-liquid-pill font-black' 
-                              : 'text-frost/70 hover:text-white hover:bg-white/[0.08]'
-                          }`}
-                        >
-                          <span>📊</span>
-                          <span>{lang === 'ml' ? 'H2H & ഫോം' : 'H2H'}</span>
-                        </button>
-
-                        <button
-                          onClick={() => setMatchSubTab(matchSubTab === 'all' ? 'lineup' : 'all')}
-                          className={`min-h-[44px] px-3.5 py-2 rounded-full text-xs font-bold transition shrink-0 ${
-                            matchSubTab === 'all'
-                              ? 'bg-white/20 text-white font-black'
-                              : 'text-frost/60 hover:text-white hover:bg-white/[0.08]'
-                          }`}
-                          title="Toggle full continuous view of all components"
-                        >
-                          {matchSubTab === 'all' ? (lang === 'ml' ? 'ചുരുക്കുക' : 'Tabs View') : (lang === 'ml' ? 'എല്ലാം' : 'View All')}
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Section 1: Starting 7 Tactical Turf Pitch */}
-                    {(matchSubTab === 'lineup' || matchSubTab === 'all') && (
-                      <div className="animate-fadeIn">
-                        <StartingSevenPitch
-                          lang={lang}
-                          isDarkMode={isDarkMode}
-                        />
-                      </div>
-                    )}
-
-                    {/* Section 2: Fan Zone & Prediction Hub (Cleanly grouped so home page is not cluttered) */}
-                    {(matchSubTab === 'predict' || matchSubTab === 'all') && SHOW_LOCAL_ONLY_FEATURES && (
-                      <div className="space-y-6 animate-fadeIn">
-                        {/* Predict & Win Contest */}
-                        <MatchPredictionCard
-                          lang={lang}
-                          isDarkMode={isDarkMode}
-                        />
-
-                        {/* Fan Player of the Match Voting */}
-                        <PlayerOfTheMatchVote
-                          lang={lang}
-                          isDarkMode={isDarkMode}
-                        />
-
-                        {/* 24 Club Fan Vote Teaser Card */}
-                        <ClubFanVoteCard
-                          lang={lang}
-                          isDarkMode={isDarkMode}
-                          onOpenVotingPage={() => handleTabChange('vote')}
-                        />
-                      </div>
-                    )}
-
-                    {/* Section 2: Head-to-Head & Historical Form */}
-                    {(matchSubTab === 'h2h' || matchSubTab === 'all') && (
-                      <div className="animate-fadeIn">
-                        <HeadToHeadCard
-                          lang={lang}
-                          isDarkMode={isDarkMode}
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Right 4 cols: Side Sponsor Ads */}
-                  <div className="lg:col-span-4 lg:sticky lg:top-20">
-                    <SponsorAdsSidebar 
-                      lang={lang} 
-                      isDarkMode={isDarkMode} 
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ModernAppHome
+              lang={lang}
+              isDarkMode={isDarkMode}
+              onNavigate={handleTabChange}
+            />
           )}
 
-          {/* Page 2: 24 CLUB FAN VOTE MARATHON */}
-          {activeTab === 'vote' && (
-            <div className="animate-fadeIn py-6 max-w-6xl mx-auto px-3 sm:px-6">
-              {SHOW_LOCAL_ONLY_FEATURES ? (
-                <ClubFanVoteSection 
-                  lang={lang} 
-                  isDarkMode={isDarkMode} 
-                />
-              ) : (
-                <div className="py-16 text-center max-w-md mx-auto space-y-4">
-                  <div className="w-12 h-12 rounded-2xl bg-navy-800 text-gold flex items-center justify-center mx-auto shadow-xs">
-                    <Trophy className="w-6 h-6 text-gold" />
-                  </div>
-                  <h3 className="text-lg font-bold text-navy-900 dark:text-white">
-                    {lang === 'ml' ? 'ഫാൻ വോട്ട് ഉടൻ ആരംഭിക്കും' : 'Official Fan Vote Coming Soon'}
-                  </h3>
-                  <p className="text-xs text-navy-muted">
-                    {lang === 'ml' 
-                      ? 'ഔദ്യോഗിക ഫാൻ വോട്ടിംഗ് ടൂർണ്ണമെന്റ് ആരംഭിക്കുന്നതോടെ ലൈവാകും.' 
-                      : 'Official 24-club fan voting will go live with shared scoring.'}
-                  </p>
-                  <button
-                    onClick={() => handleTabChange('live')}
-                    className="px-4 py-2 rounded-xl btn-royal text-white text-xs font-bold"
-                  >
-                    {lang === 'ml' ? 'Live പേജിലേക്ക് മടങ്ങുക' : 'Return to Live'}
-                  </button>
-                </div>
-              )}
+          {/* Page 2: FAN ZONE & PREDICTIONS */}
+          {(activeTab === 'predict' || activeTab === 'vote') && (
+            <div className="animate-fadeIn py-4 max-w-md mx-auto px-4 pb-28 space-y-6">
+              <MatchPredictionCard
+                lang={lang}
+                isDarkMode={isDarkMode}
+              />
+              <ClubFanVoteSection 
+                lang={lang} 
+                isDarkMode={isDarkMode} 
+                onBack={() => handleTabChange('live')}
+              />
             </div>
           )}
 
@@ -679,6 +373,7 @@ export default function App() {
           )}
         </main>
       </GlobalErrorBoundary>
+      </div>
 
       {/* Mobile App Bottom Navigation Bar */}
       <BottomNav 
