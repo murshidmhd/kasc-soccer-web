@@ -35,7 +35,7 @@ export const realOfficialMatchState = {
   lastUpdated: null,
   updatedBy: 'Ground Referee Desk',
   isCrowdLocked: true,
-  liveStreamUrl: 'https://www.youtube.com/@sabithsmgvlog',
+  liveStreamUrl: 'https://sportvot.com/event/EVENT_6aef52e024aa9a000119108a',
   isStreamLive: false,
   crowdReports: {
     home: 0,
@@ -329,8 +329,8 @@ export function getStoredMatchState() {
       localStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(completedState));
       return completedState;
     }
-    if (!parsed.liveStreamUrl || parsed.liveStreamUrl.includes('3Fr8ctztT7k')) {
-      parsed.liveStreamUrl = 'https://www.youtube.com/@sabithsmgvlog';
+    if (!parsed.liveStreamUrl || parsed.liveStreamUrl.includes('3Fr8ctztT7k') || parsed.liveStreamUrl.includes('sabithsmgvlog')) {
+      parsed.liveStreamUrl = 'https://sportvot.com/event/EVENT_6aef52e024aa9a000119108a';
     }
     return parsed;
   } catch (err) {

@@ -32,7 +32,8 @@ export const SITE_URL = typeof window !== 'undefined' && window.location.origin 
   ? window.location.origin
   : 'https://udaya-football.vercel.app';
 
-export const LIVE_YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@sabithsmgvlog';
+export const LIVE_BROADCAST_URL = 'https://sportvot.com/event/EVENT_6aef52e024aa9a000119108a';
+export const LIVE_YOUTUBE_CHANNEL_URL = 'https://sportvot.com/event/EVENT_6aef52e024aa9a000119108a';
 
 // Feature Flags
 export const SHOW_BRACKET = true;
@@ -48,9 +49,9 @@ export const SHOW_NATIONALITY = false;
 export const AWARDS_NOTE = true;
 
 // Bandwidth & Media Control Flags
-export const VIDEO_AUTOPLAY_ENABLED = true;
-export const SHOW_HOME_TEASER = true;
-export const OFFICIAL_TRAILER_URL = 'https://res.cloudinary.com/dnqwl0w8/video/upload/v1793959434/THE_ROAR_BEGINS_A_new_chapter_of_Sevens_football.Shot_entirely_on_apple--_shotoniphone_sev.mp4';
+export const VIDEO_AUTOPLAY_ENABLED = false;
+export const SHOW_HOME_TEASER = false;
+export const OFFICIAL_TRAILER_URL = 'https://sportvot.com/event/EVENT_6aef52e024aa9a000119108a';
 
 // Polling intervals (Ready for live backend)
 export const LIVE_POLL_MS = 10000;

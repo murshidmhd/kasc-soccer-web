@@ -679,10 +679,43 @@ export const participatingTeams = [
 ];
 
 export const topScorersPreview = [
-  { rank: 1, name: "Ibrahim Soumahoro", team: "UDAYA Parambil Peedika", goals: 0, matches: 0, origin: "Ivory Coast", flag: "🇨🇮", category: "Overseas Marquee" },
-  { rank: 2, name: "Shameer Kottakkal", team: "SABAN FC Kottakkal", goals: 0, matches: 0, origin: "Malappuram", flag: "🇮🇳", category: "Homegrown Striker" },
-  { rank: 3, name: "Junior Toure", team: "FIFA Manjeri", goals: 0, matches: 0, origin: "Ghana", flag: "🇬🇭", category: "Overseas Marquee" },
-  { rank: 4, name: "Muhammed Faslu", team: "Linsha Tirur", goals: 0, matches: 0, origin: "Tirur, Malappuram", flag: "🇮🇳", category: "Homegrown Striker" }
+  { rank: 1, name: "Doso", team: "SABAN FC KOTTAKKAL", goals: 1, matches: 1, origin: "Overseas", flag: "⚽", category: "Tournament Scorer" },
+  { rank: 2, name: "Dilshad", team: "KRSC KOZHIKODE", goals: 1, matches: 1, origin: "Kozhikode", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 3, name: "Muhammad", team: "KRSC KOZHIKODE", goals: 1, matches: 1, origin: "Kozhikode", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 4, name: "Benjamin", team: "SOCCER SPORTING SHORNUR", goals: 1, matches: 1, origin: "Palakkad", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 5, name: "Faheem", team: "KMG MAVOOR", goals: 1, matches: 1, origin: "Mavoor", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 6, name: "Shafeer", team: "AL MADEENA FC CHERPULASSERY", goals: 1, matches: 1, origin: "Cherpulassery", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 7, name: "Mohammed", team: "SUPER STUDIO MALAPPURAM", goals: 1, matches: 1, origin: "Malappuram", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 8, name: "Rashid", team: "KMG MAVOOR", goals: 1, matches: 1, origin: "Mavoor", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 9, name: "Sanjay", team: "UNITED FC NELLIKUTH", goals: 1, matches: 1, origin: "Nellikuth", flag: "🇮🇳", category: "Tournament Scorer" }
+];
+
+// Official Tournament Match Goal Scorers
+export const officialTournamentGoalScorers = [
+  { rank: 1, name: "Doso", team: "SABAN FC KOTTAKKAL", goals: 1, matches: 1 },
+  { rank: 2, name: "Dilshad", team: "KRSC KOZHIKODE", goals: 1, matches: 1 },
+  { rank: 3, name: "Muhammad", team: "KRSC KOZHIKODE", goals: 1, matches: 1 },
+  { rank: 4, name: "Benjamin", team: "SOCCER SPORTING SHORNUR", goals: 1, matches: 1 },
+  { rank: 5, name: "Faheem", team: "KMG MAVOOR", goals: 1, matches: 1 },
+  { rank: 6, name: "Shafeer", team: "AL MADEENA FC CHERPULASSERY", goals: 1, matches: 1 },
+  { rank: 7, name: "Mohammed", team: "SUPER STUDIO MALAPPURAM", goals: 1, matches: 1 },
+  { rank: 8, name: "Rashid", team: "KMG MAVOOR", goals: 1, matches: 1 },
+  { rank: 9, name: "Sanjay", team: "UNITED FC NELLIKUTH", goals: 1, matches: 1 }
+];
+
+// Official Tournament Goalkeepers (Saves, Clean Sheets & Goals Conceded)
+// Anonymous/unnamed keepers are identified as "Keeper of [Team Name]" as requested
+export const officialTournamentGoalkeepers = [
+  { rank: 1, name: "Keeper of United FC Nellikuth", team: "UNITED FC NELLIKUTH", saves: 14, goalsConceded: 1, cleanSheets: 0, matches: 1 },
+  { rank: 2, name: "Benjamin", team: "SOCCER SPORTING SHORNUR", saves: 12, goalsConceded: 1, cleanSheets: 0, matches: 1 },
+  { rank: 3, name: "Keeper of Hunters Koothuparambu", team: "HUNTERS KOOTHUPARAMBU", saves: 11, goalsConceded: 0, cleanSheets: 1, matches: 1 },
+  { rank: 4, name: "Keeper of Super Studio", team: "SUPER STUDIO MALAPPURAM", saves: 11, goalsConceded: 1, cleanSheets: 0, matches: 1 },
+  { rank: 5, name: "Keeper of Linsha Medicals Mannarkkad", team: "LINSHA MEDICALS MANNARKKAD", saves: 10, goalsConceded: 0, cleanSheets: 1, matches: 1 },
+  { rank: 6, name: "Keeper of KRSC Kozhikode", team: "KRSC KOZHIKODE", saves: 9, goalsConceded: 1, cleanSheets: 0, matches: 1 },
+  { rank: 7, name: "Keeper of Saban FC Kottakkal", team: "SABAN FC KOTTAKKAL", saves: 9, goalsConceded: 1, cleanSheets: 0, matches: 1 },
+  { rank: 8, name: "Keeper of KMG Mavoor", team: "KMG MAVOOR", saves: 6, goalsConceded: 0, cleanSheets: 1, matches: 1 },
+  { rank: 9, name: "Salman K", team: "AL MADEENA FC CHERPULASSERY", saves: 5, goalsConceded: 2, cleanSheets: 0, matches: 1 },
+  { rank: 10, name: "Keeper of FC Perinthalmanna", team: "FC PERINTHALMANNA", saves: 4, goalsConceded: 2, cleanSheets: 0, matches: 1 }
 ];
 
 export const sponsors = [

@@ -109,8 +109,8 @@ export default function Hero({ lang, scrollToSection, isDarkMode, onNavigate }) 
               rel="noopener noreferrer"
               className="min-h-touch w-full py-3 px-2 sm:px-4 rounded-xl font-black text-xs sm:text-sm btn-gold shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5 whitespace-nowrap"
             >
-              <Play className="w-4 h-4 text-navy-900 shrink-0" />
-              <span className="truncate">{lang === 'ml' ? 'തത്സമയ മത്സരം' : 'Watch Live'}</span>
+              <Play className="w-4 h-4 text-navy-900 shrink-0 fill-current" />
+              <span className="truncate">{lang === 'ml' ? 'തത്സമയ മത്സരം (SportVot)' : 'Watch Live on SportVot'}</span>
             </a>
           </div>
 

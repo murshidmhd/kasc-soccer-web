@@ -19,7 +19,7 @@ import {
   X
 } from 'lucide-react';
 import TeamLogo from './TeamLogo';
-import { fixtures, tournamentInfo } from '../data/tournamentData';
+import { fixtures, tournamentInfo, officialTournamentGoalkeepers, officialTournamentGoalScorers } from '../data/tournamentData';
 import { squadPlayers, squadClubs, clubSquadStatus, squadClubLabelsMl } from '../data/squad';
 import { getStoredMatchState } from '../utils/matchStateManager';
 import { calculateTournamentStats } from '../utils/statsCalculator';
@@ -139,8 +139,14 @@ export default function TopScorers({ lang, isDarkMode }) {
     });
   }, [selectedClubFilter, isClubConfirmed, playerSearchQuery]);
 
-  const topScorerLeader = stats.rankedScorers[0] || null;
-  const subsequentScorers = showTopTen ? stats.rankedScorers.slice(1, 10) : stats.rankedScorers.slice(1, 5);
+  const effectiveScorers = stats.rankedScorers.length > 0 ? stats.rankedScorers : officialTournamentGoalScorers;
+  const topScorerLeader = effectiveScorers[0] || null;
+  const subsequentScorers = showTopTen ? effectiveScorers.slice(1, 10) : effectiveScorers.slice(1, 5);
+
+  const [showAllKeepers, setShowAllKeepers] = useState(false);
+  const effectiveKeepers = officialTournamentGoalkeepers;
+  const topKeeperLeader = effectiveKeepers[0] || null;
+  const subsequentKeepers = showAllKeepers ? effectiveKeepers.slice(1) : effectiveKeepers.slice(1, 5);
 
   const hasLiveMatchesPlayed = stats.matchesCount > 0 || stats.totalGoals > 0;
 
@@ -565,7 +571,7 @@ export default function TopScorers({ lang, isDarkMode }) {
                 )}
               </section>
 
-              {/* Golden Glove Section */}
+              {/* Golden Glove & Goalkeepers Saves Section */}
               <section className="rounded-3xl p-5 sm:p-6 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-4">
                 <div className="flex items-center gap-2.5 border-b border-surface-border dark:border-navy-700 pb-3">
                   <span className="p-2 rounded-xl bg-emerald-600 text-white shadow-xs">
@@ -573,38 +579,91 @@ export default function TopScorers({ lang, isDarkMode }) {
                   </span>
                   <div>
                     <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title">
-                      {lang === 'ml' ? 'Golden Glove (Clean Sheets)' : 'GOLDEN GLOVE RACE'}
+                      {lang === 'ml' ? 'ഗോൾകീപ്പർമാരും സേവുകളും (Golden Glove)' : 'GOLDEN GLOVE & SAVES LEADERBOARD'}
                     </h3>
                     <p className="text-[11px] text-card-muted font-bold">
-                      {lang === 'ml' ? 'Starting Goalkeepers-ന്റെ Clean Sheets' : 'Clean sheets recorded by starting goalkeepers'}
+                      {lang === 'ml' ? 'ടൂർണ്ണമെന്റിലെ ഔദ്യോഗിക സേവുകളും ക്ലീൻ ഷീറ്റുകളും' : 'Official match saves and clean sheets recorded'}
                     </p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {stats.rankedGoalkeepers.slice(0, 3).map((gk, idx) => (
-                    <div 
-                      key={gk.name} 
-                      className="p-3.5 rounded-2xl surface-light border border-surface-border dark:border-navy-700 flex items-center justify-between gap-3"
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="w-6 h-6 rounded-md bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold font-sports text-xs flex items-center justify-center shrink-0">
-                          #{idx + 1}
+                {topKeeperLeader && (
+                  <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-emerald-500/5 to-transparent border border-emerald-500/40 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <span className="w-9 h-9 rounded-xl bg-emerald-500 text-navy-950 font-black font-sports text-sm flex items-center justify-center shrink-0 shadow-sm">
+                        #1
+                      </span>
+                      <div className="w-10 h-10 rounded-full bg-white p-1 border border-emerald-400/40 shrink-0 shadow-xs">
+                        <TeamLogo teamName={topKeeperLeader.team} className="w-full h-full object-contain" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
+                          Current Leader (Most Saves)
                         </span>
-                        <div className="w-7 h-7 rounded-full bg-white p-0.5 border border-slate-200 shrink-0">
-                          <TeamLogo teamName={gk.club} className="w-full h-full object-contain" />
+                        <h4 className="text-base font-black font-sports text-card-title leading-tight">
+                          {topKeeperLeader.name}
+                        </h4>
+                        <p className="text-xs text-card-muted font-medium">
+                          {topKeeperLeader.team}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-2xl font-black font-sports text-emerald-500 leading-none block">
+                        {topKeeperLeader.saves}
+                      </span>
+                      <span className="text-[10px] uppercase font-bold text-card-muted">Saves</span>
+                    </div>
+                  </div>
+                )}
+
+                {subsequentKeepers.length > 0 && (
+                  <div className="space-y-1.5 pt-1">
+                    {subsequentKeepers.map((gk, idx) => (
+                      <div
+                        key={`${gk.team}-${gk.name}`}
+                        className="p-3 rounded-xl surface-light border border-surface-border dark:border-navy-700 flex items-center justify-between gap-3 text-xs"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span className="font-sports font-bold text-card-muted w-5 text-center">
+                            #{idx + 2}
+                          </span>
+                          <div className="w-7 h-7 rounded-full bg-white p-0.5 border border-slate-200 dark:border-navy-700 shrink-0">
+                            <TeamLogo teamName={gk.team} className="w-full h-full object-contain" />
+                          </div>
+                          <div className="min-w-0">
+                            <h5 className="font-bold text-card-title truncate">{gk.name}</h5>
+                            <p className="text-[10px] text-card-muted truncate">{gk.team}</p>
+                          </div>
                         </div>
-                        <div className="min-w-0">
-                          <h5 className="font-bold text-card-title text-xs truncate">{gk.name}</h5>
-                          <p className="text-[10px] text-card-muted truncate">{gk.club}</p>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {gk.cleanSheets > 0 && (
+                            <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono text-[10px] font-bold">
+                              Clean Sheet
+                            </span>
+                          )}
+                          <span className="font-sports font-black text-emerald-600 dark:text-emerald-400 text-base">
+                            {gk.saves} <span className="text-[10px] text-card-muted font-normal uppercase">saves</span>
+                          </span>
                         </div>
                       </div>
-                      <span className="text-base font-black font-sports text-emerald-600 dark:text-emerald-400">
-                        {gk.cleanSheets}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
+
+                {effectiveKeepers.length > 5 && (
+                  <button
+                    onClick={() => setShowAllKeepers(!showAllKeepers)}
+                    className="w-full py-2.5 rounded-xl border border-surface-border dark:border-navy-700 text-xs font-bold text-card-muted hover:text-card-title surface-light transition active:scale-98 flex items-center justify-center gap-1.5"
+                  >
+                    <span>
+                      {showAllKeepers
+                        ? (lang === 'ml' ? 'കുറച്ചു കാണിക്കുക' : 'Show Top 5 Only')
+                        : (lang === 'ml' ? `ബാക്കി ഗോൾകീപ്പർമാരെ കാണുക (${effectiveKeepers.length})` : `Show All ${effectiveKeepers.length} Goalkeepers`)}
+                    </span>
+                    {showAllKeepers ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+                )}
               </section>
 
               {/* Fair Play Table */}

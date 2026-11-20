@@ -1415,7 +1415,7 @@ export default function AdminDeskSection({
                   <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-2">
                     <span className="font-sans font-bold uppercase text-[10px] text-slate-400">Current Fan View:</span>
                     <span className="truncate max-w-md text-slate-700 dark:text-slate-300">
-                      {matchState.liveStreamUrl || 'https://www.youtube.com/@sabithsmgvlog'}
+                      {matchState.liveStreamUrl || 'https://sportvot.com/event/EVENT_6aef52e024aa9a000119108a'}
                     </span>
                     {matchState.isStreamLive ? (
                       <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-100 text-red-700 dark:bg-red-900/60 dark:text-red-300">
