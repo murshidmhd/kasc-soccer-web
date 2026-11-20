@@ -105,30 +105,30 @@ export default function TeamsSection({ lang, isDarkMode }) {
           <div className="flex items-center gap-1.5 overflow-x-auto horizontal-scroll-container py-0.5 pr-8">
             <button
               onClick={() => setSelectedFilter('all')}
-              className={`min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-bold transition active:scale-95 whitespace-nowrap shrink-0 ${
+              className={`min-h-[44px] px-4 py-1.5 rounded-xl text-xs font-bold transition active:scale-95 whitespace-nowrap shrink-0 ${
                 selectedFilter === 'all'
-                  ? 'btn-royal text-white font-black shadow-xs'
-                  : 'surface-card text-card-title border border-surface-border dark:border-navy-700'
+                  ? 'btn-royal text-white font-black shadow-md'
+                  : 'bg-navy-950/70 text-card-title border border-purple-500/20 hover:border-purple-400/40 hover:text-white'
               }`}
             >
               {lang === 'ml' ? 'എല്ലാം (24)' : 'All 24'}
             </button>
             <button
               onClick={() => setSelectedFilter('malappuram')}
-              className={`min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-bold transition active:scale-95 whitespace-nowrap shrink-0 ${
+              className={`min-h-[44px] px-4 py-1.5 rounded-xl text-xs font-bold transition active:scale-95 whitespace-nowrap shrink-0 ${
                 selectedFilter === 'malappuram'
-                  ? 'btn-royal text-white font-black shadow-xs'
-                  : 'surface-card text-card-title border border-surface-border dark:border-navy-700'
+                  ? 'btn-royal text-white font-black shadow-md'
+                  : 'bg-navy-950/70 text-card-title border border-purple-500/20 hover:border-purple-400/40 hover:text-white'
               }`}
             >
               {lang === 'ml' ? 'മലപ്പുറം ബെൽറ്റ്' : 'Malappuram Belt'}
             </button>
             <button
               onClick={() => setSelectedFilter('other')}
-              className={`min-h-[44px] px-3.5 py-1.5 rounded-xl text-xs font-bold transition active:scale-95 whitespace-nowrap shrink-0 ${
+              className={`min-h-[44px] px-4 py-1.5 rounded-xl text-xs font-bold transition active:scale-95 whitespace-nowrap shrink-0 ${
                 selectedFilter === 'other'
-                  ? 'btn-royal text-white font-black shadow-xs'
-                  : 'surface-card text-card-title border border-surface-border dark:border-navy-700'
+                  ? 'btn-royal text-white font-black shadow-md'
+                  : 'bg-navy-950/70 text-card-title border border-purple-500/20 hover:border-purple-400/40 hover:text-white'
               }`}
             >
               {lang === 'ml' ? 'മറ്റു ജില്ലകൾ' : 'Other Districts'}

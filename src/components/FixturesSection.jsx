@@ -80,7 +80,7 @@ export default function FixturesSection({ lang, isDarkMode }) {
             </h2>
             <div className="flex items-center gap-1.5 text-xs text-card-muted mt-0.5">
               <MapPin className="w-3.5 h-3.5 text-royal dark:text-sky shrink-0" />
-              <span>Peruvallur Panjayath Stadium • 8:45 PM IST</span>
+              <span>Peruvallur Panjayath Stadium • 9:00 PM IST</span>
             </div>
           </div>
 
@@ -256,7 +256,7 @@ export default function FixturesSection({ lang, isDarkMode }) {
                               ) : (
                                 <div className="flex items-center gap-1 text-card-muted text-[11px] whitespace-nowrap font-mono">
                                   <Clock className="w-3 h-3 text-royal dark:text-sky" />
-                                  <span>{match.time || '8:45 PM'}</span>
+                                  <span>{match.time || '9:00 PM'}</span>
                                 </div>
                               )}
                               {isExpanded ? <ChevronUp className="w-3.5 h-3.5 text-card-muted" /> : <ChevronDown className="w-3.5 h-3.5 text-card-muted" />}

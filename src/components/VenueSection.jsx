@@ -107,7 +107,7 @@ export default function VenueSection({ lang, isDarkMode }) {
               }`}>
                 <div className="flex justify-between">
                   <span className="text-slate-500 dark:text-slate-400">Kickoff Time:</span>
-                  <span className={`font-bold ${isDarkMode ? 'text-amber-300' : 'text-amber-700'}`}>8:45 PM Sharp</span>
+                  <span className={`font-bold ${isDarkMode ? 'text-amber-300' : 'text-amber-700'}`}>9:00 PM Sharp</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500 dark:text-slate-400">Halves:</span>

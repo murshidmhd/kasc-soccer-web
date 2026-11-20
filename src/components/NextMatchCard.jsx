@@ -50,7 +50,7 @@ export default function NextMatchCard({ lang, isDarkMode, onFixtures }) {
             <span className="text-5xl font-black font-sports text-white/20 tracking-tighter">?</span>
           </div>
           <span className="mt-1 px-3 py-1 rounded-full bg-slate-700/50 border border-slate-600/40 text-slate-300 text-[10px] font-bold uppercase tracking-widest">
-            Kick-off 8:45 PM
+            Kick-off {time || '9:00 PM'}
           </span>
         </div>
 

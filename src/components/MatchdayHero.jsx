@@ -32,10 +32,16 @@ function selectFeaturedFixture(matchState) {
     return confirmed.find((fixture) => fixture.id === matchState.activeFixtureId) || confirmed[0];
   }
 
-  // After full time, leave the result in Match Center and feature the next fixture.
-  return confirmed.find((f) => f.status === 'Upcoming' || !f.score1) ||
-    confirmed.find((f) => f.id === matchState.activeFixtureId) ||
-    confirmed[0];
+  // 2. Feature today's match (pq-udaya: Udaya vs I-Nov) as requested
+  const todayMatch = confirmed.find((f) => f.id === 'pq-udaya');
+  if (todayMatch && todayMatch.status !== 'Completed') {
+    return todayMatch;
+  }
+
+  const nextUpcoming = confirmed.find((f) => f.status === 'Upcoming');
+  if (nextUpcoming) return nextUpcoming;
+
+  return confirmed.find((f) => f.id === matchState.activeFixtureId) || confirmed[confirmed.length - 1];
 }
 
 /** Format countdown from now to target ISO string */
@@ -165,7 +171,7 @@ export default function MatchdayHero({ lang, isDarkMode, onNavigate }) {
     // fixtures store date like "06 Nov 2026" and time "08:45 PM"
     try {
       const dateStr = featured.date; // e.g. "06 Nov 2026"
-      const timeStr = featured.time || '08:45 PM'; // canonical from fixtures
+      const timeStr = featured.time || '09:00 PM'; // canonical from fixtures
       return new Date(`${dateStr} ${timeStr} IST`).toISOString();
     } catch {
       return null;

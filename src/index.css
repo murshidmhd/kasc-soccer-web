@@ -218,15 +218,19 @@
 }
 
 .btn-royal {
-  background: linear-gradient(135deg, #5A3B8C 0%, #3D2663 100%) !important;
+  background: linear-gradient(135deg, #1C1032 0%, #0E071D 50%, #080310 100%) !important;
   color: #FFFFFF !important;
-  border: 1px solid rgba(201, 194, 227, 0.35);
-  box-shadow: 0 8px 24px -4px rgba(90, 59, 140, 0.55), inset 0 1px 1px 0 rgba(201, 194, 227, 0.35);
-  transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+  border: 1px solid rgba(139, 124, 199, 0.45) !important;
+  box-shadow: 0 4px 16px -2px rgba(90, 59, 140, 0.45), inset 0 1px 1px 0 rgba(201, 194, 227, 0.35) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .btn-royal:hover {
-  filter: brightness(1.15);
-  box-shadow: 0 12px 30px -4px rgba(139, 124, 199, 0.65), inset 0 1px 1px 0 rgba(201, 194, 227, 0.5);
+  background: linear-gradient(135deg, #2E1B54 0%, #170C30 50%, #0F061E 100%) !important;
+  border-color: rgba(168, 133, 235, 0.7) !important;
+  box-shadow: 0 6px 24px -2px rgba(139, 124, 199, 0.6), inset 0 1px 1px 0 rgba(201, 194, 227, 0.5) !important;
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 .btn-royal:active,
 .btn-gold:active,
@@ -247,17 +251,20 @@
 }
 
 .btn-navy-outline {
-  background: rgba(38, 12, 74, 0.45) !important;
+  background: linear-gradient(135deg, rgba(20, 13, 38, 0.85) 0%, rgba(10, 6, 20, 0.95) 100%) !important;
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
-  color: #FFFFFF !important;
-  border: 1px solid rgba(168, 85, 247, 0.3) !important;
-  box-shadow: inset 0 1px 0 rgba(233, 213, 255, 0.2);
-  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+  color: #C9C2E3 !important;
+  border: 1px solid rgba(139, 124, 199, 0.3) !important;
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(201, 194, 227, 0.15) !important;
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .btn-navy-outline:hover {
-  background: rgba(147, 51, 234, 0.4) !important;
-  border-color: rgba(192, 132, 252, 0.5) !important;
+  background: linear-gradient(135deg, rgba(38, 24, 70, 0.9) 0%, rgba(18, 11, 36, 0.98) 100%) !important;
+  border-color: rgba(168, 133, 235, 0.55) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 6px 20px -2px rgba(90, 59, 140, 0.4), inset 0 1px 0 rgba(201, 194, 227, 0.3) !important;
+  transform: translateY(-1px);
 }
 
 @layer base {

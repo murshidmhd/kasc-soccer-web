@@ -302,7 +302,7 @@ export default function App() {
                           {lang === 'ml' ? 'ഇന്നത്തെ & വരാനിരിക്കുന്ന മത്സരങ്ങൾ' : "TODAY'S & UPCOMING FIXTURES"}
                         </h3>
                         <p className="text-xs text-card-muted font-medium leading-[1.5]">
-                          {lang === 'ml' ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം • രാത്രി 8:45 PM IST' : 'Peruvallur Panjayath Stadium • 8:45 PM IST'}
+                          {lang === 'ml' ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം • രാത്രി 9:00 PM IST' : 'Peruvallur Panjayath Stadium • 9:00 PM IST'}
                         </p>
                       </div>
                     </div>
@@ -409,7 +409,7 @@ export default function App() {
                               {isMatchLive && <span className="w-1.5 h-1.5 rounded-full bg-gold animate-ping"></span>}
                               {isMatchLive ? 'LIVE' : (isNextMatch ? (lang === 'ml' ? 'അടുത്ത മത്സരം' : 'Next Match') : (lang === 'ml' ? 'വരാനിരിക്കുന്നു' : 'Upcoming'))}
                             </span>
-                            <span className="text-card-muted font-mono">{match.time || '8:45 PM IST'}</span>
+                            <span className="text-card-muted font-mono">{match.time || '9:00 PM IST'}</span>
                           </div>
                         </div>
                       );
