@@ -162,12 +162,12 @@ export default function NewUserGuidedTour({
       <div 
         className="rounded-3xl border-2 border-gold/90 text-white p-4 sm:p-5 relative overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #2D1061 0%, #1E0B3F 50%, #130728 100%)',
-          boxShadow: '0 20px 50px -10px rgba(30, 11, 63, 0.95), 0 0 0 1px rgba(245, 179, 1, 0.4)'
+          background: 'linear-gradient(135deg, #1A0733 0%, #0D031A 50%, #05010A 100%)',
+          boxShadow: '0 20px 50px -10px rgba(0, 0, 0, 0.95), 0 0 30px rgba(147, 51, 234, 0.35), 0 0 0 1.5px rgba(245, 179, 1, 0.85)'
         }}
       >
         {/* Glowing Ambient Halo */}
-        <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-gold/15 blur-xl pointer-events-none" />
+        <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-purple-500/30 blur-2xl pointer-events-none" />
 
         {/* Top Header Row */}
         <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-purple-800/60">

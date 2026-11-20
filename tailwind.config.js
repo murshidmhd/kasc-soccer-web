@@ -16,52 +16,52 @@ export default {
         // #C9C2E3: Frost Lilac Mist / Specular Highlight
         // #3A3A52: Slate Purple Neutral
         navy: {
-          950: '#0f0728',
-          900: '#180b38',
-          800: '#2e1065',
-          750: '#3b137b',
-          700: '#4c1d95',
-          600: '#6d28d9',
+          950: '#05020A',
+          900: '#0D041A',
+          800: '#1A0833',
+          750: '#260C4A',
+          700: '#361266',
+          600: '#701DC9',
         },
         purple: {
-          950: '#0f0728',
-          900: '#1e0a3d',
-          800: '#2e1065',
-          700: '#4c1d95',
-          600: '#6d28d9',
-          500: '#7c3aed',
-          400: '#a78bfa',
-          300: '#c4b5fd',
-          200: '#ddd6fe',
-          100: '#ede9fe',
-          50: '#f5f3ff',
+          950: '#07020E',
+          900: '#150629',
+          800: '#280B4D',
+          700: '#4C148B',
+          600: '#701DC9',
+          500: '#9333EA',
+          400: '#A855F7',
+          300: '#C084FC',
+          200: '#E9D5FF',
+          100: '#F3E8FF',
+          50: '#FAF5FF',
         },
-        royal: '#7c3aed', // primary vibrant electric violet
-        sky: '#a78bfa',   // luminous soft lavender
-        frost: '#ddd6fe', // frost lilac specular highlight
-        gold: '#F5B301',  // single accent
+        royal: '#9333EA', // Luxury electric neon purple (#9333EA)
+        sky: '#A855F7',   // Luminous soft lilac accent (#A855F7)
+        frost: '#E9D5FF', // Frost lavender highlight (#E9D5FF)
+        gold: '#F5B301',  // Single golden accent
         'text-on-navy': '#FFFFFF',
-        'muted-on-navy': '#ddd6fe',
+        'muted-on-navy': '#C084FC',
         surface: {
-          light: '#F5F3FF',
+          light: '#FAF5FF',
           card: '#FFFFFF',
-          border: '#ddd6fe',
+          border: '#C084FC',
         },
         liquid: {
-          obsidian: '#0f0728',
-          deep: '#241042',
-          royal: '#7c3aed',
-          lavender: '#a78bfa',
-          frost: '#ddd6fe',
-          slate: '#4c1d95',
+          obsidian: '#05020A',
+          deep: '#150629',
+          royal: '#9333EA',
+          lavender: '#A855F7',
+          frost: '#E9D5FF',
+          slate: '#260C4A',
         },
         brand: {
-          dark: '#0f0728',
-          navy: '#2e1065',
-          card: '#2e1065',
-          border: '#ddd6fe',
-          neon: '#a78bfa',
-          electric: '#7c3aed',
+          dark: '#05020A',
+          navy: '#150629',
+          card: '#1F0A38',
+          border: '#A855F7',
+          neon: '#C084FC',
+          electric: '#9333EA',
           gold: '#F5B301',
           crimson: '#ef4444'
         }

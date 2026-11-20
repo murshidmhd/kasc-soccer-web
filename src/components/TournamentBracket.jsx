@@ -49,30 +49,36 @@ export const getBracketData = (fixturesList = fixtures) => {
   });
 
   // Pre-Quarters (Round of 16)
-  const preQuarters = [
-    fixturesList.find((f) => f.id === 'm8') || {
-      id: "m8",
-      matchNum: "PQ 1",
-      date: "14 Nov 2026",
-      time: "08:45 PM",
-      stage: "Pre-Quarter (Round of 16)",
-      team1: "X8 TOURS CALICUT",
-      team2: "REAL FC THENNALA",
-      status: "Upcoming",
-      confirmed: true
-    }
-  ];
+  const preQuarterMatches = fixturesList.filter((f) => ['m8', 'm9', 'm10', 'pq-udaya', 'pq-super', 'pq-madina'].includes(f.id));
+  const preQuarters = preQuarterMatches.map((f, i) => {
+    const winner = f.winner || (f.confirmed && Number.isFinite(f.score1) && Number.isFinite(f.score2)
+      ? f.score1 === f.score2 ? null : f.score1 > f.score2 ? f.team1 : f.team2
+      : null);
+    return {
+      id: f.id,
+      matchNum: `PQ ${i + 1}`,
+      date: f.date,
+      time: f.time,
+      team1: f.team1,
+      team2: f.team2,
+      status: f.status,
+      score1: f.score1,
+      score2: f.score2,
+      winner,
+      confirmed: f.confirmed
+    };
+  });
 
   const quarterFinals = [
     { 
       id: 'qf1', 
       matchNum: 'QF 1', 
-      date: '20 Nov', 
+      date: '22 Nov', 
       time: '8:45 PM', 
-      team1Slot: 'Winner PQ 1', 
-      team2Slot: 'Winner PQ 2', 
-      team1: null,
-      team2: null,
+      team1Slot: preQuarters[0]?.winner || 'Winner PQ 1', 
+      team2Slot: preQuarters[1]?.winner || 'Winner PQ 2', 
+      team1: preQuarters[0]?.winner || null,
+      team2: preQuarters[1]?.winner || null,
       status: 'Quarter Final', 
       winner: null, 
       sfSlot: 'sf1' 
@@ -80,12 +86,12 @@ export const getBracketData = (fixturesList = fixtures) => {
     { 
       id: 'qf2', 
       matchNum: 'QF 2', 
-      date: '22 Nov', 
+      date: '24 Nov', 
       time: '8:45 PM', 
-      team1Slot: 'Winner PQ 3', 
-      team2Slot: 'Winner PQ 4', 
-      team1: null,
-      team2: null,
+      team1Slot: preQuarters[2]?.winner || 'Winner PQ 3', 
+      team2Slot: preQuarters[3]?.winner || 'Winner PQ 4', 
+      team1: preQuarters[2]?.winner || null,
+      team2: preQuarters[3]?.winner || null,
       status: 'Quarter Final', 
       winner: null, 
       sfSlot: 'sf1' 
