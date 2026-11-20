@@ -20,10 +20,12 @@ export const MAX_REPORTS_PER_USER = 3; // Strict 3 reports max per device
 export const SEVENS_HALF_MINUTES = HALF_LENGTH_MINUTES;
 export const SEVENS_TOTAL_MINUTES = MAX_MATCH_MINUTES;
 
-// Official Match 1 final state for visitors without a saved scorer update.
+// Official Match final state for visitors without a saved scorer update.
 export const realOfficialMatchState = {
-  officialScoreHome: 1,
-  officialScoreAway: 0,
+  id: 'pq-udaya',
+  activeFixtureId: 'pq-udaya',
+  officialScoreHome: 2,
+  officialScoreAway: 1,
   matchSeconds: 60 * 60,
   matchMinute: 60,
   isTimerRunning: false,
@@ -124,6 +126,7 @@ export function getMatchFixtureInfo(fixtureId) {
 }
 
 export function getNextUpcomingFixtureId(currentFixtureId) {
+  if (currentFixtureId === 'm7') return 'pq-udaya';
   return fixtures.find((fixture) => fixture.confirmed && fixture.status === 'Upcoming' && fixture.id !== currentFixtureId)?.id || null;
 }
 
