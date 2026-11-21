@@ -44,7 +44,10 @@ export const getBracketData = (fixturesList = fixtures) => {
       score1: f.score1,
       score2: f.score2,
       winner,
-      confirmed: f.confirmed
+      confirmed: f.confirmed,
+      penaltyScore: f.penaltyScore,
+      penaltyScore1: f.penaltyScore1,
+      penaltyScore2: f.penaltyScore2
     };
   });
 
@@ -65,7 +68,10 @@ export const getBracketData = (fixturesList = fixtures) => {
       score1: f.score1,
       score2: f.score2,
       winner,
-      confirmed: f.confirmed
+      confirmed: f.confirmed,
+      penaltyScore: f.penaltyScore,
+      penaltyScore1: f.penaltyScore1,
+      penaltyScore2: f.penaltyScore2
     };
   });
 
@@ -146,6 +152,149 @@ export const getBracketData = (fixturesList = fixtures) => {
 };
 
 export const BRACKET_DATA = getBracketData();
+
+function BracketMatchCard({ match, isOpening, lang }) {
+  const isCompleted = match.status === 'Completed' || (Number.isFinite(match.score1) && Number.isFinite(match.score2));
+  const winnerName = match.winner;
+
+  const team1IsWinner = Boolean(
+    winnerName && match.team1 && (
+      winnerName.toLowerCase() === match.team1.toLowerCase() ||
+      match.team1.toLowerCase().includes(winnerName.toLowerCase()) ||
+      winnerName.toLowerCase().includes(match.team1.toLowerCase())
+    )
+  );
+
+  const team2IsWinner = Boolean(
+    winnerName && match.team2 && (
+      winnerName.toLowerCase() === match.team2.toLowerCase() ||
+      match.team2.toLowerCase().includes(winnerName.toLowerCase()) ||
+      winnerName.toLowerCase().includes(match.team2.toLowerCase())
+    )
+  );
+
+  const penaltyText = match.penaltyScore 
+    ? match.penaltyScore.replace(/\(Pens\)/i, 'Pens').trim()
+    : (match.penaltyScore1 != null && match.penaltyScore2 != null)
+    ? `${match.penaltyScore1}-${match.penaltyScore2} Pens`
+    : null;
+
+  return (
+    <div
+      className={`p-3.5 rounded-2xl border surface-card shadow-card space-y-2.5 transition duration-150 ${
+        isOpening 
+          ? 'border-gold/80 ring-1 ring-gold/30' 
+          : isCompleted 
+          ? 'border-surface-border dark:border-navy-700/80' 
+          : 'border-surface-border dark:border-navy-700'
+      }`}
+    >
+      {/* Header Row: Match label, Date, Kickoff & FT Badge */}
+      <div className="flex items-center justify-between text-xs pb-2 border-b border-surface-border dark:border-navy-700 text-card-muted">
+        <div className="flex items-center gap-2">
+          <span className="font-sports font-black uppercase text-card-title">
+            {typeof match.matchNum === 'number' ? `Match ${match.matchNum}` : match.matchNum}
+          </span>
+          {isOpening && (
+            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-gold/15 text-gold border border-gold/30 uppercase">
+              Opening
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-[11px]">
+            {match.date} • {match.time?.replace(':00', '') || '9:00 PM'}
+          </span>
+          <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
+            isCompleted 
+              ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' 
+              : 'bg-surface-subtle text-card-muted border border-surface-border'
+          }`}>
+            {isCompleted ? 'FT' : 'Upcoming'}
+          </span>
+        </div>
+      </div>
+
+      {/* Team 1 Row */}
+      <div className={`flex items-center justify-between gap-3 p-2 rounded-xl transition ${
+        team1IsWinner ? 'bg-emerald-500/10 dark:bg-emerald-950/20 border border-emerald-500/30' : ''
+      }`}>
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          {match.team1 ? (
+            <div className="w-8 h-8 rounded-full bg-white p-0.5 border border-surface-border dark:border-navy-700 shadow-2xs flex items-center justify-center shrink-0">
+              <TeamLogo teamName={match.team1} className="w-full h-full rounded-full object-contain" />
+            </div>
+          ) : (
+            <div className="w-8 h-8 rounded-full border-2 border-dashed border-card-muted text-card-muted flex items-center justify-center font-bold text-xs shrink-0">?</div>
+          )}
+          <span className={`text-xs sm:text-sm font-sports truncate leading-tight ${
+            team1IsWinner ? 'font-black text-emerald-400 dark:text-emerald-300' : match.team1 ? 'font-bold text-card-title' : 'text-card-muted'
+          }`}>
+            {match.team1 || match.team1Slot || 'TBD'}
+          </span>
+          {team1IsWinner && (
+            <span className="text-[10px] text-emerald-400 font-bold shrink-0">✓ Won</span>
+          )}
+        </div>
+
+        {/* Score */}
+        {isCompleted && match.score1 != null && (
+          <div className="text-right shrink-0">
+            <span className={`text-base font-black font-mono px-2 py-0.5 rounded ${
+              team1IsWinner ? 'text-emerald-400 font-black' : 'text-card-title'
+            }`}>
+              {match.score1}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Team 2 Row */}
+      <div className={`flex items-center justify-between gap-3 p-2 rounded-xl transition ${
+        team2IsWinner ? 'bg-emerald-500/10 dark:bg-emerald-950/20 border border-emerald-500/30' : ''
+      }`}>
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          {match.team2 ? (
+            <div className="w-8 h-8 rounded-full bg-white p-0.5 border border-surface-border dark:border-navy-700 shadow-2xs flex items-center justify-center shrink-0">
+              <TeamLogo teamName={match.team2} className="w-full h-full rounded-full object-contain" />
+            </div>
+          ) : (
+            <div className="w-8 h-8 rounded-full border-2 border-dashed border-card-muted text-card-muted flex items-center justify-center font-bold text-xs shrink-0">?</div>
+          )}
+          <span className={`text-xs sm:text-sm font-sports truncate leading-tight ${
+            team2IsWinner ? 'font-black text-emerald-400 dark:text-emerald-300' : match.team2 ? 'font-bold text-card-title' : 'text-card-muted'
+          }`}>
+            {match.team2 || match.team2Slot || 'TBD'}
+          </span>
+          {team2IsWinner && (
+            <span className="text-[10px] text-emerald-400 font-bold shrink-0">✓ Won</span>
+          )}
+        </div>
+
+        {/* Score */}
+        {isCompleted && match.score2 != null && (
+          <div className="text-right shrink-0">
+            <span className={`text-base font-black font-mono px-2 py-0.5 rounded ${
+              team2IsWinner ? 'text-emerald-400 font-black' : 'text-card-title'
+            }`}>
+              {match.score2}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Penalty Shootout Banner */}
+      {penaltyText && (
+        <div className="pt-1.5 border-t border-surface-border/60 dark:border-navy-800 flex items-center justify-between text-[11px] text-amber-400 px-1 font-semibold">
+          <span>Shootout</span>
+          <span className="font-mono font-bold bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/30">
+            {penaltyText}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function TournamentBracket({ lang, isDarkMode, fixturesList }) {
   if (!SHOW_BRACKET) {
@@ -289,12 +438,12 @@ export default function TournamentBracket({ lang, isDarkMode, fixturesList }) {
 
           {/* Nodes */}
           {[
-            { id: 'r1', label: 'R1', num: 'Round 1' },
-            { id: 'pq', label: 'PQ', num: 'Pre-Quarters' },
-            { id: 'qf', label: 'QF', num: 'Quarters' },
-            { id: 'sf', label: 'SF', num: 'Semis' },
-            { id: 'final', label: 'Final', isTrophy: true }
-          ].map((node, i) => {
+            { id: 'r1', step: '1', label: 'R1', num: 'Round 1' },
+            { id: 'pq', step: '2', label: 'PQ', num: 'Pre-Quarters' },
+            { id: 'qf', step: '3', label: 'QF', num: 'Quarters' },
+            { id: 'sf', step: '4', label: 'SF', num: 'Semis' },
+            { id: 'final', step: '5', label: 'Final', num: 'Final', isTrophy: true }
+          ].map((node) => {
             const isActive = activeRound === node.id;
             const currentIndex = rounds.indexOf(activeRound);
             const isCompleted = rounds.indexOf(node.id) < currentIndex;
@@ -303,7 +452,7 @@ export default function TournamentBracket({ lang, isDarkMode, fixturesList }) {
               <button
                 key={node.id}
                 onClick={() => setActiveRound(node.id)}
-                className={`relative z-10 flex flex-col items-center group transition active:scale-95 focus:outline-hidden min-h-[44px] justify-center px-1`}
+                className="relative z-10 flex flex-col items-center group transition active:scale-95 focus:outline-hidden min-h-[44px] justify-center px-1"
                 aria-label={`Go to ${node.num || 'Final'}`}
               >
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center font-sports text-xs font-black transition-all ${
@@ -313,7 +462,7 @@ export default function TournamentBracket({ lang, isDarkMode, fixturesList }) {
                       ? 'btn-royal text-white'
                       : 'bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700 text-card-muted group-hover:text-card-title'
                 }`}>
-                  {node.isTrophy ? <Trophy className="w-3.5 h-3.5" /> : node.label}
+                  {node.isTrophy ? <Trophy className="w-3.5 h-3.5" /> : node.step}
                 </div>
                 <span className={`text-[10px] font-sports font-bold mt-1 tracking-wider uppercase transition-colors ${
                   isActive ? 'text-gold font-black' : 'text-card-muted'
@@ -328,292 +477,65 @@ export default function TournamentBracket({ lang, isDarkMode, fixturesList }) {
 
       {/* 4. Round Tabs (Rule 5: Sticky below header, swipe left/right to change) */}
       <div className="sticky top-14 sm:top-16 z-20 py-1.5 bg-surface-light dark:bg-navy-900 border-b border-surface-border dark:border-navy-800 -mx-3 px-3 sm:mx-0 sm:px-0">
-        <div className="grid grid-cols-4 sm:grid-cols-5 gap-1.5 max-w-md mx-auto">
+        <div className="grid grid-cols-5 gap-1 sm:gap-1.5 max-w-md mx-auto">
           {[
-            { id: 'r1', label: 'Round 1' },
-            { id: 'pq', label: 'Pre-QF' },
-            { id: 'qf', label: 'Quarters' },
-            { id: 'sf', label: 'Semis' },
-            { id: 'final', label: 'Final' }
+            { id: 'r1', label: 'Round 1', short: 'R1' },
+            { id: 'pq', label: 'Pre-QF', short: 'Pre-QF' },
+            { id: 'qf', label: 'Quarters', short: 'QF' },
+            { id: 'sf', label: 'Semis', short: 'SF' },
+            { id: 'final', label: 'Final', short: 'Final' }
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveRound(tab.id)}
-              className={`min-h-[40px] py-1.5 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition flex items-center justify-center active:scale-95 ${
+              className={`min-h-[40px] py-1 px-1 rounded-xl text-[10px] sm:text-xs font-bold transition flex items-center justify-center active:scale-95 ${
                 activeRound === tab.id
                   ? 'btn-royal text-white font-black shadow-xs'
                   : 'surface-card text-card-title border border-surface-border dark:border-navy-700'
               }`}
             >
-              <span>{tab.label}</span>
+              <span className="hidden sm:inline">{tab.label}</span>
+              <span className="sm:hidden">{tab.short}</span>
             </button>
           ))}
         </div>
       </div>
 
       {/* 5. Match Cards Rendered by Active Round (No horizontal page scroll per Rule 4) */}
-      <div className="space-y-3 pb-8">
+      <div className="space-y-3 pb-28">
         {/* PRE-QUARTERS (Round of 16) */}
         {activeRound === 'pq' && (
           <div className="space-y-3 animate-fadeIn">
-            {/* Featured Confirmed Pre-Quarter Match */}
-            <div className="p-3.5 sm:p-4 rounded-2xl border-2 border-gold ring-1 ring-gold/40 bg-white dark:bg-navy-800 space-y-3 shadow-card">
-              <div className="flex items-center justify-between text-xs pb-2 border-b border-surface-border dark:border-navy-700">
-                <span className="px-2 py-0.5 rounded-full bg-gold text-navy-950 font-black text-[10px] uppercase tracking-wider">
-                  Pre-Quarter (Round of 16)
-                </span>
-                <span className="font-mono text-card-muted text-[11px] font-bold">
-                  Tonight • 20 Nov • 9:00 PM
-                </span>
-              </div>
-
-              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-xl p-2.5 bg-surface-light dark:bg-navy-900/60">
-                <div className="flex flex-col items-center gap-1 text-center min-w-0">
-                  <span className="w-10 h-10 rounded-full bg-white p-0.5 border border-surface-border dark:border-navy-700 flex items-center justify-center shrink-0">
-                    <TeamLogo teamName="X8 TOURS CALICUT" className="w-full h-full rounded-full object-contain" />
-                  </span>
-                  <span className="text-xs font-bold font-sports text-card-title">X8 TOURS CALICUT</span>
-                  <span className="text-[10px] text-emerald-400 font-semibold">(R1 Winner)</span>
-                </div>
-
-                <div className="text-center px-2">
-                  <span className="inline-block px-2.5 py-1 rounded-lg bg-white dark:bg-navy-800 text-[11px] font-black uppercase tracking-widest text-card-muted border border-surface-border dark:border-navy-700">
-                    VS
-                  </span>
-                </div>
-
-                <div className="flex flex-col items-center gap-1 text-center min-w-0">
-                  <span className="w-10 h-10 rounded-full bg-white p-0.5 border border-surface-border dark:border-navy-700 flex items-center justify-center shrink-0">
-                    <TeamLogo teamName="REAL FC THENNALA" className="w-full h-full rounded-full object-contain" />
-                  </span>
-                  <span className="text-xs font-bold font-sports text-card-title">REAL FC THENNALA</span>
-                  <span className="text-[10px] text-sky-400 font-semibold">(Seeded Club)</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Seeded Teams Qualified to Pre-Quarters */}
-            <div className="p-4 rounded-2xl bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700 space-y-2.5">
-              <div className="flex items-center gap-2">
-                <Trophy className="w-4 h-4 text-gold shrink-0" />
-                <span className="text-xs font-black uppercase tracking-wider text-card-title">
-                  {lang === 'ml' ? 'പ്രീ ക്വാർട്ടറിലേക്ക് നേരിട്ട് യോഗ്യത നേടിയ ടീമുകൾ' : 'Clubs Seeded Directly into Pre-Quarters'}
-                </span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
-                {SEEDED_PRE_QUARTERS.map((team) => (
-                  <div key={team.name} className="p-3 rounded-xl bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700 flex items-center gap-2.5">
-                    <span className="w-8 h-8 rounded-full bg-white p-0.5 border border-surface-border dark:border-navy-700 flex items-center justify-center shrink-0">
-                      <TeamLogo teamName={team.name} className="w-full h-full rounded-full object-contain" />
-                    </span>
-                    <div className="min-w-0">
-                      <div className="text-xs font-bold font-sports truncate text-card-title">{team.name}</div>
-                      <div className="text-[10px] text-gold font-medium">{team.note}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Daily Announcement Notice */}
-            <div className="p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-center text-xs text-blue-200 space-y-1">
-              <p className="font-bold text-white">
-                {lang === 'ml' 
-                  ? 'പ്രീ ക്വാർട്ടർ ഫിക്സ്ചറുകൾ ഓരോ ദിവസവും കമ്മിറ്റി പ്രഖ്യാപിക്കുന്നതാണ്.' 
-                  : 'Pre-Quarter fixtures are scheduled and announced daily by the tournament committee.'}
-              </p>
-              <p className="text-[11px] opacity-80">
-                {lang === 'ml'
-                  ? 'റൗണ്ട് 1 വിജയികളും നേരിട്ട് യോഗ്യത നേടിയ ടീമുകളും ഏറ്റുമുട്ടുന്നു. വിജയിക്കുന്നവർ ക്വാർട്ടറിലേക്ക് മുന്നേറും.'
-                  : 'Round 1 qualifiers face seeded clubs. Winners advance into the Quarter Finals.'}
-              </p>
-            </div>
+            {bracketData.preQuarters.map((m) => (
+              <BracketMatchCard key={m.id} match={m} lang={lang} />
+            ))}
           </div>
         )}
+
         {/* ROUND 1 */}
         {activeRound === 'r1' && (
           <div className="space-y-3 animate-fadeIn">
-            {bracketData.round1.map((m) => {
-              const team1 = getMatchTeamDisplay(m, 'team1', 'team1Slot');
-              const team2 = getMatchTeamDisplay(m, 'team2', 'team2Slot');
-              const isOpening = m.id === 'm1';
-
-              return (
-                <div
-                  key={m.id}
-                  className={`p-3.5 rounded-2xl border surface-card shadow-card space-y-3 ${
-                    isOpening ? 'border-gold/80 ring-1 ring-gold/30' : 'border-surface-border dark:border-navy-700'
-                  }`}
-                >
-                  {/* Header Row: Match number, Date & Kickoff Time (Rule 7) */}
-                  <div className="flex items-center justify-between text-xs font-semibold pb-2 border-b border-surface-border dark:border-navy-700 text-card-muted">
-                    <span className="font-sports font-black uppercase text-card-title">
-                      Match {m.matchNum}
-                    </span>
-                    <span className="font-mono">
-                      {m.date} • {m.time}
-                    </span>
-                  </div>
-
-                  {/* Team 1 Row */}
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      {team1.isDecided ? (
-                        <div className="w-10 h-10 rounded-full bg-white p-1 border border-surface-border dark:border-navy-700 shadow-2xs flex items-center justify-center shrink-0">
-                          <TeamLogo teamName={team1.name} className="w-full h-full rounded-full object-contain" />
-                        </div>
-                      ) : (
-                        <div className="w-10 h-10 rounded-full border-2 border-dashed border-card-muted text-card-muted flex items-center justify-center font-bold text-sm shrink-0">
-                          ?
-                        </div>
-                      )}
-                      <span className={`text-xs sm:text-sm font-sports line-clamp-2 leading-tight ${
-                        team1.isDecided ? 'font-bold text-card-title' : 'text-card-muted font-medium'
-                      }`}>
-                        {team1.name}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Team 2 Row */}
-                  <div className="flex items-center justify-between gap-3 pt-1 border-t border-surface-border/50 dark:border-navy-800">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      {team2.isDecided ? (
-                        <div className="w-10 h-10 rounded-full bg-white p-1 border border-surface-border dark:border-navy-700 shadow-2xs flex items-center justify-center shrink-0">
-                          <TeamLogo teamName={team2.name} className="w-full h-full rounded-full object-contain" />
-                        </div>
-                      ) : (
-                        <div className="w-10 h-10 rounded-full border-2 border-dashed border-card-muted text-card-muted flex items-center justify-center font-bold text-sm shrink-0">
-                          ?
-                        </div>
-                      )}
-                      <span className={`text-xs sm:text-sm font-sports line-clamp-2 leading-tight ${
-                        team2.isDecided ? 'font-bold text-card-title' : 'text-card-muted font-medium'
-                      }`}>
-                        {team2.name}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-
-            {bracketData.round1.length < 8 && (
-              <div className="p-4 rounded-2xl bg-surface-light dark:bg-navy-900 border border-dashed border-surface-border dark:border-navy-700 text-center space-y-1">
-                <p className="text-xs font-bold text-card-title">
-                  {lang === 'ml' ? 'ബാക്കി Round 1 Fixtures ഉടൻ പ്രഖ്യാപിക്കും' : 'Remaining Round 1 Fixtures TBA'}
-                </p>
-                <p className="text-[11px] text-card-muted">
-                  {lang === 'ml' 
-                    ? 'കമ്മിറ്റി Fixtures പൂർണ്ണമാക്കിയാലുടൻ ബാക്കി Teams-ന്റെ Matches ഇവിടെ അപ്ഡേറ്റ് ചെയ്യുന്നതാണ്.'
-                    : 'The remaining matchups will be published here as soon as released by the tournament committee.'}
-                </p>
-              </div>
-            )}
+            {bracketData.round1.map((m) => (
+              <BracketMatchCard key={m.id} match={m} isOpening={m.id === 'm1'} lang={lang} />
+            ))}
           </div>
         )}
 
         {/* QUARTERS */}
         {activeRound === 'qf' && (
           <div className="space-y-3 animate-fadeIn">
-            {bracketData.quarterFinals.map((qf) => {
-              const team1 = getMatchTeamDisplay(qf, 'team1', 'team1Slot');
-              const team2 = getMatchTeamDisplay(qf, 'team2', 'team2Slot');
-
-              return (
-                <div
-                  key={qf.id}
-                  className="p-3.5 rounded-2xl border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-3"
-                >
-                  <div className="flex items-center justify-between text-xs font-semibold pb-2 border-b border-surface-border dark:border-navy-700 text-card-muted">
-                    <span className="font-sports font-black uppercase text-card-title">
-                      {qf.matchNum}
-                    </span>
-                    <span className="font-mono">
-                      {qf.date} • {qf.time}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      {team1.isDecided ? (
-                        <div className="w-10 h-10 rounded-full bg-white p-1 border border-surface-border dark:border-navy-700 shadow-2xs flex items-center justify-center shrink-0">
-                          <TeamLogo teamName={team1.name} className="w-full h-full rounded-full object-contain" />
-                        </div>
-                      ) : (
-                        <div className="w-10 h-10 rounded-full border-2 border-dashed border-card-muted text-card-muted flex items-center justify-center font-bold text-sm shrink-0">?</div>
-                      )}
-                      <span className={`text-xs sm:text-sm font-sports line-clamp-2 leading-tight ${team1.isDecided ? 'text-card-title font-bold' : 'text-card-muted font-medium'}`}>
-                        {team1.name}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-3 pt-1 border-t border-surface-border/50 dark:border-navy-800">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      {team2.isDecided ? (
-                        <div className="w-10 h-10 rounded-full bg-white p-1 border border-surface-border dark:border-navy-700 shadow-2xs flex items-center justify-center shrink-0">
-                          <TeamLogo teamName={team2.name} className="w-full h-full rounded-full object-contain" />
-                        </div>
-                      ) : (
-                        <div className="w-10 h-10 rounded-full border-2 border-dashed border-card-muted text-card-muted flex items-center justify-center font-bold text-sm shrink-0">?</div>
-                      )}
-                      <span className={`text-xs sm:text-sm font-sports line-clamp-2 leading-tight ${team2.isDecided ? 'text-card-title font-bold' : 'text-card-muted font-medium'}`}>
-                        {team2.name}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            {bracketData.quarterFinals.map((qf) => (
+              <BracketMatchCard key={qf.id} match={qf} lang={lang} />
+            ))}
           </div>
         )}
 
         {/* SEMIS */}
         {activeRound === 'sf' && (
           <div className="space-y-3 animate-fadeIn">
-            {bracketData.semiFinals.map((sf) => {
-              const team1 = getMatchTeamDisplay(sf, 'team1', 'team1Slot');
-              const team2 = getMatchTeamDisplay(sf, 'team2', 'team2Slot');
-
-              return (
-                <div
-                  key={sf.id}
-                  className="p-3.5 rounded-2xl border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-3"
-                >
-                  <div className="flex items-center justify-between text-xs font-semibold pb-2 border-b border-surface-border dark:border-navy-700 text-card-muted">
-                    <span className="font-sports font-black uppercase text-card-title">
-                      {sf.matchNum}
-                    </span>
-                    <span className="font-mono">
-                      {sf.date} • {sf.time}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-10 h-10 rounded-full border-2 border-dashed border-card-muted text-card-muted flex items-center justify-center font-bold text-sm shrink-0">
-                        ?
-                      </div>
-                      <span className="text-xs sm:text-sm font-sports line-clamp-2 leading-tight text-card-muted font-medium">
-                        {team1.name}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-3 pt-1 border-t border-surface-border/50 dark:border-navy-800">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-10 h-10 rounded-full border-2 border-dashed border-card-muted text-card-muted flex items-center justify-center font-bold text-sm shrink-0">
-                        ?
-                      </div>
-                      <span className="text-xs sm:text-sm font-sports line-clamp-2 leading-tight text-card-muted font-medium">
-                        {team2.name}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            {bracketData.semiFinals.map((sf) => (
+              <BracketMatchCard key={sf.id} match={sf} lang={lang} />
+            ))}
           </div>
         )}
 
