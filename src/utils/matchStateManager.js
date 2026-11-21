@@ -24,8 +24,8 @@ export const SEVENS_TOTAL_MINUTES = MAX_MATCH_MINUTES;
 export const realOfficialMatchState = {
   id: 'pq-udaya',
   activeFixtureId: 'pq-udaya',
-  officialScoreHome: 2,
-  officialScoreAway: 1,
+  officialScoreHome: 1,
+  officialScoreAway: 0,
   matchSeconds: 60 * 60,
   matchMinute: 60,
   isTimerRunning: false,

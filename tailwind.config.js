@@ -8,61 +8,64 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Liquid Glass Purple Palette (User reference colors)
-        // #0E0B1D: Obsidian Night Base
-        // #2A1E4D: Deep Indigo Violet Surface
-        // #5A3B8C: Royal Purple / Electric Violet
-        // #8B7CC7: Soft Lavender Glow Accent
-        // #C9C2E3: Frost Lilac Mist / Specular Highlight
-        // #3A3A52: Slate Purple Neutral
+        // Liquid Glass Purple Palette (Gem AI Obsidian Black & Electric Violet)
+        // #030006: Pure Obsidian Pitch Black Base
+        // #080310: Deep Obsidian Surface
+        // #0E071D: Dark Card Surface
+        // #7C3AED: Vibrant Electric Violet
+        // #8B5CF6: Luminous Amethyst Glow Accent
+        // #C4B5FD: Soft Frost Lilac Highlight
+        // #1D1530: Deep Slate Purple Neutral
         navy: {
-          950: '#0E0B1D',
-          900: '#16122C',
-          800: '#221A42',
-          750: '#2A1E4D',
-          700: '#3D2C6E',
-          600: '#5A3B8C',
+          950: '#030006',
+          900: '#080310',
+          850: '#0B0516',
+          800: '#0E071D',
+          750: '#150A2A',
+          700: '#231242',
+          600: '#7C3AED',
+          500: '#8B5CF6',
         },
         purple: {
-          950: '#0E0B1D',
-          900: '#181230',
-          800: '#2A1E4D',
-          700: '#3E2A68',
-          600: '#5A3B8C',
-          500: '#754EB5',
-          400: '#8B7CC7',
-          300: '#A99CD9',
-          200: '#C9C2E3',
-          100: '#E4DFFA',
+          950: '#030006',
+          900: '#080310',
+          800: '#0E071D',
+          700: '#1B0E36',
+          600: '#2D1554',
+          500: '#7C3AED',
+          400: '#8B5CF6',
+          300: '#A78BFA',
+          200: '#C4B5FD',
+          100: '#EDE9FE',
           50: '#F5F3FF',
         },
-        royal: '#5A3B8C', // Luxury electric neon purple (#5A3B8C)
-        sky: '#8B7CC7',   // Luminous soft lilac accent (#8B7CC7)
-        frost: '#C9C2E3', // Frost lavender highlight (#C9C2E3)
-        slatePurple: '#3A3A52', // Slate purple neutral (#3A3A52)
+        royal: '#7C3AED', // Luxury electric neon purple (#7C3AED)
+        sky: '#8B5CF6',   // Luminous soft lilac accent (#8B5CF6)
+        frost: '#C4B5FD', // Frost lavender highlight (#C4B5FD)
+        slatePurple: '#1D1530', // Slate purple neutral (#1D1530)
         gold: '#F5B301',  // Single golden accent
         'text-on-navy': '#FFFFFF',
-        'muted-on-navy': '#C9C2E3',
+        'muted-on-navy': '#C4B5FD',
         surface: {
           light: '#F8F6FF',
           card: '#FFFFFF',
-          border: '#C9C2E3',
+          border: '#C4B5FD',
         },
         liquid: {
-          obsidian: '#0E0B1D',
-          deep: '#2A1E4D',
-          royal: '#5A3B8C',
-          lavender: '#8B7CC7',
-          frost: '#C9C2E3',
-          slate: '#3A3A52',
+          obsidian: '#030006',
+          deep: '#080310',
+          royal: '#7C3AED',
+          lavender: '#8B5CF6',
+          frost: '#C4B5FD',
+          slate: '#1D1530',
         },
         brand: {
-          dark: '#0E0B1D',
-          navy: '#181230',
-          card: '#2A1E4D',
-          border: '#5A3B8C',
-          neon: '#8B7CC7',
-          electric: '#5A3B8C',
+          dark: '#030006',
+          navy: '#080310',
+          card: '#0E071D',
+          border: '#231242',
+          neon: '#8B5CF6',
+          electric: '#7C3AED',
           gold: '#F5B301',
           crimson: '#ef4444'
         }

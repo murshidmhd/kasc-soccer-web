@@ -128,6 +128,10 @@ export const teamNameToSlug = {
   'Malabar FC Kozhikode': 'malbar_fc_kozhikkode',
   'NEW MALAYA MALABAR FC': 'malbar_fc_kozhikkode',
   'New Malaya Malabar FC': 'malbar_fc_kozhikkode',
+  'NEW MALAYA MALABAR FC KOZHIKKODE': 'malbar_fc_kozhikkode',
+  'NEW MALAYALAM MALABAR FC KOZHIKODE': 'malbar_fc_kozhikkode',
+  'NEW MALAYALAM MALABAR FC': 'malbar_fc_kozhikkode',
+  'MALABAR FC': 'malbar_fc_kozhikkode',
   'NEW MALAYA FC': 'malbar_fc_kozhikkode',
   'New Malaya FC': 'malbar_fc_kozhikkode',
   'EDEX NEW MALAYA MALABAR FC': 'malbar_fc_kozhikkode',
@@ -161,6 +165,14 @@ export const teamNameToSlug = {
   // Seven Star FC Palakkad
   'SEVEN STAR FC PALAKKAD': 'seven_star_fc_palakkad',
   'Seven Star FC Palakkad': 'seven_star_fc_palakkad',
+  'SEVEN STAR': 'seven_star_fc_palakkad',
+  'SEVEN START': 'seven_star_fc_palakkad',
+  'SEVEN STAR FC': 'seven_star_fc_palakkad',
+  'SEVEN START FC': 'seven_star_fc_palakkad',
+  'SEVEN START FC PLAKAD': 'seven_star_fc_palakkad',
+  'SEVEN STAR FC PLAKAD': 'seven_star_fc_palakkad',
+  'SEVEN START FC PALAKKAD': 'seven_star_fc_palakkad',
+  'SEVEN STARS PALAKKAD': 'seven_star_fc_palakkad',
   'സെവൻ സ്റ്റാർ എഫ്.സി പാലക്കാട്': 'seven_star_fc_palakkad',
 
   // Real FC Thennala

@@ -290,26 +290,26 @@ export default function App() {
                 {/* 2. Official YouTube Live Stream & Replay Hub */}
                 <LiveViewingSection lang={lang} />
 
-                {/* 3. Today's & Upcoming Fixtures */}
+                {/* 3. Latest Finished Matches */}
                 <section className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-surface-border dark:border-navy-700">
                     <div className="flex items-center gap-2.5">
                       <div className="w-8 h-8 rounded-xl bg-navy-800 text-gold flex items-center justify-center font-bold shadow-xs">
-                        <Calendar className="w-4 h-4" />
+                        <Trophy className="w-4 h-4 text-gold" />
                       </div>
                       <div>
                         <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title leading-[1.3]">
-                          {lang === 'ml' ? 'ഇന്നത്തെ & വരാനിരിക്കുന്ന മത്സരങ്ങൾ' : "TODAY'S & UPCOMING FIXTURES"}
+                          {lang === 'ml' ? 'കഴിഞ്ഞ മത്സര ഫലങ്ങൾ' : "LATEST MATCH RESULTS"}
                         </h3>
                         <p className="text-xs text-card-muted font-medium leading-[1.5]">
-                          {lang === 'ml' ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം • രാത്രി 9:00 PM IST' : 'Peruvallur Panjayath Stadium • 9:00 PM IST'}
+                          {lang === 'ml' ? 'പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം • ഫൈനൽ സ്കോറുകൾ' : 'Peruvallur Panjayath Stadium • Full Time Results'}
                         </p>
                       </div>
                     </div>
 
                     <button
                       onClick={() => handleTabChange('fixtures')}
-                      className="self-start sm:self-auto min-h-touch px-3.5 py-2 rounded-xl bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700 text-royal dark:text-sky font-bold text-xs uppercase transition active:scale-95 flex items-center gap-1.5 shadow-xs"
+                      className="self-start sm:self-auto min-h-touch px-3.5 py-2 rounded-xl btn-navy-outline font-bold text-xs uppercase transition active:scale-95 flex items-center gap-1.5 shadow-xs"
                     >
                       <span>{lang === 'ml' ? 'മുഴുവൻ ഫിക്സ്ചറുകളും കാണുക' : 'View Full Schedule'}</span>
                       <span>→</span>
@@ -318,49 +318,42 @@ export default function App() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
                     {(() => {
-                      const confirmed = fixtures.filter((m) => m.confirmed);
-                      if (confirmed.length === 0) {
+                      const completed = fixtures.filter(
+                        (m) => m.confirmed && (m.status === 'Completed' || m.status === 'FULL_TIME')
+                      );
+                      const latestFinished = [...completed].reverse().slice(0, 3);
+
+                      if (latestFinished.length === 0) {
                         return (
                           <div className="col-span-full text-center py-8 px-4 rounded-2xl bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700">
                             <p className="text-xs sm:text-sm font-semibold text-card-title">
                               {lang === 'ml' 
-                                ? 'മത്സരങ്ങൾ ദിവസേന പ്രഖ്യാപിക്കുന്നതാണ്. ഓരോ മത്സര ദിവസത്തിനും ശേഷം വീണ്ടും പരിശോധിക്കുക.' 
-                                : 'Fixtures are announced daily. Check back after each match day.'}
+                                ? 'മത്സര ഫലങ്ങൾ ഉടൻ അപ്‌ഡേറ്റ് ചെയ്യും.' 
+                                : 'Match results will be updated soon.'}
                             </p>
                           </div>
                         );
                       }
-                      return confirmed.slice(0, 3).map((match) => {
+                      return latestFinished.map((match) => {
                         const isUdayaMatch = match.team1?.toUpperCase().includes('UDAYA') || match.team2?.toUpperCase().includes('UDAYA');
-                        const isNextMatch = match.id === 'm2' && match.status === 'Upcoming';
-                        const isMatchLive = match.status === 'LIVE';
-                        const shortTag = match.id === 'm1' 
-                          ? 'Opening Match'
-                          : 'Round 1';
+                        const isTeam1Winner = match.winner && match.team1 && match.winner.toUpperCase() === match.team1.toUpperCase();
+                        const isTeam2Winner = match.winner && match.team2 && match.winner.toUpperCase() === match.team2.toUpperCase();
 
                         return (
                           <div
                             key={match.id}
                             className={`rounded-2xl p-4 transition-all shadow-card ${
-                              isUdayaMatch ? 'border-l-4 border-l-purple-600' : ''
-                            } ${
-                              isNextMatch
-                                ? 'border-2 border-gold ring-1 ring-gold/40 bg-white dark:bg-navy-800'
-                                : 'bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700'
-                            }`}
+                              isUdayaMatch ? 'border-l-4 border-l-purple-500' : ''
+                            } bg-white dark:bg-navy-900 border border-surface-border dark:border-navy-700`}
                           >
                             {/* Header */}
                             <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-surface-border dark:border-navy-700 text-xs font-semibold">
                               <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
-                                  isNextMatch 
-                                    ? 'bg-gold text-navy-900' 
-                                    : 'bg-surface-light dark:bg-navy-700 text-card-title'
-                                }`}>
-                                  {shortTag}
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-surface-light dark:bg-navy-800 text-card-title border border-purple-500/20">
+                                  {match.stage || 'Pre-Quarter'}
                                 </span>
                                 {isUdayaMatch && (
-                                  <span className="px-1.5 py-0.5 rounded-md bg-purple-700 text-white text-[9px] font-black uppercase tracking-wider">
+                                  <span className="px-1.5 py-0.5 rounded-md bg-purple-600 text-white text-[9px] font-black uppercase tracking-wider">
                                     UDAYA
                                   </span>
                                 )}
@@ -370,51 +363,62 @@ export default function App() {
                               </span>
                             </div>
 
-                          {/* Teams */}
-                          <div className="space-y-2.5">
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <TeamLogo teamName={match.team1} size="sm" isDark={isDarkMode} />
-                                <span className="text-xs font-bold text-card-title line-clamp-2 leading-[1.3]">
-                                  {match.team1}
+                            {/* Teams & Scores */}
+                            <div className="space-y-2.5">
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <TeamLogo teamName={match.team1} size="sm" isDark={isDarkMode} />
+                                  <span className={`text-xs line-clamp-2 leading-[1.3] ${
+                                    isTeam1Winner ? 'font-black text-white' : 'font-bold text-card-title'
+                                  }`}>
+                                    {match.team1}
+                                  </span>
+                                </div>
+                                <span className={`text-sm font-black font-mono shrink-0 px-2 py-0.5 rounded-md ${
+                                  isTeam1Winner 
+                                    ? 'bg-purple-600/30 text-white border border-purple-500/40' 
+                                    : 'text-card-title'
+                                }`}>
+                                  {match.score1 !== null ? match.score1 : '-'}
                                 </span>
                               </div>
-                              <span className="text-xs font-black font-mono text-card-title shrink-0">
-                                {match.score1 !== null ? match.score1 : match.time}
-                              </span>
-                            </div>
 
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <TeamLogo teamName={match.team2} size="sm" isDark={isDarkMode} />
-                                <span className="text-xs font-bold text-card-title line-clamp-2 leading-[1.3]">
-                                  {match.team2}
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <TeamLogo teamName={match.team2} size="sm" isDark={isDarkMode} />
+                                  <span className={`text-xs line-clamp-2 leading-[1.3] ${
+                                    isTeam2Winner ? 'font-black text-white' : 'font-bold text-card-title'
+                                  }`}>
+                                    {match.team2}
+                                  </span>
+                                </div>
+                                <span className={`text-sm font-black font-mono shrink-0 px-2 py-0.5 rounded-md ${
+                                  isTeam2Winner 
+                                    ? 'bg-purple-600/30 text-white border border-purple-500/40' 
+                                    : 'text-card-title'
+                                }`}>
+                                  {match.score2 !== null ? match.score2 : '-'}
                                 </span>
                               </div>
-                              <span className="text-xs font-black font-mono text-card-title shrink-0">
-                                {match.score2 !== null ? match.score2 : match.time}
+                            </div>
+
+                            {/* Footer Status */}
+                            <div className="mt-3 pt-2 border-t border-surface-border dark:border-navy-700 flex items-center justify-between text-[11px]">
+                              <span className="inline-flex items-center gap-1.5 font-black uppercase text-emerald-400">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                {lang === 'ml' ? 'പൂർത്തിയായി' : 'Full Time'}
                               </span>
+                              {match.winner && (
+                                <span className="text-gold font-bold text-[11px] truncate flex items-center gap-1 max-w-[62%]">
+                                  <span>🏆</span>
+                                  <span className="truncate">{match.winner}</span>
+                                </span>
+                              )}
                             </div>
                           </div>
-
-                          {/* Footer Status */}
-                          <div className="mt-3 pt-2 border-t border-surface-border dark:border-navy-700 flex items-center justify-between text-[11px]">
-                            <span className={`inline-flex items-center gap-1 font-black uppercase ${
-                              isMatchLive 
-                                ? 'text-gold' 
-                                : isNextMatch 
-                                  ? 'text-gold' 
-                                  : 'text-card-muted'
-                            }`}>
-                              {isMatchLive && <span className="w-1.5 h-1.5 rounded-full bg-gold animate-ping"></span>}
-                              {isMatchLive ? 'LIVE' : (isNextMatch ? (lang === 'ml' ? 'അടുത്ത മത്സരം' : 'Next Match') : (lang === 'ml' ? 'വരാനിരിക്കുന്നു' : 'Upcoming'))}
-                            </span>
-                            <span className="text-card-muted font-mono">{match.time || '9:00 PM IST'}</span>
-                          </div>
-                        </div>
-                      );
-                    });
-                  })()}
+                        );
+                      });
+                    })()}
                   </div>
                 </section>
 
