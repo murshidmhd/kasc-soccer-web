@@ -139,10 +139,10 @@ export const fixtures = [
   },
   {
     id: "m5",
-    day: "Day 5",
+    day: "Pre-Quarter",
     date: "10 Nov 2026",
     time: "09:00 PM",
-    stage: "Round 1 (Match 5)",
+    stage: "Pre-Quarter (Round of 16)",
     team1: "SABAN FC KOTTAKKAL",
     team2: "SOCCER SPORTING SHORNUR",
     status: "Completed",
@@ -256,8 +256,8 @@ export const fixtures = [
   },
   {
     id: "pq-malabar",
-    day: "Pre-Quarter",
-    date: "22 Nov 2026",
+    day: "Pre-Quarter (Tonight's Clash)",
+    date: "21 Nov 2026",
     time: "09:00 PM",
     stage: "Pre-Quarter (Round of 16)",
     team1: "NEW MALAYA MALABAR FC",
@@ -352,8 +352,8 @@ export const lastMatchResult = {
 // Next upcoming match (Pre-Quarter: New Malaya Malabar FC vs Seven Star FC Palakkad)
 export const nextMatch = {
   id: "pq-malabar",
-  stage: "Pre-Quarter (Round of 16)",
-  date: "Sunday, 22 Nov 2026",
+  stage: "Pre-Quarter (Tonight's Clash)",
+  date: "Saturday, 21 Nov 2026",
   time: "9:00 PM IST",
   venue: "Peruvallur Panjayath Stadium",
   venueMl: "പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം, പറമ്പിൽ പീടിക",
