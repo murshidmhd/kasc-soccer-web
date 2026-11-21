@@ -28,20 +28,22 @@ export const DEFAULT_TOURNAMENT_SQUADS = {
     confirmedAt: '06 Nov 7:00 PM',
     formation: '2-2-2',
     starting: [
-      { num: 1, name: 'Jithin', pos: 'GK', captain: false, isGK: true, baseRating: 0.0 },
-      { num: 4, name: 'Midhun', pos: 'CB', captain: false, baseRating: 0.0 },
-      { num: 3, name: 'Rahul K.', pos: 'RB', captain: false, baseRating: 0.0 },
-      { num: 7, name: 'None', pos: 'CM', captain: false, photoUrl: '/players/krsc_mid_1.jpg', baseRating: 0.0 },
-      { num: 99, name: 'None', pos: 'CM', captain: false, photoUrl: '/players/krsc_mid_2.jpg', baseRating: 0.0 },
-      { num: 11, name: 'Arjun Jayaraj', displayName: 'Arjun Jayaraj', fullName: 'Arjun Jayaraj', pos: 'CF', captain: false, photoUrl: '/players/arjun_jayaraj.webp', baseRating: 0.0 },
-      { num: 10, name: 'Abdul Vahid C', displayName: 'Vahid C', pos: 'ST', captain: true, photoUrl: '/players/abdul_vahid.webp', baseRating: 0.0 }
+      { num: 1, name: 'Jithin', displayName: 'Jithin', fullName: 'Jithin', pos: 'GK', captain: false, isGK: true, baseRating: 7.2 },
+      { num: 4, name: 'Muhammad M', displayName: 'Muhammad M', fullName: 'Muhammad M', pos: 'CB', captain: false, baseRating: 7.5 },
+      { num: 3, name: 'Shafeel', displayName: 'Shafeel', fullName: 'Shafeel', pos: 'RB', captain: false, baseRating: 7.0 },
+      { num: 7, name: 'Akmal K.M', displayName: 'Akmal', fullName: 'Akmal K.M', pos: 'CM', captain: false, photoUrl: '/players/krsc_mid_1.jpg', baseRating: 7.2 },
+      { num: 14, name: 'Muhammed Dilshad', displayName: 'Dilshad', fullName: 'Muhammed Dilshad K.M', pos: 'CM', captain: false, photoUrl: '/players/krsc_mid_2.jpg', baseRating: 7.8 },
+      { num: 11, name: 'Arjun Jayaraj', displayName: 'Arjun Jayaraj', fullName: 'Arjun Jayaraj', pos: 'CF', captain: false, photoUrl: '/players/arjun_jayaraj.webp', baseRating: 7.6 },
+      { num: 10, name: 'Abdul Vahid C', displayName: 'Vahid C', pos: 'ST', captain: true, photoUrl: '/players/abdul_vahid.webp', baseRating: 7.4 }
     ],
     subs: [
-      { num: 14, name: 'Abhijith', pos: 'SUB', baseRating: 0.0 },
-      { num: 8, name: 'Vysakh', pos: 'SUB', baseRating: 0.0 },
-      { num: 15, name: 'Sarath', pos: 'SUB', baseRating: 0.0 },
-      { num: 18, name: 'Nithin', pos: 'SUB', baseRating: 0.0 },
-      { num: 0, name: 'None', pos: 'CF', baseRating: 0.0 }
+      { num: 15, name: 'Matti', displayName: 'Matti', fullName: 'Matti', pos: 'FWD', baseRating: 8.5 },
+      { num: 21, name: 'Dinkan', displayName: 'Dinkan (GK)', fullName: 'Dinkan krsc', pos: 'GK', isGK: true, baseRating: 8.0 },
+      { num: 8, name: 'Yaseen', displayName: 'Yaseen', fullName: 'Yaseen', pos: 'MID', baseRating: 7.0 },
+      { num: 5, name: 'Akhil P', displayName: 'Akhil', fullName: 'Akhil P', pos: 'DEF', baseRating: 7.0 },
+      { num: 6, name: 'Ajmal Fayis P', displayName: 'Ajmal Fayis', fullName: 'Ajmal Fayis P', pos: 'MID', baseRating: 7.0 },
+      { num: 2, name: 'Abinav A', displayName: 'Abinav', fullName: 'Abinav A', pos: 'DEF', baseRating: 6.8 },
+      { num: 17, name: 'Richu', displayName: 'Richu', fullName: 'Richu', pos: 'FWD', baseRating: 7.0 }
     ]
   },
   base: {
@@ -54,21 +56,23 @@ export const DEFAULT_TOURNAMENT_SQUADS = {
     confirmedAt: '06 Nov 7:00 PM',
     formation: '2-2-2',
     starting: [
-      { num: 1, name: 'Aneesh', pos: 'GK', captain: false, isGK: true, baseRating: 0.0 },
-      { num: 4, name: 'Sajad', fullName: 'Muhammed Sajad', displayName: 'Sajad', pos: 'CB', captain: false, photoUrl: '/players/muhammed_sajad.webp', baseRating: 0.0 },
-      { num: 5, name: 'Musthafa', pos: 'SW', captain: false, baseRating: 0.0 },
-      { num: 11, name: 'Ajmal', pos: 'CM', captain: false, baseRating: 0.0 },
-      { num: 7, name: 'Aju Ashi', pos: 'WF', captain: false, photoUrl: '/players/aju_ashi.webp', baseRating: 0.0 },
-      { num: 9, name: 'Fahad', pos: 'ST', captain: false, photoUrl: '/players/fahad.webp', baseRating: 0.0 },
-      { num: 10, name: 'Ashik Usman', pos: 'CF', captain: true, photoUrl: '/players/ashik_usman.webp', baseRating: 0.0 }
+      { num: 1, name: 'Aneesh', displayName: 'Aneesh', fullName: 'Aneesh', pos: 'GK', captain: false, isGK: true, baseRating: 7.0 },
+      { num: 4, name: 'Muhammed Sajad A', fullName: 'Muhammed Sajad A', displayName: 'Sajad', pos: 'CB', captain: false, photoUrl: '/players/muhammed_sajad.webp', baseRating: 7.0 },
+      { num: 5, name: 'Musthafa', displayName: 'Musthafa', fullName: 'Musthafa', pos: 'SW', captain: false, baseRating: 6.8 },
+      { num: 11, name: 'Ajmal', displayName: 'Ajmal', fullName: 'Ajmal', pos: 'CM', captain: false, baseRating: 7.0 },
+      { num: 7, name: 'Aju Ashi', displayName: 'Aju Ashi', fullName: 'Aju Ashi', pos: 'WF', captain: false, photoUrl: '/players/aju_ashi.webp', baseRating: 7.2 },
+      { num: 9, name: 'Fahad M.M', displayName: 'Fahad', fullName: 'Fahad M.M', pos: 'ST', captain: false, photoUrl: '/players/fahad.webp', baseRating: 7.1 },
+      { num: 10, name: 'Ashik Usman', displayName: 'Ashik Usman', fullName: 'Ashik Usman', pos: 'CF', captain: true, photoUrl: '/players/ashik_usman.webp', baseRating: 7.3 }
     ],
     subs: [
-      { num: 3, name: 'Ameer', pos: 'SUB', photoUrl: '/players/ameer.webp', baseRating: 0.0 },
-      { num: 22, name: 'Suhair', pos: 'SUB', baseRating: 0.0 },
-      { num: 6, name: 'Jameel', pos: 'SUB', baseRating: 0.0 },
-      { num: 8, name: 'Nabeel', pos: 'SUB', baseRating: 0.0 },
-      { num: 14, name: 'Nizar', pos: 'SUB', baseRating: 0.0 },
-      { num: 17, name: 'Ajmal Jr', pos: 'SUB', baseRating: 0.0 }
+      { num: 3, name: 'Ajay Alex', displayName: 'Ajay Alex', fullName: 'Ajay Alex', pos: 'DEF', photoUrl: '/players/ameer.webp', baseRating: 6.9 },
+      { num: 2, name: 'Pratheesh V.V', displayName: 'Pratheesh', fullName: 'Pratheesh V.V', pos: 'DEF', baseRating: 6.8 },
+      { num: 6, name: 'Sarath C.S', displayName: 'Sarath', fullName: 'Sarath C.S', pos: 'MID', baseRating: 6.8 },
+      { num: 8, name: 'Vaishakh Mohanan', displayName: 'Vaishakh', fullName: 'Vaishakh Mohanan', pos: 'MID', baseRating: 6.9 },
+      { num: 12, name: 'Thierry Jr', displayName: 'Thierry Jr', fullName: 'Thierry Jr', pos: 'FWD', baseRating: 7.0 },
+      { num: 14, name: 'Hassane', displayName: 'Hassane', fullName: 'Hassane', pos: 'FWD', baseRating: 7.0 },
+      { num: 15, name: 'Maji', displayName: 'Maji', fullName: 'Maji', pos: 'MID', baseRating: 6.8 },
+      { num: 18, name: 'Anychie', displayName: 'Anychie', fullName: 'Anychie', pos: 'FWD', baseRating: 7.0 }
     ]
   }
 };
@@ -90,58 +94,39 @@ function mergeSquadsWithDefaults(storedSquads) {
     const defaultByName = new Map(allDefaults.map((p) => [p.name?.toLowerCase().trim(), p]));
 
     const mergePlayerWithDefault = (player, match) => {
-      const isLegacyKrscNumberSeven = teamKey === 'krsc' && player.num === 7 && player.name === 'Favas';
-      const name = isLegacyKrscNumberSeven ? 'None' : (player.name || match.name);
-      const wasNameEdited = Boolean(player.adminModifiedName);
+      const isPlaceholder = !player.name || ['none', 'null', 'undefined', 'unknown', ''].includes(String(player.name).toLowerCase().trim());
+      const name = isPlaceholder ? (match?.name || 'Player') : player.name;
+      const displayName = isPlaceholder ? (match?.displayName || name) : (player.displayName || name);
+      const fullName = isPlaceholder ? (match?.fullName || name) : (player.fullName || name);
 
       return {
         ...player,
         name,
-        displayName: wasNameEdited
-          ? (player.displayName || name)
-          : isLegacyKrscNumberSeven
-            ? 'None'
-            : (player.displayName || match.displayName),
-        fullName: wasNameEdited
-          ? (player.fullName || name)
-          : isLegacyKrscNumberSeven
-            ? 'None'
-            : (player.fullName || match.fullName),
-        pos: player.pos || match.pos,
-        photoUrl: player.photoUrl || match.photoUrl
+        displayName,
+        fullName,
+        pos: player.pos || match?.pos || 'SUB',
+        photoUrl: player.photoUrl || match?.photoUrl,
+        baseRating: (Number(player.baseRating) > 0 && !isPlaceholder) ? Number(player.baseRating) : (match?.baseRating || 7.0)
       };
     };
 
-    // Enrich starting players with photoUrl, name, displayName, fullName, and pos
-    team.starting = (team.starting || defaultTeam.starting).map((p) => {
-      const match = defaultByNum.get(p.num) || defaultByName.get(p.name?.toLowerCase().trim());
-      if (match) {
+    // Enrich starting players
+    team.starting = (team.starting || defaultTeam.starting)
+      .filter((p) => p && !['none', 'null'].includes(String(p.name).toLowerCase().trim()) || defaultByNum.has(p.num))
+      .map((p) => {
+        const match = defaultByNum.get(p.num) || defaultByName.get(p.name?.toLowerCase().trim());
         return mergePlayerWithDefault(p, match);
-      }
-      return p;
-    });
-
-    // Move the new KRSC midfielder into the starting seven for existing saved lineups.
-    if (teamKey === 'krsc' && !team.starting.some((p) => p.num === 99)) {
-      const replacementIndex = team.starting.findIndex((p) => p.num === 8 || p.name?.toLowerCase().trim() === 'vysakh');
-      const newMidfielder = defaultTeam.starting.find((p) => p.num === 99);
-      if (replacementIndex !== -1 && newMidfielder) {
-        const displacedMidfielder = team.starting[replacementIndex];
-        team.starting[replacementIndex] = newMidfielder;
-        team.subs = [...(team.subs || []), { ...displacedMidfielder, pos: 'SUB' }];
-      }
-    }
+      });
 
     // Check subs: enrich existing subs and ensure all default subs exist
     const startingNums = new Set(team.starting.map((p) => p.num));
     const startingNames = new Set(team.starting.map((p) => p.name?.toLowerCase().trim()));
-    const subs = [...(team.subs || [])].map((s) => {
-      const match = defaultByNum.get(s.num) || defaultByName.get(s.name?.toLowerCase().trim());
-      if (match) {
+    const subs = [...(team.subs || [])]
+      .filter((s) => s && !['none', 'null'].includes(String(s.name).toLowerCase().trim()) || defaultByNum.has(s.num))
+      .map((s) => {
+        const match = defaultByNum.get(s.num) || defaultByName.get(s.name?.toLowerCase().trim());
         return mergePlayerWithDefault(s, match);
-      }
-      return s;
-    });
+      });
 
     const subNums = new Set(subs.map((s) => s.num));
     const subNames = new Set(subs.map((s) => s.name?.toLowerCase().trim()));

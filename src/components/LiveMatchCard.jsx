@@ -190,8 +190,8 @@ export default function LiveMatchCard({ lang, isDarkMode, onOpenAdminPanel }) {
 
     if (isOpeningFixture && hasYellowCardEvents) {
       events.push(
-        { id: 'opening-match-yellow-card-50', type: 'yellow_card', minute: 50, player: 'None', team: 'away', teamName: activeMatch.teamAway.name },
-        { id: 'opening-match-yellow-card-55', type: 'yellow_card', minute: 55, player: 'None', team: 'away', teamName: activeMatch.teamAway.name }
+        { id: 'opening-match-yellow-card-50', type: 'yellow_card', minute: 50, player: 'Muhammed Sajad A', team: 'away', teamName: activeMatch.teamAway.name },
+        { id: 'opening-match-yellow-card-55', type: 'yellow_card', minute: 55, player: 'Shafeel', team: 'home', teamName: activeMatch.teamHome.name }
       );
     }
 

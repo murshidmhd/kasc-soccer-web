@@ -19,8 +19,9 @@ import {
   X
 } from 'lucide-react';
 import TeamLogo from './TeamLogo';
-import { fixtures, tournamentInfo, officialTournamentGoalkeepers, officialTournamentGoalScorers } from '../data/tournamentData';
+import { fixtures, tournamentInfo, officialTournamentGoalkeepers, officialTournamentGoalScorers, participatingTeams } from '../data/tournamentData';
 import { squadPlayers, squadClubs, clubSquadStatus, squadClubLabelsMl } from '../data/squad';
+import sfaPlayersByTeam from '../data/sfa_players_by_team.json';
 import { getStoredMatchState } from '../utils/matchStateManager';
 import { calculateTournamentStats } from '../utils/statsCalculator';
 import { getPlayerDisciplinaryStatus } from '../utils/disciplinaryManager';
@@ -39,6 +40,7 @@ export default function TopScorers({ lang, isDarkMode }) {
   const [selectedCardPlayer, setSelectedCardPlayer] = useState(null);
   const [lineupTactics, setLineupTactics] = useState(getLineupTactics);
   const [showAllPerformance, setShowAllPerformance] = useState(false);
+  const [selectedStatsMatchId, setSelectedStatsMatchId] = useState('m1');
 
   // Sync matchState when referee desk updates goals or events
   useEffect(() => {
@@ -60,44 +62,243 @@ export default function TopScorers({ lang, isDarkMode }) {
     return calculateTournamentStats([], fixtures.filter((m) => m.confirmed), matchState);
   }, [matchState]);
 
+  const selectableMatches = useMemo(() => {
+    return fixtures.filter((f) => f.confirmed || f.status === 'Completed' || f.status === 'Live' || f.id === 'pq-malabar');
+  }, []);
+
+  const currentMatchFixture = useMemo(() => {
+    return fixtures.find((f) => f.id === selectedStatsMatchId) || fixtures[0];
+  }, [selectedStatsMatchId]);
+
   const matchdayPlayerStats = useMemo(() => {
-    const squadMap = lineupTactics?.squads || {};
-    const events = matchState?.events || [];
-    return ['krsc', 'base'].flatMap((teamKey) => {
-      const squad = squadMap[teamKey];
-      if (!squad) return [];
-      const teamName = squad.name;
-      const teamSide = teamKey === 'krsc' ? 'home' : 'away';
-      return [...(squad.starting || []), ...(squad.subs || [])].map((player) => {
-        const playerEvents = events.filter((event) => {
-          const sameTeam = event.teamName
-            ? event.teamName.trim().toLowerCase() === teamName.trim().toLowerCase()
-            : event.team === teamSide;
-          const eventHasNumber = event.playerNumber != null && String(event.playerNumber).trim() !== '';
-          const eventPlayerName = (event.player || '').trim().toLowerCase();
-          const squadPlayerName = (player.name || '').trim().toLowerCase();
-          const isPlaceholderName = (name) => ['none', 'null', 'undefined', 'unknown', 'unknown player', 'player', ''].includes(name);
-          const samePlayer = eventHasNumber
-            ? String(event.playerNumber).trim() === String(player.num).trim()
-            : !isPlaceholderName(eventPlayerName) && !isPlaceholderName(squadPlayerName) && eventPlayerName === squadPlayerName;
-          return sameTeam && samePlayer;
-        });
-        return {
-          key: `${teamKey}-${player.num}`,
-          name: player.displayName || player.name || 'None',
-          number: player.num,
-          position: player.pos || '—',
-          team: teamName,
-          photoUrl: player.photoUrl,
-          rating: Number(player.baseRating) || 0,
-          goals: playerEvents.filter((event) => event.type === 'goal' && !event.isOwnGoal && !event.isShootout).length,
-          yellowCards: playerEvents.filter((event) => event.type === 'yellow_card').length,
-          redCards: playerEvents.filter((event) => event.type === 'red_card').length,
-          isStarter: (squad.starting || []).some((starter) => Number(starter.num) === Number(player.num))
-        };
+    const fixture = currentMatchFixture;
+    if (!fixture) return [];
+
+    const isLiveMatch = matchState?.matchId === fixture.id;
+    const events = [...(fixture.events || []), ...(isLiveMatch ? (matchState?.events || []) : [])];
+    const motm = fixture.motm || '';
+
+    // Helper to find SFA club id
+    const findSfaId = (teamName) => {
+      if (!teamName) return null;
+      const lower = teamName.toLowerCase().trim();
+      const club = participatingTeams.find((c) => {
+        const cName = (c.name || '').toLowerCase().trim();
+        return cName === lower || cName.includes(lower) || lower.includes(cName);
       });
-    }).sort((a, b) => b.goals - a.goals || b.rating - a.rating || Number(b.isStarter) - Number(a.isStarter) || a.name.localeCompare(b.name));
-  }, [lineupTactics, matchState]);
+      return club?.sfaTeamId || null;
+    };
+
+    const team1Name = fixture.team1;
+    const team2Name = fixture.team2;
+    const team1Id = findSfaId(team1Name);
+    const team2Id = findSfaId(team2Name);
+
+    const winnerName = fixture.winner || (fixture.score1 > fixture.score2 ? team1Name : fixture.score2 > fixture.score1 ? team2Name : null);
+
+    // Build player array for both teams
+    const playersList = [];
+    const squadMap = lineupTactics?.squads || {};
+
+    const addTeamPlayers = (teamName, sfaId, isTeam1) => {
+      if (!teamName) return;
+      const isWinner = winnerName && teamName && winnerName.toLowerCase().includes(teamName.toLowerCase());
+      const lower = teamName.toLowerCase();
+
+      // If KRSC
+      if (lower.includes('krsc') && squadMap.krsc) {
+        const squad = squadMap.krsc;
+        const all = [...(squad.starting || []), ...(squad.subs || [])];
+        all.forEach((p) => {
+          const isStarter = (squad.starting || []).some((s) => s.num === p.num);
+          const pName = p.displayName || p.name;
+          if (pName && !['none', 'null'].includes(pName.toLowerCase())) {
+            playersList.push({
+              key: `krsc-${p.num}`,
+              name: pName,
+              number: p.num,
+              position: p.pos || (isStarter ? 'XI' : 'SUB'),
+              team: teamName,
+              photoUrl: p.photoUrl,
+              baseRating: Number(p.baseRating) || 7.0,
+              isStarter,
+              isWinner
+            });
+          }
+        });
+        return;
+      }
+
+      // If Base Perumbavur
+      if (lower.includes('base') && squadMap.base) {
+        const squad = squadMap.base;
+        const all = [...(squad.starting || []), ...(squad.subs || [])];
+        all.forEach((p) => {
+          const isStarter = (squad.starting || []).some((s) => s.num === p.num);
+          const pName = p.displayName || p.name;
+          if (pName && !['none', 'null'].includes(pName.toLowerCase())) {
+            playersList.push({
+              key: `base-${p.num}`,
+              name: pName,
+              number: p.num,
+              position: p.pos || (isStarter ? 'XI' : 'SUB'),
+              team: teamName,
+              photoUrl: p.photoUrl,
+              baseRating: Number(p.baseRating) || 7.0,
+              isStarter,
+              isWinner
+            });
+          }
+        });
+        return;
+      }
+
+      // From SFA database
+      const sfaPlayers = (sfaId && sfaPlayersByTeam[String(sfaId)]) || [];
+      if (sfaPlayers.length > 0) {
+        sfaPlayers.slice(0, 14).forEach((p, idx) => {
+          const num = p.jersey_number || (idx + 1);
+          playersList.push({
+            key: `sfa-${sfaId}-${p.id || idx}`,
+            name: p.name || `Player ${num}`,
+            number: num,
+            position: p.position || (idx < 7 ? 'XI' : 'SUB'),
+            team: teamName,
+            photoUrl: p.image_url && !p.image_url.includes('default') ? p.image_url : null,
+            baseRating: 7.0,
+            isStarter: idx < 7,
+            isWinner
+          });
+        });
+      } else {
+        // Fallback squad players from squad.js matching club
+        const fallback = squadPlayers.filter((p) => p.club && p.club.toLowerCase().includes(teamName.toLowerCase()));
+        if (fallback.length > 0) {
+          fallback.forEach((p, idx) => {
+            playersList.push({
+              key: `fallback-${p.id || idx}`,
+              name: p.name,
+              number: p.number || (idx + 1),
+              position: p.position || 'XI',
+              team: teamName,
+              photoUrl: p.posterUrl,
+              baseRating: 7.0,
+              isStarter: idx < 7,
+              isWinner
+            });
+          });
+        }
+      }
+    };
+
+    addTeamPlayers(team1Name, team1Id, true);
+    addTeamPlayers(team2Name, team2Id, false);
+
+    // Make sure any player in events (goals/cards) or MOTM is in playersList
+    events.forEach((ev) => {
+      const evName = (ev.player || '').trim();
+      if (!evName || ['none', 'null', 'unknown'].includes(evName.toLowerCase())) return;
+      const exists = playersList.some((p) => p.name.toLowerCase().includes(evName.toLowerCase()) || evName.toLowerCase().includes(p.name.toLowerCase()));
+      if (!exists) {
+        playersList.push({
+          key: `ev-${evName}`,
+          name: evName,
+          number: ev.playerNumber || 10,
+          position: ev.type === 'goal' ? 'FWD' : 'MID',
+          team: ev.team || team1Name,
+          photoUrl: null,
+          baseRating: 7.5,
+          isStarter: true,
+          isWinner: winnerName && ev.team ? winnerName.toLowerCase().includes(ev.team.toLowerCase()) : false
+        });
+      }
+    });
+
+    if (motm) {
+      const motmPlayerName = motm.split('(')[0].trim();
+      if (motmPlayerName && !['none', 'null', 'unknown'].includes(motmPlayerName.toLowerCase())) {
+        const exists = playersList.some((p) => p.name.toLowerCase().includes(motmPlayerName.toLowerCase()) || motmPlayerName.toLowerCase().includes(p.name.toLowerCase()));
+        if (!exists) {
+          playersList.push({
+            key: `motm-${motmPlayerName}`,
+            name: motmPlayerName,
+            number: 10,
+            position: 'FWD',
+            team: team1Name,
+            photoUrl: null,
+            baseRating: 8.5,
+            isStarter: true,
+            isWinner: true
+          });
+        }
+      }
+    }
+
+    // Now calculate goals, cards, and realistic rating for each player
+    const processed = playersList.map((player) => {
+      const pName = (player.name || '').trim().toLowerCase();
+      const pNum = String(player.number || '');
+
+      const playerEvents = events.filter((ev) => {
+        const evName = (ev.player || '').trim().toLowerCase();
+        const evNum = ev.playerNumber != null ? String(ev.playerNumber) : '';
+        const sameNum = evNum && evNum === pNum;
+        const sameName = evName && (evName === pName || pName.includes(evName) || evName.includes(pName));
+        return sameNum || sameName;
+      });
+
+      const goals = playerEvents.filter((e) => e.type === 'goal' && !e.isOwnGoal).length;
+      const yellowCards = playerEvents.filter((e) => e.type === 'yellow_card').length;
+      const redCards = playerEvents.filter((e) => e.type === 'red_card').length;
+
+      const isMotm = Boolean(motm && (motm.toLowerCase().includes(pName) || (pName.length > 3 && motm.toLowerCase().includes(pName.slice(0, 4)))));
+
+      // Calculate realistic match rating
+      let rating = player.baseRating || 6.8;
+      if (player.isStarter) rating += 0.3;
+      if (player.isWinner) rating += 0.4;
+      rating += goals * 1.4;
+      if (isMotm) rating = Math.max(rating + 1.2, 9.6);
+      rating -= yellowCards * 0.5;
+      rating -= redCards * 1.5;
+
+      // Clean name: never "None"
+      let cleanName = player.name;
+      if (!cleanName || ['none', 'null', 'undefined', 'unknown'].includes(cleanName.toLowerCase())) {
+        cleanName = `Player #${player.number}`;
+      }
+
+      return {
+        ...player,
+        name: cleanName,
+        goals,
+        yellowCards,
+        redCards,
+        isMotm,
+        rating: Math.min(Math.max(rating, 6.0), 9.9)
+      };
+    });
+
+    // Deduplicate by name + team
+    const seen = new Set();
+    const unique = [];
+    for (const p of processed) {
+      const key = `${p.team}-${p.name.toLowerCase()}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        unique.push(p);
+      }
+    }
+
+    // Sort: MOTM first, then goals desc, then rating desc, then cards
+    return unique.sort((a, b) => {
+      if (a.isMotm && !b.isMotm) return -1;
+      if (!a.isMotm && b.isMotm) return 1;
+      if (b.goals !== a.goals) return b.goals - a.goals;
+      if (b.rating !== a.rating) return b.rating - a.rating;
+      return (b.yellowCards + b.redCards) - (a.yellowCards + a.redCards);
+    });
+  }, [currentMatchFixture, lineupTactics, matchState]);
 
   // Check if a final match is finished to display the tournament champion
   const finalMatch = useMemo(() => {
@@ -250,41 +451,164 @@ export default function TopScorers({ lang, isDarkMode }) {
       </div>
 
       {activeStatsTab === 'players' && (
-        <section className="rounded-3xl p-4 sm:p-5 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-3">
+        <section className="rounded-3xl p-4 sm:p-5 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-3.5">
+          {/* Header */}
           <div className="flex items-center justify-between gap-2 border-b border-surface-border dark:border-navy-700 pb-3">
             <div className="min-w-0">
               <h3 className="text-sm font-black font-sports uppercase tracking-wider text-card-title">
-                {lang === 'ml' ? 'Match Player Stats' : 'MATCH PLAYER STATS'}
+                {lang === 'ml' ? 'മാച്ച് പ്ലെയർ സ്റ്റാറ്റ്സ് & റേറ്റിംഗ്' : 'MATCH PLAYER STATS'}
               </h3>
-              <p className="text-[10px] text-card-muted">KRSC & BASE · Goals, cards and lineup rating</p>
+              <p className="text-[10px] text-card-muted">
+                {currentMatchFixture ? `${currentMatchFixture.team1} vs ${currentMatchFixture.team2}` : 'Goals, cards and performance ratings'}
+              </p>
             </div>
             <span className="shrink-0 px-2 py-1 rounded-lg bg-surface-light dark:bg-navy-800 text-[10px] font-bold text-card-muted">
-              {matchdayPlayerStats.length} players
+              {matchdayPlayerStats.length} {lang === 'ml' ? 'താരങ്ങൾ' : 'players'}
             </span>
           </div>
 
+          {/* Matchday Selector Chips */}
+          <div className="flex items-center gap-1.5 overflow-x-auto horizontal-scroll-container pb-1 pt-0.5 -mx-1 px-1">
+            {selectableMatches.map((m, idx) => {
+              const isSelected = selectedStatsMatchId === m.id || (!selectedStatsMatchId && idx === 0);
+              const t1Short = (m.team1 || '').split(' ')[0];
+              const t2Short = (m.team2 || '').split(' ')[0];
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => {
+                    setSelectedStatsMatchId(m.id);
+                    setShowAllPerformance(false);
+                  }}
+                  className={`min-h-[34px] px-2.5 py-1 rounded-xl text-[11px] font-bold shrink-0 transition active:scale-95 flex items-center gap-1.5 ${
+                    isSelected
+                      ? 'btn-royal text-white font-black shadow-xs'
+                      : 'surface-light text-card-title border border-surface-border dark:border-navy-700 hover:border-royal/50'
+                  }`}
+                >
+                  <span className="font-sports font-black">M{idx + 1}</span>
+                  <span className="text-[10px] text-card-muted truncate max-w-[85px]">{t1Short} vs {t2Short}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Selected Match Overview Banner */}
+          {currentMatchFixture && (
+            <div className="p-3 rounded-2xl bg-surface-light dark:bg-navy-800/60 border border-surface-border dark:border-navy-700/80 space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex items-center -space-x-2 shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-white p-0.5 border border-surface-border shadow-2xs z-10">
+                      <TeamLogo teamName={currentMatchFixture.team1} className="w-full h-full object-contain" />
+                    </div>
+                    <div className="w-7 h-7 rounded-full bg-white p-0.5 border border-surface-border shadow-2xs">
+                      <TeamLogo teamName={currentMatchFixture.team2} className="w-full h-full object-contain" />
+                    </div>
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-black font-sports text-card-title truncate">
+                      {currentMatchFixture.team1} vs {currentMatchFixture.team2}
+                    </h4>
+                    <p className="text-[10px] text-card-muted font-medium">
+                      {currentMatchFixture.date} • {currentMatchFixture.time || '9:00 PM'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-xs font-mono font-black text-card-title px-2 py-0.5 rounded-lg bg-surface-card border border-surface-border">
+                    {currentMatchFixture.score1 != null && currentMatchFixture.score2 != null
+                      ? `${currentMatchFixture.score1} - ${currentMatchFixture.score2}${currentMatchFixture.penaltyScore ? ` (${currentMatchFixture.penaltyScore})` : ''}`
+                      : 'Upcoming'}
+                  </span>
+                  <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    currentMatchFixture.status === 'Completed' || (currentMatchFixture.score1 != null && currentMatchFixture.score2 != null)
+                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                      : 'bg-surface-subtle text-card-muted border border-surface-border'
+                  }`}>
+                    {currentMatchFixture.status === 'Completed' ? 'FT' : currentMatchFixture.status || 'FT'}
+                  </span>
+                </div>
+              </div>
+
+              {currentMatchFixture.motm && (
+                <div className="flex items-center gap-1.5 pt-1.5 border-t border-surface-border/60 dark:border-navy-700/60 text-[11px] text-gold font-bold">
+                  <span>🏆</span>
+                  <span className="font-sports uppercase text-[10px] text-card-muted">Man of the Match:</span>
+                  <span className="truncate">{currentMatchFixture.motm}</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Player Cards */}
           <div className="space-y-1.5">
             {(showAllPerformance ? matchdayPlayerStats : matchdayPlayerStats.slice(0, 6)).map((player) => (
-              <div key={player.key} className="flex items-center gap-2.5 p-2 rounded-xl surface-light border border-surface-border dark:border-navy-700 min-w-0">
+              <div 
+                key={player.key || `${player.team}-${player.number}-${player.name}`} 
+                className={`flex items-center gap-2.5 p-2 rounded-xl surface-light border transition min-w-0 ${
+                  player.isMotm 
+                    ? 'border-amber-500/60 bg-amber-500/5 shadow-2xs' 
+                    : 'border-surface-border dark:border-navy-700'
+                }`}
+              >
                 <div className="relative w-9 h-9 rounded-full bg-white border border-surface-border dark:border-navy-700 overflow-hidden shrink-0 flex items-center justify-center">
-                  {player.photoUrl ? <img src={player.photoUrl} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <TeamLogo teamName={player.team} className="w-6 h-6 object-contain" />}
+                  {player.photoUrl ? (
+                    <img 
+                      src={player.photoUrl} 
+                      alt="" 
+                      className="w-full h-full object-cover" 
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }} 
+                    />
+                  ) : (
+                    <TeamLogo teamName={player.team} className="w-6 h-6 object-contain" />
+                  )}
+                  {player.isMotm && (
+                    <span className="absolute -top-1 -right-1 text-[10px]">👑</span>
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-card-title truncate">#{player.number} {player.name}</p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs font-bold text-card-title truncate">#{player.number} {player.name}</p>
+                    {player.isMotm && (
+                      <span className="px-1.5 py-0.2 rounded text-[8px] font-black bg-amber-500 text-navy-950 uppercase tracking-wider shrink-0 shadow-2xs">
+                        MOTM
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[9px] text-card-muted truncate">{player.team} · {player.position}{player.isStarter ? ' · XI' : ' · SUB'}</p>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0 text-[10px] font-black">
-                  <span className="px-1.5 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-300">⚽ {player.goals}</span>
-                  <span className="px-1.5 py-1 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-300">🟨 {player.yellowCards}</span>
-                  <span className="px-1.5 py-1 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-300">🟥 {player.redCards}</span>
-                  <span title="Lineup rating" className="w-10 text-center px-1 py-1 rounded-md bg-sky-500/10 text-sky-700 dark:text-sky-300">⭐ {player.rating.toFixed(1)}</span>
+                  <span className={`px-1.5 py-1 rounded-md ${player.goals > 0 ? 'bg-emerald-500/20 text-emerald-500 font-black' : 'bg-surface-card text-card-muted'}`}>
+                    ⚽ {player.goals}
+                  </span>
+                  <span className={`px-1.5 py-1 rounded-md ${player.yellowCards > 0 ? 'bg-amber-500/20 text-amber-500 font-black' : 'bg-surface-card text-card-muted'}`}>
+                    🟨 {player.yellowCards}
+                  </span>
+                  <span className={`px-1.5 py-1 rounded-md ${player.redCards > 0 ? 'bg-rose-500/20 text-rose-500 font-black' : 'bg-surface-card text-card-muted'}`}>
+                    🟥 {player.redCards}
+                  </span>
+                  <span title="Lineup rating" className={`w-11 text-center px-1 py-1 rounded-md ${
+                    player.isMotm 
+                      ? 'bg-amber-500/20 text-amber-500 font-black ring-1 ring-amber-500/40' 
+                      : 'bg-sky-500/10 text-sky-700 dark:text-sky-300'
+                  }`}>
+                    ⭐ {player.rating.toFixed(1)}
+                  </span>
                 </div>
               </div>
             ))}
           </div>
+
           {matchdayPlayerStats.length > 6 && (
-            <button type="button" onClick={() => setShowAllPerformance((value) => !value)} className="w-full min-h-10 rounded-xl bg-surface-light dark:bg-navy-800 text-xs font-bold text-royal dark:text-sky">
-              {showAllPerformance ? (lang === 'ml' ? 'കുറച്ച് കാണിക്കുക' : 'Show less') : (lang === 'ml' ? 'എല്ലാ താരങ്ങളെയും കാണുക' : 'Show all match players')}
+            <button 
+              type="button" 
+              onClick={() => setShowAllPerformance((value) => !value)} 
+              className="w-full min-h-10 rounded-xl bg-surface-light dark:bg-navy-800 text-xs font-bold text-royal dark:text-sky hover:bg-surface-subtle transition"
+            >
+              {showAllPerformance 
+                ? (lang === 'ml' ? 'കുറച്ച് കാണിക്കുക' : 'Show less') 
+                : (lang === 'ml' ? `എല്ലാ താരങ്ങളെയും കാണുക (${matchdayPlayerStats.length})` : `Show all match players (${matchdayPlayerStats.length})`)}
             </button>
           )}
         </section>
