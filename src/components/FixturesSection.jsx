@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, Suspense, lazy } from 'react';
-import { Calendar, Clock, MapPin, Trophy, ListFilter, CheckCircle2, ChevronDown, ChevronUp, Image as ImageIcon } from 'lucide-react';
+import { Calendar, Clock, MapPin, Trophy, ListFilter, CheckCircle2, ChevronDown, ChevronUp, Image as ImageIcon, Star } from 'lucide-react';
 import { getStoredFixtures } from '../utils/fixtureManager';
 import TeamLogo from './TeamLogo';
 
@@ -295,6 +295,11 @@ export default function FixturesSection({ lang, isDarkMode }) {
                                   <span className="text-xl sm:text-2xl font-black font-sports text-card-title tracking-wider">
                                     {score1 ?? 0} <span className="text-card-muted font-normal">–</span> {score2 ?? 0}
                                   </span>
+                                  {match.penaltyScore && (
+                                    <span className="block text-[10px] font-bold text-amber-400 font-mono">
+                                      {match.penaltyScore}
+                                    </span>
+                                  )}
                                   {isCompleted && winnerName && (
                                     <span className="block text-[9px] font-bold uppercase tracking-wider text-emerald-400">
                                       Won
@@ -339,6 +344,39 @@ export default function FixturesSection({ lang, isDarkMode }) {
                               <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 font-bold flex items-center gap-2">
                                 <Trophy className="w-4 h-4 text-gold shrink-0" />
                                 <span>Winner: <strong className="text-white">{winnerName}</strong></span>
+                              </div>
+                            )}
+
+                            {match.motm && (
+                              <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 font-medium flex items-center justify-between text-xs">
+                                <span className="flex items-center gap-1.5">
+                                  <Star className="w-3.5 h-3.5 text-gold shrink-0 fill-gold" />
+                                  <span>Player of the Match:</span>
+                                </span>
+                                <strong className="text-white">{match.motm}</strong>
+                              </div>
+                            )}
+
+                            {match.events && match.events.length > 0 && (
+                              <div className="p-2.5 rounded-xl bg-slate-900/50 border border-slate-700/60 space-y-2">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-card-muted block">Official Match Events</span>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {match.events.map((ev, i) => (
+                                    <span 
+                                      key={i} 
+                                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium border ${
+                                        ev.type === 'goal'
+                                          ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+                                          : ev.type === 'red_card'
+                                            ? 'bg-red-500/15 text-red-300 border-red-500/40'
+                                            : 'bg-yellow-500/10 text-yellow-300 border-yellow-500/30'
+                                      }`}
+                                    >
+                                      {ev.type === 'goal' ? '⚽' : ev.type === 'red_card' ? '🟥' : '🟨'}
+                                      {ev.minute && ev.minute !== 30 ? `${ev.minute}' ` : ''}{ev.player}
+                                    </span>
+                                  ))}
+                                </div>
                               </div>
                             )}
 

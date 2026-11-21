@@ -28,7 +28,7 @@ export const SEEDED_PRE_QUARTERS = [
 
 // Dynamically compute bracket data from current tournament fixtures
 export const getBracketData = (fixturesList = fixtures) => {
-  const round1Matches = fixturesList.filter((f) => ['m1','r1-kmg-perinthalmanna','m3','r1-x8-ayc','r1-saban-townteam','r1-united-abilash','m6','m7','m9'].includes(f.id) || (f.stage?.includes('Round 1') && !f.stage?.includes('Pre-Quarter')));
+  const round1Matches = fixturesList.filter((f) => ['m1','m2','r1-x8-ayc','r1-saban-townteam','r1-united-abilash','m6','m7','m9'].includes(f.id) || (f.stage?.includes('Round 1') && !f.stage?.includes('Pre-Quarter')));
   const round1 = round1Matches.map((f, i) => {
     const winner = f.winner || (f.confirmed && Number.isFinite(f.score1) && Number.isFinite(f.score2)
       ? f.score1 === f.score2 ? null : f.score1 > f.score2 ? f.team1 : f.team2
@@ -49,7 +49,7 @@ export const getBracketData = (fixturesList = fixtures) => {
   });
 
   // Pre-Quarters (Round of 16)
-  const preQuarterMatches = fixturesList.filter((f) => ['m2', 'm4', 'm5', 'm8', 'pq-krsc-madina', 'pq-udaya', 'pq-malabar'].includes(f.id) || (f.stage?.includes('Pre-Quarter') && !['m1','r1-kmg-perinthalmanna','m3','r1-x8-ayc','r1-saban-townteam','r1-united-abilash','m6','m7','m9'].includes(f.id)));
+  const preQuarterMatches = fixturesList.filter((f) => ['m8', 'r1-kmg-perinthalmanna', 'pq-krsc-madina', 'm5', 'm4', 'm3', 'pq-udaya', 'pq-malabar'].includes(f.id) || (f.stage?.includes('Pre-Quarter') && !['m1','m2','r1-x8-ayc','r1-saban-townteam','r1-united-abilash','m6','m7','m9'].includes(f.id)));
   const preQuarters = preQuarterMatches.map((f, i) => {
     const winner = f.winner || (f.confirmed && Number.isFinite(f.score1) && Number.isFinite(f.score2)
       ? f.score1 === f.score2 ? null : f.score1 > f.score2 ? f.team1 : f.team2

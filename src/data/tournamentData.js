@@ -69,37 +69,24 @@ export const fixtures = [
     score2: 0,
     confirmed: true,
     badge1Color: "from-amber-500 to-red-800",
-    badge2Color: "from-zinc-800 to-black",
+    badge2Color: "from-blue-600 to-indigo-900",
     stadium: "Peruvallur Panjayath Stadium",
     winner: "KRSC KOZHIKKODE",
-    motm: "Matti",
-    motmTeam: "KRSC KOZHIKKODE",
+    motm: "Matti (KRSC Kozhikkode)",
     winnerPosterUrl: "/match1_winner_poster.jpg",
-    motmPosterUrl: "/match1_motm_matti.jpg"
-  },
-  {
-    id: "r1-kmg-perinthalmanna",
-    day: "Round 1",
-    date: "07 Nov 2026",
-    time: "09:00 PM",
-    stage: "Round 1 (First Round)",
-    team1: "KMG MAVOOR",
-    team2: "FC PERINTHALMANNA",
-    status: "Completed",
-    score1: 2,
-    score2: 0,
-    confirmed: true,
-    badge1Color: "from-green-700 to-emerald-950",
-    badge2Color: "from-red-600 to-indigo-900",
-    stadium: "Peruvallur Panjayath Stadium",
-    winner: "KMG MAVOOR"
+    motmPosterUrl: "/match1_motm_matti.jpg",
+    events: [
+      { type: "goal", minute: 48, player: "Matti", team: "KRSC KOZHIKKODE" },
+      { type: "yellow_card", minute: 30, player: "Muhammed Sajad A", team: "BASE PERUMBAVUR" },
+      { type: "yellow_card", minute: 30, player: "Shafeel", team: "KRSC KOZHIKKODE" }
+    ]
   },
   {
     id: "m2",
     day: "Day 2",
     date: "07 Nov 2026",
     time: "09:00 PM",
-    stage: "Pre-Quarter (Round of 16)",
+    stage: "Round 1 (Match 2)",
     team1: "KMG MAVOOR",
     team2: "SHOOTERS PADANNA",
     status: "Completed",
@@ -110,32 +97,18 @@ export const fixtures = [
     badge2Color: "from-emerald-500 to-green-950",
     stadium: "Peruvallur Panjayath Stadium",
     winner: "KMG MAVOOR",
-    winnerPosterUrl: "/results/match2_kmg_vs_shooters.jpg"
-  },
-  {
-    id: "m3",
-    day: "Day 3",
-    date: "08 Nov 2026",
-    time: "09:00 PM",
-    stage: "Round 1 (Match 3)",
-    team1: "LINSHA MEDICALS MANNARKKAD",
-    team2: "HUNTERS KOOTHUPARAMBU",
-    status: "Completed",
-    score1: 0,
-    score2: 0,
-    penaltyScore: "Won by Penalty",
-    confirmed: true,
-    badge1Color: "from-emerald-600 to-teal-900",
-    badge2Color: "from-zinc-900 to-black",
-    stadium: "Peruvallur Panjayath Stadium",
-    winner: "LINSHA MEDICALS MANNARKKAD",
-    winnerPosterUrl: "/results/match_linsha_vs_hunters.png",
-    motm: "Ajmal & Nikhil",
-    motmPosterUrl: "/results/potm_ajmal.png"
+    motm: "Mohammed Arshad (KMG Mavoor)",
+    winnerPosterUrl: "/results/match2_kmg_vs_shooters.jpg",
+    events: [
+      { type: "goal", minute: 10, player: "Asharudeen", team: "KMG MAVOOR" },
+      { type: "goal", minute: 12, player: "Akash", team: "SHOOTERS PADANNA" },
+      { type: "goal", minute: 36, player: "Razi", team: "KMG MAVOOR" },
+      { type: "goal", minute: 39, player: "Asif", team: "KMG MAVOOR" }
+    ]
   },
   {
     id: "r1-x8-ayc",
-    day: "Round 1",
+    day: "Day 3",
     date: "08 Nov 2026",
     time: "09:00 PM",
     stage: "Round 1 (First Round)",
@@ -149,11 +122,19 @@ export const fixtures = [
     badge2Color: "from-cyan-600 to-blue-950",
     stadium: "Peruvallur Panjayath Stadium",
     winner: "X8 TOURS CALICUT",
-    winnerPosterUrl: "/results/match3_x8_vs_ayc.jpg"
+    motm: "Asif (X8 Tours Calicut)",
+    winnerPosterUrl: "/results/match3_x8_vs_ayc.jpg",
+    events: [
+      { type: "goal", minute: 10, player: "Faisal", team: "X8 TOURS CALICUT" },
+      { type: "goal", minute: 28, player: "Asif", team: "X8 TOURS CALICUT" },
+      { type: "goal", minute: 59, player: "Sreejith", team: "AYC UCHARAKADAVU" },
+      { type: "yellow_card", minute: 30, player: "Mohammed sabith ck", team: "AYC UCHARAKADAVU" },
+      { type: "yellow_card", minute: 30, player: "Asif", team: "X8 TOURS CALICUT" }
+    ]
   },
   {
     id: "r1-saban-townteam",
-    day: "Round 1",
+    day: "Day 4",
     date: "09 Nov 2026",
     time: "09:00 PM",
     stage: "Round 1 (First Round)",
@@ -167,11 +148,19 @@ export const fixtures = [
     badge2Color: "from-sky-600 to-blue-950",
     stadium: "Peruvallur Panjayath Stadium",
     winner: "SABAN FC KOTTAKKAL",
-    winnerPosterUrl: "/results/match4_saban_vs_townteam.jpg"
+    motm: "Dosso (Saban FC Kottakkal)",
+    winnerPosterUrl: "/results/match4_saban_vs_townteam.jpg",
+    events: [
+      { type: "goal", minute: 19, player: "Dosso", team: "SABAN FC KOTTAKKAL" },
+      { type: "goal", minute: 49, player: "Ssali Brian", team: "SABAN FC KOTTAKKAL" },
+      { type: "goal", minute: 53, player: "Dosso", team: "SABAN FC KOTTAKKAL" },
+      { type: "goal", minute: 56, player: "Dosso", team: "SABAN FC KOTTAKKAL" },
+      { type: "yellow_card", minute: 30, player: "Ssali Brian", team: "SABAN FC KOTTAKKAL" }
+    ]
   },
   {
     id: "r1-united-abilash",
-    day: "Round 1",
+    day: "Day 5",
     date: "10 Nov 2026",
     time: "09:00 PM",
     stage: "Round 1 (First Round)",
@@ -185,47 +174,13 @@ export const fixtures = [
     badge2Color: "from-blue-700 to-indigo-950",
     stadium: "Peruvallur Panjayath Stadium",
     winner: "UNITED FC NELLIKKUTH",
-    winnerPosterUrl: "/results/match5_abhilash_vs_united.jpg"
-  },
-  {
-    id: "m4",
-    day: "Pre-Quarter",
-    date: "09 Nov 2026",
-    time: "09:00 PM",
-    stage: "Pre-Quarter (Round of 16)",
-    team1: "UNITED FC NELLIKKUTH",
-    team2: "SUPER STUDIO MALAPPURAM",
-    status: "Completed",
-    score1: 1,
-    score2: 1,
-    penaltyScore: "Won by Penalty",
-    confirmed: true,
-    badge1Color: "from-blue-800 to-orange-700",
-    badge2Color: "from-blue-700 to-indigo-950",
-    stadium: "Peruvallur Panjayath Stadium",
-    winner: "SUPER STUDIO MALAPPURAM",
-    winnerPosterUrl: "/results/match_united_vs_superstudio.png",
-    motm: "Ibnu",
-    motmPosterUrl: "/results/potm_ibnu.png"
-  },
-  {
-    id: "m5",
-    day: "Pre-Quarter",
-    date: "10 Nov 2026",
-    time: "09:00 PM",
-    stage: "Pre-Quarter (Round of 16)",
-    team1: "SABAN FC KOTTAKKAL",
-    team2: "SOCCER SPORTING SHORNUR",
-    status: "Completed",
-    score1: 1,
-    score2: 1,
-    penaltyScore: "Won by Penalty",
-    confirmed: true,
-    badge1Color: "from-amber-400 to-yellow-600",
-    badge2Color: "from-red-800 to-stone-900",
-    stadium: "Peruvallur Panjayath Stadium",
-    winner: "SOCCER SPORTING SHORNUR",
-    winnerPosterUrl: "/results/match_saban_vs_shornur.png"
+    motm: "Auguiro (United FC Nellikkuth)",
+    winnerPosterUrl: "/results/match5_abhilash_vs_united.jpg",
+    events: [
+      { type: "goal", minute: 9, player: "Vishak C", team: "ABILASH FC KUPPOOTH" },
+      { type: "goal", minute: 38, player: "Augustus", team: "UNITED FC NELLIKKUTH" },
+      { type: "goal", minute: 38, player: "Auguiro", team: "UNITED FC NELLIKKUTH" }
+    ]
   },
   {
     id: "m6",
@@ -240,12 +195,15 @@ export const fixtures = [
     score2: 0,
     confirmed: true,
     badge1Color: "from-emerald-600 to-teal-900",
-    badge2Color: "from-red-600 to-amber-700",
+    badge2Color: "from-red-600 to-blue-900",
     stadium: "Peruvallur Panjayath Stadium",
     winner: "LINSHA MEDIKKALS MANNARKADU",
+    motm: "Thahir Zaman K.C (Linsha Medicals)",
     winnerPosterUrl: "/results/match_linsha_vs_afc.png",
-    motm: "Zaman",
-    motmPosterUrl: "/results/potm_zaman.png"
+    events: [
+      { type: "goal", minute: 9, player: "Prince", team: "LINSHA MEDIKKALS MANNARKADU" },
+      { type: "goal", minute: 34, player: "Ashik", team: "LINSHA MEDIKKALS MANNARKADU" }
+    ]
   },
   {
     id: "m7",
@@ -259,17 +217,51 @@ export const fixtures = [
     score1: 1,
     score2: 3,
     confirmed: true,
-    badge1Color: "from-red-600 to-rose-900",
-    badge2Color: "from-slate-900 to-blue-900",
+    badge1Color: "from-red-600 to-indigo-900",
+    badge2Color: "from-sky-500 to-blue-900",
     stadium: "Peruvallur Panjayath Stadium",
     winner: "I NOV FC MANJERI",
+    motm: "Mohamed Shanin (I Nov FC Manjeri)",
     winnerPosterUrl: "/results/match_usha_vs_inov.png",
-    motm: "Aju",
-    motmPosterUrl: "/results/potm_aju.png"
+    events: [
+      { type: "goal", minute: 39, player: "Mammad", team: "USHA FC THRISSUR" },
+      { type: "goal", minute: 52, player: "Mohamed Shanin", team: "I NOV FC MANJERI" },
+      { type: "goal", minute: 59, player: "Djahli", team: "I NOV FC MANJERI" },
+      { type: "goal", minute: 64, player: "Rajin", team: "I NOV FC MANJERI" },
+      { type: "yellow_card", minute: 30, player: "Mammad", team: "USHA FC THRISSUR" }
+    ]
+  },
+  {
+    id: "m9",
+    day: "Day 8",
+    date: "13 Nov 2026",
+    time: "09:00 PM",
+    stage: "Round 1 (Match 8)",
+    team1: "SEVEN STAR FC PALAKKAD",
+    team2: "POWER DIPPO THRISSUR",
+    status: "Completed",
+    score1: 3,
+    score2: 2,
+    confirmed: true,
+    badge1Color: "from-red-600 to-rose-900",
+    badge2Color: "from-amber-600 to-orange-950",
+    stadium: "Peruvallur Panjayath Stadium",
+    winner: "SEVEN STAR FC PALAKKAD",
+    motm: "Madhusudhan S (Seven Star FC Palakkad)",
+    winnerPosterUrl: "/results/match_sevenstar_vs_powerdippo.png",
+    events: [
+      { type: "goal", minute: 25, player: "Abishek V Nair", team: "SEVEN STAR FC PALAKKAD" },
+      { type: "goal", minute: 28, player: "Madhusudhan S", team: "SEVEN STAR FC PALAKKAD" },
+      { type: "goal", minute: 43, player: "Jithin G", team: "SEVEN STAR FC PALAKKAD" },
+      { type: "goal", minute: 58, player: "Latheef", team: "POWER DIPPO THRISSUR" },
+      { type: "goal", minute: 60, player: "Richard", team: "POWER DIPPO THRISSUR" },
+      { type: "yellow_card", minute: 30, player: "Jishnu K.S", team: "POWER DIPPO THRISSUR" },
+      { type: "yellow_card", minute: 30, player: "Afsal", team: "SEVEN STAR FC PALAKKAD" }
+    ]
   },
   {
     id: "m8",
-    day: "Pre-Quarter",
+    day: "Day 9",
     date: "14 Nov 2026",
     time: "09:00 PM",
     stage: "Pre-Quarter (Round of 16)",
@@ -283,14 +275,44 @@ export const fixtures = [
     badge2Color: "from-sky-400 to-blue-700",
     stadium: "Peruvallur Panjayath Stadium",
     winner: "X8 TOURS CALICUT",
+    motm: "Asif (X8 Tours Calicut)",
     winnerPosterUrl: "/results/match_x8_vs_thennala.png",
-    motm: "Asif",
-    motmPosterUrl: "/results/potm_asif.png"
+    events: [
+      { type: "goal", minute: 9, player: "Francis Tawiah", team: "REAL FC THENNALA" },
+      { type: "goal", minute: 27, player: "Francis Tawiah", team: "X8 TOURS CALICUT" },
+      { type: "goal", minute: 66, player: "Asif", team: "X8 TOURS CALICUT" }
+    ]
+  },
+  {
+    id: "r1-kmg-perinthalmanna",
+    day: "Day 10",
+    date: "15 Nov 2026",
+    time: "09:00 PM",
+    stage: "Pre-Quarter (Round of 16)",
+    team1: "KMG MAVOOR",
+    team2: "FC PERINTHALMANNA",
+    status: "Completed",
+    score1: 2,
+    score2: 0,
+    confirmed: true,
+    badge1Color: "from-green-700 to-emerald-950",
+    badge2Color: "from-red-600 to-indigo-900",
+    stadium: "Peruvallur Panjayath Stadium",
+    winner: "KMG MAVOOR",
+    motm: "Marcos KMG (KMG Mavoor)",
+    events: [
+      { type: "goal", minute: 3, player: "Faheem Ali N.P", team: "KMG MAVOOR" },
+      { type: "goal", minute: 54, player: "Razi", team: "KMG MAVOOR" },
+      { type: "red_card", minute: 30, player: "Muhammed Anas M.P", team: "KMG MAVOOR" },
+      { type: "yellow_card", minute: 30, player: "Sayis C", team: "KMG MAVOOR" },
+      { type: "yellow_card", minute: 30, player: "Hyder", team: "FC PERINTHALMANNA" },
+      { type: "yellow_card", minute: 30, player: "Muhammed Shameen P.P", team: "KMG MAVOOR" }
+    ]
   },
   {
     id: "pq-krsc-madina",
-    day: "Pre-Quarter",
-    date: "18 Nov 2026",
+    day: "Day 11",
+    date: "16 Nov 2026",
     time: "09:00 PM",
     stage: "Pre-Quarter (Round of 16)",
     team1: "KRSC KOZHIKKODE",
@@ -303,31 +325,99 @@ export const fixtures = [
     badge2Color: "from-purple-600 to-violet-950",
     stadium: "Peruvallur Panjayath Stadium",
     winner: "KRSC KOZHIKKODE",
-    winnerPosterUrl: "/results/match_almadeena_vs_krsc.png"
+    motm: "Dinkan KRSC (KRSC Kozhikkode)",
+    winnerPosterUrl: "/results/match_almadeena_vs_krsc.png",
+    events: [
+      { type: "goal", minute: 14, player: "Muhammad M", team: "KRSC KOZHIKKODE" },
+      { type: "goal", minute: 16, player: "Safeer UP", team: "AL MADEENA CHERPULASSERY" },
+      { type: "goal", minute: 61, player: "Muhammed Dilshad K.M", team: "KRSC KOZHIKKODE" },
+      { type: "yellow_card", minute: 30, player: "Yaseen", team: "KRSC KOZHIKKODE" },
+      { type: "yellow_card", minute: 30, player: "Yahiya C.K", team: "AL MADEENA CHERPULASSERY" }
+    ]
   },
   {
-    id: "m9",
-    day: "Day 9",
-    date: "16 Nov 2026",
+    id: "m5",
+    day: "Day 12",
+    date: "17 Nov 2026",
     time: "09:00 PM",
-    stage: "Round 1 (Match 9)",
-    team1: "SEVEN STAR FC PALAKKAD",
-    team2: "POWER DIPPO THRISSUR",
+    stage: "Pre-Quarter (Round of 16)",
+    team1: "SABAN FC KOTTAKKAL",
+    team2: "SOCCER SPORTING SHORNUR",
     status: "Completed",
-    score1: 3,
-    score2: 2,
+    score1: 1,
+    score2: 1,
+    penaltyScore: "3 - 4 (Pens)",
     confirmed: true,
-    badge1Color: "from-red-600 to-stone-900",
-    badge2Color: "from-amber-500 to-red-800",
+    badge1Color: "from-amber-400 to-yellow-600",
+    badge2Color: "from-red-800 to-amber-700",
     stadium: "Peruvallur Panjayath Stadium",
-    winner: "SEVEN STAR FC PALAKKAD",
-    winnerPosterUrl: "/results/match_sevenstar_vs_powerdippo.png",
-    motm: "Madhu",
-    motmPosterUrl: "/results/potm_madhu.png"
+    winner: "SOCCER SPORTING SHORNUR",
+    motm: "Mohammed Bin Abdulla (Soccer Sporting)",
+    winnerPosterUrl: "/results/match_saban_vs_shornur.png",
+    events: [
+      { type: "goal", minute: 9, player: "Dosso", team: "SABAN FC KOTTAKKAL" },
+      { type: "goal", minute: 33, player: "Benjamin", team: "SOCCER SPORTING SHORNUR" },
+      { type: "red_card", minute: 30, player: "Dosso", team: "SABAN FC KOTTAKKAL" },
+      { type: "yellow_card", minute: 30, player: "Anu", team: "SOCCER SPORTING SHORNUR" },
+      { type: "yellow_card", minute: 30, player: "Eric", team: "SOCCER SPORTING SHORNUR" },
+      { type: "yellow_card", minute: 30, player: "Mohamed Nashid J", team: "SABAN FC KOTTAKKAL" },
+      { type: "yellow_card", minute: 30, player: "Shanavas P", team: "SABAN FC KOTTAKKAL" }
+    ]
+  },
+  {
+    id: "m4",
+    day: "Day 13",
+    date: "18 Nov 2026",
+    time: "09:00 PM",
+    stage: "Pre-Quarter (Round of 16)",
+    team1: "SUPER STUDIO MALAPPURAM",
+    team2: "UNITED FC NELLIKKUTH",
+    status: "Completed",
+    score1: 1,
+    score2: 1,
+    penaltyScore: "4 - 3 (Pens)",
+    confirmed: true,
+    badge1Color: "from-red-600 to-blue-700",
+    badge2Color: "from-blue-800 to-orange-700",
+    stadium: "Peruvallur Panjayath Stadium",
+    winner: "SUPER STUDIO MALAPPURAM",
+    motm: "Nikhil M (Super Studio Malappuram)",
+    winnerPosterUrl: "/results/match_united_vs_superstudio.png",
+    events: [
+      { type: "goal", minute: 32, player: "Muhammed A", team: "SUPER STUDIO MALAPPURAM" },
+      { type: "goal", minute: 41, player: "Sajay John J", team: "UNITED FC NELLIKKUTH" },
+      { type: "yellow_card", minute: 30, player: "Muhammed A", team: "SUPER STUDIO MALAPPURAM" },
+      { type: "yellow_card", minute: 30, player: "Nandhu", team: "UNITED FC NELLIKKUTH" }
+    ]
+  },
+  {
+    id: "m3",
+    day: "Day 14",
+    date: "19 Nov 2026",
+    time: "09:00 PM",
+    stage: "Pre-Quarter (Round of 16)",
+    team1: "LINSHA MEDICALS MANNARKKAD",
+    team2: "HUNTERS KOOTHUPARAMBU",
+    status: "Completed",
+    score1: 0,
+    score2: 0,
+    penaltyScore: "4 - 3 (Pens)",
+    confirmed: true,
+    badge1Color: "from-emerald-600 to-teal-900",
+    badge2Color: "from-zinc-900 to-black",
+    stadium: "Peruvallur Panjayath Stadium",
+    winner: "LINSHA MEDICALS MANNARKKAD",
+    motm: "Ajmal P.A (Linsha Medicals)",
+    winnerPosterUrl: "/results/match_linsha_vs_hunters.png",
+    events: [
+      { type: "yellow_card", minute: 30, player: "Lucas Firmin", team: "LINSHA MEDICALS MANNARKKAD" },
+      { type: "yellow_card", minute: 30, player: "Ahammed Ziyad KA", team: "HUNTERS KOOTHUPARAMBU" },
+      { type: "yellow_card", minute: 30, player: "Shibili Mon", team: "LINSHA MEDICALS MANNARKKAD" }
+    ]
   },
   {
     id: "pq-udaya",
-    day: "Pre-Quarter",
+    day: "Day 15",
     date: "20 Nov 2026",
     time: "09:00 PM",
     stage: "Pre-Quarter (Round of 16)",
@@ -337,15 +427,18 @@ export const fixtures = [
     score1: 1,
     score2: 0,
     confirmed: true,
-    badge1Color: "from-purple-700 to-indigo-950",
-    badge2Color: "from-slate-900 to-blue-900",
+    badge1Color: "from-purple-900 via-indigo-900 to-black",
+    badge2Color: "from-sky-500 to-blue-900",
     stadium: "Peruvallur Panjayath Stadium",
     winner: "UDAYA PARAMBIL PEEDIKA",
-    winnerPosterUrl: "/logo_udaya_transparent.webp"
+    motm: "Noufal Noushad (Udaya FC Parambil Peedika)",
+    events: [
+      { type: "goal", minute: 50, player: "Asif Udhaya", team: "UDAYA PARAMBIL PEEDIKA" }
+    ]
   },
   {
     id: "pq-malabar",
-    day: "Pre-Quarter (Tonight's Clash)",
+    day: "Day 16 (Tonight)",
     date: "21 Nov 2026",
     time: "09:00 PM",
     stage: "Pre-Quarter (Round of 16)",
@@ -355,9 +448,10 @@ export const fixtures = [
     score1: null,
     score2: null,
     confirmed: true,
-    badge1Color: "from-blue-700 to-indigo-950",
-    badge2Color: "from-red-600 to-stone-900",
-    stadium: "Peruvallur Panjayath Stadium"
+    badge1Color: "from-blue-600 to-sky-900",
+    badge2Color: "from-red-600 to-rose-900",
+    stadium: "Peruvallur Panjayath Stadium",
+    winner: null
   },
   {
     id: "qf1",
@@ -373,7 +467,8 @@ export const fixtures = [
     confirmed: true,
     badge1Color: "from-amber-500 to-red-800",
     badge2Color: "from-green-700 to-emerald-950",
-    stadium: "Peruvallur Panjayath Stadium"
+    stadium: "Peruvallur Panjayath Stadium",
+    winner: null
   },
   {
     id: "qf2",
@@ -388,8 +483,9 @@ export const fixtures = [
     score2: null,
     confirmed: true,
     badge1Color: "from-emerald-600 to-teal-900",
-    badge2Color: "from-blue-700 to-indigo-950",
-    stadium: "Peruvallur Panjayath Stadium"
+    badge2Color: "from-red-600 to-blue-700",
+    stadium: "Peruvallur Panjayath Stadium",
+    winner: null
   },
   {
     id: "qf3",
@@ -403,9 +499,10 @@ export const fixtures = [
     score1: null,
     score2: null,
     confirmed: true,
-    badge1Color: "from-amber-400 to-yellow-600",
+    badge1Color: "from-red-800 to-amber-700",
     badge2Color: "from-emerald-600 to-teal-900",
-    stadium: "Peruvallur Panjayath Stadium"
+    stadium: "Peruvallur Panjayath Stadium",
+    winner: null
   },
   {
     id: "qf4",
@@ -420,12 +517,12 @@ export const fixtures = [
     score2: null,
     confirmed: true,
     badge1Color: "from-red-700 to-black",
-    badge2Color: "from-purple-700 to-indigo-950",
-    stadium: "Peruvallur Panjayath Stadium"
+    badge2Color: "from-purple-900 via-indigo-900 to-black",
+    stadium: "Peruvallur Panjayath Stadium",
+    winner: null
   }
 ];
 
-// Last completed match highlight
 export const lastMatchResult = {
   matchId: "pq-udaya",
   homeTeam: "UDAYA PARAMBIL PEEDIKA",
@@ -736,32 +833,32 @@ export const participatingTeams = [
 ];
 
 export const topScorersPreview = [
-  { rank: 1, name: "Doso", team: "SABAN FC KOTTAKKAL", goals: 1, matches: 1, origin: "Overseas", flag: "⚽", category: "Tournament Scorer" },
-  { rank: 2, name: "Dilshad", team: "KRSC KOZHIKODE", goals: 1, matches: 1, origin: "Kozhikode", flag: "🇮🇳", category: "Tournament Scorer" },
-  { rank: 3, name: "Muhammad", team: "KRSC KOZHIKODE", goals: 1, matches: 1, origin: "Kozhikode", flag: "🇮🇳", category: "Tournament Scorer" },
-  { rank: 4, name: "Benjamin", team: "SOCCER SPORTING SHORNUR", goals: 1, matches: 1, origin: "Palakkad", flag: "🇮🇳", category: "Tournament Scorer" },
-  { rank: 5, name: "Faheem", team: "KMG MAVOOR", goals: 1, matches: 1, origin: "Mavoor", flag: "🇮🇳", category: "Tournament Scorer" },
-  { rank: 6, name: "Shafeer", team: "AL MADEENA FC CHERPULASSERY", goals: 1, matches: 1, origin: "Cherpulassery", flag: "🇮🇳", category: "Tournament Scorer" },
-  { rank: 7, name: "Mohammed", team: "SUPER STUDIO MALAPPURAM", goals: 1, matches: 1, origin: "Malappuram", flag: "🇮🇳", category: "Tournament Scorer" },
-  { rank: 8, name: "Rashid", team: "KMG MAVOOR", goals: 1, matches: 1, origin: "Mavoor", flag: "🇮🇳", category: "Tournament Scorer" },
-  { rank: 9, name: "Sanjay", team: "UNITED FC NELLIKUTH", goals: 1, matches: 1, origin: "Nellikuth", flag: "🇮🇳", category: "Tournament Scorer" }
+  { rank: 1, name: "Dosso", team: "SABAN FC KOTTAKKAL", goals: 4, matches: 2, origin: "Overseas", flag: "⚽", category: "Tournament Top Scorer (Hat-trick)" },
+  { rank: 2, name: "Asif", team: "X8 TOURS CALICUT", goals: 3, matches: 2, origin: "Calicut", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 3, name: "Razi", team: "KMG MAVOOR", goals: 2, matches: 2, origin: "Mavoor", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 4, name: "Matti", team: "KRSC KOZHIKKODE", goals: 1, matches: 2, origin: "Kozhikode", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 5, name: "Asif Udhaya", team: "UDAYA PARAMBIL PEEDIKA", goals: 1, matches: 1, origin: "Parambil Peedika", flag: "🇮🇳", category: "Host Club Match Winner" },
+  { rank: 6, name: "Benjamin", team: "SOCCER SPORTING SHORNUR", goals: 1, matches: 1, origin: "Palakkad", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 7, name: "Muhammed A", team: "SUPER STUDIO MALAPPURAM", goals: 1, matches: 1, origin: "Malappuram", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 8, name: "Sajay John J", team: "UNITED FC NELLIKKUTH", goals: 1, matches: 2, origin: "Nellikuth", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 9, name: "Madhusudhan S", team: "SEVEN STAR FC PALAKKAD", goals: 1, matches: 1, origin: "Palakkad", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 10, name: "Mohamed Shanin", team: "I NOV FC MANJERI", goals: 1, matches: 2, origin: "Manjeri", flag: "🇮🇳", category: "Tournament Scorer" }
 ];
 
 // Official Tournament Match Goal Scorers
 export const officialTournamentGoalScorers = [
-  { rank: 1, name: "Doso", team: "SABAN FC KOTTAKKAL", goals: 1, matches: 1 },
-  { rank: 2, name: "Dilshad", team: "KRSC KOZHIKODE", goals: 1, matches: 1 },
-  { rank: 3, name: "Muhammad", team: "KRSC KOZHIKODE", goals: 1, matches: 1 },
-  { rank: 4, name: "Benjamin", team: "SOCCER SPORTING SHORNUR", goals: 1, matches: 1 },
-  { rank: 5, name: "Faheem", team: "KMG MAVOOR", goals: 1, matches: 1 },
-  { rank: 6, name: "Shafeer", team: "AL MADEENA FC CHERPULASSERY", goals: 1, matches: 1 },
-  { rank: 7, name: "Mohammed", team: "SUPER STUDIO MALAPPURAM", goals: 1, matches: 1 },
-  { rank: 8, name: "Rashid", team: "KMG MAVOOR", goals: 1, matches: 1 },
-  { rank: 9, name: "Sanjay", team: "UNITED FC NELLIKUTH", goals: 1, matches: 1 }
+  { rank: 1, name: "Dosso", team: "SABAN FC KOTTAKKAL", goals: 4, matches: 2 },
+  { rank: 2, name: "Asif", team: "X8 TOURS CALICUT", goals: 3, matches: 2 },
+  { rank: 3, name: "Razi", team: "KMG MAVOOR", goals: 2, matches: 2 },
+  { rank: 4, name: "Matti", team: "KRSC KOZHIKKODE", goals: 1, matches: 2 },
+  { rank: 5, name: "Asif Udhaya", team: "UDAYA PARAMBIL PEEDIKA", goals: 1, matches: 1 },
+  { rank: 6, name: "Benjamin", team: "SOCCER SPORTING SHORNUR", goals: 1, matches: 1 },
+  { rank: 7, name: "Muhammed A", team: "SUPER STUDIO MALAPPURAM", goals: 1, matches: 1 },
+  { rank: 8, name: "Sajay John J", team: "UNITED FC NELLIKKUTH", goals: 1, matches: 2 },
+  { rank: 9, name: "Madhusudhan S", team: "SEVEN STAR FC PALAKKAD", goals: 1, matches: 1 },
+  { rank: 10, name: "Mohamed Shanin", team: "I NOV FC MANJERI", goals: 1, matches: 2 }
 ];
 
-// Official Tournament Goalkeepers (Saves, Clean Sheets & Goals Conceded)
-// Anonymous/unnamed keepers are identified as "Keeper of [Team Name]" as requested
 export const officialTournamentGoalkeepers = [
   { rank: 1, name: "Keeper of United FC Nellikuth", team: "UNITED FC NELLIKUTH", saves: 14, goalsConceded: 1, cleanSheets: 0, matches: 1 },
   { rank: 2, name: "Benjamin", team: "SOCCER SPORTING SHORNUR", saves: 12, goalsConceded: 1, cleanSheets: 0, matches: 1 },

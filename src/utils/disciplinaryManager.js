@@ -1,4 +1,5 @@
 import { getStoredMatchState, saveOfficialMatchState } from './matchStateManager.js';
+import { fixtures } from '../data/tournamentData.js';
 
 /**
  * Disciplinary Manager for KASC Sevens Football
@@ -135,6 +136,40 @@ export function getAllDisciplinaryRecords() {
     }
   } catch (e) {
     console.error('Failed to merge match state events', e);
+  }
+
+  // 3. Merge with official tournament fixtures cards
+  try {
+    fixtures.forEach((f) => {
+      if (Array.isArray(f.events)) {
+        f.events.forEach((evt, idx) => {
+          if (evt.type === 'yellow_card' || evt.type === 'red_card') {
+            const cardId = `f_${f.id}_${idx}`;
+            if (!seenIds.has(cardId)) {
+              const isDuplicate = records.some((r) => 
+                r.cardType === evt.type &&
+                isPlayerMatch(r.playerName, evt.player, null, null, r.teamName, evt.team)
+              );
+              if (!isDuplicate) {
+                records.push({
+                  id: cardId,
+                  cardType: evt.type,
+                  player: evt.player,
+                  playerName: evt.player,
+                  teamName: evt.team,
+                  minute: evt.minute || 30,
+                  reason: evt.type === 'red_card' ? 'Red Card Dismissal (Official SFA Record)' : 'Yellow Card Caution (Official SFA Record)',
+                  timestamp: f.date
+                });
+                seenIds.add(cardId);
+              }
+            }
+          }
+        });
+      }
+    });
+  } catch (e) {
+    console.error('Failed to merge fixture cards', e);
   }
 
   return records;
