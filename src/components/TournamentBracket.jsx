@@ -49,7 +49,7 @@ export const getBracketData = (fixturesList = fixtures) => {
   });
 
   // Pre-Quarters (Round of 16)
-  const preQuarterMatches = fixturesList.filter((f) => ['m4', 'm5', 'm8', 'pq-udaya', 'pq-malabar'].includes(f.id) || (f.stage?.includes('Pre-Quarter') && !['m1','m2','m3','m6','m7','m9'].includes(f.id)));
+  const preQuarterMatches = fixturesList.filter((f) => ['m4', 'm5', 'm8', 'pq-krsc-madina', 'pq-udaya', 'pq-malabar'].includes(f.id) || (f.stage?.includes('Pre-Quarter') && !['m1','m2','m3','r1-x8-ayc','r1-saban-townteam','r1-united-abilash','m6','m7','m9'].includes(f.id)));
   const preQuarters = preQuarterMatches.map((f, i) => {
     const winner = f.winner || (f.confirmed && Number.isFinite(f.score1) && Number.isFinite(f.score2)
       ? f.score1 === f.score2 ? null : f.score1 > f.score2 ? f.team1 : f.team2
