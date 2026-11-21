@@ -575,7 +575,11 @@ export const participatingTeams = [
     manager: "Asharaf Bava",
     asstManager: "Imathiyas",
     category: "Permanent SFA Club",
-    column: "left"
+    column: "left",
+    regNo: "SFA/2608/T/019",
+    established: 1995,
+    address: "Super Studio, Kottappadi, Malappuram",
+    phone: "9995253752"
   },
   {
     id: 2,
@@ -586,7 +590,10 @@ export const participatingTeams = [
     manager: "Rasheed Poorona",
     asstManager: "Shameer Babu",
     category: "Permanent SFA Club",
-    column: "left"
+    column: "left",
+    regNo: "SFA/2608/T/010",
+    address: "Rasheed Poorona, Chirakkalppadi, Thrikkaloor Post, Palakkad",
+    phone: "9747540473"
   },
   {
     id: 3,
@@ -597,7 +604,10 @@ export const participatingTeams = [
     manager: "Mubaarak Salih",
     asstManager: "Ajith",
     category: "Permanent SFA Club",
-    column: "left"
+    column: "left",
+    regNo: "SFA/2608/T/014",
+    address: "Palakkathodi House, Kadungapuram Post, Malappuram, PIN:679321",
+    phone: "7559000009"
   },
   {
     id: 4,
@@ -608,7 +618,11 @@ export const participatingTeams = [
     manager: "Latheef",
     asstManager: "Sidiq E 4",
     category: "Permanent SFA Club",
-    column: "left"
+    column: "left",
+    regNo: "SFA/2608/T/001",
+    established: 2026,
+    address: "Pullissery House, Kalpakanchery, Malappuram",
+    phone: "9746850000"
   },
   {
     id: 5,
@@ -619,7 +633,10 @@ export const participatingTeams = [
     manager: "Usman K P",
     asstManager: "Musthu",
     category: "Permanent SFA Club",
-    column: "left"
+    column: "left",
+    regNo: "SFA/2608/T/008",
+    established: 2025,
+    phone: "8714608740"
   },
   {
     id: 6,
@@ -630,7 +647,10 @@ export const participatingTeams = [
     manager: "Hifsu Rahman",
     asstManager: "Shafeeq",
     category: "Permanent SFA Club",
-    column: "left"
+    column: "left",
+    regNo: "SFA/2608/T/009",
+    address: "Hifsu Rahman. M.K, Athooli House, Kanni Paramba, Mavoor",
+    phone: "9947717776"
   },
   {
     id: 7,
@@ -641,7 +661,11 @@ export const participatingTeams = [
     manager: "Rasheed",
     asstManager: "Arshad Soopi",
     category: "Permanent SFA Club",
-    column: "left"
+    column: "left",
+    regNo: "SFA/2608/T/006",
+    established: 1984,
+    address: "Chittalpilly House, Andoor, Vaduvanchal Post, Wayanad, 673581",
+    phone: "9562812368"
   },
   {
     id: 8,
@@ -652,7 +676,11 @@ export const participatingTeams = [
     manager: "Noufal",
     asstManager: "Riyas",
     category: "Permanent SFA Club",
-    column: "left"
+    column: "left",
+    regNo: "SFA/2608/T/022",
+    established: 1986,
+    address: "Karaparamban House, Nellikuth Post, PIN:676122",
+    phone: "7736956879"
   },
   {
     id: 9,
@@ -663,7 +691,10 @@ export const participatingTeams = [
     manager: "Bava Master",
     asstManager: "Mujeeb",
     category: "Permanent SFA Club",
-    column: "left"
+    column: "left",
+    regNo: "SFA/2608/T/007",
+    address: "Thorappan House, Thirurkad Post, Malappuram, PIN:679321",
+    phone: "9846194908"
   },
   {
     id: 10,
@@ -674,7 +705,10 @@ export const participatingTeams = [
     manager: "Faisal",
     asstManager: "Shihab",
     category: "Permanent SFA Club",
-    column: "left"
+    column: "left",
+    regNo: "SFA/2608/T/024",
+    address: "Shafeeq N, S/o Abdul Kabeer, Neerumunda House, Marattappadi, Valluvangad Post, Vettikkattiri, Malappuram, PIN:676521",
+    phone: "9447712222"
   },
   {
     id: 11,
@@ -685,7 +719,10 @@ export const participatingTeams = [
     manager: "Aboobacker Master",
     asstManager: "Ziyad",
     category: "Permanent SFA Club",
-    column: "left"
+    column: "left",
+    regNo: "SFA/2608/T/011",
+    address: "Mohammed Saed K.K, Karuvan kannan House, Chirayil Post, Kootalungal, Kondotty, Malappuram, PIN:673638",
+    phone: "9847546789"
   },
   {
     id: 12,
@@ -696,7 +733,11 @@ export const participatingTeams = [
     manager: "Ansari P",
     asstManager: "Shahul",
     category: "Permanent SFA Club",
-    column: "left"
+    column: "left",
+    regNo: "SFA/2608/T/017",
+    established: 2026,
+    address: "Shooters Arts & Sports Club, Padanna",
+    phone: "9895149363"
   },
   {
     id: 13,
@@ -707,7 +748,11 @@ export const participatingTeams = [
     manager: "Saifudheen (Mani)",
     asstManager: "Manager Desk",
     category: "Permanent SFA Club",
-    column: "right"
+    column: "right",
+    regNo: "SFA/2608/T/005",
+    established: 2000,
+    address: "Puliakkunnan House, Ucharakkadavu, Chemmaniyode Post, Malappuram",
+    phone: "9207195311"
   },
   {
     id: 14,
@@ -718,7 +763,10 @@ export const participatingTeams = [
     manager: "Dilshad",
     asstManager: "Anil Mathew",
     category: "Permanent SFA Club",
-    column: "right"
+    column: "right",
+    regNo: "SFA/2608/T/018",
+    address: "Dilshad, S/o Divakaran N.S, Nedungattoor house, Paruthipra, Shornur Post, Ottappalam",
+    phone: "9447942302"
   },
   {
     id: 15,
@@ -729,7 +777,11 @@ export const participatingTeams = [
     manager: "Salam",
     asstManager: "Rajeesh Piari",
     category: "Permanent SFA Club",
-    column: "right"
+    column: "right",
+    regNo: "SFA/2608/T/020",
+    established: 2025,
+    address: "Main Road Areekode, Malappuram, PIN:673639",
+    phone: "9447535742"
   },
   {
     id: 16,
@@ -740,7 +792,11 @@ export const participatingTeams = [
     manager: "Haridas",
     asstManager: "Vineeth",
     category: "Permanent SFA Club",
-    column: "right"
+    column: "right",
+    regNo: "SFA/2608/T/016",
+    established: 1968,
+    address: "Vivekanandan. M, Idiyattel House, Mundur, Palakkad",
+    phone: "7907858563"
   },
   {
     id: 17,
@@ -751,7 +807,9 @@ export const participatingTeams = [
     manager: "Usman",
     asstManager: "Jershid",
     category: "Permanent SFA Club",
-    column: "right"
+    column: "right",
+    regNo: "SFA/2608/T/013",
+    phone: "7902808448"
   },
   {
     id: 18,
@@ -762,7 +820,11 @@ export const participatingTeams = [
     manager: "Santhosh K. T",
     asstManager: "Biju Varghese",
     category: "Permanent SFA Club",
-    column: "right"
+    column: "right",
+    regNo: "SFA/2608/T/012",
+    established: 1978,
+    address: "Shinil CG, Changarampurath House Kairali nagar, East Fort Trichur",
+    phone: "9847195254"
   },
   {
     id: 19,
@@ -773,7 +835,11 @@ export const participatingTeams = [
     manager: "Rujeesh",
     asstManager: "Asif",
     category: "Permanent SFA Club",
-    column: "right"
+    column: "right",
+    regNo: "SFA/2608/T/015",
+    established: 1981,
+    address: "Rujeesh K, Kozhishery House, Mangalam Post, Tirur",
+    phone: "9961184009"
   },
   {
     id: 20,
@@ -784,7 +850,11 @@ export const participatingTeams = [
     manager: "Shamsu",
     asstManager: "Ansar",
     category: "Permanent SFA Club",
-    column: "right"
+    column: "right",
+    regNo: "SFA/2608/T/003",
+    established: 1954,
+    address: "ANASWARAM, MOOLAKKULAM, KUTHUPARAMBA POST",
+    phone: "9207526679"
   },
   {
     id: 21,
@@ -795,7 +865,11 @@ export const participatingTeams = [
     manager: "Abdul Vahid",
     asstManager: "Muhamed Sabique",
     category: "Permanent SFA Club",
-    column: "right"
+    column: "right",
+    regNo: "SFA/2608/T/002",
+    established: 1979,
+    address: "S/o abdul rahiman Santhipurath house Kuppooth Po vilayur west Palakkad 679309",
+    phone: "9544619463"
   },
   {
     id: 22,
@@ -806,7 +880,11 @@ export const participatingTeams = [
     manager: "Baiju",
     asstManager: "Shanid",
     category: "Permanent SFA Club",
-    column: "right"
+    column: "right",
+    regNo: "SFA/2608/T/004",
+    established: 1982,
+    address: "KUNNATH (H), ANDOOR, VADUVANCHAL. P. O WAYANAD 673581",
+    phone: "9947400507"
   },
   {
     id: 23,
@@ -817,7 +895,11 @@ export const participatingTeams = [
     manager: "Muneer",
     asstManager: "Shabeer",
     category: "Host Club & Tournament Pioneer",
-    column: "right"
+    column: "right",
+    regNo: "SFA/2608/T/021",
+    established: 2025,
+    address: "Muhammed Muneer M.K, Palappettiyil House, Parambil Peedika",
+    phone: "9400129900"
   },
   {
     id: 24,
@@ -828,7 +910,10 @@ export const participatingTeams = [
     manager: "Pradeep P V",
     asstManager: "C G Shinil",
     category: "Permanent SFA Club",
-    column: "right"
+    column: "right",
+    regNo: "SFA/2608/T/023",
+    address: "Pradeep Payyazhi Vadakkekkara, 2B, Palais Grande, kanattukara, Thrissur, PIN:680011",
+    phone: "9447835946"
   }
 ];
 

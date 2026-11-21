@@ -162,6 +162,15 @@ export default function TeamsSection({ lang, isDarkMode }) {
                 <div className="w-11 h-11 rounded-full bg-white p-1 border border-surface-border dark:border-navy-700 shadow-xs flex items-center justify-center shrink-0">
                   <TeamLogo teamName={team.name} className="w-full h-full rounded-full object-contain" />
                 </div>
+                {team.established ? (
+                  <span className="text-[9.5px] font-bold text-amber-500 dark:text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/25 font-sports tracking-wide">
+                    Est. {team.established}
+                  </span>
+                ) : team.regNo ? (
+                  <span className="text-[9px] font-mono text-card-muted bg-surface-subtle px-1.5 py-0.5 rounded border border-surface-border dark:border-navy-700">
+                    {team.regNo.replace('SFA/2608/T/', '#')}
+                  </span>
+                ) : null}
               </div>
 
               {/* Club name (max 2 lines, no ellipsis) & Town (Rule 2: town only, never truncated) */}

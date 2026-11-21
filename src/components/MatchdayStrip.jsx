@@ -10,7 +10,36 @@ import TeamLogo from './TeamLogo';
 import { fixtures } from '../data/tournamentData';
 import { getStoredMatchState } from '../utils/matchStateManager';
 
-const MAX_CHIPS = 14;
+const MAX_CHIPS = 25;
+
+function getShortTeamName(name = '') {
+  const upper = name.toUpperCase().trim();
+  if (upper.includes('SUPER STUDIO')) return 'SUPER STUDIO';
+  if (upper.includes('AL MADEENA')) return 'AL MADEENA';
+  if (upper.includes('I NOV') || upper.includes('I-NOV')) return 'I-NOV FC';
+  if (upper.includes('MALABAR')) return 'MALABAR FC';
+  if (upper.includes('SEVEN STAR')) return 'SEVEN STAR';
+  if (upper.includes('POWER DIPPO')) return 'POWER DIPPO';
+  if (upper.includes('TOWN TEAM')) return 'TOWN TEAM';
+  if (upper.includes('PERINTHALMANNA')) return 'PERINTHALMANNA';
+  if (upper.includes('SOCCER SPORTING')) return 'SHORNUR';
+  if (upper.includes('HUNTERS')) return 'HUNTERS';
+  if (upper.includes('UDAYA')) return 'UDAYA FC';
+  if (upper.includes('KMG')) return 'KMG MAVOOR';
+  if (upper.includes('KRSC')) return 'KRSC';
+  if (upper.includes('LINSHA')) return 'LINSHA';
+  if (upper.includes('SABAN')) return 'SABAN FC';
+  if (upper.includes('UNITED')) return 'UNITED FC';
+  if (upper.includes('ABILASH')) return 'ABILASH';
+  if (upper.includes('BASE')) return 'BASE PRMBVR';
+  if (upper.includes('AYC')) return 'AYC';
+  if (upper.includes('AFC')) return 'AFC WYND';
+  if (upper.includes('USHA')) return 'USHA FC';
+  if (upper.includes('REAL')) return 'REAL FC';
+  if (upper.includes('SHOOTERS')) return 'SHOOTERS';
+  if (upper.includes('X8')) return 'X8 TOURS';
+  return name.split(' ')[0];
+}
 
 function statusChip(match, matchState) {
   const activeFixtureId = matchState.activeFixtureId || 'm1';
@@ -96,17 +125,30 @@ export default function MatchdayStrip({ lang, isDarkMode, onNavigate }) {
                   <TeamLogo teamName={match.team1} className="w-full h-full object-contain" />
                 </div>
                 <span className="text-[10px] font-bold text-frost/90 truncate flex-1">
-                  {match.team1.split(' ')[0]}
+                  {getShortTeamName(match.team1)}
                 </span>
               </div>
 
               {/* Score or time */}
-              <div className="text-xs font-black font-mono text-white tracking-wide">
-                {isFT
-                  ? `${scoreHome} – ${scoreAway}`
-                  : isLive
-                  ? `${scoreHome} – ${scoreAway}`
-                  : match.time?.replace(':00', '') || '8:45 PM'}
+              <div className="text-xs font-black font-mono text-white tracking-wide text-center">
+                {isFT ? (
+                  <div className="flex flex-col items-center leading-none">
+                    <span>{scoreHome} – {scoreAway}</span>
+                    {match.penaltyScore ? (
+                      <span className="text-[8px] font-bold text-amber-400 font-sans tracking-tight mt-0.5">
+                        {match.penaltyScore.replace(/\(Pens\)/i, 'P').trim()}
+                      </span>
+                    ) : (match.penaltyScore1 != null && match.penaltyScore2 != null) ? (
+                      <span className="text-[8px] font-bold text-amber-400 font-sans tracking-tight mt-0.5">
+                        {match.penaltyScore1}-{match.penaltyScore2} P
+                      </span>
+                    ) : null}
+                  </div>
+                ) : isLive ? (
+                  `${scoreHome} – ${scoreAway}`
+                ) : (
+                  match.time?.replace(':00', '') || '8:45 PM'
+                )}
               </div>
 
               <div className="flex items-center gap-1 w-full">
@@ -114,7 +156,7 @@ export default function MatchdayStrip({ lang, isDarkMode, onNavigate }) {
                   <TeamLogo teamName={match.team2} className="w-full h-full object-contain" />
                 </div>
                 <span className="text-[10px] font-bold text-frost/90 truncate flex-1">
-                  {match.team2.split(' ')[0]}
+                  {getShortTeamName(match.team2)}
                 </span>
               </div>
 

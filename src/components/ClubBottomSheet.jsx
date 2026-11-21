@@ -14,7 +14,7 @@ import { fixtures, openingMatch } from '../data/tournamentData';
 import clubHistoryData from '../data/clubHistory.json';
 
 // Single configuration switches requested by user
-export const FIXTURES_CONFIRMED = false;
+export const FIXTURES_CONFIRMED = true;
 export const SHOW_SFA_CLAIMS = false;
 
 export default function ClubBottomSheet({ 
@@ -158,10 +158,13 @@ export default function ClubBottomSheet({
               </span>
             )}
             <span className="px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-navy-800 text-royal dark:text-sky text-[10px] font-bold border border-blue-200 dark:border-navy-600">
-              {SHOW_SFA_CLAIMS 
-                ? 'Registered Club' 
-                : (lang === 'ml' ? 'സീസൺ 7 ടീം' : 'Season 7 Club')}
+              {club.regNo ? `Reg: ${club.regNo}` : (lang === 'ml' ? 'സീസൺ 7 ടീം' : 'Season 7 Club')}
             </span>
+            {club.established && (
+              <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-300 text-[10px] font-bold border border-amber-500/30">
+                Est. {club.established}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5">
@@ -266,6 +269,23 @@ export default function ClubBottomSheet({
                   </div>
                   <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-navy-800 text-royal dark:text-sky flex items-center justify-center">
                     <UserCheck className="w-4 h-4" />
+                  </div>
+                </div>
+              )}
+
+              {/* Official Address / Headquarters */}
+              {club.address && (
+                <div className="p-3 rounded-2xl border border-surface-border dark:border-navy-700 surface-card-subtle flex items-start gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-navy-800 text-royal dark:text-sky flex items-center justify-center shrink-0 mt-0.5">
+                    <MapPin className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-card-muted block">
+                      {lang === 'ml' ? 'ക്ലബ്ബ് ആസ്ഥാനം' : 'Club Headquarters'}
+                    </span>
+                    <span className="text-xs font-semibold text-card-title leading-relaxed">
+                      {club.address}
+                    </span>
                   </div>
                 </div>
               )}
