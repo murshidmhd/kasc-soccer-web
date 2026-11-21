@@ -7,11 +7,13 @@ import {
   Calendar, 
   Star, 
   BookOpen, 
-  Share2 
+  Share2,
+  Users
 } from 'lucide-react';
 import TeamLogo from './TeamLogo';
 import { fixtures, openingMatch } from '../data/tournamentData';
 import clubHistoryData from '../data/clubHistory.json';
+import sfaPlayersByTeam from '../data/sfa_players_by_team.json';
 
 // Single configuration switches requested by user
 export const FIXTURES_CONFIRMED = true;
@@ -26,7 +28,7 @@ export default function ClubBottomSheet({
 }) {
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
-  const [activeTab, setActiveTab] = useState('details'); // 'details' | 'history'
+  const [activeTab, setActiveTab] = useState('details'); // 'details' | 'squad' | 'history'
 
   // Handle Browser Back Button (popstate listener)
   useEffect(() => {
@@ -96,6 +98,7 @@ export default function ClubBottomSheet({
   const displayMatch = FIXTURES_CONFIRMED ? nextMatch : (isNov6Team ? nov6Match : null);
 
   const isPermanent = club.category?.includes('Permanent') || club.category?.includes('Host');
+  const squad = (club?.sfaTeamId && sfaPlayersByTeam[club.sfaTeamId]) || [];
 
   // Verify History Data:
   // Rule 8: Show history content ONLY if status === 'verified'.
@@ -212,29 +215,40 @@ export default function ClubBottomSheet({
           </div>
         </div>
 
-        {/* Tabs: Details vs History */}
+        {/* Tabs: Details vs Squad vs History */}
         <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700">
           <button
             onClick={() => setActiveTab('details')}
-            className={`flex-1 min-h-[44px] py-1.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 ${
+            className={`flex-1 min-h-[44px] py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 active:scale-95 ${
               activeTab === 'details'
                 ? 'btn-royal text-white font-black shadow-xs'
                 : 'text-card-muted hover:text-card-title'
             }`}
           >
             <Shield className="w-3.5 h-3.5" />
-            <span>{lang === 'ml' ? 'വിവരങ്ങൾ' : 'Club Details'}</span>
+            <span>{lang === 'ml' ? 'വിവരങ്ങൾ' : 'Details'}</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('squad')}
+            className={`flex-1 min-h-[44px] py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 active:scale-95 ${
+              activeTab === 'squad'
+                ? 'btn-royal text-white font-black shadow-xs'
+                : 'text-card-muted hover:text-card-title'
+            }`}
+          >
+            <Users className="w-3.5 h-3.5" />
+            <span>{lang === 'ml' ? `സ്ക്വാഡ് (${squad.length})` : `Squad (${squad.length})`}</span>
           </button>
           <button
             onClick={() => setActiveTab('history')}
-            className={`flex-1 min-h-[44px] py-1.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 ${
+            className={`flex-1 min-h-[44px] py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 active:scale-95 ${
               activeTab === 'history'
                 ? 'btn-royal text-white font-black shadow-xs'
                 : 'text-card-muted hover:text-card-title'
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>{lang === 'ml' ? 'ചരിത്രം' : 'Club History'}</span>
+            <span>{lang === 'ml' ? 'ചരിത്രം' : 'History'}</span>
           </button>
         </div>
 
@@ -318,7 +332,90 @@ export default function ClubBottomSheet({
           </div>
         )}
 
-        {/* TAB 2: CLUB HISTORY (Rule 8: Show content ONLY if verified; for draft show placeholder and NOTHING from draft data) */}
+        {/* TAB 2: SQUAD */}
+        {activeTab === 'squad' && (
+          <div className="space-y-3 animate-fadeIn">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-card-muted">
+                {lang === 'ml' ? 'ഔദ്യോഗിക SFA രജിസ്റ്റേർഡ് സ്ക്വാഡ്' : 'Official SFA Registered Squad'}
+              </span>
+              <span className="text-xs font-bold text-royal dark:text-sky font-sports">
+                {squad.length} {lang === 'ml' ? 'കളിക്കാർ' : 'Players'}
+              </span>
+            </div>
+
+            {squad.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[380px] overflow-y-auto pr-1">
+                {squad.map((player) => (
+                  <div
+                    key={player.id}
+                    className="p-2.5 rounded-xl border border-surface-border dark:border-navy-700 surface-card-subtle flex items-center justify-between gap-3"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-navy-800 border border-surface-border dark:border-navy-600 overflow-hidden shrink-0 flex items-center justify-center">
+                        {player.photo ? (
+                          <img
+                            src={player.photo}
+                            alt={player.name}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <Users className="w-5 h-5 text-card-muted" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <span className="text-xs font-bold text-card-title block truncate">
+                          {player.name}
+                        </span>
+                        <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-card-muted flex-wrap">
+                          {player.regNo && (
+                            <span className="font-mono text-royal dark:text-sky font-semibold">
+                              {player.regNo.replace('SFA/2608/P/', '#')}
+                            </span>
+                          )}
+                          {player.nationality && player.nationality !== 'Indian' && (
+                            <span className="bg-amber-500/15 text-amber-500 dark:text-amber-300 px-1 py-0.2 rounded text-[9px] font-bold">
+                              {player.nationality}
+                            </span>
+                          )}
+                          {player.bloodGroup && (
+                            <span className="text-[9px] text-card-muted">
+                              🩸 {player.bloodGroup}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Badges: Goals / MOTM */}
+                    <div className="flex items-center gap-1 shrink-0">
+                      {player.goals > 0 && (
+                        <span className="text-[10px] font-bold bg-emerald-500/15 text-emerald-400 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                          ⚽ {player.goals}
+                        </span>
+                      )}
+                      {player.manOfTheMatch > 0 && (
+                        <span className="text-[10px] font-bold bg-amber-500/15 text-amber-400 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                          ⭐ {player.manOfTheMatch}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-6 text-center text-xs text-card-muted surface-card-subtle rounded-2xl">
+                {lang === 'ml' ? 'സ്ക്വാഡ് വിവരങ്ങൾ ലഭ്യമായിട്ടില്ല' : 'No squad details available for this club.'}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 3: CLUB HISTORY */}
         {activeTab === 'history' && (
           <div className="space-y-3 animate-fadeIn">
             {isHistoryVerified ? (
