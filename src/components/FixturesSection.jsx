@@ -48,7 +48,10 @@ export default function FixturesSection({ lang, isDarkMode }) {
   }, [displayedFixtures]);
 
   const getShortTag = (match) => {
-    if (match.stage?.includes('Quarter') || match.id?.startsWith('qf')) {
+    if (match.stage?.includes('Pre-Quarter') || match.id?.startsWith('pq') || match.day?.includes('Pre-Quarter')) {
+      return 'Pre-Quarter';
+    }
+    if ((match.stage?.includes('Quarter') && !match.stage?.includes('Pre-Quarter')) || match.id?.startsWith('qf')) {
       return 'Quarter Final';
     }
     if (match.stage?.includes('Semi') || match.id?.startsWith('sf')) {
@@ -189,10 +192,12 @@ export default function FixturesSection({ lang, isDarkMode }) {
                     const team1Name = isConfirmed ? (match.team1 || 'TBD') : 'TBD';
                     const team2Name = isConfirmed ? (match.team2 || 'TBD') : 'TBD';
 
-                    const isNextMatch = match.status === 'Upcoming' && isConfirmed && (match.id === 'm8');
+                    const nextUpcomingId = activeFixtures.find(f => f.confirmed && f.status === 'Upcoming')?.id;
+                    const isNextMatch = match.status === 'Upcoming' && isConfirmed && (match.id === nextUpcomingId || match.id === 'pq-malabar');
                     const isMatchLive = match.status === 'LIVE';
                     const isCompleted = match.status === 'Completed';
-                    const isQuarter = match.id?.startsWith('qf') || match.stage?.includes('Quarter');
+                    const isPreQuarter = match.id?.startsWith('pq') || match.stage?.includes('Pre-Quarter') || match.day?.includes('Pre-Quarter');
+                    const isQuarter = (match.id?.startsWith('qf') || match.stage?.includes('Quarter')) && !isPreQuarter;
 
                     const score1 = match.score1 !== null ? Number(match.score1) : null;
                     const score2 = match.score2 !== null ? Number(match.score2) : null;
@@ -209,9 +214,11 @@ export default function FixturesSection({ lang, isDarkMode }) {
                             ? 'border-2 border-gold ring-1 ring-gold/40 bg-white dark:bg-navy-800'
                             : isQuarter
                               ? 'border-purple-500/50 bg-white dark:bg-navy-800'
-                              : isDarkMode 
-                                ? 'bg-navy-800/95 border-navy-700/80 hover:border-navy-600' 
-                                : 'bg-white border-surface-border hover:border-slate-300'
+                              : isPreQuarter
+                                ? 'border-purple-500/30 bg-white dark:bg-navy-800/95'
+                                : isDarkMode 
+                                  ? 'bg-navy-800/95 border-navy-700/80 hover:border-navy-600' 
+                                  : 'bg-white border-surface-border hover:border-slate-300'
                         }`}
                       >
                         <div 
@@ -228,14 +235,16 @@ export default function FixturesSection({ lang, isDarkMode }) {
                                   ? 'bg-gold text-navy-950 font-black'
                                   : isQuarter
                                     ? 'bg-purple-700 text-white'
-                                    : isCompleted
-                                      ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 font-bold'
-                                      : 'bg-surface-light dark:bg-navy-700 text-card-title'
+                                    : isPreQuarter
+                                      ? 'bg-purple-600/30 text-purple-300 border border-purple-500/40'
+                                      : isCompleted
+                                        ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 font-bold'
+                                        : 'bg-surface-light dark:bg-navy-700 text-card-title'
                               }`}>
                                 {getShortTag(match)}
                               </span>
 
-                              {match.day && (
+                              {match.day && match.day !== getShortTag(match) && match.day !== 'Pre-Quarter' && (
                                 <span className="text-[10px] text-card-muted font-mono font-medium">
                                   {match.day}
                                 </span>
