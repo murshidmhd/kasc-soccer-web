@@ -401,74 +401,44 @@ export default function TournamentBracket({ lang, isDarkMode, fixturesList }) {
         </div>
       )}
 
-      {/* 3. Road to the Final Strip (Rule 6: 4 nodes + trophy connected by thin line) */}
-      <div className="py-2 px-1">
-        <div className="relative flex items-center justify-between max-w-md mx-auto">
-          {/* Connecting line */}
-          <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-0.5 bg-surface-border dark:bg-navy-700 z-0" />
-
-          {/* Nodes */}
+      {/* 3. Sleek Stage Navigation Bar (Unified & Responsive) */}
+      <div className="sticky top-14 sm:top-16 z-20 py-2 bg-surface-light/95 dark:bg-navy-900/95 backdrop-blur-md border-b border-surface-border dark:border-navy-800 -mx-3 px-3 sm:mx-0 sm:px-0">
+        <div className="grid grid-cols-5 gap-1 sm:gap-2 max-w-md mx-auto">
           {[
-            { id: 'r1', step: '1', label: 'R1', num: 'Round 1' },
-            { id: 'pq', step: '2', label: 'PQ', num: 'Pre-Quarters' },
-            { id: 'qf', step: '3', label: 'QF', num: 'Quarters' },
-            { id: 'sf', step: '4', label: 'SF', num: 'Semis' },
-            { id: 'final', step: '5', label: 'Final', num: 'Final', isTrophy: true }
-          ].map((node) => {
-            const isActive = activeRound === node.id;
-            const currentIndex = rounds.indexOf(activeRound);
-            const isCompleted = rounds.indexOf(node.id) < currentIndex;
-
+            { id: 'r1', step: '1', label: 'Round 1', short: 'R1' },
+            { id: 'pq', step: '2', label: 'Pre-QF', short: 'Pre-QF' },
+            { id: 'qf', step: '3', label: 'Quarters', short: 'QF' },
+            { id: 'sf', step: '4', label: 'Semis', short: 'SF' },
+            { id: 'final', step: '5', label: 'Final', short: 'Final', isTrophy: true }
+          ].map((tab) => {
+            const isActive = activeRound === tab.id;
             return (
               <button
-                key={node.id}
-                onClick={() => setActiveRound(node.id)}
-                className="relative z-10 flex flex-col items-center group transition active:scale-95 focus:outline-hidden min-h-[44px] justify-center px-1"
-                aria-label={`Go to ${node.num || 'Final'}`}
+                key={tab.id}
+                onClick={() => setActiveRound(tab.id)}
+                className={`min-h-[46px] py-1.5 px-1 rounded-2xl text-center transition flex flex-col items-center justify-center active:scale-95 ${
+                  isActive
+                    ? 'btn-royal text-white font-black shadow-md ring-2 ring-royal/30'
+                    : 'surface-card text-card-muted hover:text-card-title border border-surface-border dark:border-navy-700'
+                }`}
+                aria-label={`Go to ${tab.label}`}
               >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-sports text-xs font-black transition-all ${
-                  isActive 
-                    ? 'btn-gold text-navy-900 ring-4 ring-gold/30 scale-110 shadow-xs' 
-                    : isCompleted
-                      ? 'btn-royal text-white'
-                      : 'bg-white dark:bg-navy-800 border border-surface-border dark:border-navy-700 text-card-muted group-hover:text-card-title'
-                }`}>
-                  {node.isTrophy ? <Trophy className="w-3.5 h-3.5" /> : node.step}
+                <div className="flex items-center gap-1">
+                  {tab.isTrophy ? (
+                    <Trophy className={`w-3.5 h-3.5 ${isActive ? 'text-gold' : 'text-card-muted'}`} />
+                  ) : (
+                    <span className={`text-[10px] font-sports font-black ${isActive ? 'text-gold' : 'text-card-muted'}`}>
+                      {tab.short}
+                    </span>
+                  )}
                 </div>
-                <span className={`text-[10px] font-sports font-bold mt-1 tracking-wider uppercase transition-colors ${
-                  isActive ? 'text-gold font-black' : 'text-card-muted'
-                }`}>
-                  {node.label}
+                <span className={`text-[10px] sm:text-xs font-sports font-bold leading-tight ${isActive ? 'text-white' : 'text-card-title'}`}>
+                  <span className="hidden sm:inline">{tab.label}</span>
+                  <span className="sm:hidden">{tab.short}</span>
                 </span>
               </button>
             );
           })}
-        </div>
-      </div>
-
-      {/* 4. Round Tabs (Rule 5: Sticky below header, swipe left/right to change) */}
-      <div className="sticky top-14 sm:top-16 z-20 py-1.5 bg-surface-light dark:bg-navy-900 border-b border-surface-border dark:border-navy-800 -mx-3 px-3 sm:mx-0 sm:px-0">
-        <div className="grid grid-cols-5 gap-1 sm:gap-1.5 max-w-md mx-auto">
-          {[
-            { id: 'r1', label: 'Round 1', short: 'R1' },
-            { id: 'pq', label: 'Pre-QF', short: 'Pre-QF' },
-            { id: 'qf', label: 'Quarters', short: 'QF' },
-            { id: 'sf', label: 'Semis', short: 'SF' },
-            { id: 'final', label: 'Final', short: 'Final' }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveRound(tab.id)}
-              className={`min-h-[40px] py-1 px-1 rounded-xl text-[10px] sm:text-xs font-bold transition flex items-center justify-center active:scale-95 ${
-                activeRound === tab.id
-                  ? 'btn-royal text-white font-black shadow-xs'
-                  : 'surface-card text-card-title border border-surface-border dark:border-navy-700'
-              }`}
-            >
-              <span className="hidden sm:inline">{tab.label}</span>
-              <span className="sm:hidden">{tab.short}</span>
-            </button>
-          ))}
         </div>
       </div>
 

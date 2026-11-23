@@ -16,7 +16,9 @@ import {
   Users,
   Radio,
   TrendingUp,
-  X
+  X,
+  Crown,
+  Star
 } from 'lucide-react';
 import TeamLogo from './TeamLogo';
 import { fixtures, tournamentInfo, officialTournamentGoalkeepers, officialTournamentGoalScorers, participatingTeams } from '../data/tournamentData';
@@ -33,7 +35,10 @@ import {
 
 export default function TopScorers({ lang, isDarkMode }) {
   const [matchState, setMatchState] = useState(getStoredMatchState);
-  const [activeStatsTab, setActiveStatsTab] = useState('players'); // 'players' | 'leaders'
+  const [activeStatsTab, setActiveStatsTab] = useState('mvp'); // 'mvp' | 'players' | 'leaders'
+  const [mvpSortMode, setMvpSortMode] = useState('points'); // 'points' | 'goals' | 'motm'
+  const [mvpSearchQuery, setMvpSearchQuery] = useState('');
+  const [showAllMvp, setShowAllMvp] = useState(false);
   const [showTopTen, setShowTopTen] = useState(false);
   const [playerSearchQuery, setPlayerSearchQuery] = useState('');
   const [selectedClubFilter, setSelectedClubFilter] = useState('All');
@@ -61,6 +66,174 @@ export default function TopScorers({ lang, isDarkMode }) {
   const stats = useMemo(() => {
     return calculateTournamentStats([], fixtures.filter((m) => m.confirmed), matchState);
   }, [matchState]);
+
+  // Official Tournament Top Players & MVP Leaderboard aggregated dynamically from all matches
+  const tournamentTopPlayers = useMemo(() => {
+    const playerMap = new Map();
+
+    const findSfaId = (teamName) => {
+      if (!teamName) return null;
+      const lower = teamName.toLowerCase().trim();
+      const club = participatingTeams.find((c) => {
+        const cName = (c.name || '').toLowerCase().trim();
+        return cName === lower || cName.includes(lower) || lower.includes(cName);
+      });
+      return club?.sfaTeamId || null;
+    };
+
+    const findPhoto = (playerName, teamName) => {
+      const sfaId = findSfaId(teamName);
+      if (sfaId && sfaPlayersByTeam[String(sfaId)]) {
+        const found = sfaPlayersByTeam[String(sfaId)].find(
+          (p) => p.name && (p.name.toLowerCase() === playerName.toLowerCase() || p.name.toLowerCase().includes(playerName.toLowerCase()))
+        );
+        if (found?.image_url && !found.image_url.includes('default')) {
+          return found.image_url;
+        }
+      }
+      const squadP = squadPlayers.find(
+        (p) => p.name && (p.name.toLowerCase() === playerName.toLowerCase() || p.name.toLowerCase().includes(playerName.toLowerCase()))
+      );
+      return squadP?.photoUrl || null;
+    };
+
+    const completedMatches = fixtures.filter((f) => f.confirmed || f.status === 'Completed' || (f.score1 != null && f.score2 != null));
+
+    completedMatches.forEach((f) => {
+      const events = f.events || [];
+      events.forEach((ev) => {
+        if (!ev.player) return;
+        const pName = ev.player.trim();
+        const pTeam = ev.team || f.team1;
+        const key = `${pName.toLowerCase()}__${(pTeam || '').toLowerCase()}`;
+
+        if (!playerMap.has(key)) {
+          playerMap.set(key, {
+            name: pName,
+            team: pTeam,
+            goals: 0,
+            yellowCards: 0,
+            redCards: 0,
+            motmCount: 0,
+            matches: new Set(),
+            photoUrl: findPhoto(pName, pTeam)
+          });
+        }
+        const record = playerMap.get(key);
+        record.matches.add(f.id);
+        if (ev.type === 'goal' && !ev.isOwnGoal) record.goals++;
+        if (ev.type === 'yellow_card') record.yellowCards++;
+        if (ev.type === 'red_card') record.redCards++;
+      });
+
+      if (f.motm) {
+        const match = f.motm.match(/^([^(]+)(?:\(([^)]+)\))?/);
+        const motmName = match ? match[1].trim() : f.motm.trim();
+        const motmTeam = match && match[2] ? match[2].trim() : (f.winner || f.team1);
+
+        let matched = false;
+        for (const [k, p] of playerMap.entries()) {
+          const sameName = p.name.toLowerCase() === motmName.toLowerCase() ||
+            p.name.toLowerCase().includes(motmName.toLowerCase()) ||
+            motmName.toLowerCase().includes(p.name.toLowerCase());
+          const sameTeam = !motmTeam || (p.team && p.team.toLowerCase().includes(motmTeam.toLowerCase())) ||
+            (motmTeam && motmTeam.toLowerCase().includes(p.team?.toLowerCase() || ''));
+
+          if (sameName && (sameTeam || !p.team)) {
+            p.motmCount++;
+            p.matches.add(f.id);
+            if (!p.photoUrl) p.photoUrl = findPhoto(p.name, p.team);
+            matched = true;
+            break;
+          }
+        }
+
+        if (!matched) {
+          const key = `${motmName.toLowerCase()}__${(motmTeam || '').toLowerCase()}`;
+          playerMap.set(key, {
+            name: motmName,
+            team: motmTeam,
+            goals: 0,
+            yellowCards: 0,
+            redCards: 0,
+            motmCount: 1,
+            matches: new Set([f.id]),
+            photoUrl: findPhoto(motmName, motmTeam)
+          });
+        }
+      }
+    });
+
+    officialTournamentGoalScorers.forEach((ts) => {
+      let found = false;
+      for (const [k, p] of playerMap.entries()) {
+        if (p.name.toLowerCase() === ts.name.toLowerCase() || p.name.toLowerCase().includes(ts.name.toLowerCase())) {
+          if (ts.goals > p.goals) p.goals = ts.goals;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        const key = `${ts.name.toLowerCase()}__${(ts.team || '').toLowerCase()}`;
+        playerMap.set(key, {
+          name: ts.name,
+          team: ts.team,
+          goals: ts.goals,
+          yellowCards: 0,
+          redCards: 0,
+          motmCount: 0,
+          matches: new Set(),
+          photoUrl: findPhoto(ts.name, ts.team)
+        });
+      }
+    });
+
+    return Array.from(playerMap.values())
+      .filter((p) => p.goals > 0 || p.motmCount > 0)
+      .map((p) => {
+        const matchesCount = Math.max(p.matches.size, 1);
+        const points = (p.goals * 3) + (p.motmCount * 5) - (p.yellowCards * 1) - (p.redCards * 3);
+        let badge = null;
+        if (p.motmCount >= 2) badge = '👑 2x MOTM';
+        else if (p.goals >= 4) badge = '🔥 4 Goals Top Scorer';
+        else if (p.goals >= 3) badge = '⚽ Top Scorer';
+        else if (p.goals >= 2 && p.motmCount >= 1) badge = '⭐ Match Winner';
+        else if (p.motmCount >= 1 && p.goals === 0) badge = '🛡️ Star MOTM';
+        else if (p.goals >= 1) badge = '⚽ Goal Scorer';
+
+        return {
+          ...p,
+          matchesCount,
+          points,
+          badge
+        };
+      });
+  }, []);
+
+  const filteredMvpPlayers = useMemo(() => {
+    let list = [...tournamentTopPlayers];
+    if (mvpSearchQuery.trim()) {
+      const q = mvpSearchQuery.toLowerCase().trim();
+      list = list.filter((p) => p.name.toLowerCase().includes(q) || (p.team && p.team.toLowerCase().includes(q)));
+    }
+    list.sort((a, b) => {
+      if (mvpSortMode === 'goals') {
+        if (b.goals !== a.goals) return b.goals - a.goals;
+        if (b.motmCount !== a.motmCount) return b.motmCount - a.motmCount;
+        return b.points - a.points;
+      }
+      if (mvpSortMode === 'motm') {
+        if (b.motmCount !== a.motmCount) return b.motmCount - a.motmCount;
+        if (b.goals !== a.goals) return b.goals - a.goals;
+        return b.points - a.points;
+      }
+      // Default: MVP points
+      if (b.points !== a.points) return b.points - a.points;
+      if (b.goals !== a.goals) return b.goals - a.goals;
+      return b.motmCount - a.motmCount;
+    });
+    return list;
+  }, [tournamentTopPlayers, mvpSortMode, mvpSearchQuery]);
 
   const selectableMatches = useMemo(() => {
     return fixtures.filter((f) => f.confirmed || f.status === 'Completed' || f.status === 'Live' || f.id === 'pq-malabar');
@@ -423,32 +596,467 @@ export default function TopScorers({ lang, isDarkMode }) {
         </div>
       </section>
 
-      {/* 2. Sleek Section Controller: Tab Navigation between Players Directory & Leaderboards */}
-      <div className="p-1.5 rounded-2xl bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700 grid grid-cols-2 gap-1.5">
+      {/* 2. Sleek Section Controller: Tab Navigation between Top Players (MVP), Players Directory & Leaderboards */}
+      <div className="p-1.5 rounded-2xl bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700 grid grid-cols-3 gap-1.5">
         <button
-          onClick={() => setActiveStatsTab('players')}
-          className={`min-h-[46px] px-3 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 active:scale-95 ${
-            activeStatsTab === 'players'
-              ? 'btn-royal text-white font-black shadow-md'
+          onClick={() => setActiveStatsTab('mvp')}
+          className={`min-h-[46px] px-2 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 ${
+            activeStatsTab === 'mvp'
+              ? 'btn-royal text-white font-black shadow-md ring-2 ring-royal/30'
               : 'text-card-muted hover:text-card-title'
           }`}
         >
-          <Users className="w-4 h-4" />
-          <span>{lang === 'ml' ? 'കളിക്കാരും സ്റ്റാറ്റ്സും' : 'Players & Stats'}</span>
+          <Crown className={`w-3.5 h-3.5 ${activeStatsTab === 'mvp' ? 'text-gold' : ''}`} />
+          <span className="truncate">{lang === 'ml' ? 'ടോപ്പ് താരങ്ങൾ (MVP)' : 'Top Players (MVP)'}</span>
+        </button>
+
+        <button
+          onClick={() => setActiveStatsTab('players')}
+          className={`min-h-[46px] px-2 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 ${
+            activeStatsTab === 'players'
+              ? 'btn-royal text-white font-black shadow-md ring-2 ring-royal/30'
+              : 'text-card-muted hover:text-card-title'
+          }`}
+        >
+          <Users className="w-3.5 h-3.5" />
+          <span className="truncate">{lang === 'ml' ? 'മാച്ച് & സ്ക്വാഡ്' : 'Match & Squad'}</span>
         </button>
 
         <button
           onClick={() => setActiveStatsTab('leaders')}
-          className={`min-h-[46px] px-3 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 active:scale-95 ${
+          className={`min-h-[46px] px-2 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 ${
             activeStatsTab === 'leaders'
-              ? 'btn-royal text-white font-black shadow-md'
+              ? 'btn-royal text-white font-black shadow-md ring-2 ring-royal/30'
               : 'text-card-muted hover:text-card-title'
           }`}
         >
-          <Trophy className="w-4 h-4" />
-          <span>{lang === 'ml' ? 'പോയിന്റ് പട്ടിക & ലീഡർബോർഡുകൾ' : 'Standings & Leaders'}</span>
+          <Trophy className="w-3.5 h-3.5" />
+          <span className="truncate">{lang === 'ml' ? 'ലീഡർബോർഡ്' : 'Standings'}</span>
         </button>
       </div>
+
+      {/* ============================================================== */}
+      {/* VIEW MVP: CURRENT TOP PLAYERS & MVP LEADERBOARD */}
+      {/* ============================================================== */}
+      {activeStatsTab === 'mvp' && (
+        <section className="space-y-4 animate-fadeIn">
+          {/* Header Card */}
+          <div className="rounded-3xl p-4 sm:p-5 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-surface-border dark:border-navy-700 pb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="p-2 rounded-xl btn-gold text-navy-950 shadow-xs">
+                  <Crown className="w-5 h-5" />
+                </span>
+                <div>
+                  <h3 className="text-sm sm:text-base font-black font-sports uppercase tracking-wider text-card-title flex items-center gap-1.5">
+                    <span>{lang === 'ml' ? 'ടൂർണ്ണമെന്റ് ടോപ്പ് താരങ്ങൾ' : 'CURRENT TOP PLAYERS'}</span>
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-gold/15 text-gold border border-gold/30">
+                      MVP
+                    </span>
+                  </h3>
+                  <p className="text-[11px] text-card-muted">
+                    {lang === 'ml' 
+                      ? 'ഗോളുകൾ (⚽), മാൻ ഓഫ് ദി മാച്ച് (🏆), MVP ഇംപാക്ട് പോയിന്റുകൾ അടിസ്ഥാനമാക്കി'
+                      : 'Ranked by Goals (⚽), Man of the Match (🏆), and Overall MVP Impact Rating'}
+                  </p>
+                </div>
+              </div>
+
+              <span className="shrink-0 px-2.5 py-1 rounded-xl bg-surface-light dark:bg-navy-800 text-[11px] font-mono font-bold text-card-muted border border-surface-border self-start sm:self-center">
+                {filteredMvpPlayers.length} {lang === 'ml' ? 'താരങ്ങൾ' : 'players'}
+              </span>
+            </div>
+
+            {/* Sort & Search Controls */}
+            <div className="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between">
+              {/* Sort Pills */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
+                <button
+                  onClick={() => setMvpSortMode('points')}
+                  className={`min-h-[36px] px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 shrink-0 ${
+                    mvpSortMode === 'points'
+                      ? 'btn-royal text-white font-black shadow-xs'
+                      : 'surface-light text-card-muted border border-surface-border dark:border-navy-700 hover:text-card-title'
+                  }`}
+                >
+                  <Star className="w-3.5 h-3.5 text-gold" />
+                  <span>{lang === 'ml' ? 'MVP പോയിന്റുകൾ' : 'MVP Points'}</span>
+                </button>
+
+                <button
+                  onClick={() => setMvpSortMode('goals')}
+                  className={`min-h-[36px] px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 shrink-0 ${
+                    mvpSortMode === 'goals'
+                      ? 'btn-royal text-white font-black shadow-xs'
+                      : 'surface-light text-card-muted border border-surface-border dark:border-navy-700 hover:text-card-title'
+                  }`}
+                >
+                  <span>⚽</span>
+                  <span>{lang === 'ml' ? 'കൂടുതൽ ഗോളുകൾ' : 'Most Goals'}</span>
+                </button>
+
+                <button
+                  onClick={() => setMvpSortMode('motm')}
+                  className={`min-h-[36px] px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 shrink-0 ${
+                    mvpSortMode === 'motm'
+                      ? 'btn-royal text-white font-black shadow-xs'
+                      : 'surface-light text-card-muted border border-surface-border dark:border-navy-700 hover:text-card-title'
+                  }`}
+                >
+                  <span>🏆</span>
+                  <span>{lang === 'ml' ? 'മാൻ ഓഫ് ദി മാച്ച്' : 'Most MOTMs'}</span>
+                </button>
+              </div>
+
+              {/* Search input */}
+              <div className="relative min-w-[200px]">
+                <Search className="w-3.5 h-3.5 text-card-muted absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={mvpSearchQuery}
+                  onChange={(e) => setMvpSearchQuery(e.target.value)}
+                  placeholder={lang === 'ml' ? 'പേര് അല്ലെങ്കിൽ ക്ലബ്...' : 'Search player or club...'}
+                  className="w-full h-9 pl-8 pr-7 rounded-xl text-xs surface-light text-card-title border border-surface-border dark:border-navy-700 focus:outline-hidden focus:ring-1 focus:ring-royal/40"
+                />
+                {mvpSearchQuery && (
+                  <button
+                    onClick={() => setMvpSearchQuery('')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-card-muted hover:text-card-title"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Top 3 Podium Cards (when no search query or top 3 available) */}
+            {!mvpSearchQuery && filteredMvpPlayers.length >= 3 && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                {/* 1st Place (Gold) */}
+                {filteredMvpPlayers[0] && (
+                  <div className="p-3.5 rounded-2xl bg-gradient-to-b from-amber-500/15 to-transparent border border-amber-500/40 relative space-y-2 order-1 sm:order-2 ring-1 ring-amber-500/20">
+                    <div className="flex items-center justify-between">
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-navy-950 uppercase tracking-wider shadow-xs">
+                        <Crown className="w-3 h-3" /> #1 Rank
+                      </span>
+                      <span className="text-xs font-black font-sports text-gold">
+                        ⭐ {filteredMvpPlayers[0].points} PTS
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <div className="relative w-12 h-12 rounded-2xl bg-white p-0.5 border-2 border-amber-500/60 overflow-hidden shrink-0 shadow-md">
+                        {filteredMvpPlayers[0].photoUrl ? (
+                          <img 
+                            src={filteredMvpPlayers[0].photoUrl} 
+                            alt={filteredMvpPlayers[0].name}
+                            className="w-full h-full object-cover rounded-xl"
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          />
+                        ) : (
+                          <TeamLogo teamName={filteredMvpPlayers[0].team} className="w-full h-full object-contain p-1" />
+                        )}
+                        <span className="absolute -top-1 -right-1 text-xs">👑</span>
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="text-sm font-black text-card-title truncate">
+                          {filteredMvpPlayers[0].name}
+                        </h4>
+                        <p className="text-[10px] text-card-muted truncate font-medium flex items-center gap-1">
+                          <TeamLogo teamName={filteredMvpPlayers[0].team} className="w-3 h-3 inline object-contain" />
+                          <span>{filteredMvpPlayers[0].team}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-1.5 pt-1 text-center text-[10px] font-bold">
+                      <div className="p-1.5 rounded-lg bg-surface-card border border-surface-border">
+                        <span className="text-card-muted block text-[9px] uppercase">ഗോളുകൾ</span>
+                        <span className="text-emerald-400 font-sports font-black text-sm">⚽ {filteredMvpPlayers[0].goals}</span>
+                      </div>
+                      <div className="p-1.5 rounded-lg bg-surface-card border border-surface-border">
+                        <span className="text-card-muted block text-[9px] uppercase">MOTM</span>
+                        <span className="text-amber-400 font-sports font-black text-sm">🏆 {filteredMvpPlayers[0].motmCount}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 2nd Place (Silver) */}
+                {filteredMvpPlayers[1] && (
+                  <div className="p-3.5 rounded-2xl bg-gradient-to-b from-slate-400/10 to-transparent border border-slate-400/30 relative space-y-2 order-2 sm:order-1">
+                    <div className="flex items-center justify-between">
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-100 uppercase tracking-wider">
+                        🥈 #2 Rank
+                      </span>
+                      <span className="text-xs font-black font-sports text-slate-300">
+                        ⭐ {filteredMvpPlayers[1].points} PTS
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <div className="relative w-11 h-11 rounded-2xl bg-white p-0.5 border-2 border-slate-400/40 overflow-hidden shrink-0 shadow-xs">
+                        {filteredMvpPlayers[1].photoUrl ? (
+                          <img 
+                            src={filteredMvpPlayers[1].photoUrl} 
+                            alt={filteredMvpPlayers[1].name}
+                            className="w-full h-full object-cover rounded-xl"
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          />
+                        ) : (
+                          <TeamLogo teamName={filteredMvpPlayers[1].team} className="w-full h-full object-contain p-1" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="text-sm font-black text-card-title truncate">
+                          {filteredMvpPlayers[1].name}
+                        </h4>
+                        <p className="text-[10px] text-card-muted truncate font-medium flex items-center gap-1">
+                          <TeamLogo teamName={filteredMvpPlayers[1].team} className="w-3 h-3 inline object-contain" />
+                          <span>{filteredMvpPlayers[1].team}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-1.5 pt-1 text-center text-[10px] font-bold">
+                      <div className="p-1.5 rounded-lg bg-surface-card border border-surface-border">
+                        <span className="text-card-muted block text-[9px] uppercase">ഗോളുകൾ</span>
+                        <span className="text-emerald-400 font-sports font-black text-sm">⚽ {filteredMvpPlayers[1].goals}</span>
+                      </div>
+                      <div className="p-1.5 rounded-lg bg-surface-card border border-surface-border">
+                        <span className="text-card-muted block text-[9px] uppercase">MOTM</span>
+                        <span className="text-amber-400 font-sports font-black text-sm">🏆 {filteredMvpPlayers[1].motmCount}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 3rd Place (Bronze) */}
+                {filteredMvpPlayers[2] && (
+                  <div className="p-3.5 rounded-2xl bg-gradient-to-b from-amber-700/10 to-transparent border border-amber-700/30 relative space-y-2 order-3">
+                    <div className="flex items-center justify-between">
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-800/60 text-amber-200 uppercase tracking-wider">
+                        🥉 #3 Rank
+                      </span>
+                      <span className="text-xs font-black font-sports text-amber-400">
+                        ⭐ {filteredMvpPlayers[2].points} PTS
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <div className="relative w-11 h-11 rounded-2xl bg-white p-0.5 border-2 border-amber-700/40 overflow-hidden shrink-0 shadow-xs">
+                        {filteredMvpPlayers[2].photoUrl ? (
+                          <img 
+                            src={filteredMvpPlayers[2].photoUrl} 
+                            alt={filteredMvpPlayers[2].name}
+                            className="w-full h-full object-cover rounded-xl"
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          />
+                        ) : (
+                          <TeamLogo teamName={filteredMvpPlayers[2].team} className="w-full h-full object-contain p-1" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="text-sm font-black text-card-title truncate">
+                          {filteredMvpPlayers[2].name}
+                        </h4>
+                        <p className="text-[10px] text-card-muted truncate font-medium flex items-center gap-1">
+                          <TeamLogo teamName={filteredMvpPlayers[2].team} className="w-3 h-3 inline object-contain" />
+                          <span>{filteredMvpPlayers[2].team}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-1.5 pt-1 text-center text-[10px] font-bold">
+                      <div className="p-1.5 rounded-lg bg-surface-card border border-surface-border">
+                        <span className="text-card-muted block text-[9px] uppercase">ഗോളുകൾ</span>
+                        <span className="text-emerald-400 font-sports font-black text-sm">⚽ {filteredMvpPlayers[2].goals}</span>
+                      </div>
+                      <div className="p-1.5 rounded-lg bg-surface-card border border-surface-border">
+                        <span className="text-card-muted block text-[9px] uppercase">MOTM</span>
+                        <span className="text-amber-400 font-sports font-black text-sm">🏆 {filteredMvpPlayers[2].motmCount}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Full Table / Card List */}
+          <div className="rounded-3xl p-4 sm:p-5 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-3">
+            <div className="flex items-center justify-between gap-2 border-b border-surface-border dark:border-navy-700 pb-2.5">
+              <h4 className="text-xs font-black font-sports uppercase tracking-wider text-card-title">
+                {lang === 'ml' ? 'മുഴുവൻ താരങ്ങളുടെ ലീഡർബോർഡ്' : 'COMPLETE TOURNAMENT LEADERBOARD'}
+              </h4>
+              <span className="text-[10px] text-card-muted">
+                {mvpSortMode === 'goals' 
+                  ? (lang === 'ml' ? 'ഗോളുകൾ മുൻഗണനയിൽ' : 'Sorted by Goals') 
+                  : mvpSortMode === 'motm' 
+                  ? (lang === 'ml' ? 'MOTM മുൻഗണനയിൽ' : 'Sorted by MOTMs') 
+                  : (lang === 'ml' ? 'MVP റേറ്റിംഗ് മുൻഗണനയിൽ' : 'Sorted by MVP Impact Rating')}
+              </span>
+            </div>
+
+            {filteredMvpPlayers.length === 0 ? (
+              <div className="p-8 text-center space-y-2">
+                <Users className="w-8 h-8 text-card-muted mx-auto" />
+                <p className="text-xs font-bold text-card-title">
+                  {lang === 'ml' ? 'താരങ്ങളെ കണ്ടെത്തിയില്ല' : 'No players found'}
+                </p>
+                {mvpSearchQuery && (
+                  <button
+                    onClick={() => setMvpSearchQuery('')}
+                    className="text-[11px] text-royal dark:text-sky underline font-bold"
+                  >
+                    Clear search filter
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                {(showAllMvp ? filteredMvpPlayers : filteredMvpPlayers.slice(0, 10)).map((player, idx) => {
+                  const rank = idx + 1;
+                  return (
+                    <div
+                      key={`${player.team}-${player.name}-${idx}`}
+                      className={`flex items-center gap-2.5 p-2.5 rounded-2xl surface-light border transition ${
+                        rank === 1
+                          ? 'border-amber-500/60 bg-amber-500/5 shadow-2xs'
+                          : rank === 2
+                          ? 'border-slate-400/40 bg-slate-500/5'
+                          : rank === 3
+                          ? 'border-amber-700/40 bg-amber-700/5'
+                          : 'border-surface-border dark:border-navy-700/80 hover:border-royal/40'
+                      }`}
+                    >
+                      {/* Rank Number */}
+                      <div className="w-7 text-center shrink-0">
+                        {rank === 1 ? (
+                          <span className="w-6 h-6 rounded-lg bg-amber-500 text-navy-950 font-black font-sports text-xs inline-flex items-center justify-center shadow-xs">
+                            1
+                          </span>
+                        ) : rank === 2 ? (
+                          <span className="w-6 h-6 rounded-lg bg-slate-300 dark:bg-slate-700 text-slate-900 dark:text-slate-100 font-black font-sports text-xs inline-flex items-center justify-center">
+                            2
+                          </span>
+                        ) : rank === 3 ? (
+                          <span className="w-6 h-6 rounded-lg bg-amber-800/80 text-amber-200 font-black font-sports text-xs inline-flex items-center justify-center">
+                            3
+                          </span>
+                        ) : (
+                          <span className="text-xs font-black font-sports text-card-muted">
+                            #{rank}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Photo / Avatar */}
+                      <div className="relative w-10 h-10 rounded-full bg-white border border-surface-border dark:border-navy-700 overflow-hidden shrink-0 flex items-center justify-center shadow-2xs">
+                        {player.photoUrl ? (
+                          <img 
+                            src={player.photoUrl} 
+                            alt="" 
+                            className="w-full h-full object-cover" 
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }} 
+                          />
+                        ) : (
+                          <TeamLogo teamName={player.team} className="w-6 h-6 object-contain" />
+                        )}
+                        {player.motmCount > 0 && (
+                          <span className="absolute -top-1 -right-1 text-[10px]">👑</span>
+                        )}
+                      </div>
+
+                      {/* Name & Club */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="text-xs font-black text-card-title truncate">
+                            {player.name}
+                          </p>
+                          {player.badge && (
+                            <span className="px-1.5 py-0.2 rounded-md text-[9px] font-black bg-gold/15 text-gold border border-gold/30 shrink-0">
+                              {player.badge}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[10px] text-card-muted truncate flex items-center gap-1 mt-0.5">
+                          <TeamLogo teamName={player.team} className="w-3 h-3 inline object-contain shrink-0" />
+                          <span className="truncate">{player.team}</span>
+                          <span className="text-card-muted/60">•</span>
+                          <span className="shrink-0">{player.matchesCount} {lang === 'ml' ? 'മത്സരം' : 'matches'}</span>
+                        </p>
+                      </div>
+
+                      {/* Metrics: Goals, MOTM, MVP Points */}
+                      <div className="flex items-center gap-1.5 shrink-0 text-[10px] font-black">
+                        {/* Goals */}
+                        <div 
+                          title="Total Goals"
+                          className={`px-2 py-1 rounded-lg flex items-center gap-1 ${
+                            player.goals > 0 
+                              ? 'bg-emerald-500/20 text-emerald-400 font-black' 
+                              : 'bg-surface-card text-card-muted'
+                          }`}
+                        >
+                          <span>⚽</span>
+                          <span className="font-sports text-xs">{player.goals}</span>
+                        </div>
+
+                        {/* MOTM */}
+                        <div 
+                          title="Man of the Match awards"
+                          className={`px-2 py-1 rounded-lg flex items-center gap-1 ${
+                            player.motmCount > 0 
+                              ? 'bg-amber-500/20 text-amber-400 font-black ring-1 ring-amber-500/30' 
+                              : 'bg-surface-card text-card-muted'
+                          }`}
+                        >
+                          <span>🏆</span>
+                          <span className="font-sports text-xs">{player.motmCount}</span>
+                        </div>
+
+                        {/* Total MVP Points */}
+                        <div 
+                          title="Overall MVP Impact Points"
+                          className="min-w-[48px] text-center px-2 py-1 rounded-lg btn-royal text-white font-black font-sports text-xs shadow-xs"
+                        >
+                          {player.points} <span className="text-[8px] font-sans font-bold opacity-80">PTS</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {filteredMvpPlayers.length > 10 && (
+              <button 
+                type="button" 
+                onClick={() => setShowAllMvp((v) => !v)} 
+                className="w-full min-h-10 rounded-xl bg-surface-light dark:bg-navy-800 text-xs font-bold text-royal dark:text-sky hover:bg-surface-subtle transition flex items-center justify-center gap-1"
+              >
+                <span>
+                  {showAllMvp 
+                    ? (lang === 'ml' ? 'കുറച്ച് കാണിക്കുക' : 'Show less') 
+                    : (lang === 'ml' ? `എല്ലാ ${filteredMvpPlayers.length} താരങ്ങളെയും കാണുക` : `Show all ${filteredMvpPlayers.length} players`)}
+                </span>
+                {showAllMvp ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              </button>
+            )}
+
+            {/* Explanatory Scoring Note */}
+            <div className="p-3 rounded-2xl bg-surface-light/60 dark:bg-navy-800/40 border border-surface-border text-[11px] text-card-muted flex items-center gap-2">
+              <Info className="w-4 h-4 text-royal dark:text-sky shrink-0" />
+              <span>
+                {lang === 'ml'
+                  ? 'MVP കണക്കുകൂട്ടൽ രീതി: ഗോൾ = +3 PTS, മാൻ ഓഫ് ദി മാച്ച് = +5 PTS, മഞ്ഞ കാർഡ് = -1 PTS, ചുവപ്പ് കാർഡ് = -3 PTS'
+                  : 'MVP Scoring: Goal = +3 pts | Man of the Match = +5 pts | Yellow Card = -1 pt | Red Card = -3 pts'}
+              </span>
+            </div>
+          </div>
+        </section>
+      )}
 
       {activeStatsTab === 'players' && (
         <section className="rounded-3xl p-4 sm:p-5 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-3.5">
