@@ -35,17 +35,13 @@ import {
 
 export default function TopScorers({ lang, isDarkMode }) {
   const [matchState, setMatchState] = useState(getStoredMatchState);
-  const [activeStatsTab, setActiveStatsTab] = useState('mvp'); // 'mvp' | 'players' | 'leaders'
-  const [mvpSortMode, setMvpSortMode] = useState('points'); // 'points' | 'goals' | 'motm'
-  const [mvpSearchQuery, setMvpSearchQuery] = useState('');
-  const [showAllMvp, setShowAllMvp] = useState(false);
-  const [showTopTen, setShowTopTen] = useState(false);
+  const [activeStatsTab, setActiveStatsTab] = useState('players'); // 'players' | 'leaders'
+  const [playerSortMode, setPlayerSortMode] = useState('mvp'); // 'mvp' | 'goals' | 'motm' | 'number'
   const [playerSearchQuery, setPlayerSearchQuery] = useState('');
   const [selectedClubFilter, setSelectedClubFilter] = useState('All');
   const [selectedCardPlayer, setSelectedCardPlayer] = useState(null);
-  const [lineupTactics, setLineupTactics] = useState(getLineupTactics);
-  const [showAllPerformance, setShowAllPerformance] = useState(false);
-  const [selectedStatsMatchId, setSelectedStatsMatchId] = useState('m1');
+  const [visibleCount, setVisibleCount] = useState(20);
+  const [showTopTen, setShowTopTen] = useState(false);
 
   // Sync matchState when referee desk updates goals or events
   useEffect(() => {
@@ -67,36 +63,81 @@ export default function TopScorers({ lang, isDarkMode }) {
     return calculateTournamentStats([], fixtures.filter((m) => m.confirmed), matchState);
   }, [matchState]);
 
-  // Official Tournament Top Players & MVP Leaderboard aggregated dynamically from all matches
-  const tournamentTopPlayers = useMemo(() => {
+  // All Clubs List for Filter Chips
+  const allClubsList = useMemo(() => {
+    const list = ['All'];
+    const seen = new Set(['All']);
+    squadClubs.forEach((c) => {
+      if (!seen.has(c)) {
+        seen.add(c);
+        list.push(c);
+      }
+    });
+    participatingTeams.forEach((t) => {
+      if (!seen.has(t.name)) {
+        seen.add(t.name);
+        list.push(t.name);
+      }
+    });
+    return list;
+  }, []);
+
+  // SINGLE UNIFIED PLAYERS DIRECTORY & TOURNAMENT STATS
+  const unifiedPlayersList = useMemo(() => {
     const playerMap = new Map();
 
-    const findSfaId = (teamName) => {
-      if (!teamName) return null;
-      const lower = teamName.toLowerCase().trim();
-      const club = participatingTeams.find((c) => {
-        const cName = (c.name || '').toLowerCase().trim();
-        return cName === lower || cName.includes(lower) || lower.includes(cName);
+    const getCleanKey = (name, club) => {
+      return ((name || '').trim() + '__' + (club || '').trim()).toLowerCase();
+    };
+
+    // 1. Add confirmed squad players
+    squadPlayers.forEach((sp, idx) => {
+      const key = getCleanKey(sp.name, sp.club);
+      playerMap.set(key, {
+        id: sp.id || `sp-${idx}`,
+        name: sp.name,
+        nameMl: sp.nameMl || sp.name,
+        number: sp.number,
+        club: sp.club,
+        clubMl: sp.clubMl || sp.club,
+        position: sp.position || 'XI',
+        photoUrl: sp.photoUrl || sp.posterUrl || null,
+        goals: 0,
+        motmCount: 0,
+        yellowCards: 0,
+        redCards: 0,
+        matches: new Set()
       });
-      return club?.sfaTeamId || null;
-    };
+    });
 
-    const findPhoto = (playerName, teamName) => {
-      const sfaId = findSfaId(teamName);
+    // 2. Add SFA players for all participating teams
+    participatingTeams.forEach((t) => {
+      const sfaId = t.sfaTeamId;
       if (sfaId && sfaPlayersByTeam[String(sfaId)]) {
-        const found = sfaPlayersByTeam[String(sfaId)].find(
-          (p) => p.name && (p.name.toLowerCase() === playerName.toLowerCase() || p.name.toLowerCase().includes(playerName.toLowerCase()))
-        );
-        if (found?.image_url && !found.image_url.includes('default')) {
-          return found.image_url;
-        }
+        sfaPlayersByTeam[String(sfaId)].forEach((p, idx) => {
+          const key = getCleanKey(p.name, t.name);
+          if (!playerMap.has(key)) {
+            playerMap.set(key, {
+              id: `sfa-${sfaId}-${p.id || idx}`,
+              name: p.name,
+              nameMl: p.name,
+              number: p.jersey_number || (idx + 1),
+              club: t.name,
+              clubMl: t.nameMl || t.name,
+              position: p.position || 'XI',
+              photoUrl: p.image_url && !p.image_url.includes('default') ? p.image_url : null,
+              goals: 0,
+              motmCount: 0,
+              yellowCards: 0,
+              redCards: 0,
+              matches: new Set()
+            });
+          }
+        });
       }
-      const squadP = squadPlayers.find(
-        (p) => p.name && (p.name.toLowerCase() === playerName.toLowerCase() || p.name.toLowerCase().includes(playerName.toLowerCase()))
-      );
-      return squadP?.photoUrl || null;
-    };
+    });
 
+    // 3. Aggregate match stats from fixtures
     const completedMatches = fixtures.filter((f) => f.confirmed || f.status === 'Completed' || (f.score1 != null && f.score2 != null));
 
     completedMatches.forEach((f) => {
@@ -105,25 +146,41 @@ export default function TopScorers({ lang, isDarkMode }) {
         if (!ev.player) return;
         const pName = ev.player.trim();
         const pTeam = ev.team || f.team1;
-        const key = `${pName.toLowerCase()}__${(pTeam || '').toLowerCase()}`;
 
-        if (!playerMap.has(key)) {
+        let matched = false;
+        for (const [k, p] of playerMap.entries()) {
+          const sameName = p.name.toLowerCase() === pName.toLowerCase() ||
+            p.name.toLowerCase().includes(pName.toLowerCase()) ||
+            pName.toLowerCase().includes(p.name.toLowerCase());
+          const sameClub = !pTeam || p.club.toLowerCase().includes(pTeam.toLowerCase()) || pTeam.toLowerCase().includes(p.club.toLowerCase());
+          if (sameName && (sameClub || !p.club)) {
+            p.matches.add(f.id);
+            if (ev.type === 'goal' && !ev.isOwnGoal) p.goals++;
+            if (ev.type === 'yellow_card') p.yellowCards++;
+            if (ev.type === 'red_card') p.redCards++;
+            matched = true;
+            break;
+          }
+        }
+
+        if (!matched) {
+          const key = getCleanKey(pName, pTeam);
           playerMap.set(key, {
+            id: `ev-${pName}`,
             name: pName,
-            team: pTeam,
-            goals: 0,
-            yellowCards: 0,
-            redCards: 0,
+            nameMl: pName,
+            number: ev.playerNumber || 10,
+            club: pTeam,
+            clubMl: pTeam,
+            position: ev.type === 'goal' ? 'FWD' : 'MID',
+            photoUrl: null,
+            goals: ev.type === 'goal' && !ev.isOwnGoal ? 1 : 0,
             motmCount: 0,
-            matches: new Set(),
-            photoUrl: findPhoto(pName, pTeam)
+            yellowCards: ev.type === 'yellow_card' ? 1 : 0,
+            redCards: ev.type === 'red_card' ? 1 : 0,
+            matches: new Set([f.id])
           });
         }
-        const record = playerMap.get(key);
-        record.matches.add(f.id);
-        if (ev.type === 'goal' && !ev.isOwnGoal) record.goals++;
-        if (ev.type === 'yellow_card') record.yellowCards++;
-        if (ev.type === 'red_card') record.redCards++;
       });
 
       if (f.motm) {
@@ -136,342 +193,111 @@ export default function TopScorers({ lang, isDarkMode }) {
           const sameName = p.name.toLowerCase() === motmName.toLowerCase() ||
             p.name.toLowerCase().includes(motmName.toLowerCase()) ||
             motmName.toLowerCase().includes(p.name.toLowerCase());
-          const sameTeam = !motmTeam || (p.team && p.team.toLowerCase().includes(motmTeam.toLowerCase())) ||
-            (motmTeam && motmTeam.toLowerCase().includes(p.team?.toLowerCase() || ''));
-
-          if (sameName && (sameTeam || !p.team)) {
+          const sameClub = !motmTeam || p.club.toLowerCase().includes(motmTeam.toLowerCase()) || motmTeam.toLowerCase().includes(p.club.toLowerCase());
+          if (sameName && (sameClub || !p.club)) {
             p.motmCount++;
             p.matches.add(f.id);
-            if (!p.photoUrl) p.photoUrl = findPhoto(p.name, p.team);
             matched = true;
             break;
           }
         }
 
         if (!matched) {
-          const key = `${motmName.toLowerCase()}__${(motmTeam || '').toLowerCase()}`;
+          const key = getCleanKey(motmName, motmTeam);
           playerMap.set(key, {
+            id: `motm-${motmName}`,
             name: motmName,
-            team: motmTeam,
+            nameMl: motmName,
+            number: 10,
+            club: motmTeam,
+            clubMl: motmTeam,
+            position: 'FWD',
+            photoUrl: null,
             goals: 0,
+            motmCount: 1,
             yellowCards: 0,
             redCards: 0,
-            motmCount: 1,
-            matches: new Set([f.id]),
-            photoUrl: findPhoto(motmName, motmTeam)
+            matches: new Set([f.id])
           });
         }
       }
     });
 
+    // 4. Enrich with officialTournamentGoalScorers
     officialTournamentGoalScorers.forEach((ts) => {
-      let found = false;
       for (const [k, p] of playerMap.entries()) {
         if (p.name.toLowerCase() === ts.name.toLowerCase() || p.name.toLowerCase().includes(ts.name.toLowerCase())) {
           if (ts.goals > p.goals) p.goals = ts.goals;
-          found = true;
           break;
         }
       }
-      if (!found) {
-        const key = `${ts.name.toLowerCase()}__${(ts.team || '').toLowerCase()}`;
-        playerMap.set(key, {
-          name: ts.name,
-          team: ts.team,
-          goals: ts.goals,
-          yellowCards: 0,
-          redCards: 0,
-          motmCount: 0,
-          matches: new Set(),
-          photoUrl: findPhoto(ts.name, ts.team)
-        });
-      }
     });
 
-    return Array.from(playerMap.values())
-      .filter((p) => p.goals > 0 || p.motmCount > 0)
-      .map((p) => {
-        const matchesCount = Math.max(p.matches.size, 1);
-        const points = (p.goals * 3) + (p.motmCount * 5) - (p.yellowCards * 1) - (p.redCards * 3);
-        let badge = null;
-        if (p.motmCount >= 2) badge = '👑 2x MOTM';
-        else if (p.goals >= 4) badge = '🔥 4 Goals Top Scorer';
-        else if (p.goals >= 3) badge = '⚽ Top Scorer';
-        else if (p.goals >= 2 && p.motmCount >= 1) badge = '⭐ Match Winner';
-        else if (p.motmCount >= 1 && p.goals === 0) badge = '🛡️ Star MOTM';
-        else if (p.goals >= 1) badge = '⚽ Goal Scorer';
-
-        return {
-          ...p,
-          matchesCount,
-          points,
-          badge
-        };
-      });
-  }, []);
-
-  const filteredMvpPlayers = useMemo(() => {
-    let list = [...tournamentTopPlayers];
-    if (mvpSearchQuery.trim()) {
-      const q = mvpSearchQuery.toLowerCase().trim();
-      list = list.filter((p) => p.name.toLowerCase().includes(q) || (p.team && p.team.toLowerCase().includes(q)));
-    }
-    list.sort((a, b) => {
-      if (mvpSortMode === 'goals') {
-        if (b.goals !== a.goals) return b.goals - a.goals;
-        if (b.motmCount !== a.motmCount) return b.motmCount - a.motmCount;
-        return b.points - a.points;
-      }
-      if (mvpSortMode === 'motm') {
-        if (b.motmCount !== a.motmCount) return b.motmCount - a.motmCount;
-        if (b.goals !== a.goals) return b.goals - a.goals;
-        return b.points - a.points;
-      }
-      // Default: MVP points
-      if (b.points !== a.points) return b.points - a.points;
-      if (b.goals !== a.goals) return b.goals - a.goals;
-      return b.motmCount - a.motmCount;
-    });
-    return list;
-  }, [tournamentTopPlayers, mvpSortMode, mvpSearchQuery]);
-
-  const selectableMatches = useMemo(() => {
-    return fixtures.filter((f) => f.confirmed || f.status === 'Completed' || f.status === 'Live' || f.id === 'pq-malabar');
-  }, []);
-
-  const currentMatchFixture = useMemo(() => {
-    return fixtures.find((f) => f.id === selectedStatsMatchId) || fixtures[0];
-  }, [selectedStatsMatchId]);
-
-  const matchdayPlayerStats = useMemo(() => {
-    const fixture = currentMatchFixture;
-    if (!fixture) return [];
-
-    const isLiveMatch = matchState?.matchId === fixture.id;
-    const events = [...(fixture.events || []), ...(isLiveMatch ? (matchState?.events || []) : [])];
-    const motm = fixture.motm || '';
-
-    // Helper to find SFA club id
-    const findSfaId = (teamName) => {
-      if (!teamName) return null;
-      const lower = teamName.toLowerCase().trim();
-      const club = participatingTeams.find((c) => {
-        const cName = (c.name || '').toLowerCase().trim();
-        return cName === lower || cName.includes(lower) || lower.includes(cName);
-      });
-      return club?.sfaTeamId || null;
-    };
-
-    const team1Name = fixture.team1;
-    const team2Name = fixture.team2;
-    const team1Id = findSfaId(team1Name);
-    const team2Id = findSfaId(team2Name);
-
-    const winnerName = fixture.winner || (fixture.score1 > fixture.score2 ? team1Name : fixture.score2 > fixture.score1 ? team2Name : null);
-
-    // Build player array for both teams
-    const playersList = [];
-    const squadMap = lineupTactics?.squads || {};
-
-    const addTeamPlayers = (teamName, sfaId, isTeam1) => {
-      if (!teamName) return;
-      const isWinner = winnerName && teamName && winnerName.toLowerCase().includes(teamName.toLowerCase());
-      const lower = teamName.toLowerCase();
-
-      // If KRSC
-      if (lower.includes('krsc') && squadMap.krsc) {
-        const squad = squadMap.krsc;
-        const all = [...(squad.starting || []), ...(squad.subs || [])];
-        all.forEach((p) => {
-          const isStarter = (squad.starting || []).some((s) => s.num === p.num);
-          const pName = p.displayName || p.name;
-          if (pName && !['none', 'null'].includes(pName.toLowerCase())) {
-            playersList.push({
-              key: `krsc-${p.num}`,
-              name: pName,
-              number: p.num,
-              position: p.pos || (isStarter ? 'XI' : 'SUB'),
-              team: teamName,
-              photoUrl: p.photoUrl,
-              baseRating: Number(p.baseRating) || 7.0,
-              isStarter,
-              isWinner
-            });
-          }
-        });
-        return;
-      }
-
-      // If Base Perumbavur
-      if (lower.includes('base') && squadMap.base) {
-        const squad = squadMap.base;
-        const all = [...(squad.starting || []), ...(squad.subs || [])];
-        all.forEach((p) => {
-          const isStarter = (squad.starting || []).some((s) => s.num === p.num);
-          const pName = p.displayName || p.name;
-          if (pName && !['none', 'null'].includes(pName.toLowerCase())) {
-            playersList.push({
-              key: `base-${p.num}`,
-              name: pName,
-              number: p.num,
-              position: p.pos || (isStarter ? 'XI' : 'SUB'),
-              team: teamName,
-              photoUrl: p.photoUrl,
-              baseRating: Number(p.baseRating) || 7.0,
-              isStarter,
-              isWinner
-            });
-          }
-        });
-        return;
-      }
-
-      // From SFA database
-      const sfaPlayers = (sfaId && sfaPlayersByTeam[String(sfaId)]) || [];
-      if (sfaPlayers.length > 0) {
-        sfaPlayers.slice(0, 14).forEach((p, idx) => {
-          const num = p.jersey_number || (idx + 1);
-          playersList.push({
-            key: `sfa-${sfaId}-${p.id || idx}`,
-            name: p.name || `Player ${num}`,
-            number: num,
-            position: p.position || (idx < 7 ? 'XI' : 'SUB'),
-            team: teamName,
-            photoUrl: p.image_url && !p.image_url.includes('default') ? p.image_url : null,
-            baseRating: 7.0,
-            isStarter: idx < 7,
-            isWinner
-          });
-        });
-      } else {
-        // Fallback squad players from squad.js matching club
-        const fallback = squadPlayers.filter((p) => p.club && p.club.toLowerCase().includes(teamName.toLowerCase()));
-        if (fallback.length > 0) {
-          fallback.forEach((p, idx) => {
-            playersList.push({
-              key: `fallback-${p.id || idx}`,
-              name: p.name,
-              number: p.number || (idx + 1),
-              position: p.position || 'XI',
-              team: teamName,
-              photoUrl: p.posterUrl,
-              baseRating: 7.0,
-              isStarter: idx < 7,
-              isWinner
-            });
-          });
-        }
-      }
-    };
-
-    addTeamPlayers(team1Name, team1Id, true);
-    addTeamPlayers(team2Name, team2Id, false);
-
-    // Make sure any player in events (goals/cards) or MOTM is in playersList
-    events.forEach((ev) => {
-      const evName = (ev.player || '').trim();
-      if (!evName || ['none', 'null', 'unknown'].includes(evName.toLowerCase())) return;
-      const exists = playersList.some((p) => p.name.toLowerCase().includes(evName.toLowerCase()) || evName.toLowerCase().includes(p.name.toLowerCase()));
-      if (!exists) {
-        playersList.push({
-          key: `ev-${evName}`,
-          name: evName,
-          number: ev.playerNumber || 10,
-          position: ev.type === 'goal' ? 'FWD' : 'MID',
-          team: ev.team || team1Name,
-          photoUrl: null,
-          baseRating: 7.5,
-          isStarter: true,
-          isWinner: winnerName && ev.team ? winnerName.toLowerCase().includes(ev.team.toLowerCase()) : false
-        });
-      }
-    });
-
-    if (motm) {
-      const motmPlayerName = motm.split('(')[0].trim();
-      if (motmPlayerName && !['none', 'null', 'unknown'].includes(motmPlayerName.toLowerCase())) {
-        const exists = playersList.some((p) => p.name.toLowerCase().includes(motmPlayerName.toLowerCase()) || motmPlayerName.toLowerCase().includes(p.name.toLowerCase()));
-        if (!exists) {
-          playersList.push({
-            key: `motm-${motmPlayerName}`,
-            name: motmPlayerName,
-            number: 10,
-            position: 'FWD',
-            team: team1Name,
-            photoUrl: null,
-            baseRating: 8.5,
-            isStarter: true,
-            isWinner: true
-          });
-        }
-      }
-    }
-
-    // Now calculate goals, cards, and realistic rating for each player
-    const processed = playersList.map((player) => {
-      const pName = (player.name || '').trim().toLowerCase();
-      const pNum = String(player.number || '');
-
-      const playerEvents = events.filter((ev) => {
-        const evName = (ev.player || '').trim().toLowerCase();
-        const evNum = ev.playerNumber != null ? String(ev.playerNumber) : '';
-        const sameNum = evNum && evNum === pNum;
-        const sameName = evName && (evName === pName || pName.includes(evName) || evName.includes(pName));
-        return sameNum || sameName;
-      });
-
-      const goals = playerEvents.filter((e) => e.type === 'goal' && !e.isOwnGoal).length;
-      const yellowCards = playerEvents.filter((e) => e.type === 'yellow_card').length;
-      const redCards = playerEvents.filter((e) => e.type === 'red_card').length;
-
-      const isMotm = Boolean(motm && (motm.toLowerCase().includes(pName) || (pName.length > 3 && motm.toLowerCase().includes(pName.slice(0, 4)))));
-
-      // Calculate realistic match rating
-      let rating = player.baseRating || 6.8;
-      if (player.isStarter) rating += 0.3;
-      if (player.isWinner) rating += 0.4;
-      rating += goals * 1.4;
-      if (isMotm) rating = Math.max(rating + 1.2, 9.6);
-      rating -= yellowCards * 0.5;
-      rating -= redCards * 1.5;
-
-      // Clean name: never "None"
-      let cleanName = player.name;
-      if (!cleanName || ['none', 'null', 'undefined', 'unknown'].includes(cleanName.toLowerCase())) {
-        cleanName = `Player #${player.number}`;
-      }
+    return Array.from(playerMap.values()).map((p) => {
+      const points = (p.goals * 3) + (p.motmCount * 5) - (p.yellowCards * 1) - (p.redCards * 3);
+      let badge = null;
+      if (p.motmCount >= 2) badge = '👑 2x MOTM';
+      else if (p.goals >= 4) badge = '🔥 4 Goals Top Scorer';
+      else if (p.goals >= 3) badge = '⚽ Top Scorer';
+      else if (p.goals >= 2 && p.motmCount >= 1) badge = '⭐ Match Winner';
+      else if (p.motmCount >= 1 && p.goals === 0) badge = '🛡️ Star MOTM';
+      else if (p.goals >= 1) badge = '⚽ Goal Scorer';
 
       return {
-        ...player,
-        name: cleanName,
-        goals,
-        yellowCards,
-        redCards,
-        isMotm,
-        rating: Math.min(Math.max(rating, 6.0), 9.9)
+        ...p,
+        points,
+        matchCount: Math.max(p.matches.size, p.goals > 0 || p.motmCount > 0 ? 1 : 0),
+        badge
       };
     });
+  }, []);
 
-    // Deduplicate by name + team
-    const seen = new Set();
-    const unique = [];
-    for (const p of processed) {
-      const key = `${p.team}-${p.name.toLowerCase()}`;
-      if (!seen.has(key)) {
-        seen.add(key);
-        unique.push(p);
-      }
+  // Filtered and Sorted Players for the Single Unified Table
+  const filteredUnifiedPlayers = useMemo(() => {
+    let list = [...unifiedPlayersList];
+
+    // Filter by club
+    if (selectedClubFilter !== 'All') {
+      const targetClub = selectedClubFilter.toLowerCase();
+      list = list.filter((p) => (p.club || '').toLowerCase().includes(targetClub) || targetClub.includes((p.club || '').toLowerCase()));
     }
 
-    // Sort: MOTM first, then goals desc, then rating desc, then cards
-    return unique.sort((a, b) => {
-      if (a.isMotm && !b.isMotm) return -1;
-      if (!a.isMotm && b.isMotm) return 1;
+    // Filter by search query
+    if (playerSearchQuery.trim()) {
+      const q = playerSearchQuery.toLowerCase().trim();
+      list = list.filter((p) => {
+        const nameEn = (p.name || '').toLowerCase();
+        const nameMl = (p.nameMl || '').toLowerCase();
+        const num = String(p.number || '');
+        const club = (p.club || '').toLowerCase();
+        return nameEn.includes(q) || nameMl.includes(q) || num === q || club.includes(q);
+      });
+    }
+
+    // Sort
+    list.sort((a, b) => {
+      if (playerSortMode === 'goals') {
+        if (b.goals !== a.goals) return b.goals - a.goals;
+        if (b.motmCount !== a.motmCount) return b.motmCount - a.motmCount;
+        return b.points - a.points;
+      }
+      if (playerSortMode === 'motm') {
+        if (b.motmCount !== a.motmCount) return b.motmCount - a.motmCount;
+        if (b.goals !== a.goals) return b.goals - a.goals;
+        return b.points - a.points;
+      }
+      if (playerSortMode === 'number') {
+        return (Number(a.number) || 99) - (Number(b.number) || 99);
+      }
+      // Default: MVP points / Performance
+      if (b.points !== a.points) return b.points - a.points;
       if (b.goals !== a.goals) return b.goals - a.goals;
-      if (b.rating !== a.rating) return b.rating - a.rating;
-      return (b.yellowCards + b.redCards) - (a.yellowCards + a.redCards);
+      if (b.motmCount !== a.motmCount) return b.motmCount - a.motmCount;
+      return (Number(a.number) || 99) - (Number(b.number) || 99);
     });
-  }, [currentMatchFixture, lineupTactics, matchState]);
+
+    return list;
+  }, [unifiedPlayersList, selectedClubFilter, playerSearchQuery, playerSortMode]);
 
   // Check if a final match is finished to display the tournament champion
   const finalMatch = useMemo(() => {
@@ -596,131 +422,162 @@ export default function TopScorers({ lang, isDarkMode }) {
         </div>
       </section>
 
-      {/* 2. Sleek Section Controller: Tab Navigation between Top Players (MVP), Players Directory & Leaderboards */}
-      <div className="p-1.5 rounded-2xl bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700 grid grid-cols-3 gap-1.5">
-        <button
-          onClick={() => setActiveStatsTab('mvp')}
-          className={`min-h-[46px] px-2 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 ${
-            activeStatsTab === 'mvp'
-              ? 'btn-royal text-white font-black shadow-md ring-2 ring-royal/30'
-              : 'text-card-muted hover:text-card-title'
-          }`}
-        >
-          <Crown className={`w-3.5 h-3.5 ${activeStatsTab === 'mvp' ? 'text-gold' : ''}`} />
-          <span className="truncate">{lang === 'ml' ? 'ടോപ്പ് താരങ്ങൾ (MVP)' : 'Top Players (MVP)'}</span>
-        </button>
-
+      {/* 2. Sleek Section Controller: 2 Clean Tabs (Single Unified Players Table & Standings) */}
+      <div className="p-1.5 rounded-2xl bg-surface-light dark:bg-navy-900 border border-surface-border dark:border-navy-700 grid grid-cols-2 gap-1.5">
         <button
           onClick={() => setActiveStatsTab('players')}
-          className={`min-h-[46px] px-2 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 ${
+          className={`min-h-[46px] px-3 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 active:scale-95 ${
             activeStatsTab === 'players'
               ? 'btn-royal text-white font-black shadow-md ring-2 ring-royal/30'
               : 'text-card-muted hover:text-card-title'
           }`}
         >
-          <Users className="w-3.5 h-3.5" />
-          <span className="truncate">{lang === 'ml' ? 'മാച്ച് & സ്ക്വാഡ്' : 'Match & Squad'}</span>
+          <Users className="w-4 h-4" />
+          <span>{lang === 'ml' ? 'കളിക്കാരുടെ വിവരങ്ങൾ & സ്റ്റാറ്റ്സ്' : 'Players Directory & Stats'}</span>
         </button>
 
         <button
           onClick={() => setActiveStatsTab('leaders')}
-          className={`min-h-[46px] px-2 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 ${
+          className={`min-h-[46px] px-3 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 active:scale-95 ${
             activeStatsTab === 'leaders'
               ? 'btn-royal text-white font-black shadow-md ring-2 ring-royal/30'
               : 'text-card-muted hover:text-card-title'
           }`}
         >
-          <Trophy className="w-3.5 h-3.5" />
-          <span className="truncate">{lang === 'ml' ? 'ലീഡർബോർഡ്' : 'Standings'}</span>
+          <Trophy className="w-4 h-4" />
+          <span>{lang === 'ml' ? 'പോയിന്റ് പട്ടിക & ലീഡർബോർഡ്' : 'Standings & Leaders'}</span>
         </button>
       </div>
 
       {/* ============================================================== */}
-      {/* VIEW MVP: CURRENT TOP PLAYERS & MVP LEADERBOARD */}
+      {/* VIEW: SINGLE UNIFIED PLAYERS DETAILS & STATS TABLE */}
       {/* ============================================================== */}
-      {activeStatsTab === 'mvp' && (
+      {activeStatsTab === 'players' && (
         <section className="space-y-4 animate-fadeIn">
-          {/* Header Card */}
           <div className="rounded-3xl p-4 sm:p-5 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-4">
+            {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-surface-border dark:border-navy-700 pb-3">
               <div className="flex items-center gap-2.5">
-                <span className="p-2 rounded-xl btn-gold text-navy-950 shadow-xs">
-                  <Crown className="w-5 h-5" />
+                <span className="p-2 rounded-xl btn-royal text-white shadow-xs">
+                  <Users className="w-5 h-5" />
                 </span>
                 <div>
-                  <h3 className="text-sm sm:text-base font-black font-sports uppercase tracking-wider text-card-title flex items-center gap-1.5">
-                    <span>{lang === 'ml' ? 'ടൂർണ്ണമെന്റ് ടോപ്പ് താരങ്ങൾ' : 'CURRENT TOP PLAYERS'}</span>
-                    <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-gold/15 text-gold border border-gold/30">
-                      MVP
-                    </span>
+                  <h3 className="text-sm sm:text-base font-black font-sports uppercase tracking-wider text-card-title">
+                    {lang === 'ml' ? 'കളിക്കാരുടെ വിവരങ്ങളും ടൂർണ്ണമെന്റ് സ്റ്റാറ്റ്സും' : 'PLAYERS DIRECTORY & TOURNAMENT STATS'}
                   </h3>
-                  <p className="text-[11px] text-card-muted">
+                  <p className="text-[11px] text-card-muted font-medium">
                     {lang === 'ml' 
-                      ? 'ഗോളുകൾ (⚽), മാൻ ഓഫ് ദി മാച്ച് (🏆), MVP ഇംപാക്ട് പോയിന്റുകൾ അടിസ്ഥാനമാക്കി'
-                      : 'Ranked by Goals (⚽), Man of the Match (🏆), and Overall MVP Impact Rating'}
+                      ? 'താരങ്ങളുടെ വിവരങ്ങൾ, ഗോളുകൾ (⚽), മാൻ ഓഫ് ദി മാച്ച് (🏆), കാർഡുകൾ'
+                      : 'Verified player details, goals (⚽), MOTMs (🏆), and disciplinary records'}
                   </p>
                 </div>
               </div>
 
               <span className="shrink-0 px-2.5 py-1 rounded-xl bg-surface-light dark:bg-navy-800 text-[11px] font-mono font-bold text-card-muted border border-surface-border self-start sm:self-center">
-                {filteredMvpPlayers.length} {lang === 'ml' ? 'താരങ്ങൾ' : 'players'}
+                {filteredUnifiedPlayers.length} {lang === 'ml' ? 'താരങ്ങൾ' : 'Players'}
               </span>
             </div>
 
-            {/* Sort & Search Controls */}
+            {/* Club Filter Chips */}
+            <div className="flex items-center gap-1.5 overflow-x-auto horizontal-scroll-container py-1 -mx-1 px-1">
+              {allClubsList.map((club) => {
+                const isSelected = selectedClubFilter === club;
+                const clubLabel = club === 'All' 
+                  ? (lang === 'ml' ? 'എല്ലാ ക്ലബ്ബുകളും' : 'All Clubs')
+                  : (squadClubLabelsMl[club] || club);
+                return (
+                  <button
+                    key={club}
+                    onClick={() => {
+                      setSelectedClubFilter(club);
+                      setVisibleCount(20);
+                    }}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1.5 cursor-pointer active:scale-95 ${
+                      isSelected
+                        ? 'btn-royal text-white shadow-xs ring-2 ring-royal/30'
+                        : 'surface-light hover:bg-surface-subtle text-card-title border border-surface-border dark:border-navy-700'
+                    }`}
+                  >
+                    {club !== 'All' && (
+                      <div className="w-4 h-4 rounded-full bg-white p-0.5 shrink-0 inline-flex items-center justify-center">
+                        <TeamLogo teamName={club} className="w-full h-full object-contain" />
+                      </div>
+                    )}
+                    <span>{clubLabel}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Sort Controls & Search Bar */}
             <div className="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between">
               {/* Sort Pills */}
               <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
                 <button
-                  onClick={() => setMvpSortMode('points')}
-                  className={`min-h-[36px] px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 shrink-0 ${
-                    mvpSortMode === 'points'
-                      ? 'btn-royal text-white font-black shadow-xs'
-                      : 'surface-light text-card-muted border border-surface-border dark:border-navy-700 hover:text-card-title'
+                  onClick={() => setPlayerSortMode('mvp')}
+                  className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shrink-0 ${
+                    playerSortMode === 'mvp'
+                      ? 'btn-royal text-white shadow-xs'
+                      : 'surface-light text-card-muted hover:text-card-title border border-surface-border dark:border-navy-700'
                   }`}
                 >
                   <Star className="w-3.5 h-3.5 text-gold" />
-                  <span>{lang === 'ml' ? 'MVP പോയിന്റുകൾ' : 'MVP Points'}</span>
+                  <span>{lang === 'ml' ? 'MVP റേറ്റിംഗ്' : 'MVP Points'}</span>
                 </button>
 
                 <button
-                  onClick={() => setMvpSortMode('goals')}
-                  className={`min-h-[36px] px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 shrink-0 ${
-                    mvpSortMode === 'goals'
-                      ? 'btn-royal text-white font-black shadow-xs'
-                      : 'surface-light text-card-muted border border-surface-border dark:border-navy-700 hover:text-card-title'
+                  onClick={() => setPlayerSortMode('goals')}
+                  className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shrink-0 ${
+                    playerSortMode === 'goals'
+                      ? 'btn-royal text-white shadow-xs'
+                      : 'surface-light text-card-muted hover:text-card-title border border-surface-border dark:border-navy-700'
                   }`}
                 >
                   <span>⚽</span>
-                  <span>{lang === 'ml' ? 'കൂടുതൽ ഗോളുകൾ' : 'Most Goals'}</span>
+                  <span>{lang === 'ml' ? 'ഗോളുകൾ' : 'Goals'}</span>
                 </button>
 
                 <button
-                  onClick={() => setMvpSortMode('motm')}
-                  className={`min-h-[36px] px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 shrink-0 ${
-                    mvpSortMode === 'motm'
-                      ? 'btn-royal text-white font-black shadow-xs'
-                      : 'surface-light text-card-muted border border-surface-border dark:border-navy-700 hover:text-card-title'
+                  onClick={() => setPlayerSortMode('motm')}
+                  className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shrink-0 ${
+                    playerSortMode === 'motm'
+                      ? 'btn-royal text-white shadow-xs'
+                      : 'surface-light text-card-muted hover:text-card-title border border-surface-border dark:border-navy-700'
                   }`}
                 >
                   <span>🏆</span>
-                  <span>{lang === 'ml' ? 'മാൻ ഓഫ് ദി മാച്ച്' : 'Most MOTMs'}</span>
+                  <span>{lang === 'ml' ? 'MOTM' : 'MOTMs'}</span>
+                </button>
+
+                <button
+                  onClick={() => setPlayerSortMode('number')}
+                  className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 shrink-0 ${
+                    playerSortMode === 'number'
+                      ? 'btn-royal text-white shadow-xs'
+                      : 'surface-light text-card-muted hover:text-card-title border border-surface-border dark:border-navy-700'
+                  }`}
+                >
+                  <span>#</span>
+                  <span>{lang === 'ml' ? 'ജേഴ്സി നമ്പർ' : 'Jersey #'}</span>
                 </button>
               </div>
 
-              {/* Search input */}
-              <div className="relative min-w-[200px]">
+              {/* Search Bar */}
+              <div className="relative min-w-[220px]">
                 <Search className="w-3.5 h-3.5 text-card-muted absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  value={mvpSearchQuery}
-                  onChange={(e) => setMvpSearchQuery(e.target.value)}
-                  placeholder={lang === 'ml' ? 'പേര് അല്ലെങ്കിൽ ക്ലബ്...' : 'Search player or club...'}
+                  value={playerSearchQuery}
+                  onChange={(e) => {
+                    setPlayerSearchQuery(e.target.value);
+                    setVisibleCount(20);
+                  }}
+                  placeholder={lang === 'ml' ? 'കളിക്കാരന്റെ പേര്, നമ്പർ...' : 'Search player by name, #, club...'}
                   className="w-full h-9 pl-8 pr-7 rounded-xl text-xs surface-light text-card-title border border-surface-border dark:border-navy-700 focus:outline-hidden focus:ring-1 focus:ring-royal/40"
                 />
-                {mvpSearchQuery && (
+                {playerSearchQuery && (
                   <button
-                    onClick={() => setMvpSearchQuery('')}
+                    onClick={() => setPlayerSearchQuery('')}
                     className="absolute right-2 top-1/2 -translate-y-1/2 text-card-muted hover:text-card-title"
                   >
                     <X className="w-3.5 h-3.5" />
@@ -729,184 +586,16 @@ export default function TopScorers({ lang, isDarkMode }) {
               </div>
             </div>
 
-            {/* Top 3 Podium Cards (when no search query or top 3 available) */}
-            {!mvpSearchQuery && filteredMvpPlayers.length >= 3 && (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
-                {/* 1st Place (Gold) */}
-                {filteredMvpPlayers[0] && (
-                  <div className="p-3.5 rounded-2xl bg-gradient-to-b from-amber-500/15 to-transparent border border-amber-500/40 relative space-y-2 order-1 sm:order-2 ring-1 ring-amber-500/20">
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-navy-950 uppercase tracking-wider shadow-xs">
-                        <Crown className="w-3 h-3" /> #1 Rank
-                      </span>
-                      <span className="text-xs font-black font-sports text-gold">
-                        ⭐ {filteredMvpPlayers[0].points} PTS
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2.5">
-                      <div className="relative w-12 h-12 rounded-2xl bg-white p-0.5 border-2 border-amber-500/60 overflow-hidden shrink-0 shadow-md">
-                        {filteredMvpPlayers[0].photoUrl ? (
-                          <img 
-                            src={filteredMvpPlayers[0].photoUrl} 
-                            alt={filteredMvpPlayers[0].name}
-                            className="w-full h-full object-cover rounded-xl"
-                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                          />
-                        ) : (
-                          <TeamLogo teamName={filteredMvpPlayers[0].team} className="w-full h-full object-contain p-1" />
-                        )}
-                        <span className="absolute -top-1 -right-1 text-xs">👑</span>
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="text-sm font-black text-card-title truncate">
-                          {filteredMvpPlayers[0].name}
-                        </h4>
-                        <p className="text-[10px] text-card-muted truncate font-medium flex items-center gap-1">
-                          <TeamLogo teamName={filteredMvpPlayers[0].team} className="w-3 h-3 inline object-contain" />
-                          <span>{filteredMvpPlayers[0].team}</span>
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-1.5 pt-1 text-center text-[10px] font-bold">
-                      <div className="p-1.5 rounded-lg bg-surface-card border border-surface-border">
-                        <span className="text-card-muted block text-[9px] uppercase">ഗോളുകൾ</span>
-                        <span className="text-emerald-400 font-sports font-black text-sm">⚽ {filteredMvpPlayers[0].goals}</span>
-                      </div>
-                      <div className="p-1.5 rounded-lg bg-surface-card border border-surface-border">
-                        <span className="text-card-muted block text-[9px] uppercase">MOTM</span>
-                        <span className="text-amber-400 font-sports font-black text-sm">🏆 {filteredMvpPlayers[0].motmCount}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* 2nd Place (Silver) */}
-                {filteredMvpPlayers[1] && (
-                  <div className="p-3.5 rounded-2xl bg-gradient-to-b from-slate-400/10 to-transparent border border-slate-400/30 relative space-y-2 order-2 sm:order-1">
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-100 uppercase tracking-wider">
-                        🥈 #2 Rank
-                      </span>
-                      <span className="text-xs font-black font-sports text-slate-300">
-                        ⭐ {filteredMvpPlayers[1].points} PTS
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2.5">
-                      <div className="relative w-11 h-11 rounded-2xl bg-white p-0.5 border-2 border-slate-400/40 overflow-hidden shrink-0 shadow-xs">
-                        {filteredMvpPlayers[1].photoUrl ? (
-                          <img 
-                            src={filteredMvpPlayers[1].photoUrl} 
-                            alt={filteredMvpPlayers[1].name}
-                            className="w-full h-full object-cover rounded-xl"
-                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                          />
-                        ) : (
-                          <TeamLogo teamName={filteredMvpPlayers[1].team} className="w-full h-full object-contain p-1" />
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="text-sm font-black text-card-title truncate">
-                          {filteredMvpPlayers[1].name}
-                        </h4>
-                        <p className="text-[10px] text-card-muted truncate font-medium flex items-center gap-1">
-                          <TeamLogo teamName={filteredMvpPlayers[1].team} className="w-3 h-3 inline object-contain" />
-                          <span>{filteredMvpPlayers[1].team}</span>
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-1.5 pt-1 text-center text-[10px] font-bold">
-                      <div className="p-1.5 rounded-lg bg-surface-card border border-surface-border">
-                        <span className="text-card-muted block text-[9px] uppercase">ഗോളുകൾ</span>
-                        <span className="text-emerald-400 font-sports font-black text-sm">⚽ {filteredMvpPlayers[1].goals}</span>
-                      </div>
-                      <div className="p-1.5 rounded-lg bg-surface-card border border-surface-border">
-                        <span className="text-card-muted block text-[9px] uppercase">MOTM</span>
-                        <span className="text-amber-400 font-sports font-black text-sm">🏆 {filteredMvpPlayers[1].motmCount}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* 3rd Place (Bronze) */}
-                {filteredMvpPlayers[2] && (
-                  <div className="p-3.5 rounded-2xl bg-gradient-to-b from-amber-700/10 to-transparent border border-amber-700/30 relative space-y-2 order-3">
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-800/60 text-amber-200 uppercase tracking-wider">
-                        🥉 #3 Rank
-                      </span>
-                      <span className="text-xs font-black font-sports text-amber-400">
-                        ⭐ {filteredMvpPlayers[2].points} PTS
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2.5">
-                      <div className="relative w-11 h-11 rounded-2xl bg-white p-0.5 border-2 border-amber-700/40 overflow-hidden shrink-0 shadow-xs">
-                        {filteredMvpPlayers[2].photoUrl ? (
-                          <img 
-                            src={filteredMvpPlayers[2].photoUrl} 
-                            alt={filteredMvpPlayers[2].name}
-                            className="w-full h-full object-cover rounded-xl"
-                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                          />
-                        ) : (
-                          <TeamLogo teamName={filteredMvpPlayers[2].team} className="w-full h-full object-contain p-1" />
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="text-sm font-black text-card-title truncate">
-                          {filteredMvpPlayers[2].name}
-                        </h4>
-                        <p className="text-[10px] text-card-muted truncate font-medium flex items-center gap-1">
-                          <TeamLogo teamName={filteredMvpPlayers[2].team} className="w-3 h-3 inline object-contain" />
-                          <span>{filteredMvpPlayers[2].team}</span>
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-1.5 pt-1 text-center text-[10px] font-bold">
-                      <div className="p-1.5 rounded-lg bg-surface-card border border-surface-border">
-                        <span className="text-card-muted block text-[9px] uppercase">ഗോളുകൾ</span>
-                        <span className="text-emerald-400 font-sports font-black text-sm">⚽ {filteredMvpPlayers[2].goals}</span>
-                      </div>
-                      <div className="p-1.5 rounded-lg bg-surface-card border border-surface-border">
-                        <span className="text-card-muted block text-[9px] uppercase">MOTM</span>
-                        <span className="text-amber-400 font-sports font-black text-sm">🏆 {filteredMvpPlayers[2].motmCount}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Full Table / Card List */}
-          <div className="rounded-3xl p-4 sm:p-5 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-3">
-            <div className="flex items-center justify-between gap-2 border-b border-surface-border dark:border-navy-700 pb-2.5">
-              <h4 className="text-xs font-black font-sports uppercase tracking-wider text-card-title">
-                {lang === 'ml' ? 'മുഴുവൻ താരങ്ങളുടെ ലീഡർബോർഡ്' : 'COMPLETE TOURNAMENT LEADERBOARD'}
-              </h4>
-              <span className="text-[10px] text-card-muted">
-                {mvpSortMode === 'goals' 
-                  ? (lang === 'ml' ? 'ഗോളുകൾ മുൻഗണനയിൽ' : 'Sorted by Goals') 
-                  : mvpSortMode === 'motm' 
-                  ? (lang === 'ml' ? 'MOTM മുൻഗണനയിൽ' : 'Sorted by MOTMs') 
-                  : (lang === 'ml' ? 'MVP റേറ്റിംഗ് മുൻഗണനയിൽ' : 'Sorted by MVP Impact Rating')}
-              </span>
-            </div>
-
-            {filteredMvpPlayers.length === 0 ? (
-              <div className="p-8 text-center space-y-2">
+            {/* The One Unified Players Table */}
+            {filteredUnifiedPlayers.length === 0 ? (
+              <div className="py-12 px-4 rounded-2xl surface-light border border-dashed border-surface-border dark:border-navy-700 text-center space-y-2">
                 <Users className="w-8 h-8 text-card-muted mx-auto" />
                 <p className="text-xs font-bold text-card-title">
-                  {lang === 'ml' ? 'താരങ്ങളെ കണ്ടെത്തിയില്ല' : 'No players found'}
+                  {lang === 'ml' ? 'തിരഞ്ഞെടുത്ത വിവരങ്ങളുമായി പൊരുത്തപ്പെടുന്ന താരങ്ങളെ കണ്ടെത്തിയില്ല' : 'No players found matching your query'}
                 </p>
-                {mvpSearchQuery && (
+                {playerSearchQuery && (
                   <button
-                    onClick={() => setMvpSearchQuery('')}
+                    onClick={() => setPlayerSearchQuery('')}
                     className="text-[11px] text-royal dark:text-sky underline font-bold"
                   >
                     Clear search filter
@@ -915,114 +604,117 @@ export default function TopScorers({ lang, isDarkMode }) {
               </div>
             ) : (
               <div className="space-y-1.5">
-                {(showAllMvp ? filteredMvpPlayers : filteredMvpPlayers.slice(0, 10)).map((player, idx) => {
+                {filteredUnifiedPlayers.slice(0, visibleCount).map((p, idx) => {
                   const rank = idx + 1;
+                  const disc = getPlayerDisciplinaryStatus(p.name, p.number, p.club);
+
                   return (
                     <div
-                      key={`${player.team}-${player.name}-${idx}`}
-                      className={`flex items-center gap-2.5 p-2.5 rounded-2xl surface-light border transition ${
-                        rank === 1
-                          ? 'border-amber-500/60 bg-amber-500/5 shadow-2xs'
-                          : rank === 2
-                          ? 'border-slate-400/40 bg-slate-500/5'
-                          : rank === 3
-                          ? 'border-amber-700/40 bg-amber-700/5'
-                          : 'border-surface-border dark:border-navy-700/80 hover:border-royal/40'
+                      key={p.id || `unified-p-${idx}`}
+                      onClick={() => {
+                        if (disc.hasCard) {
+                          setSelectedCardPlayer({ player: p, disciplinary: disc });
+                        }
+                      }}
+                      className={`p-3 rounded-2xl surface-light border transition flex items-center justify-between gap-3 text-xs min-h-[56px] ${
+                        disc.hasRedCard
+                          ? 'border-red-500/50 bg-red-500/5 hover:border-red-500 cursor-pointer'
+                          : disc.hasYellowCard
+                          ? 'border-amber-500/50 bg-amber-500/5 hover:border-amber-500 cursor-pointer'
+                          : 'border-surface-border dark:border-navy-700 hover:border-royal'
                       }`}
                     >
-                      {/* Rank Number */}
-                      <div className="w-7 text-center shrink-0">
-                        {rank === 1 ? (
-                          <span className="w-6 h-6 rounded-lg bg-amber-500 text-navy-950 font-black font-sports text-xs inline-flex items-center justify-center shadow-xs">
-                            1
-                          </span>
-                        ) : rank === 2 ? (
-                          <span className="w-6 h-6 rounded-lg bg-slate-300 dark:bg-slate-700 text-slate-900 dark:text-slate-100 font-black font-sports text-xs inline-flex items-center justify-center">
-                            2
-                          </span>
-                        ) : rank === 3 ? (
-                          <span className="w-6 h-6 rounded-lg bg-amber-800/80 text-amber-200 font-black font-sports text-xs inline-flex items-center justify-center">
-                            3
-                          </span>
-                        ) : (
-                          <span className="text-xs font-black font-sports text-card-muted">
-                            #{rank}
-                          </span>
-                        )}
-                      </div>
+                      {/* Left: Number + Avatar + Name & Club */}
+                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        {/* Jersey Number or Rank */}
+                        <div className="w-8 h-8 rounded-xl bg-surface-card text-card-title font-black font-sports border border-surface-border dark:border-navy-700 flex items-center justify-center shrink-0 shadow-2xs text-xs">
+                          {p.number ? `#${p.number}` : `#${rank}`}
+                        </div>
 
-                      {/* Photo / Avatar */}
-                      <div className="relative w-10 h-10 rounded-full bg-white border border-surface-border dark:border-navy-700 overflow-hidden shrink-0 flex items-center justify-center shadow-2xs">
-                        {player.photoUrl ? (
-                          <img 
-                            src={player.photoUrl} 
-                            alt="" 
-                            className="w-full h-full object-cover" 
-                            onError={(e) => { e.currentTarget.style.display = 'none'; }} 
-                          />
-                        ) : (
-                          <TeamLogo teamName={player.team} className="w-6 h-6 object-contain" />
-                        )}
-                        {player.motmCount > 0 && (
-                          <span className="absolute -top-1 -right-1 text-[10px]">👑</span>
-                        )}
-                      </div>
-
-                      {/* Name & Club */}
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <p className="text-xs font-black text-card-title truncate">
-                            {player.name}
-                          </p>
-                          {player.badge && (
-                            <span className="px-1.5 py-0.2 rounded-md text-[9px] font-black bg-gold/15 text-gold border border-gold/30 shrink-0">
-                              {player.badge}
-                            </span>
+                        {/* Photo or Team Avatar */}
+                        <div className="relative w-9 h-9 rounded-full bg-white border border-surface-border dark:border-navy-700 overflow-hidden shrink-0 flex items-center justify-center shadow-2xs">
+                          {p.photoUrl ? (
+                            <img 
+                              src={p.photoUrl} 
+                              alt="" 
+                              className="w-full h-full object-cover" 
+                              onError={(e) => { e.currentTarget.style.display = 'none'; }} 
+                            />
+                          ) : (
+                            <TeamLogo teamName={p.club} className="w-6 h-6 object-contain" />
+                          )}
+                          {p.motmCount > 0 && (
+                            <span className="absolute -top-1 -right-1 text-[10px]" title="MOTM Winner">👑</span>
                           )}
                         </div>
-                        <p className="text-[10px] text-card-muted truncate flex items-center gap-1 mt-0.5">
-                          <TeamLogo teamName={player.team} className="w-3 h-3 inline object-contain shrink-0" />
-                          <span className="truncate">{player.team}</span>
-                          <span className="text-card-muted/60">•</span>
-                          <span className="shrink-0">{player.matchesCount} {lang === 'ml' ? 'മത്സരം' : 'matches'}</span>
-                        </p>
+
+                        {/* Player Name and Club */}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <h5 className="font-bold text-card-title truncate text-xs sm:text-sm">
+                              {lang === 'ml' ? (p.nameMl || p.name) : p.name}
+                            </h5>
+                            {p.badge && (
+                              <span className="px-1.5 py-0.2 rounded-md text-[9px] font-black bg-gold/15 text-gold border border-gold/30 shrink-0">
+                                {p.badge}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[10px] text-card-muted truncate flex items-center gap-1 mt-0.5">
+                            <TeamLogo teamName={p.club} className="w-3 h-3 inline object-contain shrink-0" />
+                            <span className="truncate">{lang === 'ml' ? (p.clubMl || p.club) : p.club}</span>
+                            <span className="text-card-muted/60">•</span>
+                            <span className="shrink-0">{p.position || 'XI'}</span>
+                          </p>
+                        </div>
                       </div>
 
-                      {/* Metrics: Goals, MOTM, MVP Points */}
+                      {/* Right: Stats Pills: Goals, MOTM, Cards, MVP */}
                       <div className="flex items-center gap-1.5 shrink-0 text-[10px] font-black">
                         {/* Goals */}
-                        <div 
+                        <span 
                           title="Total Goals"
                           className={`px-2 py-1 rounded-lg flex items-center gap-1 ${
-                            player.goals > 0 
-                              ? 'bg-emerald-500/20 text-emerald-400 font-black' 
-                              : 'bg-surface-card text-card-muted'
+                            p.goals > 0
+                              ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                              : 'bg-surface-card text-card-muted/70'
                           }`}
                         >
                           <span>⚽</span>
-                          <span className="font-sports text-xs">{player.goals}</span>
-                        </div>
+                          <span className="font-sports text-xs">{p.goals}</span>
+                        </span>
 
                         {/* MOTM */}
-                        <div 
-                          title="Man of the Match awards"
-                          className={`px-2 py-1 rounded-lg flex items-center gap-1 ${
-                            player.motmCount > 0 
-                              ? 'bg-amber-500/20 text-amber-400 font-black ring-1 ring-amber-500/30' 
-                              : 'bg-surface-card text-card-muted'
-                          }`}
-                        >
-                          <span>🏆</span>
-                          <span className="font-sports text-xs">{player.motmCount}</span>
-                        </div>
+                        {p.motmCount > 0 && (
+                          <span 
+                            title="Man of the Match awards"
+                            className="px-2 py-1 rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 flex items-center gap-1"
+                          >
+                            <span>🏆</span>
+                            <span className="font-sports text-xs">{p.motmCount}</span>
+                          </span>
+                        )}
+
+                        {/* Disciplinary Cards (if any) */}
+                        {disc.hasRedCard ? (
+                          <span title="Red Card" className="px-1.5 py-1 rounded-lg bg-red-600 text-white font-black text-[10px]">
+                            🟥 {disc.latestCard?.minute ? `${disc.latestCard.minute}'` : ''}
+                          </span>
+                        ) : disc.hasYellowCard ? (
+                          <span title="Yellow Card" className="px-1.5 py-1 rounded-lg bg-amber-500 text-navy-950 font-black text-[10px]">
+                            🟨 {disc.latestCard?.minute ? `${disc.latestCard.minute}'` : ''}
+                          </span>
+                        ) : null}
 
                         {/* Total MVP Points */}
-                        <div 
-                          title="Overall MVP Impact Points"
-                          className="min-w-[48px] text-center px-2 py-1 rounded-lg btn-royal text-white font-black font-sports text-xs shadow-xs"
-                        >
-                          {player.points} <span className="text-[8px] font-sans font-bold opacity-80">PTS</span>
-                        </div>
+                        {p.points > 0 && (
+                          <span 
+                            title="MVP Points: (Goals * 3) + (MOTM * 5) - Cards"
+                            className="min-w-[42px] text-center px-1.5 py-1 rounded-lg btn-royal text-white font-black font-sports text-xs shadow-xs hidden sm:inline-block"
+                          >
+                            {p.points} <span className="text-[8px] font-sans font-bold opacity-80">PTS</span>
+                          </span>
+                        )}
                       </div>
                     </div>
                   );
@@ -1030,18 +722,19 @@ export default function TopScorers({ lang, isDarkMode }) {
               </div>
             )}
 
-            {filteredMvpPlayers.length > 10 && (
+            {/* Pagination / Expand Button */}
+            {filteredUnifiedPlayers.length > visibleCount && (
               <button 
                 type="button" 
-                onClick={() => setShowAllMvp((v) => !v)} 
-                className="w-full min-h-10 rounded-xl bg-surface-light dark:bg-navy-800 text-xs font-bold text-royal dark:text-sky hover:bg-surface-subtle transition flex items-center justify-center gap-1"
+                onClick={() => setVisibleCount((prev) => Math.min(prev + 25, filteredUnifiedPlayers.length))} 
+                className="w-full min-h-10 rounded-xl bg-surface-light dark:bg-navy-800 text-xs font-bold text-royal dark:text-sky hover:bg-surface-subtle transition flex items-center justify-center gap-1 cursor-pointer"
               >
                 <span>
-                  {showAllMvp 
-                    ? (lang === 'ml' ? 'കുറച്ച് കാണിക്കുക' : 'Show less') 
-                    : (lang === 'ml' ? `എല്ലാ ${filteredMvpPlayers.length} താരങ്ങളെയും കാണുക` : `Show all ${filteredMvpPlayers.length} players`)}
+                  {lang === 'ml' 
+                    ? `കൂടുതൽ താരങ്ങളെ കാണുക (${visibleCount} / ${filteredUnifiedPlayers.length})` 
+                    : `Show more players (${visibleCount} of ${filteredUnifiedPlayers.length})`}
                 </span>
-                {showAllMvp ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                <ChevronDown className="w-3.5 h-3.5" />
               </button>
             )}
 
@@ -1050,307 +743,14 @@ export default function TopScorers({ lang, isDarkMode }) {
               <Info className="w-4 h-4 text-royal dark:text-sky shrink-0" />
               <span>
                 {lang === 'ml'
-                  ? 'MVP കണക്കുകൂട്ടൽ രീതി: ഗോൾ = +3 PTS, മാൻ ഓഫ് ദി മാച്ച് = +5 PTS, മഞ്ഞ കാർഡ് = -1 PTS, ചുവപ്പ് കാർഡ് = -3 PTS'
-                  : 'MVP Scoring: Goal = +3 pts | Man of the Match = +5 pts | Yellow Card = -1 pt | Red Card = -3 pts'}
+                  ? 'ടൂർണ്ണമെന്റിൽ രജിസ്റ്റർ ചെയ്ത എല്ലാ താരങ്ങളുടെയും സമ്പൂർണ്ണ പട്ടിക. ഗോളുകൾ, മാൻ ഓഫ് ദി മാച്ച്, കാർഡുകൾ എന്നിവ ഉൾപ്പെടുന്നു.'
+                  : 'Official unified tournament players directory with verified squad numbers, goals, MOTMs, and cards.'}
               </span>
             </div>
           </div>
         </section>
       )}
 
-      {activeStatsTab === 'players' && (
-        <section className="rounded-3xl p-4 sm:p-5 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-3.5">
-          {/* Header */}
-          <div className="flex items-center justify-between gap-2 border-b border-surface-border dark:border-navy-700 pb-3">
-            <div className="min-w-0">
-              <h3 className="text-sm font-black font-sports uppercase tracking-wider text-card-title">
-                {lang === 'ml' ? 'മാച്ച് പ്ലെയർ സ്റ്റാറ്റ്സ് & റേറ്റിംഗ്' : 'MATCH PLAYER STATS'}
-              </h3>
-              <p className="text-[10px] text-card-muted">
-                {currentMatchFixture ? `${currentMatchFixture.team1} vs ${currentMatchFixture.team2}` : 'Goals, cards and performance ratings'}
-              </p>
-            </div>
-            <span className="shrink-0 px-2 py-1 rounded-lg bg-surface-light dark:bg-navy-800 text-[10px] font-bold text-card-muted">
-              {matchdayPlayerStats.length} {lang === 'ml' ? 'താരങ്ങൾ' : 'players'}
-            </span>
-          </div>
-
-          {/* Matchday Selector Chips */}
-          <div className="flex items-center gap-1.5 overflow-x-auto horizontal-scroll-container pb-1 pt-0.5 -mx-1 px-1">
-            {selectableMatches.map((m, idx) => {
-              const isSelected = selectedStatsMatchId === m.id || (!selectedStatsMatchId && idx === 0);
-              const t1Short = (m.team1 || '').split(' ')[0];
-              const t2Short = (m.team2 || '').split(' ')[0];
-              return (
-                <button
-                  key={m.id}
-                  onClick={() => {
-                    setSelectedStatsMatchId(m.id);
-                    setShowAllPerformance(false);
-                  }}
-                  className={`min-h-[34px] px-2.5 py-1 rounded-xl text-[11px] font-bold shrink-0 transition active:scale-95 flex items-center gap-1.5 ${
-                    isSelected
-                      ? 'btn-royal text-white font-black shadow-xs'
-                      : 'surface-light text-card-title border border-surface-border dark:border-navy-700 hover:border-royal/50'
-                  }`}
-                >
-                  <span className="font-sports font-black">M{idx + 1}</span>
-                  <span className="text-[10px] text-card-muted truncate max-w-[85px]">{t1Short} vs {t2Short}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Selected Match Overview Banner */}
-          {currentMatchFixture && (
-            <div className="p-3 rounded-2xl bg-surface-light dark:bg-navy-800/60 border border-surface-border dark:border-navy-700/80 space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className="flex items-center -space-x-2 shrink-0">
-                    <div className="w-7 h-7 rounded-full bg-white p-0.5 border border-surface-border shadow-2xs z-10">
-                      <TeamLogo teamName={currentMatchFixture.team1} className="w-full h-full object-contain" />
-                    </div>
-                    <div className="w-7 h-7 rounded-full bg-white p-0.5 border border-surface-border shadow-2xs">
-                      <TeamLogo teamName={currentMatchFixture.team2} className="w-full h-full object-contain" />
-                    </div>
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="text-xs font-black font-sports text-card-title truncate">
-                      {currentMatchFixture.team1} vs {currentMatchFixture.team2}
-                    </h4>
-                    <p className="text-[10px] text-card-muted font-medium">
-                      {currentMatchFixture.date} • {currentMatchFixture.time || '9:00 PM'}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-xs font-mono font-black text-card-title px-2 py-0.5 rounded-lg bg-surface-card border border-surface-border">
-                    {currentMatchFixture.score1 != null && currentMatchFixture.score2 != null
-                      ? `${currentMatchFixture.score1} - ${currentMatchFixture.score2}${currentMatchFixture.penaltyScore ? ` (${currentMatchFixture.penaltyScore})` : ''}`
-                      : 'Upcoming'}
-                  </span>
-                  <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                    currentMatchFixture.status === 'Completed' || (currentMatchFixture.score1 != null && currentMatchFixture.score2 != null)
-                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                      : 'bg-surface-subtle text-card-muted border border-surface-border'
-                  }`}>
-                    {currentMatchFixture.status === 'Completed' ? 'FT' : currentMatchFixture.status || 'FT'}
-                  </span>
-                </div>
-              </div>
-
-              {currentMatchFixture.motm && (
-                <div className="flex items-center gap-1.5 pt-1.5 border-t border-surface-border/60 dark:border-navy-700/60 text-[11px] text-gold font-bold">
-                  <span>🏆</span>
-                  <span className="font-sports uppercase text-[10px] text-card-muted">Man of the Match:</span>
-                  <span className="truncate">{currentMatchFixture.motm}</span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Player Cards */}
-          <div className="space-y-1.5">
-            {(showAllPerformance ? matchdayPlayerStats : matchdayPlayerStats.slice(0, 6)).map((player) => (
-              <div 
-                key={player.key || `${player.team}-${player.number}-${player.name}`} 
-                className={`flex items-center gap-2.5 p-2 rounded-xl surface-light border transition min-w-0 ${
-                  player.isMotm 
-                    ? 'border-amber-500/60 bg-amber-500/5 shadow-2xs' 
-                    : 'border-surface-border dark:border-navy-700'
-                }`}
-              >
-                <div className="relative w-9 h-9 rounded-full bg-white border border-surface-border dark:border-navy-700 overflow-hidden shrink-0 flex items-center justify-center">
-                  {player.photoUrl ? (
-                    <img 
-                      src={player.photoUrl} 
-                      alt="" 
-                      className="w-full h-full object-cover" 
-                      onError={(e) => { e.currentTarget.style.display = 'none'; }} 
-                    />
-                  ) : (
-                    <TeamLogo teamName={player.team} className="w-6 h-6 object-contain" />
-                  )}
-                  {player.isMotm && (
-                    <span className="absolute -top-1 -right-1 text-[10px]">👑</span>
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5">
-                    <p className="text-xs font-bold text-card-title truncate">#{player.number} {player.name}</p>
-                    {player.isMotm && (
-                      <span className="px-1.5 py-0.2 rounded text-[8px] font-black bg-amber-500 text-navy-950 uppercase tracking-wider shrink-0 shadow-2xs">
-                        MOTM
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[9px] text-card-muted truncate">{player.team} · {player.position}{player.isStarter ? ' · XI' : ' · SUB'}</p>
-                </div>
-                <div className="flex items-center gap-1.5 shrink-0 text-[10px] font-black">
-                  <span className={`px-1.5 py-1 rounded-md ${player.goals > 0 ? 'bg-emerald-500/20 text-emerald-500 font-black' : 'bg-surface-card text-card-muted'}`}>
-                    ⚽ {player.goals}
-                  </span>
-                  <span className={`px-1.5 py-1 rounded-md ${player.yellowCards > 0 ? 'bg-amber-500/20 text-amber-500 font-black' : 'bg-surface-card text-card-muted'}`}>
-                    🟨 {player.yellowCards}
-                  </span>
-                  <span className={`px-1.5 py-1 rounded-md ${player.redCards > 0 ? 'bg-rose-500/20 text-rose-500 font-black' : 'bg-surface-card text-card-muted'}`}>
-                    🟥 {player.redCards}
-                  </span>
-                  <span title="Lineup rating" className={`w-11 text-center px-1 py-1 rounded-md ${
-                    player.isMotm 
-                      ? 'bg-amber-500/20 text-amber-500 font-black ring-1 ring-amber-500/40' 
-                      : 'bg-sky-500/10 text-sky-700 dark:text-sky-300'
-                  }`}>
-                    ⭐ {player.rating.toFixed(1)}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {matchdayPlayerStats.length > 6 && (
-            <button 
-              type="button" 
-              onClick={() => setShowAllPerformance((value) => !value)} 
-              className="w-full min-h-10 rounded-xl bg-surface-light dark:bg-navy-800 text-xs font-bold text-royal dark:text-sky hover:bg-surface-subtle transition"
-            >
-              {showAllPerformance 
-                ? (lang === 'ml' ? 'കുറച്ച് കാണിക്കുക' : 'Show less') 
-                : (lang === 'ml' ? `എല്ലാ താരങ്ങളെയും കാണുക (${matchdayPlayerStats.length})` : `Show all match players (${matchdayPlayerStats.length})`)}
-            </button>
-          )}
-        </section>
-      )}
-
-      {/* ============================================================== */}
-      {/* VIEW A: ALL PLAYERS DIRECTORY (Default, Highly Requested & Active) */}
-      {/* ============================================================== */}
-      {activeStatsTab === 'players' && (
-        <section className="rounded-3xl p-4 sm:p-6 border border-surface-border dark:border-navy-700 surface-card shadow-card space-y-4 animate-fadeIn">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-surface-border dark:border-navy-700 pb-3">
-            <div className="flex items-center gap-2.5">
-              <span className="p-2 rounded-xl btn-royal text-white shadow-xs">
-                <Users className="w-5 h-5" />
-              </span>
-              <div>
-                <h3 className="text-base sm:text-lg font-black font-sports uppercase tracking-wider text-card-title">
-                  {lang === 'ml' ? 'കളിക്കാരുടെ പട്ടിക' : 'ALL PLAYERS DIRECTORY'}
-                </h3>
-                <p className="text-[11px] text-card-muted font-bold">
-                  {lang === 'ml' ? 'സ്ഥിരീകരിച്ച സ്ക്വാഡുകളിലെ താരങ്ങൾ' : 'Names, numbers, positions and disciplinary records'}
-                </p>
-              </div>
-            </div>
-
-            <span className="text-xs font-mono font-bold text-card-muted self-start sm:self-center">
-              {visiblePlayers.length} {lang === 'ml' ? 'താരങ്ങൾ' : 'Players'}
-            </span>
-          </div>
-
-          {/* Club Filter Chips */}
-          <div className="flex items-center gap-1.5 overflow-x-auto horizontal-scroll-container py-1">
-            {squadClubs.map((club) => {
-              const isSelected = selectedClubFilter === club;
-              return (
-                <button
-                  key={club}
-                  onClick={() => setSelectedClubFilter(club)}
-                  className={`min-h-[40px] px-3 py-1 rounded-xl text-xs font-bold shrink-0 transition active:scale-95 flex items-center gap-1.5 ${
-                    isSelected
-                      ? 'btn-royal text-white font-black shadow-xs'
-                      : 'surface-light text-card-title border border-surface-border dark:border-navy-700'
-                  }`}
-                >
-                  <span>{club === 'All' ? (lang === 'ml' ? 'എല്ലാ ക്ലബ്ബുകളും' : 'All Clubs') : (lang === 'ml' ? (squadClubLabelsMl[club] || club) : club)}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Search Bar */}
-          <div className="relative">
-            <Search className="w-4 h-4 text-card-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              value={playerSearchQuery}
-              onChange={(e) => setPlayerSearchQuery(e.target.value)}
-              placeholder={lang === 'ml' ? 'കളിക്കാരന്റെ പേര് അല്ലെങ്കിൽ ജേഴ്സി നമ്പർ തിരയുക...' : 'Search player by name, number or club...'}
-              className="w-full pl-10 pr-10 py-2.5 rounded-xl text-xs font-medium surface-light border border-surface-border dark:border-navy-700 text-card-title focus:outline-hidden focus:ring-2 focus:ring-royal min-h-[44px]"
-            />
-            {playerSearchQuery && (
-              <button
-                onClick={() => setPlayerSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-card-muted hover:text-card-title"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-
-          {/* Players Grid with Live Card Status Indicators */}
-          {visiblePlayers.length === 0 ? (
-            <div className="py-8 px-4 rounded-2xl surface-light border border-dashed border-surface-border dark:border-navy-700 text-center text-xs text-card-muted font-medium">
-              {lang === 'ml' ? 'തിരഞ്ഞെടുത്ത വിവരങ്ങളുമായി പൊരുത്തപ്പെടുന്ന കളിക്കാരെ കണ്ടെത്തിയില്ല' : 'No players found matching your query'}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {visiblePlayers.map((p) => {
-                const disc = getPlayerDisciplinaryStatus(p.name, p.number, p.club);
-                return (
-                  <div
-                    key={p.id}
-                    onClick={() => {
-                      if (disc.hasCard) {
-                        setSelectedCardPlayer({ player: p, disciplinary: disc });
-                      }
-                    }}
-                    className={`p-3 rounded-2xl surface-light border transition flex items-center justify-between gap-3 text-xs min-h-[52px] ${
-                      disc.hasRedCard 
-                        ? 'border-red-500/50 bg-red-500/5 hover:border-red-500 cursor-pointer' 
-                        : disc.hasYellowCard
-                        ? 'border-amber-500/50 bg-amber-500/5 hover:border-amber-500 cursor-pointer'
-                        : 'border-surface-border dark:border-navy-700 hover:border-royal'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-8 h-8 rounded-xl bg-surface-card text-card-title font-black font-sports border border-surface-border dark:border-navy-700 flex items-center justify-center shrink-0 shadow-2xs">
-                        #{p.number}
-                      </span>
-                      <div className="w-8 h-8 rounded-full bg-white p-0.5 border border-slate-200 shrink-0">
-                        <TeamLogo teamName={p.club} className="w-full h-full object-contain" />
-                      </div>
-                      <div className="min-w-0">
-                        <h5 className="font-bold text-card-title truncate text-xs sm:text-sm">
-                          {lang === 'ml' ? (p.nameMl || p.name) : p.name}
-                        </h5>
-                        <p className="text-[10px] text-card-muted truncate font-medium">
-                          {lang === 'ml' ? (p.clubMl || p.club) : p.club}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Disciplinary Card Indicator */}
-                    {disc.hasRedCard && (
-                      <span className="px-2 py-1 rounded-lg bg-red-600 text-white font-black text-[10px] flex items-center gap-1 shrink-0 shadow-xs animate-pulse">
-                        <span>🟥</span>
-                        <span>Red Card</span>
-                        <span className="font-mono bg-black/20 px-1 rounded-xs">{disc.latestCard?.minute}'</span>
-                      </span>
-                    )}
-                    {disc.hasYellowCard && !disc.hasRedCard && (
-                      <span className="px-2 py-1 rounded-lg bg-amber-500 text-navy-950 font-black text-[10px] flex items-center gap-1 shrink-0 shadow-xs">
-                        <span>🟨</span>
-                        <span>Yellow Card</span>
-                        <span className="font-mono bg-black/20 px-1 rounded-xs">{disc.latestCard?.minute}'</span>
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </section>
-      )}
 
       {/* ============================================================== */}
       {/* VIEW B: OFFICIAL HONOURS & LEADERBOARDS */}
