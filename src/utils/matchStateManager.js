@@ -22,9 +22,9 @@ export const SEVENS_TOTAL_MINUTES = MAX_MATCH_MINUTES;
 
 // Official Match final state for visitors without a saved scorer update.
 export const realOfficialMatchState = {
-  id: 'pq-udaya',
-  activeFixtureId: 'pq-udaya',
-  officialScoreHome: 1,
+  id: 'pq-malabar',
+  activeFixtureId: 'pq-malabar',
+  officialScoreHome: 2,
   officialScoreAway: 0,
   matchSeconds: 60 * 60,
   matchMinute: 60,
@@ -44,7 +44,10 @@ export const realOfficialMatchState = {
     away: 0,
     total: 0
   },
-  events: []
+  events: [
+    { id: 'pq-malabar-goal-1', type: 'goal', minute: 28, player: 'Oliver', team: 'home', teamName: 'NEW MALAYA MALABAR FC' },
+    { id: 'pq-malabar-goal-2', type: 'goal', minute: 54, player: 'Oliver', team: 'home', teamName: 'NEW MALAYA MALABAR FC' }
+  ]
 };
 
 export const DEMO_MODE_KEY = 'kasc_demo_mode_active';

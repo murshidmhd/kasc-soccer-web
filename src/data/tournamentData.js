@@ -438,20 +438,25 @@ export const fixtures = [
   },
   {
     id: "pq-malabar",
-    day: "Day 16 (Tonight)",
+    day: "Day 16",
     date: "21 Nov 2026",
     time: "09:00 PM",
     stage: "Pre-Quarter (Round of 16)",
     team1: "NEW MALAYA MALABAR FC",
     team2: "SEVEN STAR FC PALAKKAD",
-    status: "Upcoming",
-    score1: null,
-    score2: null,
+    status: "Completed",
+    score1: 2,
+    score2: 0,
     confirmed: true,
     badge1Color: "from-blue-600 to-sky-900",
     badge2Color: "from-red-600 to-rose-900",
     stadium: "Peruvallur Panjayath Stadium",
-    winner: null
+    winner: "NEW MALAYA MALABAR FC",
+    motm: "Oliver (New Malaya Malabar FC)",
+    events: [
+      { type: "goal", minute: 28, player: "Oliver", team: "NEW MALAYA MALABAR FC" },
+      { type: "goal", minute: 54, player: "Oliver", team: "NEW MALAYA MALABAR FC" }
+    ]
   },
   {
     id: "qf1",
@@ -494,13 +499,13 @@ export const fixtures = [
     time: "09:00 PM",
     stage: "Quarter Final 3",
     team1: "SOCCER SPORTING SHORNUR",
-    team2: "LINSHA MEDIKKALS MANNARKADU",
+    team2: "NEW MALAYA MALABAR FC",
     status: "Upcoming",
     score1: null,
     score2: null,
     confirmed: true,
     badge1Color: "from-red-800 to-amber-700",
-    badge2Color: "from-emerald-600 to-teal-900",
+    badge2Color: "from-blue-600 to-sky-900",
     stadium: "Peruvallur Panjayath Stadium",
     winner: null
   },
@@ -524,44 +529,44 @@ export const fixtures = [
 ];
 
 export const lastMatchResult = {
-  matchId: "pq-udaya",
-  homeTeam: "UDAYA PARAMBIL PEEDIKA",
-  awayTeam: "I NOV FC MANJERI",
-  homeScore: 1,
+  matchId: "pq-malabar",
+  homeTeam: "NEW MALAYA MALABAR FC",
+  awayTeam: "SEVEN STAR FC PALAKKAD",
+  homeScore: 2,
   awayScore: 0,
-  winnerTeam: "UDAYA PARAMBIL PEEDIKA",
+  winnerTeam: "NEW MALAYA MALABAR FC",
   stage: "Pre-Quarter (Round of 16)",
-  date: "20 Nov 2026",
-  winnerPosterUrl: "/logo_udaya_transparent.webp",
+  date: "21 Nov 2026",
+  winnerPosterUrl: "/assets/teams/malbar_fc_kozhikkode.png",
 };
 
-// Next upcoming match (Pre-Quarter: New Malaya Malabar FC vs Seven Star FC Palakkad)
+// Next upcoming match (Quarter Final 1: KRSC Kozhikkode vs KMG Mavoor)
 export const nextMatch = {
-  id: "pq-malabar",
-  stage: "Pre-Quarter (Tonight's Clash)",
-  date: "Saturday, 21 Nov 2026",
+  id: "qf1",
+  stage: "Quarter Final 1",
+  date: "22 Nov 2026",
   time: "9:00 PM IST",
   venue: "Peruvallur Panjayath Stadium",
   venueMl: "പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം, പറമ്പിൽ പീടിക",
   teamHome: {
-    id: "malbar_fc_kozhikkode",
-    name: "NEW MALAYA MALABAR FC",
-    nameMl: "ന്യൂ മലയ മലബാർ എഫ്.സി",
-    shortName: "MALABAR",
+    id: "krsc_kozhikkode",
+    name: "KRSC KOZHIKKODE",
+    nameMl: "കെ.ആർ.എസ്.സി കോഴിക്കോട്",
+    shortName: "KRSC",
     city: "Kozhikode",
-    color: "#2563EB",
-    textColor: "#ffffff",
-    badgeBg: "from-blue-700 to-indigo-950",
+    color: "#EAB308",
+    textColor: "#000000",
+    badgeBg: "from-yellow-500 to-amber-700",
   },
   teamAway: {
-    id: "seven_star_fc_palakkad",
-    name: "SEVEN STAR FC PALAKKAD",
-    nameMl: "സെവൻ സ്റ്റാർ എഫ്.സി പാലക്കാട്",
-    shortName: "SEVEN STAR",
-    city: "Palakkad",
-    color: "#DC2626",
+    id: "kmg_mavoor",
+    name: "KMG MAVOOR",
+    nameMl: "കെ.എം.ജി മാവൂർ",
+    shortName: "KMG",
+    city: "Mavoor, Kozhikode",
+    color: "#059669",
     textColor: "#ffffff",
-    badgeBg: "from-red-600 to-stone-900",
+    badgeBg: "from-emerald-700 to-teal-950",
   }
 };
 
@@ -944,28 +949,28 @@ export const participatingTeams = [
 export const topScorersPreview = [
   { rank: 1, name: "Dosso", team: "SABAN FC KOTTAKKAL", goals: 4, matches: 2, origin: "Overseas", flag: "⚽", category: "Tournament Top Scorer (Hat-trick)" },
   { rank: 2, name: "Asif", team: "X8 TOURS CALICUT", goals: 3, matches: 2, origin: "Calicut", flag: "🇮🇳", category: "Tournament Scorer" },
-  { rank: 3, name: "Razi", team: "KMG MAVOOR", goals: 2, matches: 2, origin: "Mavoor", flag: "🇮🇳", category: "Tournament Scorer" },
-  { rank: 4, name: "Matti", team: "KRSC KOZHIKKODE", goals: 1, matches: 2, origin: "Kozhikode", flag: "🇮🇳", category: "Tournament Scorer" },
-  { rank: 5, name: "Asif Udhaya", team: "UDAYA PARAMBIL PEEDIKA", goals: 1, matches: 1, origin: "Parambil Peedika", flag: "🇮🇳", category: "Host Club Match Winner" },
-  { rank: 6, name: "Benjamin", team: "SOCCER SPORTING SHORNUR", goals: 1, matches: 1, origin: "Palakkad", flag: "🇮🇳", category: "Tournament Scorer" },
-  { rank: 7, name: "Muhammed A", team: "SUPER STUDIO MALAPPURAM", goals: 1, matches: 1, origin: "Malappuram", flag: "🇮🇳", category: "Tournament Scorer" },
-  { rank: 8, name: "Sajay John J", team: "UNITED FC NELLIKKUTH", goals: 1, matches: 2, origin: "Nellikuth", flag: "🇮🇳", category: "Tournament Scorer" },
-  { rank: 9, name: "Madhusudhan S", team: "SEVEN STAR FC PALAKKAD", goals: 1, matches: 1, origin: "Palakkad", flag: "🇮🇳", category: "Tournament Scorer" },
-  { rank: 10, name: "Mohamed Shanin", team: "I NOV FC MANJERI", goals: 1, matches: 2, origin: "Manjeri", flag: "🇮🇳", category: "Tournament Scorer" }
+  { rank: 3, name: "Oliver", team: "NEW MALAYA MALABAR FC", goals: 2, matches: 1, origin: "Kozhikode", flag: "🇮🇳", category: "Pre-QF Brace & MOTM" },
+  { rank: 4, name: "Razi", team: "KMG MAVOOR", goals: 2, matches: 2, origin: "Mavoor", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 5, name: "Matti", team: "KRSC KOZHIKKODE", goals: 1, matches: 2, origin: "Kozhikode", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 6, name: "Asif Udhaya", team: "UDAYA PARAMBIL PEEDIKA", goals: 1, matches: 1, origin: "Parambil Peedika", flag: "🇮🇳", category: "Host Club Match Winner" },
+  { rank: 7, name: "Benjamin", team: "SOCCER SPORTING SHORNUR", goals: 1, matches: 1, origin: "Palakkad", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 8, name: "Muhammed A", team: "SUPER STUDIO MALAPPURAM", goals: 1, matches: 1, origin: "Malappuram", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 9, name: "Sajay John J", team: "UNITED FC NELLIKKUTH", goals: 1, matches: 2, origin: "Nellikuth", flag: "🇮🇳", category: "Tournament Scorer" },
+  { rank: 10, name: "Madhusudhan S", team: "SEVEN STAR FC PALAKKAD", goals: 1, matches: 2, origin: "Palakkad", flag: "🇮🇳", category: "Tournament Scorer" }
 ];
 
 // Official Tournament Match Goal Scorers
 export const officialTournamentGoalScorers = [
   { rank: 1, name: "Dosso", team: "SABAN FC KOTTAKKAL", goals: 4, matches: 2 },
   { rank: 2, name: "Asif", team: "X8 TOURS CALICUT", goals: 3, matches: 2 },
-  { rank: 3, name: "Razi", team: "KMG MAVOOR", goals: 2, matches: 2 },
-  { rank: 4, name: "Matti", team: "KRSC KOZHIKKODE", goals: 1, matches: 2 },
-  { rank: 5, name: "Asif Udhaya", team: "UDAYA PARAMBIL PEEDIKA", goals: 1, matches: 1 },
-  { rank: 6, name: "Benjamin", team: "SOCCER SPORTING SHORNUR", goals: 1, matches: 1 },
-  { rank: 7, name: "Muhammed A", team: "SUPER STUDIO MALAPPURAM", goals: 1, matches: 1 },
-  { rank: 8, name: "Sajay John J", team: "UNITED FC NELLIKKUTH", goals: 1, matches: 2 },
-  { rank: 9, name: "Madhusudhan S", team: "SEVEN STAR FC PALAKKAD", goals: 1, matches: 1 },
-  { rank: 10, name: "Mohamed Shanin", team: "I NOV FC MANJERI", goals: 1, matches: 2 }
+  { rank: 3, name: "Oliver", team: "NEW MALAYA MALABAR FC", goals: 2, matches: 1 },
+  { rank: 4, name: "Razi", team: "KMG MAVOOR", goals: 2, matches: 2 },
+  { rank: 5, name: "Matti", team: "KRSC KOZHIKKODE", goals: 1, matches: 2 },
+  { rank: 6, name: "Asif Udhaya", team: "UDAYA PARAMBIL PEEDIKA", goals: 1, matches: 1 },
+  { rank: 7, name: "Benjamin", team: "SOCCER SPORTING SHORNUR", goals: 1, matches: 1 },
+  { rank: 8, name: "Muhammed A", team: "SUPER STUDIO MALAPPURAM", goals: 1, matches: 1 },
+  { rank: 9, name: "Sajay John J", team: "UNITED FC NELLIKKUTH", goals: 1, matches: 2 },
+  { rank: 10, name: "Madhusudhan S", team: "SEVEN STAR FC PALAKKAD", goals: 1, matches: 2 }
 ];
 
 export const officialTournamentGoalkeepers = [

@@ -352,6 +352,34 @@ export const squadPlayers = [
     devFallbackUrl: '',
     fileSize: 'Unknown',
     isAiGenerated: false,
+  },
+  {
+    id: 'malabar_oliver',
+    name: 'Oliver',
+    nameMl: 'ഒലിവർ',
+    number: '10',
+    club: 'NEW MALAYA MALABAR FC',
+    clubMl: 'ന്യൂ മലയ മലബാർ',
+    position: 'Forward / സ്ട്രൈക്കർ',
+    posterUrl: '/assets/teams/malbar_fc_kozhikkode.png',
+    videoUrl: '',
+    devFallbackUrl: '',
+    fileSize: 'Unknown',
+    isAiGenerated: false,
+  },
+  {
+    id: 'malabar_sanfeed',
+    name: 'Mohamed Sanfeed P.P',
+    nameMl: 'മുഹമ്മദ് സൻഫീദ് പി.പി',
+    number: '7',
+    club: 'NEW MALAYA MALABAR FC',
+    clubMl: 'ന്യൂ മലയ മലബാർ',
+    position: 'Midfielder / മിഡ്ഫീൽഡർ',
+    posterUrl: '/assets/teams/malbar_fc_kozhikkode.png',
+    videoUrl: '',
+    devFallbackUrl: '',
+    fileSize: 'Unknown',
+    isAiGenerated: false,
   }
 ];
 
@@ -383,6 +411,6 @@ export const clubSquadStatus = {
   'UDAYA Parambil Peedika': 'confirmed',
   'SUPER STUDIO MALAPPURAM': 'confirmed',
   'LINSHA MEDICALS MANNARKKAD': 'confirmed',
-  'NEW MALAYA MALABAR FC': 'unconfirmed',
+  'NEW MALAYA MALABAR FC': 'confirmed',
   'FIFA Manjeri': 'unconfirmed'
 };
