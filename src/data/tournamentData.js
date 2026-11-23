@@ -460,25 +460,25 @@ export const fixtures = [
   },
   {
     id: "qf1",
-    day: "Quarter Final 1",
-    date: "22 Nov 2026",
+    day: "Quarter Final 1 (Tonight)",
+    date: "23 Nov 2026",
     time: "09:00 PM",
     stage: "Quarter Final 1",
-    team1: "KRSC KOZHIKKODE",
-    team2: "KMG MAVOOR",
+    team1: "KMG MAVOOR",
+    team2: "SOCCER SPORTING SHORNUR",
     status: "Upcoming",
     score1: null,
     score2: null,
     confirmed: true,
-    badge1Color: "from-amber-500 to-red-800",
-    badge2Color: "from-green-700 to-emerald-950",
+    badge1Color: "from-green-700 to-emerald-950",
+    badge2Color: "from-red-800 to-amber-700",
     stadium: "Peruvallur Panjayath Stadium",
     winner: null
   },
   {
     id: "qf2",
     day: "Quarter Final 2",
-    date: "23 Nov 2026",
+    date: "24 Nov 2026",
     time: "09:00 PM",
     stage: "Quarter Final 2",
     team1: "LINSHA MEDICALS MANNARKKAD",
@@ -495,16 +495,16 @@ export const fixtures = [
   {
     id: "qf3",
     day: "Quarter Final 3",
-    date: "24 Nov 2026",
+    date: "25 Nov 2026",
     time: "09:00 PM",
     stage: "Quarter Final 3",
-    team1: "SOCCER SPORTING SHORNUR",
+    team1: "KRSC KOZHIKKODE",
     team2: "NEW MALAYA MALABAR FC",
     status: "Upcoming",
     score1: null,
     score2: null,
     confirmed: true,
-    badge1Color: "from-red-800 to-amber-700",
+    badge1Color: "from-amber-500 to-red-800",
     badge2Color: "from-blue-600 to-sky-900",
     stadium: "Peruvallur Panjayath Stadium",
     winner: null
@@ -512,7 +512,7 @@ export const fixtures = [
   {
     id: "qf4",
     day: "Quarter Final 4",
-    date: "25 Nov 2026",
+    date: "26 Nov 2026",
     time: "09:00 PM",
     stage: "Quarter Final 4",
     team1: "X8 TOURS CALICUT",
@@ -540,25 +540,15 @@ export const lastMatchResult = {
   winnerPosterUrl: "/assets/teams/malbar_fc_kozhikkode.png",
 };
 
-// Next upcoming match (Quarter Final 1: KRSC Kozhikkode vs KMG Mavoor)
+// Next upcoming match (Quarter Final 1: KMG Mavoor vs Soccer Sporting Shornur)
 export const nextMatch = {
   id: "qf1",
-  stage: "Quarter Final 1",
-  date: "22 Nov 2026",
+  stage: "Quarter Final 1 (Tonight's Clash)",
+  date: "Monday, 23 Nov 2026",
   time: "9:00 PM IST",
   venue: "Peruvallur Panjayath Stadium",
   venueMl: "പെരുവള്ളൂർ പഞ്ചായത്ത് സ്റ്റേഡിയം, പറമ്പിൽ പീടിക",
   teamHome: {
-    id: "krsc_kozhikkode",
-    name: "KRSC KOZHIKKODE",
-    nameMl: "കെ.ആർ.എസ്.സി കോഴിക്കോട്",
-    shortName: "KRSC",
-    city: "Kozhikode",
-    color: "#EAB308",
-    textColor: "#000000",
-    badgeBg: "from-yellow-500 to-amber-700",
-  },
-  teamAway: {
     id: "kmg_mavoor",
     name: "KMG MAVOOR",
     nameMl: "കെ.എം.ജി മാവൂർ",
@@ -567,6 +557,16 @@ export const nextMatch = {
     color: "#059669",
     textColor: "#ffffff",
     badgeBg: "from-emerald-700 to-teal-950",
+  },
+  teamAway: {
+    id: "soccer_sporting_shornur",
+    name: "SOCCER SPORTING SHORNUR",
+    nameMl: "സോക്കർ സ്പോർട്ടിംഗ് ഷൊർണ്ണൂർ",
+    shortName: "SHORNUR",
+    city: "Shornur, Palakkad",
+    color: "#DC2626",
+    textColor: "#ffffff",
+    badgeBg: "from-red-800 to-amber-900",
   }
 };
 

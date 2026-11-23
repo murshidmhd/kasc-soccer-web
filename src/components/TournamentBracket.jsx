@@ -75,60 +75,31 @@ export const getBracketData = (fixturesList = fixtures) => {
     };
   });
 
-  const quarterFinals = [
-    { 
-      id: 'qf1', 
-      matchNum: 'QF 1', 
-      date: '22 Nov', 
-      time: '9:00 PM', 
-      team1Slot: preQuarters[0]?.winner || 'Winner PQ 1', 
-      team2Slot: preQuarters[1]?.winner || 'Winner PQ 2', 
-      team1: preQuarters[0]?.winner || null,
-      team2: preQuarters[1]?.winner || null,
-      status: 'Quarter Final', 
-      winner: null, 
-      sfSlot: 'sf1' 
-    },
-    { 
-      id: 'qf2', 
-      matchNum: 'QF 2', 
-      date: '24 Nov', 
-      time: '9:00 PM', 
-      team1Slot: preQuarters[2]?.winner || 'Winner PQ 3', 
-      team2Slot: preQuarters[3]?.winner || 'Winner PQ 4', 
-      team1: preQuarters[2]?.winner || null,
-      team2: preQuarters[3]?.winner || null,
-      status: 'Quarter Final', 
-      winner: null, 
-      sfSlot: 'sf1' 
-    },
-    { 
-      id: 'qf3', 
-      matchNum: 'QF 3', 
-      date: '24 Nov', 
-      time: '9:00 PM', 
-      team1Slot: preQuarters[4]?.winner || 'Winner PQ 5', 
-      team2Slot: preQuarters[5]?.winner || 'Winner PQ 6', 
-      team1: preQuarters[4]?.winner || null,
-      team2: preQuarters[5]?.winner || null,
-      status: 'Quarter Final', 
-      winner: null, 
-      sfSlot: 'sf2' 
-    },
-    { 
-      id: 'qf4', 
-      matchNum: 'QF 4', 
-      date: '26 Nov', 
-      time: '9:00 PM', 
-      team1Slot: preQuarters[6]?.winner || 'Winner PQ 7', 
-      team2Slot: preQuarters[7]?.winner || 'Winner PQ 8', 
-      team1: preQuarters[6]?.winner || null,
-      team2: preQuarters[7]?.winner || null,
-      status: 'Quarter Final', 
-      winner: null, 
-      sfSlot: 'sf2' 
-    }
-  ];
+  const quarterFinalMatches = fixturesList.filter((f) => f.id?.startsWith('qf') || f.stage?.includes('Quarter Final'));
+  const quarterFinals = quarterFinalMatches.map((f, i) => {
+    const winner = f.winner || (f.confirmed && Number.isFinite(f.score1) && Number.isFinite(f.score2)
+      ? f.score1 === f.score2 ? null : f.score1 > f.score2 ? f.team1 : f.team2
+      : null);
+    return {
+      id: f.id,
+      matchNum: `QF ${i + 1}`,
+      date: f.date,
+      time: f.time,
+      team1: f.team1,
+      team2: f.team2,
+      team1Slot: f.team1 || `Winner PQ ${2 * i + 1}`,
+      team2Slot: f.team2 || `Winner PQ ${2 * i + 2}`,
+      status: f.status,
+      score1: f.score1,
+      score2: f.score2,
+      winner,
+      confirmed: f.confirmed,
+      penaltyScore: f.penaltyScore,
+      penaltyScore1: f.penaltyScore1,
+      penaltyScore2: f.penaltyScore2,
+      sfSlot: i < 2 ? 'sf1' : 'sf2'
+    };
+  });
 
   return {
     round1,
